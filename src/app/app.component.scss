@@ -1,0 +1,41 @@
+.rewrite {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  .map {
+    flex: 0 0 60%;
+  }
+
+  .debug {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 40%;
+    padding: 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+}
+
+button,
+input {
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.layer {
+  box-sizing: border-box;
+  padding: 12px;
+  border-bottom: 1px solid gray;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+}
+
+.actions button {
+  margin-right: 6px;
+}

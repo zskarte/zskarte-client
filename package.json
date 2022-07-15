@@ -1,12 +1,14 @@
 {
   "name": "zskarte-v3",
-  "version": "0.0.0",
+  "version": "3.0.0-alpha.0",
+  "main": "dist/electron/index.js",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "ng:serve": "ng serve --port 4300",
+    "ng:build": "ng build --configuration production",
+    "electron:serve": "yarn electron:build && wait-on http-get://localhost:4300/ && electron ./ --serve",
+    "electron:build": "tsc -p tsconfig.electron.json && electron-builder install-app-deps",
+    "build": "run-p ng:build electron:build",
+    "start": "run-p ng:serve electron:serve"
   },
   "private": true,
   "dependencies": {
@@ -18,8 +20,11 @@
     "@angular/platform-browser": "^14.0.0",
     "@angular/platform-browser-dynamic": "^14.0.0",
     "@angular/router": "^14.0.0",
+    "immer": "^9.0.15",
+    "ol": "^6.14.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
+    "uuid": "^8.3.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -27,12 +32,17 @@
     "@angular/cli": "~14.0.6",
     "@angular/compiler-cli": "^14.0.0",
     "@types/jasmine": "~4.0.0",
+    "@types/uuid": "^8.3.4",
+    "electron": "^19.0.8",
+    "electron-builder": "^23.1.0",
     "jasmine-core": "~4.1.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "typescript": "~4.7.2"
+    "npm-run-all": "^4.1.5",
+    "typescript": "~4.7.2",
+    "wait-on": "^6.0.1"
   }
 }
