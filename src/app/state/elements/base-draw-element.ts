@@ -11,20 +11,17 @@ import { distinctUntilChanged, map } from 'rxjs/operators';
 import { IZsMapDrawElementUi } from '../draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 
-export abstract class ZsMapBaseDrawElement<
-  T extends IZsMapBaseDrawElementState = IZsMapBaseDrawElementState
-> extends ZsMapBaseElement<T> {
-  constructor(
-    protected override _id: string,
-    protected override _state: ZsMapStateService
-  ) {
+export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState = IZsMapBaseDrawElementState> extends ZsMapBaseElement<T> {
+  constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.IS_DRAW_ELEMENT, true);
     this._element = this._state.observeMapState().pipe(
       map((o) => {
+        // TODO typings
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return o.drawElements?.find((o) => o.id === this._id) as any;
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 
@@ -43,7 +40,7 @@ export abstract class ZsMapBaseDrawElement<
         }
         return o?.coordinates;
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 
@@ -61,7 +58,7 @@ export abstract class ZsMapBaseDrawElement<
       map((o) => {
         return o?.layer;
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 
@@ -78,15 +75,12 @@ export abstract class ZsMapBaseDrawElement<
   }
 
   // static handlers for drawing
-  public static getOlDrawHandler(
-    state: ZsMapStateService,
-    layer: string
-  ): Draw {
+  public static getOlDrawHandler(state: ZsMapStateService, layer: string): Draw {
     const draw = new Draw(
       this._enhanceOlDrawOptions({
         source: new VectorSource({ wrapX: false }),
         type: this._getOlDrawType(),
-      })
+      }),
     );
     draw.on('drawend', (event) => {
       this._parseFeature(event.feature, state, layer);
@@ -99,11 +93,8 @@ export abstract class ZsMapBaseDrawElement<
   protected static _enhanceOlDrawOptions(options: Options) {
     return options;
   }
-  protected static _parseFeature(
-    event: Feature<Geometry>,
-    state: ZsMapStateService,
-    layer: string
-  ): void {
+  protected static _parseFeature(event: Feature<Geometry>, state: ZsMapStateService, layer: string): void {
+    console.log('static fn _parseFeature is not implemented', { event, state, layer });
     throw new Error('static fn _parseFeature is not implemented');
   }
 }

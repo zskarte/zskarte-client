@@ -9,7 +9,8 @@ import Feature from 'ol/Feature';
 export abstract class ZsMapBaseLayer {
   protected _layer: Observable<ZsMapLayerState | undefined>;
   protected _olSource = new VectorSource();
-  // TODO any
+  // TODO types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected _olLayer: VectorLayer<any> = new VectorLayer({
     source: this._olSource,
   });
@@ -22,7 +23,7 @@ export abstract class ZsMapBaseLayer {
         }
         return undefined;
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
 
     this.observePosition().subscribe((position) => {
@@ -42,7 +43,8 @@ export abstract class ZsMapBaseLayer {
     return this._id;
   }
 
-  // TODO any
+  // TODO types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public getOlLayer(): VectorLayer<any> {
     return this._olLayer;
   }
@@ -62,18 +64,16 @@ export abstract class ZsMapBaseLayer {
       map((o) => {
         return o?.type;
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 
   public observeOpacity(): Observable<number> {
     return this._state.observeDisplayState().pipe(
       map((o) => {
-        return o?.layerOpacity?.[this._id] === undefined
-          ? 1
-          : o?.layerOpacity?.[this._id];
+        return o?.layerOpacity?.[this._id] === undefined ? 1 : o?.layerOpacity?.[this._id];
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 
@@ -88,7 +88,7 @@ export abstract class ZsMapBaseLayer {
       map((o) => {
         return o?.name;
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 
@@ -106,7 +106,7 @@ export abstract class ZsMapBaseLayer {
       map((o) => {
         return o?.layerVisibility?.[this._id];
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 
@@ -115,7 +115,7 @@ export abstract class ZsMapBaseLayer {
       map((o) => {
         return o?.activeLayer === this._id;
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 
@@ -124,7 +124,7 @@ export abstract class ZsMapBaseLayer {
       map((o) => {
         return o?.layerOrder.findIndex((o) => o === this._id) + 1;
       }),
-      distinctUntilChanged((x, y) => x === y)
+      distinctUntilChanged((x, y) => x === y),
     );
   }
 

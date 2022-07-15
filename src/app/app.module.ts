@@ -7,16 +7,9 @@ import { AppComponent } from './app.component';
 import { MapRendererComponent } from './map-renderer/map-renderer.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MapRendererComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule
-  ],
+  declarations: [AppComponent, MapRendererComponent],
+  imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

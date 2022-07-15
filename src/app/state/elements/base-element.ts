@@ -1,12 +1,10 @@
 import { Feature } from 'ol';
 import { Observable } from 'rxjs';
-import { IZsMapBaseElementState } from '../interfaces';
-import OlMap from 'ol/Map';
 import { ZsMapStateService } from '../state.service';
 
 export abstract class ZsMapBaseElement<T> {
   private _layer!: string;
-  protected _element!: Observable<T>;
+  protected _element!: Observable<T | undefined>;
   protected _olFeature: Feature = new Feature();
   protected _isInitialized = false;
   constructor(protected _id: string, protected _state: ZsMapStateService) {}
@@ -19,7 +17,5 @@ export abstract class ZsMapBaseElement<T> {
     return this._id;
   }
 
-  protected abstract _initialize(
-    coordinates: number[] | number[][] | undefined
-  ): void;
+  protected abstract _initialize(coordinates: number[] | number[][] | undefined): void;
 }

@@ -1,16 +1,13 @@
-
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {
-  IZsMapState,
-  ZsMapDrawElementStateType,
-  ZsMapStateSource,
-} from './state/interfaces';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { IZsMapState, ZsMapDrawElementStateType, ZsMapStateSource } from './state/interfaces';
 import { ZsMapStateService } from './state/state.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  encapsulation: ViewEncapsulation.ShadowDom,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   ZsMapStateSource = ZsMapStateSource;

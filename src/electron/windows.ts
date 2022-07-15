@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ArgsHandler } from './args';
-import { BrowserWindow, Menu } from 'electron';
+import { BrowserWindow } from 'electron';
 import * as path from 'path';
 
 export class AppWindowHandler {
@@ -12,9 +12,7 @@ export class AppWindowHandler {
     if (ArgsHandler.serve) {
       window.loadURL('http://localhost:4300');
     } else {
-      window.loadURL(
-        'file://' + path.resolve(__dirname, '../../../bbit-app/index.html')
-      );
+      window.loadURL('file://' + path.resolve(__dirname, '../../../bbit-app/index.html'));
     }
   }
 
@@ -38,7 +36,6 @@ export class AppWindowHandler {
         // preload: path.join(__dirname, 'preload.js'),
       },
     });
-
 
     window.webContents.on('dom-ready', (): void => {
       if (!window.isVisible()) {

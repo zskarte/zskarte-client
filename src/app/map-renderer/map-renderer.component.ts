@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Draw, Select, Translate, defaults } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
@@ -17,6 +17,8 @@ import { debounce } from '../helper/debounce';
   selector: 'app-map-renderer',
   templateUrl: './map-renderer.component.html',
   styleUrls: ['./map-renderer.component.scss'],
+  encapsulation: ViewEncapsulation.ShadowDom,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapRendererComponent implements OnInit {
   private _ngUnsubscribe = new Subject<void>();
@@ -26,10 +28,7 @@ export class MapRendererComponent implements OnInit {
     zIndex: 0,
   });
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
-  private _drawElementCache: Record<
-    string,
-    { layer: string | undefined; element: ZsMapBaseDrawElement }
-  > = {};
+  private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
 
   constructor(private _state: ZsMapStateService) {
@@ -89,7 +88,7 @@ export class MapRendererComponent implements OnInit {
       }).extend([select, translate]),
     });
 
-    this._map.on('moveend', (event) => {
+    this._map.on('moveend', () => {
       this._state.setMapCenter(this._view.getCenter() || [0, 0]);
     });
 
@@ -97,7 +96,7 @@ export class MapRendererComponent implements OnInit {
       this._state.setMapZoom(this._view.getZoom() || 10);
     }, 1000);
 
-    this._view.on('change:resolution', (event) => {
+    this._view.on('change:resolution', () => {
       debouncedZoomSave();
     });
 
@@ -125,11 +124,7 @@ export class MapRendererComponent implements OnInit {
 
     this._state.observeElementToDraw().subscribe((element) => {
       if (element) {
-        const interaction = DrawElementHelper.createDrawHandlerForType(
-          element.type,
-          this._state,
-          element.layer
-        );
+        const interaction = DrawElementHelper.createDrawHandlerForType(element.type, this._state, element.layer);
         interaction.on('drawend', () => {
           this._state.cancelDrawing();
         });
