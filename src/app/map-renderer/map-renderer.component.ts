@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Draw, Select, Translate, defaults } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
@@ -20,7 +20,8 @@ import { debounce } from '../helper/debounce';
   encapsulation: ViewEncapsulation.ShadowDom,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MapRendererComponent implements OnInit {
+export class MapRendererComponent implements AfterViewInit {
+  @ViewChild('mapElement') mapElement!: ElementRef;
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
   private _view!: OlView;
@@ -31,26 +32,14 @@ export class MapRendererComponent implements OnInit {
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
 
-  constructor(private _state: ZsMapStateService) {
-    // this.positionFlag.setStyle(
-    //   new Style({
-    //     image: new Icon({
-    //       anchor: [0.5, 1],
-    //       anchorXUnits: IconAnchorUnits.FRACTION,
-    //       anchorYUnits: IconAnchorUnits.FRACTION,
-    //       src: 'assets/img/place.png',
-    //       scale: 0.5,
-    //     }),
-    //   })
-    // );
-  }
+  constructor(private _state: ZsMapStateService) {}
 
   public ngOnDestroy(): void {
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
   }
 
-  public ngOnInit(): void {
+  public ngAfterViewInit(): void {
     // TODO
     const select = new Select({
       style: null,
@@ -78,7 +67,7 @@ export class MapRendererComponent implements OnInit {
     });
 
     this._map = new OlMap({
-      target: 'map',
+      target: this.mapElement.nativeElement,
       view: this._view,
       controls: [],
       interactions: defaults({
@@ -102,7 +91,7 @@ export class MapRendererComponent implements OnInit {
 
     this._state.observeMapCenter().subscribe((center) => {
       if (!areArraysEqual(this._view.getCenter() || [0, 0], center)) {
-        // TODO remove this
+        // TODO implement proper fallback center
         if (!center[0] && !center[1]) {
           center = [849861.97, 5905812.55];
         }
@@ -112,7 +101,7 @@ export class MapRendererComponent implements OnInit {
 
     this._state.observeMapZoom().subscribe((zoom) => {
       if (this._view.getZoom() !== zoom) {
-        // TODO remove this
+        // TODO implement proper fallback zoom
         if (!zoom) {
           zoom = 16;
         }

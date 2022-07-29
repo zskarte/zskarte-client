@@ -2,21 +2,23 @@ import { Feature } from 'ol';
 import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../interfaces';
 import { ZsMapStateService } from '../state.service';
 import { ZsMapBaseDrawElement } from './base-draw-element';
-import GeometryType from 'ol/geom/GeometryType';
 import { Point } from 'ol/geom';
 import { Fill, RegularShape, Style } from 'ol/style';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
+import { Type } from 'ol/geom/Geometry';
+import { checkCoordinates } from '../../helper/coordinates';
 
 export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
-  protected _olPoint: Point | undefined;
-  protected _olStyles: Style | undefined;
+  protected _olPoint!: Point;
+  protected _olStyles!: Style;
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.SYMBOL);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates().subscribe((coordinates) => {
-      if (this._olPoint && coordinates && coordinates !== this._olPoint.getCoordinates()) {
-        this._olPoint?.setCoordinates(coordinates);
+      if (this._olPoint && checkCoordinates(coordinates, this._olPoint.getCoordinates())) {
+        // only update coordinates if they are not matching to prevent loops
+        this._olPoint?.setCoordinates(coordinates as number[]);
       }
     });
   }
@@ -36,16 +38,18 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawEl
 
     // handle changes on the map, eg. translate
     this._olFeature.on('change', () => {
-      console.log('TODO update coordinates', this._olPoint?.getCoordinates());
       this.setCoordinates(this._olPoint?.getCoordinates());
     });
     this._isInitialized = true;
     return;
   }
-  protected static override _getOlDrawType(): string {
-    return GeometryType.POINT;
+
+  protected static override _getOlDrawType(): Type {
+    return 'Point';
   }
+
   protected static override _parseFeature(feature: Feature<Point>, state: ZsMapStateService, layer: string): void {
+    // TODO add overlay to get proper symbol :)
     state.addDrawElement({
       type: ZsMapDrawElementStateType.SYMBOL,
       coordinates: feature.getGeometry()?.getCoordinates() || [],

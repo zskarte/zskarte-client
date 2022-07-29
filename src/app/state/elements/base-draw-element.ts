@@ -10,6 +10,8 @@ import { Geometry } from 'ol/geom';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { IZsMapDrawElementUi } from '../draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
+import { Type } from 'ol/geom/Geometry';
+import { checkCoordinates } from '../../helper/coordinates';
 
 export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState = IZsMapBaseDrawElementState> extends ZsMapBaseElement<T> {
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
@@ -40,7 +42,7 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
         }
         return o?.coordinates;
       }),
-      distinctUntilChanged((x, y) => x === y),
+      distinctUntilChanged((x, y) => checkCoordinates(x, y)),
     );
   }
 
@@ -87,7 +89,7 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
     });
     return draw;
   }
-  protected static _getOlDrawType(): string {
+  protected static _getOlDrawType(): Type {
     throw new Error('static fn _getOlDrawType is not implemented');
   }
   protected static _enhanceOlDrawOptions(options: Options) {

@@ -86,10 +86,10 @@ export class ZsMapStateService {
 
   public reset(newMapState?: IZsMapState, newDisplayState?: IZsMapDisplayState): void {
     this.resetDisplayState(newDisplayState);
-    this.resetMapState(newMapState);
+    this.setMapState(newMapState);
   }
 
-  public resetMapState(newState?: IZsMapState): void {
+  public setMapState(newState?: IZsMapState): void {
     this._layerCache = {};
     this._drawElementCache = {};
     this.updateMapState(() => {
@@ -104,13 +104,12 @@ export class ZsMapStateService {
   }
 
   public loadMapState(map: IZsMapState) {
-    console.log('load map state', map);
     this.reset(map);
   }
 
   public loadSavedMapState(): void {
     const state = JSON.parse(localStorage.getItem('tempMapState') || '{}');
-    this.resetMapState(state);
+    this.setMapState(state);
   }
 
   public saveMapState(): void {

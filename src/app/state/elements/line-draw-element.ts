@@ -1,21 +1,42 @@
 import { Feature } from 'ol';
-import { ZsMapTextDrawElementState } from '../interfaces';
+import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../interfaces';
 import { ZsMapStateService } from '../state.service';
 import { ZsMapBaseDrawElement } from './base-draw-element';
-import GeometryType from 'ol/geom/GeometryType';
 import { LineString } from 'ol/geom';
+import { Type } from 'ol/geom/Geometry';
+import { ZsMapOLFeatureProps } from './ol-feature-props';
+import { checkCoordinates } from '../../helper/coordinates';
 
 export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
+  protected _olLine!: LineString;
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
+    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.LINE);
+    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
+    this.observeCoordinates().subscribe((coordinates) => {
+      if (this._olLine && checkCoordinates(coordinates, this._olLine.getCoordinates())) {
+        // only update coordinates if they are not matching to prevent loops
+        this._olLine?.setCoordinates(coordinates as number[][]);
+      }
+    });
   }
-  protected _initialize(): void {
+  protected _initialize(coordinates: number[] | number[][]): void {
+    this._olLine = new LineString(coordinates);
+    this._olFeature.setGeometry(this._olLine);
+    this._olFeature.on('change', () => {
+      this.setCoordinates(this._olLine.getCoordinates());
+    });
+    this._isInitialized = true;
     return;
   }
-  protected static override _getOlDrawType(): string {
-    return GeometryType.LINE_STRING;
+  protected static override _getOlDrawType(): Type {
+    return 'LineString';
   }
   protected static override _parseFeature(feature: Feature<LineString>, state: ZsMapStateService, layer: string): void {
-    console.log('line drawn', feature, feature.getGeometry(), state, layer);
+    state.addDrawElement({
+      type: ZsMapDrawElementStateType.LINE,
+      coordinates: feature.getGeometry()?.getCoordinates() || [],
+      layer,
+    });
   }
 }

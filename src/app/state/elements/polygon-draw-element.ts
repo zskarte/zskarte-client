@@ -1,21 +1,47 @@
 import { Feature } from 'ol';
-import { ZsMapTextDrawElementState } from '../interfaces';
+import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../interfaces';
 import { ZsMapStateService } from '../state.service';
 import { ZsMapBaseDrawElement } from './base-draw-element';
-import GeometryType from 'ol/geom/GeometryType';
 import { Polygon } from 'ol/geom';
+import { Type } from 'ol/geom/Geometry';
+import { ZsMapOLFeatureProps } from './ol-feature-props';
+import { checkCoordinates } from '../../helper/coordinates';
 
 export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
+  protected _olPolygon!: Polygon;
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
+    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.POLYGON);
+    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
+    this.observeCoordinates().subscribe((coordinates) => {
+      // TODO types
+      if (this._olPolygon && checkCoordinates(coordinates, this._olPolygon.getCoordinates() as any)) {
+        // only update coordinates if they are not matching to prevent loops
+        // TODO types
+        this._olPolygon?.setCoordinates(coordinates as any);
+      }
+    });
   }
-  protected _initialize(): void {
-    return;
+
+  // TODO types
+  protected _initialize(coordinates: any): void {
+    this._olPolygon = new Polygon(coordinates);
+    this._olFeature.setGeometry(this._olPolygon);
+    this._olFeature.on('change', () => {
+      // TODO types
+      this.setCoordinates(this._olPolygon.getCoordinates() as any);
+    });
+    this._isInitialized = true;
   }
-  protected static override _getOlDrawType(): string {
-    return GeometryType.POLYGON;
+  protected static override _getOlDrawType(): Type {
+    return 'Polygon';
   }
   protected static override _parseFeature(feature: Feature<Polygon>, state: ZsMapStateService, layer: string): void {
-    console.log('polygon drawn', feature.getGeometry()?.getCoordinates(), state, layer);
+    state.addDrawElement({
+      type: ZsMapDrawElementStateType.POLYGON,
+      // TODO types
+      coordinates: (feature.getGeometry()?.getCoordinates() as any) || [],
+      layer,
+    });
   }
 }

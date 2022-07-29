@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function areArraysEqual(a: any[], b: any[]) {
+export const areArraysEqual = (a: any[], b: any[]): boolean => {
   if (a === b) return true;
   if (a == null || b == null) return false;
   if (a.length !== b.length) return false;
@@ -13,4 +13,4 @@ export function areArraysEqual(a: any[], b: any[]) {
     if (a[i] !== b[i]) return false;
   }
   return true;
-}
+};

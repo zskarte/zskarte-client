@@ -1,33 +1,17 @@
-
-<div class="rewrite">
+<main>
   <div class="map">
     <app-map-renderer></app-map-renderer>
   </div>
   <div class="debug">
     <h3>Name: {{ state.observeMapName() | async }}</h3>
-    <input
-      #mapName
-      type="text"
-      [ngModel]="state.observeMapName() | async"
-      (ngModelChange)="state.setMapName($event)"
-    />
+    <input #mapName type="text" [ngModel]="state.observeMapName() | async" (ngModelChange)="state.setMapName($event)" />
     <!-- <button (click)="state.setMapName('New test')">set name</button> -->
     <h3>Maps</h3>
     <div class="actions">
-      <button (click)="state.setMapSource(ZsMapStateSource.OPEN_STREET_MAP)">
-        Open Street Map
-      </button>
-      <button
-        (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_SWISS_IMAGE)"
-      >
-        Swiss Image
-      </button>
-      <button (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_PIXEL)">
-        Pixel
-      </button>
-      <button (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_PIXEL_BW)">
-        Pixel B/W
-      </button>
+      <button (click)="state.setMapSource(ZsMapStateSource.OPEN_STREET_MAP)">Open Street Map</button>
+      <button (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_SWISS_IMAGE)">Swiss Image</button>
+      <button (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_PIXEL)">Pixel</button>
+      <button (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_PIXEL_BW)">Pixel B/W</button>
     </div>
     <input
       type="range"
@@ -40,22 +24,12 @@
 
     <h3>Draw</h3>
     <div class="actions">
-      <ng-container
-        *ngIf="
-          state.observeActiveLayer() | async as layer;
-          else selectDrawLayerMsg
-        "
-      >
-        <button
-          *ngFor="let element of drawElements"
-          (click)="layer.draw(element.type)"
-        >
+      <ng-container *ngIf="state.observeActiveLayer() | async as layer; else selectDrawLayerMsg">
+        <button *ngFor="let element of drawElements" (click)="layer.draw(element.type)">
           {{ element.text }}
         </button>
       </ng-container>
-      <ng-template #selectDrawLayerMsg
-        ><div>Please select a draw layer</div></ng-template
-      >
+      <ng-template #selectDrawLayerMsg><div>Please select a draw layer</div></ng-template>
     </div>
 
     <h3>Layers</h3>
@@ -63,12 +37,7 @@
     <div class="layers">
       <div class="layer" *ngFor="let layer of state.observeLayers() | async">
         <!-- <h4>{{ layer.observeName() | async }}</h4> -->
-        <input
-          #layerName
-          type="text"
-          [ngModel]="layer.observeName() | async"
-          (ngModelChange)="layer.setName($event)"
-        />
+        <input #layerName type="text" [ngModel]="layer.observeName() | async" (ngModelChange)="layer.setName($event)" />
         <div>Is visible: {{ layer.observeIsVisible() | async }}</div>
         <div>Is active: {{ layer.observeIsActive() | async }}</div>
         <div>Position: {{ layer.observePosition() | async }}</div>
@@ -93,12 +62,10 @@
     </div>
 
     <h3>States</h3>
-    <button (click)="state.loadMapState(defaultMap)">
-      load default maps state
-    </button>
+    <button (click)="state.loadMapState(defaultMap)">load default maps state</button>
     <button (click)="state.saveMapState()">save map state</button>
     <button (click)="state.loadSavedMapState()">load map state</button>
     <button (click)="state.saveDisplayState()">save display state</button>
     <button (click)="state.loadSavedDisplayState()">load display state</button>
   </div>
-</div>
+</main>

@@ -96,15 +96,15 @@ export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
 export interface ZsMapSymbolDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.SYMBOL;
   symbol: IZsMapSymbolState;
-  coordinates: number[];
+  coordinates: number[] | number[][];
 }
 
 export interface ZsMapLineDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.LINE;
-  symbol: IZsMapSymbolState;
+  symbol?: IZsMapSymbolState;
 }
 
 export interface ZsMapPolygonDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.POLYGON;
-  symbol: IZsMapSymbolState;
+  symbol?: IZsMapSymbolState;
 }
