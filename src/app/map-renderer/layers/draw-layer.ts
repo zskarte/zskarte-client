@@ -1,6 +1,6 @@
 import { ZsMapBaseLayer } from './base-layer';
-import { ZsMapDrawElementStateType } from '../interfaces';
-import { ZsMapStateService } from '../state.service';
+import { ZsMapDrawElementStateType } from '../../state/interfaces';
+import { ZsMapStateService } from '../../state/state.service';
 
 export class ZsMapDrawLayer extends ZsMapBaseLayer {
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {

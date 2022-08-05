@@ -32,8 +32,7 @@ export class AppWindowHandler {
         allowRunningInsecureContent: false,
         nodeIntegration: false,
         webSecurity: true,
-        // // Might be required for IPC later
-        // preload: path.join(__dirname, 'preload.js'),
+        preload: path.join(__dirname, 'preload.js'),
       },
     });
 

@@ -1,10 +1,10 @@
 import { Feature } from 'ol';
-import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../interfaces';
-import { ZsMapStateService } from '../state.service';
-import { ZsMapBaseDrawElement } from './base-draw-element';
+import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../../state/interfaces';
+import { ZsMapStateService } from '../../state/state.service';
+import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { Point } from 'ol/geom';
 import { Fill, RegularShape, Style } from 'ol/style';
-import { ZsMapOLFeatureProps } from './ol-feature-props';
+import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
 import { checkCoordinates } from '../../helper/coordinates';
 

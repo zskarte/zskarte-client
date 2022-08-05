@@ -1,17 +1,17 @@
 import { Feature } from 'ol';
 import { Observable } from 'rxjs';
-import { IZsMapBaseDrawElementState } from '../interfaces';
-import { ZsMapStateService } from '../state.service';
+import { IZsMapBaseDrawElementState } from '../../../state/interfaces';
+import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapBaseElement } from './base-element';
 import { Draw } from 'ol/interaction';
 import VectorSource from 'ol/source/Vector';
 import { Options } from 'ol/interaction/Draw';
 import { Geometry } from 'ol/geom';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import { IZsMapDrawElementUi } from '../draw-element-ui.interfaces';
+import { IZsMapDrawElementUi } from './draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
-import { checkCoordinates } from '../../helper/coordinates';
+import { checkCoordinates } from '../../../helper/coordinates';
 
 export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState = IZsMapBaseDrawElementState> extends ZsMapBaseElement<T> {
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {

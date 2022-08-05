@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { DateTime } from 'luxon';
+import { IpcService } from './ipc/ipc.service';
 import { IZsMapState, ZsMapDrawElementStateType, ZsMapStateSource } from './state/interfaces';
 import { ZsMapStateService } from './state/state.service';
 
@@ -13,7 +15,9 @@ export class AppComponent {
   ZsMapStateSource = ZsMapStateSource;
   ZsMapDrawElementStateType = ZsMapDrawElementStateType;
 
-  constructor(public state: ZsMapStateService) {}
+  constructor(public state: ZsMapStateService, public ipc: IpcService) {
+    state.addDrawLayer();
+  }
 
   public defaultMap: IZsMapState = {
     id: 'testid',
@@ -29,4 +33,40 @@ export class AppComponent {
     { text: 'Polygon', type: ZsMapDrawElementStateType.POLYGON },
     { text: 'Line', type: ZsMapDrawElementStateType.LINE },
   ];
+
+  // TODO move this stuff somewhere where it belongs :)
+
+  public async saveMapToFile(): Promise<void> {
+    // TODO name
+    const fileName = `Ereignis_${DateTime.now().toFormat('yyyy_LL_dd_hh_mm')}.zsmap`;
+    const saveFileState = this.state.getSaveFileState();
+    this.ipc.saveFile({
+      data: JSON.stringify(saveFileState),
+      fileName,
+      filters: [
+        {
+          name: 'ZS-Karte',
+          extensions: ['zsmap'],
+        },
+      ],
+    });
+  }
+
+  public async openMapFromFile(): Promise<void> {
+    const jsonString = await this.ipc.openFile({
+      filters: [
+        {
+          name: 'ZS-Karte',
+          extensions: ['zsmap'],
+        },
+      ],
+    });
+    try {
+      const data = JSON.parse(jsonString);
+      this.state.loadSaveFileState(data);
+    } catch (e) {
+      // TODO error handling
+      console.error('TODO error handling', e);
+    }
+  }
 }

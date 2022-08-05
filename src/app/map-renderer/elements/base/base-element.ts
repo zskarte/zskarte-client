@@ -1,6 +1,6 @@
 import { Feature } from 'ol';
 import { Observable } from 'rxjs';
-import { ZsMapStateService } from '../state.service';
+import { ZsMapStateService } from '../../../state/state.service';
 
 export abstract class ZsMapBaseElement<T> {
   private _layer!: string;

@@ -62,10 +62,8 @@
     </div>
 
     <h3>States</h3>
-    <button (click)="state.loadMapState(defaultMap)">load default maps state</button>
-    <button (click)="state.saveMapState()">save map state</button>
-    <button (click)="state.loadSavedMapState()">load map state</button>
-    <button (click)="state.saveDisplayState()">save display state</button>
-    <button (click)="state.loadSavedDisplayState()">load display state</button>
+    <button (click)="state.reset()">reset</button>
+    <button (click)="saveMapToFile()">save map to file</button>
+    <button (click)="openMapFromFile()">open map from file</button>
   </div>
 </main>

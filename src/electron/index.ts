@@ -5,6 +5,7 @@ import * as path from 'path';
 
 // import pkgJson from '../../package.json';
 import { ArgsHandler } from './args';
+import { IpcHandler } from './ipc';
 import { AppWindowHandler } from './windows';
 
 // AutoUpdateHandler.initialize();
@@ -18,6 +19,7 @@ app.whenReady().then((): void => {
   //   });
   // }
 
+  IpcHandler.initialize();
   AppWindowHandler.createAppWindow();
 });
 

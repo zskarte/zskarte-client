@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from '../interfaces';
-import { ZsMapStateService } from '../state.service';
+import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from '../../state/interfaces';
+import { ZsMapStateService } from '../../state/state.service';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';

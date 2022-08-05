@@ -1,7 +1,7 @@
 import { Feature } from 'ol';
-import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../interfaces';
-import { ZsMapStateService } from '../state.service';
-import { ZsMapBaseDrawElement } from './base-draw-element';
+import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../../state/interfaces';
+import { ZsMapStateService } from '../../state/state.service';
+import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { Point } from 'ol/geom';
 import { Type } from 'ol/geom/Geometry';
 

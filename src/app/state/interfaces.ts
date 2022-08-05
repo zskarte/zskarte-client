@@ -5,6 +5,11 @@ export enum ZsMapStateSource {
   GEO_ADMIN_PIXEL_BW = 'geoAdminPixelBW',
 }
 
+export interface IZsMapSaveFileState {
+  map: IZsMapState;
+  display: IZsMapDisplayState;
+}
+
 export interface IZsMapState {
   id: string;
   name?: string;

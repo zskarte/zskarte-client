@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import produce, { enablePatches, Patch } from 'immer';
 import {
   IZsMapDisplayState,
+  IZsMapSaveFileState,
   IZsMapState,
   ZsMapDisplayMode,
   ZsMapDrawElementState,
@@ -13,10 +14,10 @@ import {
 } from './interfaces';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ZsMapBaseLayer } from './layers/base-layer';
+import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
-import { ZsMapDrawLayer } from './layers/draw-layer';
-import { ZsMapBaseDrawElement } from './elements/base-draw-element';
+import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
+import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 
@@ -103,25 +104,15 @@ export class ZsMapStateService {
     });
   }
 
-  public loadMapState(map: IZsMapState) {
-    this.reset(map);
-  }
-
-  public loadSavedMapState(): void {
-    const state = JSON.parse(localStorage.getItem('tempMapState') || '{}');
-    this.setMapState(state);
-  }
-
-  public saveMapState(): void {
-    localStorage.setItem('tempMapState', JSON.stringify(this._map.value));
+  public loadMapState(state: IZsMapState) {
+    this.reset(state);
   }
 
   public observeMapState(): Observable<IZsMapState> {
     return this._map.asObservable();
   }
 
-  public loadSavedDisplayState(): void {
-    const state = JSON.parse(localStorage.getItem('tempDisplayState') || '{}');
+  public loadDisplayState(state: IZsMapDisplayState): void {
     this.resetDisplayState(state);
   }
 
@@ -343,5 +334,17 @@ export class ZsMapStateService {
     });
     console.log('updated display state', newState);
     this._display.next(newState);
+  }
+
+  public getSaveFileState(): IZsMapSaveFileState {
+    return {
+      map: this._map.value,
+      display: this._display.value,
+    };
+  }
+
+  public loadSaveFileState(state: IZsMapSaveFileState): void {
+    this.loadMapState(state.map);
+    this.loadDisplayState(state.display);
   }
 }

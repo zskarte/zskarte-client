@@ -1,9 +1,9 @@
 import { Draw } from 'ol/interaction';
-import { ZsMapBaseDrawElement } from '../state/elements/base-draw-element';
-import { ZsMapLineDrawElement } from '../state/elements/line-draw-element';
-import { ZsMapPolygonDrawElement } from '../state/elements/polygon-draw-element';
-import { ZsMapSymbolDrawElement } from '../state/elements/symbol-draw-element';
-import { ZsMapTextDrawElement } from '../state/elements/text-draw-element';
+import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
+import { ZsMapLineDrawElement } from '../map-renderer/elements/line-draw-element';
+import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
+import { ZsMapSymbolDrawElement } from '../map-renderer/elements/symbol-draw-element';
+import { ZsMapTextDrawElement } from '../map-renderer/elements/text-draw-element';
 import { ZsMapDrawElementStateType } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 
