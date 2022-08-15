@@ -33,8 +33,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MapLegendDisplayComponent } from './sidebar/map-legend-display/map-legend-display.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { HelpComponent } from "./help/help.component";
-import {Nl2BrPipeModule} from "nl2br-pipe";
+import { HelpComponent } from './help/help.component';
+import { Nl2BrPipeModule } from 'nl2br-pipe';
 import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
 import {SessionCreatorComponent} from "./session-creator/session-creator.component";
 

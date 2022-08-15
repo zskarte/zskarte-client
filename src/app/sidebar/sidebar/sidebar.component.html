@@ -22,20 +22,20 @@
           [max]="1"
           [min]="0"
           [step]="0.1"
-          [ngModel]="layer.observeOpacity() | async"
-          (input)="layer.setOpacity($event.value ?? 0)"
+          [ngModel]="mapState.observeMapOpacity() | async"
+          (input)="mapState.setMapOpacity($event.value ?? 0)"
           style="width: 100%"
         >
         </mat-slider>
       </div>
-      <div *ngFor="let layer of mapSources">
-        <button mat-menu-item (click)="switchLayer(layer)">
+      <mat-action-list *ngFor="let layer of mapSources">
+        <button mat-list-item (click)="switchLayer(layer)">
           {{ layer }}
         </button>
-      </div>
+      </mat-action-list>
     </div>
   </mat-expansion-panel>
-  <ng-container *ngIf="mapState.observeSelectedFeatures() | async as features">
+  <ng-container *ngIf="(mapState.observeSelectedFeatures() | async)?.length ?? 0 > 0">
     <mat-divider></mat-divider>
     <mat-expansion-panel
       class="mat-elevation-z0"
@@ -50,7 +50,7 @@
       <div class="allSelected">
         <div
           *ngFor="
-            let item of features;
+            let item of mapState.observeSelectedFeatures() | async;
             let index = index;
             let first = first;
             let last = last
@@ -61,36 +61,36 @@
           <div class="titleRow">
             <div class="title">{{ item.label }}</div>
             <i (click)="showLegend(item)" class="material-icons">info</i>
-            <!-- <i
-              (click)="this.sharedState.toggleFeature(item)"
+            <i
+              (click)="mapState.toggleFeature(item, index)"
               class="material-icons"
               >visibility_off</i
-            > -->
+            >
             <i (click)="mapState.removeFeature(item)" class="material-icons"
               >remove_circle_outline</i
             >
-            <!-- <i
-              (click)="sharedState.sortFeatureUp(index)"
+            <i
+              (click)="mapState.sortFeatureUp(index)"
               *ngIf="!first"
               class="material-icons"
               >arrow_upward</i
             >
             <i
-              (click)="sharedState.sortFeatureDown(index)"
+              (click)="mapState.sortFeatureDown(index)"
               *ngIf="!last"
               class="material-icons"
               >arrow_downward</i
-            > -->
+            >
           </div>
           <div>
-            <!-- <mat-slider
+            <mat-slider
               [max]="1"
               [min]="0"
               [step]="0.1"
-              [(ngModel)]="item.opacity"
-              (ngModelChange)="sharedState.updateLayer(item)"
+              [value]="item.opacity"
+              (valueChange)="mapState.setFeatureOpacity(index, $event)"
             >
-            </mat-slider> -->
+            </mat-slider>
           </div>
           <mat-divider *ngIf="!last"></mat-divider>
         </div>
@@ -98,7 +98,7 @@
     </mat-expansion-panel>
   </ng-container>
   <mat-divider></mat-divider>
-  <!-- <mat-expansion-panel
+  <mat-expansion-panel
     class="mat-elevation-z0"
     (opened)="favoriteLayersOpenState = true"
     (closed)="favoriteLayersOpenState = false"
@@ -108,21 +108,21 @@
         {{ i18n.get('favoriteLayers') }}
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <div class="availableLayers">
-      <span *ngIf="(sharedState.favoriteFeatures | async)?.length === 0">{{
+    <mat-action-list class="availableLayers" *ngIf="favouriteFeatures$ | async as favouriteFeatures">
+      <span *ngIf="favouriteFeatures?.length === 0">{{
         i18n.get('noMoreFavorites')
       }}</span>
       <button
-        *ngFor="let item of sharedState.favoriteFeatures | async"
-        mat-menu-item
-        (click)="this.sharedState.addRemoveFeature(item)"
+        *ngFor="let item of favouriteFeatures"
+        mat-list-item
+        (click)="selectFeature(item)"
         title="{{ item.label }}"
       >
         {{ item.label }}
       </button>
-    </div>
+    </mat-action-list>
   </mat-expansion-panel>
-  <mat-divider></mat-divider> -->
+  <mat-divider></mat-divider>
   <mat-expansion-panel
     class="mat-elevation-z0"
     (opened)="availableLayersOpenState = true"
@@ -138,17 +138,17 @@
       <input
         type="text"
         matInput
-        [(ngModel)]="layerFilter"
-        (ngModelChange)="updateFilteredFeatures()"
+        [formControl]="layerFilter"
     /></mat-form-field>
-    <div class="availableLayers">
+    <mat-action-list class="availableLayers">
       <button
-        *ngFor="let item of filteredAvailableFeatures"
-        mat-menu-item
+        *ngFor="let item of filteredAvailableFeatures$ | async"
+        mat-list-item
+        (click)="selectFeature(item)"
         title="{{ item.label }}"
       >
         {{ item.label }}
       </button>
-    </div>
+    </mat-action-list>
   </mat-expansion-panel>
 </mat-accordion>

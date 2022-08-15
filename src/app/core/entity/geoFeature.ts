@@ -1,3 +1,6 @@
+import OlTileLayer from 'ol/layer/Tile';
+import OlTileWMTS from 'ol/source/WMTS';
+
 export interface GeoFeature {
   attribution: string;
   attributionUrl: string;
@@ -15,6 +18,9 @@ export interface GeoFeature {
   tooltip: boolean;
   topics: string;
   type: string;
+  // should be OlTileLayer<OlTileWMTS> but TS does not allow it somehow
+  layer?: any;
+  visible?: boolean;
 }
 
 export interface GeoFeatures {

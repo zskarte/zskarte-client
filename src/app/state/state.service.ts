@@ -23,6 +23,7 @@ import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 import { GeoFeature, GeoFeatures } from '../core/entity/geoFeature';
 import {IZsSession} from '../core/entity/session';
+import { GeoadminService } from '../core/geoadmin.service';
 
 // TODO move this to right position
 enablePatches();
@@ -31,6 +32,8 @@ enablePatches();
   providedIn: 'root',
 })
 export class ZsMapStateService {
+  constructor(private geoAdminService: GeoadminService) {}
+
   private _map = new BehaviorSubject<IZsMapState>(produce<IZsMapState>(this._getDefaultMapState(), (draft) => draft));
   private _mapPatches = new BehaviorSubject<Patch[]>([]);
   private _mapInversePatches = new BehaviorSubject<Patch[]>([]);
@@ -297,7 +300,11 @@ export class ZsMapStateService {
 
   public addFeature(feature: GeoFeature) {
     this.updateDisplayState((draft) => {
-      draft.features.push(feature);
+      let maxIndex = Math.max(...(draft.features.map((f) => f.layer?.getZIndex()).filter(Boolean) as number[]));
+      maxIndex = Number.isInteger(maxIndex) ? maxIndex + 1 : 0;
+      const opacity = 0.75;
+      const layer = this.geoAdminService.createGeoAdminLayer(feature.serverLayerName, feature.timestamps[0], feature.format, maxIndex);
+      draft.features.unshift({ ...feature, layer, opacity, visible: true });
     });
   }
 
@@ -305,6 +312,45 @@ export class ZsMapStateService {
     this.updateDisplayState((draft) => {
       draft.features = draft.features.filter((f) => f.serverLayerName !== feature.serverLayerName);
     });
+  }
+
+  public sortFeatureUp(index: number) {
+    this.updateDisplayState((draft) => {
+      const feature = draft.features[index];
+      if (feature.layer) {
+        const currentZIndex = feature.layer.getZIndex();
+
+        draft.features[index - 1].layer?.setZIndex(currentZIndex);
+        feature.layer.setZIndex(currentZIndex + 1);
+        draft.features.sort((a, b) => b.layer.getZIndex() - a.layer.getZIndex());
+      }
+    });
+  }
+
+  public sortFeatureDown(index: number) {
+    this.updateDisplayState((draft) => {
+      const feature = draft.features[index];
+      if (feature.layer) {
+        const currentZIndex = feature.layer.getZIndex();
+
+        draft.features[index + 1].layer?.setZIndex(currentZIndex);
+        feature.layer.setZIndex(currentZIndex - 1);
+        draft.features.sort((a, b) => b.layer.getZIndex() - a.layer.getZIndex());
+      }
+    });
+  }
+
+  public setFeatureOpacity(index: number, opacity: number | null) {
+    this.updateDisplayState((draft) => {
+      const feature = draft.features[index];
+      feature.opacity = opacity ?? 0;
+      feature.layer.setOpacity(opacity);
+    });
+  }
+
+  public toggleFeature(item: GeoFeature, index: number) {
+    const opacity = item.opacity > 0 ? 0 : 0.75;
+    this.setFeatureOpacity(index, opacity);
   }
 
   public addDrawElement(element: ZsMapDrawElementState): void {
