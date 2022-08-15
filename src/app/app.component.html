@@ -1,7 +1,14 @@
 <main>
-  <div class="map">
-    <app-map-renderer></app-map-renderer>
-  </div>
+  <mat-sidenav-container style="flex: 1">
+    <mat-sidenav position="end" mode="side" #sidenav style="width: 350px" [opened]="sidebarOpen | async">
+        <app-sidebar></app-sidebar>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="map">
+        <app-map-renderer></app-map-renderer>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
   <div class="debug">
     <h3>Name: {{ state.observeMapName() | async }}</h3>
     <input #mapName type="text" [ngModel]="state.observeMapName() | async" (ngModelChange)="state.setMapName($event)" />

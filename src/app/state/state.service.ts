@@ -5,6 +5,7 @@ import {
   IZsMapDisplayState,
   IZsMapSaveFileState,
   IZsMapState,
+  SidebarContext,
   ZsMapDisplayMode,
   ZsMapDrawElementState,
   ZsMapDrawElementStateType,
@@ -20,6 +21,7 @@ import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
+import { GeoFeature, GeoFeatures } from '../core/entity/geoFeature';
 
 // TODO move this to right position
 enablePatches();
@@ -63,6 +65,8 @@ export class ZsMapStateService {
       layerOrder: [],
       elementVisibility: {},
       elementOpacity: {},
+      features: [],
+      sidebarContext: null,
     };
   }
 
@@ -137,6 +141,12 @@ export class ZsMapStateService {
   public setMapZoom(zoom: number) {
     this.updateDisplayState((draft) => {
       draft.mapZoom = zoom;
+    });
+  }
+
+  public updateMapZoom(delta: number) {
+    this.updateDisplayState((draft) => {
+      draft.mapZoom = draft.mapZoom + delta;
     });
   }
 
@@ -272,6 +282,28 @@ export class ZsMapStateService {
     });
   }
 
+  // features
+  public observeSelectedFeatures(): Observable<GeoFeature[]> {
+    return this._display.pipe(
+      map((o) => {
+        return o?.features;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public addFeature(feature: GeoFeature) {
+    this.updateDisplayState((draft) => {
+      draft.features.push(feature);
+    });
+  }
+
+  public removeFeature(feature: GeoFeature) {
+    this.updateDisplayState((draft) => {
+      draft.features = draft.features.filter((f) => f.serverLayerName !== feature.serverLayerName);
+    });
+  }
+
   public addDrawElement(element: ZsMapDrawElementState): void {
     element.id = uuidv4();
     this.updateMapState((draft) => {
@@ -346,5 +378,18 @@ export class ZsMapStateService {
   public loadSaveFileState(state: IZsMapSaveFileState): void {
     this.loadMapState(state.map);
     this.loadDisplayState(state.display);
+  }
+
+  toggleSidebarContext(context: SidebarContext | null) {
+    this.updateDisplayState((draft) => {
+      draft.sidebarContext = draft.sidebarContext === context ? null : context;
+    });
+  }
+
+  public observeSidebarContext(): Observable<SidebarContext | null> {
+    return this._display.pipe(
+      map((o) => o?.sidebarContext),
+      distinctUntilChanged((x, y) => x === y),
+    );
   }
 }

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { DateTime } from 'luxon';
+import { map, Observable } from 'rxjs';
 import { IpcService } from './ipc/ipc.service';
 import { IZsMapState, ZsMapDrawElementStateType, ZsMapStateSource } from './state/interfaces';
 import { ZsMapStateService } from './state/state.service';
@@ -14,9 +15,11 @@ import { ZsMapStateService } from './state/state.service';
 export class AppComponent {
   ZsMapStateSource = ZsMapStateSource;
   ZsMapDrawElementStateType = ZsMapDrawElementStateType;
+  sidebarOpen!: Observable<boolean>;
 
   constructor(public state: ZsMapStateService, public ipc: IpcService) {
     state.addDrawLayer();
+    this.sidebarOpen = state.observeSidebarContext().pipe(map((context) => (context === null ? false : true)));
   }
 
   public defaultMap: IZsMapState = {

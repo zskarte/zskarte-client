@@ -5608,6 +5608,11 @@ matcher@^3.0.0:
   dependencies:
     escape-string-regexp "^4.0.0"
 
+material-icons@^1.11.10:
+  version "1.11.10"
+  resolved "https://registry.yarnpkg.com/material-icons/-/material-icons-1.11.10.tgz#66d0af836294f494d76a88e61f04ef3531377fd8"
+  integrity sha512-1nGlVYwH98BQGSoxHf1QCCDll6AmnkxuATjTHREvy8BSEc6EfRkvcsQwEmSgAY7qcKLV3Ip81u9YEiH/sjQgkg==
+
 media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"

@@ -12,6 +12,8 @@ import { ZsMapBaseLayer } from './layers/base-layer';
 import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
+import { I18NService } from '../core/i18n.service';
+import { SidebarContext } from '../state/interfaces';
 
 @Component({
   selector: 'app-map-renderer',
@@ -22,6 +24,9 @@ import { debounce } from '../helper/debounce';
 })
 export class MapRendererComponent implements AfterViewInit {
   @ViewChild('mapElement') mapElement!: ElementRef;
+
+  sidebarContext = SidebarContext;
+
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
   private _view!: OlView;
@@ -32,7 +37,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
 
-  constructor(private _state: ZsMapStateService) {}
+  constructor(private _state: ZsMapStateService, public i18n: I18NService) {}
 
   public ngOnDestroy(): void {
     this._ngUnsubscribe.next();
@@ -180,5 +185,17 @@ export class MapRendererComponent implements AfterViewInit {
           }
         }
       });
+  }
+
+  zoomIn() {
+    this._state.updateMapZoom(1);
+  }
+
+  zoomOut() {
+    this._state.updateMapZoom(-1);
+  }
+
+  setSidebarContext(context: SidebarContext) {
+    this._state.toggleSidebarContext(context);
   }
 }

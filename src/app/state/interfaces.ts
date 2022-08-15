@@ -1,8 +1,11 @@
+import { GeoFeature } from '../core/entity/geoFeature';
+
 export enum ZsMapStateSource {
   OPEN_STREET_MAP = 'openStreetMap',
   GEO_ADMIN_SWISS_IMAGE = 'geoAdminSwissImage',
   GEO_ADMIN_PIXEL = 'geoAdminPixel',
   GEO_ADMIN_PIXEL_BW = 'geoAdminPixelBW',
+  OFFLINE = 'offline',
 }
 
 export interface IZsMapSaveFileState {
@@ -35,6 +38,8 @@ export interface IZsMapDisplayState {
   layerOrder: string[];
   elementOpacity: Record<string, number>;
   elementVisibility: Record<string, boolean>;
+  features: GeoFeature[];
+  sidebarContext: SidebarContext | null;
 }
 
 export type ZsMapLayerState = IZsMapDrawLayerState | IZsMapGeoDataLayerState;
@@ -112,4 +117,9 @@ export interface ZsMapLineDrawElementState extends IZsMapBaseDrawElementState {
 export interface ZsMapPolygonDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.POLYGON;
   symbol?: IZsMapSymbolState;
+}
+
+export enum SidebarContext {
+  Layers,
+  Filters,
 }

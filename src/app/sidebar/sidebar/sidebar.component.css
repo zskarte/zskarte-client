@@ -1,0 +1,45 @@
+.features {
+  margin-left: 1em;
+}
+
+.selectedLayer {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: 0.3em;
+}
+
+.titleRow {
+  display: flex;
+}
+
+.availableLayers {
+  max-height: 20vh;
+  overflow: auto;
+}
+
+.selectedLayer .title {
+  flex: 1;
+  font-size: 0.9em;
+}
+
+.selectedLayer i {
+  cursor: pointer;
+  margin-left: 0.5em;
+}
+
+.sectionTitle {
+  margin-top: 1.2em;
+  margin-bottom: 1em;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+.content {
+  margin-right: 1em;
+  margin-left: 1em;
+}
+
+mat-form-field,
+mat-slider {
+  width: 100%;
+}
