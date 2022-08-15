@@ -32,12 +32,16 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MapLegendDisplayComponent } from './sidebar/map-legend-display/map-legend-display.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
+import { HelpComponent } from "./help/help.component";
+import {Nl2BrPipeModule} from "nl2br-pipe";
 
 @NgModule({
   declarations: [
     AppComponent,
     MapRendererComponent,
-
+    ToolbarComponent,
+    HelpComponent,
     // sidebar
     SidebarComponent,
     // SidebarFiltersComponent,
@@ -72,6 +76,8 @@ import { MapLegendDisplayComponent } from './sidebar/map-legend-display/map-lege
     MatTableModule,
     MatRadioModule,
     MatListModule,
+    MatButtonModule,
+    Nl2BrPipeModule,
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'de-CH' }],
   bootstrap: [AppComponent],

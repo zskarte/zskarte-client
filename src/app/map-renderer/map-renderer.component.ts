@@ -19,7 +19,6 @@ import { SidebarContext } from '../state/interfaces';
   selector: 'app-map-renderer',
   templateUrl: './map-renderer.component.html',
   styleUrls: ['./map-renderer.component.scss'],
-  encapsulation: ViewEncapsulation.ShadowDom,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapRendererComponent implements AfterViewInit {

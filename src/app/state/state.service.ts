@@ -22,6 +22,7 @@ import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-el
 import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 import { GeoFeature, GeoFeatures } from '../core/entity/geoFeature';
+import {IZsSession} from '../core/entity/session';
 
 // TODO move this to right position
 enablePatches();
@@ -47,6 +48,8 @@ export class ZsMapStateService {
       }
     | undefined
   >(undefined);
+
+  private _session = new BehaviorSubject<IZsSession | null>(produce<IZsSession | null>(null, (draft) => draft));
 
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -391,5 +394,9 @@ export class ZsMapStateService {
       map((o) => o?.sidebarContext),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public observeSession(): Observable<IZsSession | null> {
+    return this._session.asObservable();
   }
 }
