@@ -5608,6 +5608,11 @@ matcher@^3.0.0:
   dependencies:
     escape-string-regexp "^4.0.0"
 
+material-icons@^1.11.10:
+  version "1.11.10"
+  resolved "https://registry.yarnpkg.com/material-icons/-/material-icons-1.11.10.tgz#66d0af836294f494d76a88e61f04ef3531377fd8"
+  integrity sha512-1nGlVYwH98BQGSoxHf1QCCDll6AmnkxuATjTHREvy8BSEc6EfRkvcsQwEmSgAY7qcKLV3Ip81u9YEiH/sjQgkg==
+
 media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
@@ -7958,6 +7963,11 @@ truncate-utf8-bytes@^1.0.0:
   integrity sha512-95Pu1QXQvruGEhv62XCMO3Mm90GscOCClvrIUwCM0PYOXK3kaF3l3sIHxx71ThJfcbM2O5Au6SO3AWCSEfW4mQ==
   dependencies:
     utf8-byte-length "^1.0.1"
+
+ts-md5@^1.2.11:
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/ts-md5/-/ts-md5-1.2.11.tgz#0bbdf884eecf7da3952fe8671a109d7e55d322c6"
+  integrity sha512-vAwy9rEuRE6a8xa1MavIVkLFyyU0ydk4CLMFA5vOVccmQKLOuGb/BHm3oEN7XHf2FoqS+z0pSvhaad/ombd1Vg==
 
 tslib@2.4.0, tslib@^2.1.0, tslib@^2.3.0:
   version "2.4.0"

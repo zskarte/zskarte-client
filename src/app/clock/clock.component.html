@@ -1,0 +1,28 @@
+<div class="flexContainer">
+  <span class="timeLeft" *ngIf="doCheckTimeout !== 0">
+    <div
+      class="flexContainer"
+      mat-raised-button
+      #tooltip="matTooltip"
+      matTooltip="{{ i18n.get('tooltipSession') }}"
+      matTooltipPosition="below"
+      matTooltipHideDelay="100"
+    >
+      <mat-progress-spinner
+        class="spinner"
+        color="primary"
+        mode="determinate"
+        diameter="35"
+        [value]="timerProgressValue"
+      >
+      </mat-progress-spinner>
+      <div class="overlay">
+        <strong class="timer">{{ sessionTimeLeft }}</strong>
+      </div>
+    </div>
+  </span>
+  <div class="flexColumn">
+    <span class="date">{{ now | date: 'dd.MM.yyyy' }}</span>
+    <span class="time">{{ now | date: 'HH:mm:ss' }}</span>
+  </div>
+</div>

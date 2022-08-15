@@ -35,6 +35,8 @@ import { MapLegendDisplayComponent } from './sidebar/map-legend-display/map-lege
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HelpComponent } from "./help/help.component";
 import {Nl2BrPipeModule} from "nl2br-pipe";
+import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
+import {SessionCreatorComponent} from "./session-creator/session-creator.component";
 
 @NgModule({
   declarations: [
@@ -42,6 +44,8 @@ import {Nl2BrPipeModule} from "nl2br-pipe";
     MapRendererComponent,
     ToolbarComponent,
     HelpComponent,
+    ConfirmationDialogComponent,
+    SessionCreatorComponent,
     // sidebar
     SidebarComponent,
     // SidebarFiltersComponent,

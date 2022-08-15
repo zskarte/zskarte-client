@@ -399,4 +399,8 @@ export class ZsMapStateService {
   public observeSession(): Observable<IZsSession | null> {
     return this._session.asObservable();
   }
+
+  public loadSession(session: IZsSession | null) {
+    this._session.next(session);
+  }
 }

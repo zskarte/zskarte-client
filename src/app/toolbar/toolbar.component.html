@@ -1,4 +1,4 @@
-<mat-card class="toolbar" *ngIf="session">
+<mat-card class="toolbar" *ngIf="session | async as session">
   <div class="flexContainer alignCenter">
     <div class="credits">
       <div class="flexContainer">

@@ -6,6 +6,8 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {ZsMapStateService} from "../state/state.service";
 import {ZsMapDisplayMode} from '../state/interfaces';
 import {IZsSession} from '../core/entity/session';
+import {SessionCreatorComponent} from "../session-creator/session-creator.component";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-toolbar',
@@ -17,7 +19,7 @@ export class ToolbarComponent implements OnInit {
   static ONBOARDING_VERSION = '1.0';
 
   historyMode: ZsMapDisplayMode = ZsMapDisplayMode.DRAW;
-  session: IZsSession | null = <IZsSession> {title: "Test"};
+  session: Observable<IZsSession | null>;
   exportEnabled = true;
   downloadData = null;
   downloadCSVData = null;
@@ -31,6 +33,7 @@ export class ToolbarComponent implements OnInit {
     private sanitizer: DomSanitizer,
     public zsMapStateService: ZsMapStateService,
   ) {
+    this.session = this.zsMapStateService.observeSession();
     /*
     this.zsMapStateService.observeDisplayState().subscribe((mode) => {
       this.historyMode = ZsMapDisplayMode.HISTORY;
@@ -49,15 +52,15 @@ export class ToolbarComponent implements OnInit {
         ? (this.downloadTime = new Date().toISOString())
         : (this.downloadTime = historyDate)
     );
-
-    if (this.initialLaunch) {
+    */
+    if (this.isinitialLaunch()) {
       this.dialog.open(HelpComponent, {
         data: true,
       });
-    }*/
+    }
   }
 
-  get initialLaunch(): boolean {
+  isinitialLaunch(): boolean {
     const currentOnboardingVersion = localStorage.getItem('onboardingVersion');
     if (currentOnboardingVersion !== ToolbarComponent.ONBOARDING_VERSION) {
       localStorage.setItem(
@@ -105,11 +108,10 @@ export class ToolbarComponent implements OnInit {
         this.sharedState.loadSession(JSON.parse(session));
         return;
       }
-    }
-    this.createInitialSession();*/
+    }*/
+    this.createInitialSession();
   }
 
-  /*
   private createInitialSession() {
     this.dialog.open(SessionCreatorComponent, {
       data: {
@@ -120,7 +122,7 @@ export class ToolbarComponent implements OnInit {
       width: '80vw',
       maxWidth: '80vw',
     });
-  }*/
+  }
 
   /*
   createOrLoadSession() {

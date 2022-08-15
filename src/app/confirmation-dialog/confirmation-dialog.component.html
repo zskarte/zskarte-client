@@ -1,0 +1,17 @@
+<div mat-dialog-content>{{ data }}</div>
+<div mat-dialog-actions align="end">
+  <button
+    mat-raised-button
+    [mat-dialog-close]="true"
+    (click)="cancel()"
+    [innerText]="i18n.get('no')"
+  ></button>
+  <button
+    mat-raised-button
+    color="primary"
+    [mat-dialog-close]="true"
+    cdkFocusInitial
+    (click)="ok()"
+    [innerText]="i18n.get('yes')"
+  ></button>
+</div>

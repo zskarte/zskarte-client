@@ -1,0 +1,142 @@
+<!--<div class="modal-dialog">-->
+<div
+  *ngIf="!editMode"
+  style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  "
+>
+  <h1 mat-dialog-title style="margin-bottom: 0">
+    {{ i18n.get('sessionCreatorTitle') }}
+  </h1>
+  <mat-select style="flex-grow: 0; width: 150px" [(value)]="i18n.locale">
+    <mat-option *ngFor="let locale of locales" [value]="locale">
+      {{ i18n.get(locale) }}
+    </mat-option>
+  </mat-select>
+</div>
+<div mat-dialog-content>
+  <mat-tab-group>
+    <mat-tab [label]="editMode ? session.title : i18n.get('newMap')">
+      <form #createOrEditForm="ngForm">
+        <div
+          *ngIf="!editMode"
+          [innerHTML]="i18n.get('sessionCreatorInstructions') | nl2br"
+        ></div>
+        <mat-form-field *ngIf="!editMode">
+          <mat-label>{{ i18n.get('zso') }}</mat-label>
+          <mat-select name="zsoId" [(ngModel)]="session.zsoId" required>
+            <mat-option *ngFor="let zso of listOfZSO" [value]="zso.id">
+              <img
+                class="zsoIcon"
+                src="assets/img/zso/{{ zso.id }}.png"
+              /><span> {{ zso.name }}</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="session.zsoId !== 'zso_guest'">
+          <mat-label>{{ i18n.get('password') }}:</mat-label>
+          <input
+            matInput
+            [type]="hidepw ? 'password' : 'text'"
+            name="password"
+            [(ngModel)]="enteredPassword"
+            required
+          />
+          <mat-icon
+            matSuffix
+            class="material-icons"
+            (click)="hidepw = !hidepw"
+            >{{ hidepw ? 'visibility_off' : 'visibility' }}</mat-icon
+          >
+        </mat-form-field>
+        <small class="text-danger" *ngIf="enteredPasswordInvalid">
+          {{ i18n.get('wrongPassword') }}
+        </small>
+
+        <div *ngIf="session.zsoId !== 'zso_guest'">
+          <mat-checkbox name="mapDataOvertake" [(ngModel)]="mapDataOvertake">
+            {{ i18n.get('mapDataOvertake') }}
+          </mat-checkbox>
+        </div>
+
+        <mat-form-field>
+          <mat-label>{{ i18n.get('eventname') }}:</mat-label>
+          <input
+            matInput
+            type="text"
+            name="title"
+            [(ngModel)]="session.title"
+            required
+          />
+        </mat-form-field>
+        <div align="end">
+          <button
+            type="submit"
+            mat-raised-button
+            color="primary"
+            [disabled]="createOrEditForm.invalid"
+            (click)="submit()"
+          >
+            {{ i18n.get('ok') }}
+          </button>
+        </div>
+      </form>
+    </mat-tab>
+    <mat-tab
+      [label]="i18n.get('loadMap')"
+      *ngIf="!editMode && allSessionsButActive.length > 0"
+    >
+      <form #loadForm="ngForm">
+        <div [innerHTML]="i18n.get('sessionLoaderInstructions') | nl2br"></div>
+        <table>
+          <tr *ngFor="let session of allSessionsButActive">
+            <td class="icon">
+              <img
+                class="zsoIcon"
+                [src]="'assets/img/zso/' + session.zsoId + '.png'"
+              />
+            </td>
+            <td>{{ session.title }}</td>
+            <td>{{ session.start | date: 'dd.MM.yyyy HH:mm:ss' }}</td>
+            <td class="buttons">
+              <button
+                mat-stroked-button
+                [mat-dialog-close]="true"
+                (click)="loadSession(session)"
+              >
+                <i class="material-icons">autorenew</i>
+              </button>
+            </td>
+          </tr>
+        </table>
+      </form>
+    </mat-tab>
+    <mat-tab [label]="i18n.get('importMap')" *ngIf="!editMode">
+      <div [innerHTML]="i18n.get('importSessionInstructions') | nl2br"></div>
+      <form #importForm="ngForm">
+        <input
+          id="loadFromFile"
+          type="file"
+          accept=".zsjson"
+          #fileInput
+          required
+        />
+        <div align="start" class="importButton">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="importSessionFromFile()"
+            [disabled]="importForm.invalid"
+          >
+            <i class="material-icons">open_in_browser</i>
+            {{ i18n.get('importMap') }}
+          </button>
+        </div>
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+</div>
