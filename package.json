@@ -25,7 +25,6 @@
     "@angular/router": "^14.1.1",
     "immer": "^9.0.15",
     "luxon": "^3.0.1",
-    "material-icons": "^1.11.10",
     "ol": "^6.15.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
