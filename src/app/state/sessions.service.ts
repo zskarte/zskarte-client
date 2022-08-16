@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import {IZsSession} from "../core/entity/session";
+import { IZsSession, IZsSessionState } from '../core/entity/session';
+import {BehaviorSubject, Observable} from 'rxjs';
+import produce from 'immer';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionsService {
-  constructor() {}
+  private _session = new BehaviorSubject<IZsSessionState>(produce<IZsSessionState>(this._getDefaultSessionState(), (draft) => draft));
 
   public saveSession(session: IZsSession) {
     localStorage.setItem('session_' + session.uuid, JSON.stringify(session));
@@ -30,5 +32,20 @@ export class SessionsService {
       }
     }
     return result;
+  }
+
+  private _getDefaultSessionState(): IZsSessionState {
+    return {
+      session: new BehaviorSubject<IZsSession>({
+        title: '',
+        uuid: '',
+        zsoId: '',
+        startDateTime: new Date(),
+      }),
+      isOutdated(): boolean {
+        return false;
+        //return Math.abs(this.session.start - new Date()) > 0;
+      },
+    };
   }
 }

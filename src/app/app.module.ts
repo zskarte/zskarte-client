@@ -35,9 +35,16 @@ import { MapLegendDisplayComponent } from './sidebar/map-legend-display/map-lege
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HelpComponent } from './help/help.component';
 import { Nl2BrPipeModule } from 'nl2br-pipe';
-import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
-import {SessionCreatorComponent} from "./session-creator/session-creator.component";
-import {GeocoderComponent} from "./geocoder/geocoder.component";
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { SessionCreatorComponent } from './session-creator/session-creator.component';
+import { GeocoderComponent } from './geocoder/geocoder.component';
+import { ImportDialogComponent } from './import-dialog/import-dialog.component';
+import { TagStateComponent } from './tag-state/tag-state.component';
+import { ClockComponent } from './clock/clock.component';
+
+import { registerLocaleData } from '@angular/common';
+import localeCH from '@angular/common/locales/de-CH';
+registerLocaleData(localeCH);
 
 @NgModule({
   declarations: [
@@ -48,6 +55,9 @@ import {GeocoderComponent} from "./geocoder/geocoder.component";
     ConfirmationDialogComponent,
     SessionCreatorComponent,
     GeocoderComponent,
+    ImportDialogComponent,
+    TagStateComponent,
+    ClockComponent,
     // sidebar
     SidebarComponent,
     // SidebarFiltersComponent,

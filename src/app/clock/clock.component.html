@@ -1,5 +1,5 @@
 <div class="flexContainer">
-  <span class="timeLeft" *ngIf="doCheckTimeout !== 0">
+  <div class="timeLeft" *ngIf="doCheckTimeout !== 0">
     <div
       class="flexContainer"
       mat-raised-button
@@ -20,9 +20,9 @@
         <strong class="timer">{{ sessionTimeLeft }}</strong>
       </div>
     </div>
-  </span>
+  </div>
   <div class="flexColumn">
-    <span class="date">{{ now | date: 'dd.MM.yyyy' }}</span>
-    <span class="time">{{ now | date: 'HH:mm:ss' }}</span>
+    <span class="date">{{ now | async | date: 'dd.MM.yyyy' }}</span>
+    <span class="time">{{ now | async | date: 'HH:mm:ss' }}</span>
   </div>
 </div>

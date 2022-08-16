@@ -150,6 +150,7 @@ export class GeocoderComponent {
       let coordinates;
       if (element.mercatorCoordinates) {
         coordinates = [element.mercatorCoordinates[1], element.mercatorCoordinates[0]];
+        // TODO: Why is this code needed?
         if (select) {
           //this.sharedState.selectFeature(element.feature);
         }

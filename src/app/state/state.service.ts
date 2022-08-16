@@ -23,8 +23,6 @@ import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 import { GeoFeature } from '../core/entity/geoFeature';
 import { IZsSession } from '../core/entity/session';
-import { GeoadminService } from '../core/geoadmin.service';
-import {coordinates} from "ol/geom/flat/reverse";
 
 // TODO move this to right position
 enablePatches();

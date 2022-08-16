@@ -1,17 +1,19 @@
-import {ChangeDetectorRef, Component, OnInit,} from '@angular/core';
-import {I18NService, LOCALES} from '../state/i18n.service';
-import {MatDialog} from '@angular/material/dialog';
-import {HelpComponent} from '../help/help.component';
-import {DomSanitizer} from '@angular/platform-browser';
-import {ZsMapStateService} from "../state/state.service";
-import {IZsMapDisplayState, ZsMapDisplayMode} from '../state/interfaces';
-import {IZsSession} from '../core/entity/session';
-import {SessionCreatorComponent} from "../session-creator/session-creator.component";
-import {firstValueFrom, lastValueFrom, Observable} from "rxjs";
-import {map} from "rxjs/operators";
-import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
-import {PreferencesService} from "../state/preferences.service";
-import {SessionsService} from "../state/sessions.service";
+import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { I18NService, LOCALES } from '../state/i18n.service';
+import { MatDialog } from '@angular/material/dialog';
+import { HelpComponent } from '../help/help.component';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ZsMapStateService } from '../state/state.service';
+import { ZsMapDisplayMode } from '../state/interfaces';
+import { IZsSession } from '../core/entity/session';
+import { SessionCreatorComponent } from '../session-creator/session-creator.component';
+import { firstValueFrom, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { PreferencesService } from '../state/preferences.service';
+import { SessionsService } from '../state/sessions.service';
+import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
+import {TagStateComponent} from "../tag-state/tag-state.component";
 
 @Component({
   selector: 'app-toolbar',
@@ -19,7 +21,6 @@ import {SessionsService} from "../state/sessions.service";
   styleUrls: ['./toolbar.component.css'],
 })
 export class ToolbarComponent implements OnInit {
-
   static ONBOARDING_VERSION = '1.0';
 
   session: Observable<IZsSession | null>;
@@ -40,25 +41,29 @@ export class ToolbarComponent implements OnInit {
     private sessions: SessionsService,
   ) {
     this.session = this.zsMapStateService.observeSession();
-    this.historyMode = this.zsMapStateService.observeDisplayState().pipe(map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY));
+    this.historyMode = this.zsMapStateService
+      .observeDisplayState()
+      .pipe(map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY));
 
     this.zsMapStateService.observeDisplayState().subscribe((mode) => {
       window.history.pushState(null, '', '?mode=' + mode.displayMode);
     });
 
-    /*
-
-    this.sharedState.sessionOutdated.subscribe((isOutdated) => {
-      if (isOutdated) {
+    this.zsMapStateService.observeSession().subscribe((session) => {
+      /*if (session?.isOutdated()) {
         this.createInitialSession();
-      }
+      }*/
     });
+
+    // TODO: Is this needed?
+    /*
     this.sharedState.historyDate.subscribe((historyDate) =>
       historyDate === 'now'
         ? (this.downloadTime = new Date().toISOString())
         : (this.downloadTime = historyDate)
     );
     */
+
     if (this.isinitialLaunch()) {
       this.dialog.open(HelpComponent, {
         data: true,
@@ -69,33 +74,24 @@ export class ToolbarComponent implements OnInit {
   isinitialLaunch(): boolean {
     const currentOnboardingVersion = localStorage.getItem('onboardingVersion');
     if (currentOnboardingVersion !== ToolbarComponent.ONBOARDING_VERSION) {
-      localStorage.setItem(
-        'onboardingVersion',
-        ToolbarComponent.ONBOARDING_VERSION
-      );
+      localStorage.setItem('onboardingVersion', ToolbarComponent.ONBOARDING_VERSION);
       return true;
     }
     return false;
   }
 
-  /*
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     // Only handle global events (to prevent input elements to be considered)
     const globalEvent = event.target instanceof HTMLBodyElement;
-    if (
-      globalEvent &&
-      !this.sharedState.featureSource.getValue() &&
-      event.altKey
-    ) {
+    if (globalEvent && event.altKey) {
       switch (event.code) {
         case 'KeyH':
           this.toggleHistory();
           break;
       }
     }
-  }*/
-
+  }
 
   ngOnInit() {
     this.zsMapStateService.observeSession().subscribe((s) => {
@@ -129,7 +125,6 @@ export class ToolbarComponent implements OnInit {
       maxWidth: '80vw',
     });
   }
-
 
   async createOrLoadSession() {
     const currentSession = await firstValueFrom(this.session);
@@ -189,9 +184,7 @@ export class ToolbarComponent implements OnInit {
     this.dialog.open(HelpComponent, { data: false });
   }
 
-
   importData(): void {
-    /*
     const dialogRef = this.dialog.open(ImportDialogComponent, {
       maxWidth: '80vw',
       maxHeight: '80vh',
@@ -200,9 +193,7 @@ export class ToolbarComponent implements OnInit {
       if (result && result.value) {
         this.dialog
           .open(ConfirmationDialogComponent, {
-            data: result.replace
-              ? this.i18n.get('confirmImportDrawing')
-              : this.i18n.get('confirmImportDrawingNoReplace'),
+            data: result.replace ? this.i18n.get('confirmImportDrawing') : this.i18n.get('confirmImportDrawingNoReplace'),
           })
           .afterClosed()
           .subscribe((confirmed) => {
@@ -211,13 +202,12 @@ export class ToolbarComponent implements OnInit {
             }
           });
       }
-    });*/
+    });
   }
 
   getDownloadFileName() {
     return 'zskarte_' + new Date().toISOString() + '.geojson';
   }
-
 
   download(): void {
     /*
@@ -229,7 +219,6 @@ export class ToolbarComponent implements OnInit {
   getDownloadFileNameCSV() {
     return 'zskarte_' + new Date().toISOString() + '.csv';
   }
-
 
   downloadCSV(): void {
     /*
@@ -256,13 +245,12 @@ export class ToolbarComponent implements OnInit {
   }
 
   tagState(): void {
-    /*
     const dialogRef = this.dialog.open(TagStateComponent);
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.mapStore.setTag(result).then(() => {});
+        //this.mapStore.setTag(result).then(() => {});
       }
-    });*/
+    });
   }
 
   setLocale(locale: string) {

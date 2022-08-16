@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { ToolbarComponent } from './toolbar.component';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -39,12 +41,7 @@ describe('ToolbarComponent', () => {
           useValue: jasmine.createSpyObj('NgxIndexedDBService', ['add']),
         },
       ],
-      declarations: [
-        ToolbarComponent,
-        HelpComponent,
-        ConfirmationDialogComponent,
-        SessionCreatorComponent,
-      ],
+      declarations: [ToolbarComponent, HelpComponent, ConfirmationDialogComponent, SessionCreatorComponent],
       schemas: [NO_ERRORS_SCHEMA],
     });
   });

@@ -1,0 +1,18 @@
+<div mat-dialog-content>
+  <mat-form-field>
+    <input
+      type="text"
+      matInput
+      placeholder="{{ i18n.get('yourTag') }}"
+      [(ngModel)]="tag"
+    />
+  </mat-form-field>
+</div>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancel()">
+    {{ i18n.get('cancel') }}
+  </button>
+  <button mat-raised-button color="primary" (click)="submit()">
+    {{ i18n.get('ok') }}
+  </button>
+</mat-dialog-actions>

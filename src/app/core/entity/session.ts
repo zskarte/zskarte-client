@@ -1,6 +1,13 @@
+import { BehaviorSubject } from 'rxjs';
+
 export interface IZsSession {
   title: string;
   uuid: string;
   zsoId: string;
-  start: Date;
+  startDateTime: Date;
+}
+
+export interface IZsSessionState {
+  session: BehaviorSubject<IZsSession>;
+  isOutdated(): boolean;
 }
