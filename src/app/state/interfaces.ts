@@ -22,6 +22,11 @@ export interface IZsMapState {
   center: [number, number];
 }
 
+export interface IPositionFlag {
+  coordinates: number[];
+  isVisible: boolean;
+}
+
 export enum ZsMapDisplayMode {
   DRAW = 'draw',
   HISTORY = 'history',
@@ -40,6 +45,7 @@ export interface IZsMapDisplayState {
   elementVisibility: Record<string, boolean>;
   features: GeoFeature[];
   sidebarContext: SidebarContext | null;
+  positionFlag: IPositionFlag;
 }
 
 export type ZsMapLayerState = IZsMapDrawLayerState | IZsMapGeoDataLayerState;

@@ -15,6 +15,11 @@ import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
 import { SidebarContext } from '../state/interfaces';
 import { GeoFeature } from '../core/entity/geoFeature';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import { Feature } from 'ol';
+import { Point } from 'ol/geom';
+import { Icon, Style } from 'ol/style';
 
 @Component({
   selector: 'app-map-renderer',
@@ -33,6 +38,9 @@ export class MapRendererComponent implements AfterViewInit {
   private _mapLayer = new OlTileLayer({
     zIndex: 0,
   });
+  private _navigationLayer!: VectorLayer<VectorSource>;
+  private _positionFlag!: Feature;
+  private _positionFlagLocation!: Point;
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
@@ -82,6 +90,32 @@ export class MapRendererComponent implements AfterViewInit {
         shiftDragZoom: false,
       }).extend([select, translate]),
     });
+
+    this._positionFlagLocation = new Point([0, 0]);
+    this._positionFlag = new Feature({
+      geometry: this._positionFlagLocation,
+    });
+
+    this._positionFlag.setStyle(
+      new Style({
+        image: new Icon({
+          anchor: [0.5, 1],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+          src: 'assets/img/place.png',
+          scale: 0.15,
+        }),
+      }),
+    );
+
+    const navigationSource = new VectorSource({
+      features: [this._positionFlag],
+    });
+    this._navigationLayer = new VectorLayer({
+      source: navigationSource,
+    });
+    this._navigationLayer.setZIndex(99999999999);
+    this._map.addLayer(this._navigationLayer);
 
     this._map.on('moveend', () => {
       this._state.setMapCenter(this._view.getCenter() || [0, 0]);
@@ -207,6 +241,12 @@ export class MapRendererComponent implements AfterViewInit {
 
         this._featureLayerCache = features;
       });
+
+    this._state.observePositionFlag().subscribe((positionFlag) => {
+      this._navigationLayer.setVisible(positionFlag.isVisible);
+      this._positionFlagLocation.setCoordinates(positionFlag.coordinates);
+      this._positionFlag.changed();
+    });
   }
 
   zoomIn() {

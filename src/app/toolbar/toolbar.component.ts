@@ -42,11 +42,9 @@ export class ToolbarComponent implements OnInit {
     this.session = this.zsMapStateService.observeSession();
     this.historyMode = this.zsMapStateService.observeDisplayState().pipe(map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY));
 
-    /*
     this.zsMapStateService.observeDisplayState().subscribe((mode) => {
-      this.historyMode = ZsMapDisplayMode.HISTORY;
-      window.history.pushState(null, '', '?mode=' + mode);
-    });*/
+      window.history.pushState(null, '', '?mode=' + mode.displayMode);
+    });
 
     /*
 
@@ -102,7 +100,6 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
     this.zsMapStateService.observeSession().subscribe((s) => {
       if (s !== null) {
-        console.log(s.uuid);
         const currentZSO = this.preferences.getZSO();
         this.exportEnabled = currentZSO != null && currentZSO.id != 'zso_guest';
         this.preferences.setLastSessionId(s.uuid);
@@ -134,10 +131,11 @@ export class ToolbarComponent implements OnInit {
   }
 
 
-  createOrLoadSession() {
+  async createOrLoadSession() {
+    const currentSession = await firstValueFrom(this.session);
     this.dialog.open(SessionCreatorComponent, {
       data: {
-        session: this.session,
+        session: currentSession,
         edit: false,
       },
       width: '80vw',
@@ -145,10 +143,11 @@ export class ToolbarComponent implements OnInit {
     });
   }
 
-  editSession() {
+  async editSession() {
+    const currentSession = await firstValueFrom(this.session);
     this.dialog.open(SessionCreatorComponent, {
       data: {
-        session: this.session,
+        session: currentSession,
         edit: true,
       },
       width: '80vw',
@@ -156,19 +155,19 @@ export class ToolbarComponent implements OnInit {
     });
   }
 
-  deleteSession(): void {
-    if (this.session) {
+  async deleteSession() {
+    const currentSession = await firstValueFrom(this.session);
+
+    if (currentSession) {
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: this.i18n.get('confirmDeleteMap'),
       });
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed().subscribe(async (result) => {
         if (result) {
-          /*
-          this.mapStore.removeMap(this.session.uuid, true);
-          this.sessions.removeSession(this.session.uuid);
-          this.preferences.removeSessionSpecificPreferences(this.session.uuid);
-          this.sharedState.loadSession(null);
-          this.createInitialSession();*/
+          this.sessions.removeSession(currentSession.uuid);
+          this.preferences.removeSessionSpecificPreferences(currentSession.uuid);
+          this.zsMapStateService.reset();
+          await this.createInitialSession();
         }
       });
     }

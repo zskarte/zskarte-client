@@ -1,0 +1,37 @@
+.mat-option {
+  font-size: 0.7em;
+}
+
+.geocoder {
+  display: flex;
+  gap: 10px;
+}
+
+.input {
+  min-width: 250px;
+}
+
+.currentLocation {
+  display: flex;
+  align-items: center;
+  line-height: 1.5em;
+}
+
+.currentLocation img {
+  height: 1.5em;
+  margin-right: 1em;
+}
+
+.currentLocationLabel {
+  font-size: 12px;
+  white-space: nowrap;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 150px;
+}
+
+.alignCenter {
+  display: flex;
+  align-items: center;
+}

@@ -37,6 +37,7 @@ import { HelpComponent } from './help/help.component';
 import { Nl2BrPipeModule } from 'nl2br-pipe';
 import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
 import {SessionCreatorComponent} from "./session-creator/session-creator.component";
+import {GeocoderComponent} from "./geocoder/geocoder.component";
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import {SessionCreatorComponent} from "./session-creator/session-creator.compone
     HelpComponent,
     ConfirmationDialogComponent,
     SessionCreatorComponent,
+    GeocoderComponent,
     // sidebar
     SidebarComponent,
     // SidebarFiltersComponent,

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import produce, {enablePatches, Patch} from 'immer';
 import {
+  IPositionFlag,
   IZsMapDisplayState,
   IZsMapSaveFileState,
   IZsMapState,
@@ -23,6 +24,7 @@ import {areArraysEqual} from '../helper/array';
 import {GeoFeature} from '../core/entity/geoFeature';
 import {IZsSession} from '../core/entity/session';
 import { GeoadminService } from '../core/geoadmin.service';
+import {coordinates} from "ol/geom/flat/reverse";
 
 // TODO move this to right position
 enablePatches();
@@ -62,6 +64,7 @@ export class ZsMapStateService {
     return {
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
+      positionFlag: { coordinates: [0, 0], isVisible: false },
       mapCenter: [0, 0],
       mapZoom: 16,
       activeLayer: undefined,
@@ -151,6 +154,21 @@ export class ZsMapStateService {
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public observePositionFlag(): Observable<IPositionFlag> {
+    return this._display.pipe(
+      map((o) => {
+        return o.positionFlag;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public updatePositionFlag(positionFlag: IPositionFlag) {
+    this.updateDisplayState((draft) => {
+      draft.positionFlag = positionFlag;
+    });
   }
 
   public setMapZoom(zoom: number) {

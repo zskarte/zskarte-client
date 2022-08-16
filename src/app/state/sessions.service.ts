@@ -8,7 +8,6 @@ export class SessionsService {
   constructor() {}
 
   public saveSession(session: IZsSession) {
-    console.log(session);
     localStorage.setItem('session_' + session.uuid, JSON.stringify(session));
   }
 
