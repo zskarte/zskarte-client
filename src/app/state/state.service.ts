@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
-import produce, {enablePatches, Patch} from 'immer';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import produce, { enablePatches, Patch } from 'immer';
 import {
   IZsMapDisplayState,
   IZsMapSaveFileState,
@@ -13,15 +13,15 @@ import {
   ZsMapLayerStateType,
   ZsMapStateSource,
 } from './interfaces';
-import {distinctUntilChanged, map} from 'rxjs/operators';
-import {ZsMapBaseLayer} from '../map-renderer/layers/base-layer';
-import {v4 as uuidv4} from 'uuid';
-import {ZsMapDrawLayer} from '../map-renderer/layers/draw-layer';
-import {ZsMapBaseDrawElement} from '../map-renderer/elements/base/base-draw-element';
-import {DrawElementHelper} from '../helper/draw-element-helper';
-import {areArraysEqual} from '../helper/array';
-import {GeoFeature} from '../core/entity/geoFeature';
-import {IZsSession} from '../core/entity/session';
+import { distinctUntilChanged, map, takeUntil, takeWhile } from 'rxjs/operators';
+import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
+import { v4 as uuidv4 } from 'uuid';
+import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
+import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
+import { DrawElementHelper } from '../helper/draw-element-helper';
+import { areArraysEqual } from '../helper/array';
+import { GeoFeature } from '../core/entity/geoFeature';
+import { IZsSession } from '../core/entity/session';
 import { GeoadminService } from '../core/geoadmin.service';
 
 // TODO move this to right position
@@ -31,8 +31,6 @@ enablePatches();
   providedIn: 'root',
 })
 export class ZsMapStateService {
-  constructor(private geoAdminService: GeoadminService) {}
-
   private _map = new BehaviorSubject<IZsMapState>(produce<IZsMapState>(this._getDefaultMapState(), (draft) => draft));
   private _mapPatches = new BehaviorSubject<Patch[]>([]);
   private _mapInversePatches = new BehaviorSubject<Patch[]>([]);
@@ -301,59 +299,61 @@ export class ZsMapStateService {
   public observeSelectedFeatures(): Observable<GeoFeature[]> {
     return this._display.pipe(
       map((o) => {
-        return o?.features;
+        return o?.features?.filter((feature) => !feature.deleted);
       }),
       distinctUntilChanged((x, y) => x === y),
     );
   }
 
+  public observeFeature(serverLayerName: string): Observable<GeoFeature | undefined> {
+    return this._display.pipe(
+      map((o) => {
+        return o?.features?.find((feature) => feature.serverLayerName === serverLayerName);
+      }),
+      distinctUntilChanged((x, y) => x === y),
+      takeWhile((feature) => !!feature),
+    );
+  }
+
   public addFeature(feature: GeoFeature) {
     this.updateDisplayState((draft) => {
-      let maxIndex = Math.max(...(draft.features.map((f) => f.layer?.getZIndex()).filter(Boolean) as number[]));
+      let maxIndex = Math.max(...(draft.features.map((f) => f.zIndex).filter(Boolean) as number[]));
       maxIndex = Number.isInteger(maxIndex) ? maxIndex + 1 : 0;
-      const opacity = 0.75;
-      const layer = this.geoAdminService.createGeoAdminLayer(feature.serverLayerName, feature.timestamps[0], feature.format, maxIndex);
-      draft.features.unshift({ ...feature, layer, opacity, visible: true });
+      draft.features.unshift({ ...feature, opacity: 0.75, deleted: false, zIndex: maxIndex });
     });
   }
 
-  public removeFeature(feature: GeoFeature) {
+  public removeFeature(index: number) {
     this.updateDisplayState((draft) => {
-      draft.features = draft.features.filter((f) => f.serverLayerName !== feature.serverLayerName);
+      draft.features.splice(index, 1);
     });
   }
 
   public sortFeatureUp(index: number) {
     this.updateDisplayState((draft) => {
       const feature = draft.features[index];
-      if (feature.layer) {
-        const currentZIndex = feature.layer.getZIndex();
+      const currentZIndex = feature.zIndex;
 
-        draft.features[index - 1].layer?.setZIndex(currentZIndex);
-        feature.layer.setZIndex(currentZIndex + 1);
-        draft.features.sort((a, b) => b.layer.getZIndex() - a.layer.getZIndex());
-      }
+      draft.features[index - 1].zIndex = currentZIndex;
+      feature.zIndex = currentZIndex + 1;
+      draft.features.sort((a, b) => b.zIndex - a.zIndex);
     });
   }
 
   public sortFeatureDown(index: number) {
     this.updateDisplayState((draft) => {
       const feature = draft.features[index];
-      if (feature.layer) {
-        const currentZIndex = feature.layer.getZIndex();
+      const currentZIndex = feature.zIndex;
 
-        draft.features[index + 1].layer?.setZIndex(currentZIndex);
-        feature.layer.setZIndex(currentZIndex - 1);
-        draft.features.sort((a, b) => b.layer.getZIndex() - a.layer.getZIndex());
-      }
+      draft.features[index + 1].zIndex = currentZIndex;
+      feature.zIndex = currentZIndex - 1;
+      draft.features.sort((a, b) => b.zIndex - a.zIndex);
     });
   }
 
   public setFeatureOpacity(index: number, opacity: number | null) {
     this.updateDisplayState((draft) => {
-      const feature = draft.features[index];
-      feature.opacity = opacity ?? 0;
-      feature.layer.setOpacity(opacity);
+      draft.features[index].opacity = opacity ?? 0;
     });
   }
 

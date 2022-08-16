@@ -3,6 +3,7 @@ import { Draw, Select, Translate, defaults } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
+import OlTileWMTS from 'ol/source/WMTS';
 import { Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
@@ -15,6 +16,7 @@ import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
 import { SidebarContext } from '../state/interfaces';
 import { GeoFeature } from '../core/entity/geoFeature';
+import { GeoadminService } from '../core/geoadmin.service';
 
 @Component({
   selector: 'app-map-renderer',
@@ -36,9 +38,9 @@ export class MapRendererComponent implements AfterViewInit {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
-  private _featureLayerCache: GeoFeature[] = [];
+  private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
 
-  constructor(private _state: ZsMapStateService, public i18n: I18NService) {}
+  constructor(private _state: ZsMapStateService, public i18n: I18NService, private geoAdminService: GeoadminService) {}
 
   public ngOnDestroy(): void {
     this._ngUnsubscribe.next();
@@ -192,20 +194,33 @@ export class MapRendererComponent implements AfterViewInit {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((features) => {
         // removed features
-        this._featureLayerCache
-          .filter((feature) => !features.includes(feature))
-          .forEach((feature) => {
-            this._map.removeLayer(feature.layer);
-          });
-
-        // added features
+        const cacheNames = Array.from(this._featureLayerCache.keys());
         features
-          .filter((el) => !this._featureLayerCache.includes(el))
+          .filter((el) => !cacheNames.includes(el.serverLayerName))
           .forEach((feature) => {
-            this._map.addLayer(feature.layer);
-          });
+            const layer = this.geoAdminService.createGeoAdminLayer(
+              feature.serverLayerName,
+              feature.timestamps[0],
+              feature.format,
+              feature.zIndex,
+            );
+            this._map.addLayer(layer);
+            this._featureLayerCache.set(feature.serverLayerName, layer);
 
-        this._featureLayerCache = features;
+            // observe feature changes
+            this._state.observeFeature(feature.serverLayerName).subscribe({
+              next: (updatedFeature) => {
+                if (updatedFeature) {
+                  layer.setZIndex(updatedFeature.zIndex);
+                  layer.setOpacity(updatedFeature.opacity);
+                }
+              },
+              complete: () => {
+                this._map.removeLayer(layer);
+                this._featureLayerCache.delete(feature.serverLayerName);
+              },
+            });
+          });
       });
   }
 

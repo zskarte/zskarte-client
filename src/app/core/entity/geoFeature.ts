@@ -19,8 +19,8 @@ export interface GeoFeature {
   topics: string;
   type: string;
   // should be OlTileLayer<OlTileWMTS> but TS does not allow it somehow
-  layer?: any;
-  visible?: boolean;
+  deleted?: boolean;
+  zIndex: number;
 }
 
 export interface GeoFeatures {
