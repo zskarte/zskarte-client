@@ -21,6 +21,7 @@ import { Feature } from 'ol';
 import { Point } from 'ol/geom';
 import { Icon, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
+import { DrawStyle } from './draw-style';
 
 @Component({
   selector: 'app-map-renderer',
@@ -57,8 +58,10 @@ export class MapRendererComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
     // TODO
     const select = new Select({
-      style: null,
       hitTolerance: 10,
+      style: (feature, resolution) => {
+        return DrawStyle.styleFunctionSelect(feature, resolution, true);
+      },
     });
     select.on('select', (event) => {
       for (const feature of event.selected) {

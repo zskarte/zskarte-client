@@ -13,6 +13,7 @@ import { Md5 } from 'ts-md5';
 import ConvexHull from 'ol-ext/geom/ConvexHull';
 import { Feature } from 'ol';
 import { defineDefaultValuesForSignature, getFirstCoordinate, getLastCoordinate } from '../core/entity/sign';
+import { FeatureLike } from 'ol/Feature';
 
 export class DrawStyle {
   static defaultScaleFactor = 0.2;
@@ -63,7 +64,7 @@ export class DrawStyle {
     return value;
   }
 
-  private static styleFunctionSelectSingleFeature(feature: Feature, resolution: any, editMode: any) {
+  private static styleFunctionSelectSingleFeature(feature: FeatureLike, resolution: any, editMode: any) {
     if (resolution !== DrawStyle.lastResolution) {
       DrawStyle.lastResolution = resolution;
       DrawStyle.clearCaches();
@@ -81,7 +82,7 @@ export class DrawStyle {
     }
   }
 
-  public static styleFunctionSelect(feature: Feature, resolution: any, editMode: any): any {
+  public static styleFunctionSelect(feature: FeatureLike, resolution: any, editMode: any): any {
     if (feature.get('features')) {
       const features = feature.get('features');
       if (features.length > 1) {
@@ -794,7 +795,6 @@ export class DrawStyle {
 
   private static imageStyleFunction(feature: any, resolution: any, signature: any, selected: any, editMode: any): any {
     defineDefaultValuesForSignature(signature);
-    console.log(signature);
     const scale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
     const vectorStyles = this.getVectorStyles(feature, resolution, signature, selected, scale, editMode);
     const iconStyles = this.getIconStyle(feature, resolution, signature, selected, scale);
