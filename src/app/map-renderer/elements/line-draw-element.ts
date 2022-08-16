@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../../state/interfaces';
+import { IZsMapBaseDrawElementState, ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString } from 'ol/geom';
@@ -20,8 +20,8 @@ export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
       }
     });
   }
-  protected _initialize(coordinates: number[] | number[][]): void {
-    this._olLine = new LineString(coordinates);
+  protected _initialize(element: IZsMapBaseDrawElementState): void {
+    this._olLine = new LineString(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olLine);
     this._olFeature.on('change', () => {
       this.setCoordinates(this._olLine.getCoordinates());

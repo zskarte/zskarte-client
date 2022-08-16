@@ -23,7 +23,9 @@ import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 import { GeoFeature } from '../core/entity/geoFeature';
 import { IZsSession } from '../core/entity/session';
-import { GeoadminService } from '../core/geoadmin.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { Sign } from '../core/entity/sign';
 import {coordinates} from "ol/geom/flat/reverse";
 
 // TODO move this to right position
@@ -47,11 +49,14 @@ export class ZsMapStateService {
     | {
         type: ZsMapDrawElementStateType;
         layer: string;
+        symbol?: Sign;
       }
     | undefined
   >(undefined);
 
   private _session = new BehaviorSubject<IZsSession | null>(produce<IZsSession | null>(null, (draft) => draft));
+
+  constructor(private drawDialog: MatDialog) {}
 
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,7 +83,18 @@ export class ZsMapStateService {
 
   // drawing
   public drawElement(type: ZsMapDrawElementStateType, layer: string): void {
-    this._elementToDraw.next({ type, layer });
+    if (type === ZsMapDrawElementStateType.SYMBOL) {
+      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
+
+      dialogRef.afterClosed().subscribe((result) => {
+        // if (result) {
+        //   this.sharedState.selectSign(result);
+        // }
+        this._elementToDraw.next({ type, layer, symbol: result });
+      });
+    } else {
+      this._elementToDraw.next({ type, layer });
+    }
   }
 
   public cancelDrawing(): void {
@@ -89,6 +105,7 @@ export class ZsMapStateService {
     | {
         type: ZsMapDrawElementStateType;
         layer: string;
+        symbol?: Sign;
       }
     | undefined
   > {

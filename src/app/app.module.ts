@@ -37,6 +37,9 @@ import { HelpComponent } from './help/help.component';
 import { Nl2BrPipeModule } from 'nl2br-pipe';
 import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
 import {SessionCreatorComponent} from "./session-creator/session-creator.component";
+import { FabMenuComponent } from './fab-menu/fab-menu.component';
+import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
+import { TextDialogComponent } from './text-dialog/text-dialog.component';
 import {GeocoderComponent} from "./geocoder/geocoder.component";
 
 @NgModule({
@@ -52,6 +55,9 @@ import {GeocoderComponent} from "./geocoder/geocoder.component";
     SidebarComponent,
     // SidebarFiltersComponent,
     MapLegendDisplayComponent,
+    FabMenuComponent,
+    DrawingDialogComponent,
+    TextDialogComponent,
   ],
   imports: [
     BrowserModule,

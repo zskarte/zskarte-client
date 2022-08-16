@@ -1,0 +1,17 @@
+<div mat-dialog-content>
+  <mat-form-field>
+    <textarea
+      matInput
+      placeholder="{{ i18n.get('yourText') }}"
+      [(ngModel)]="text"
+    ></textarea>
+  </mat-form-field>
+</div>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancel()">
+    {{ i18n.get('cancel') }}
+  </button>
+  <button mat-raised-button color="primary" (click)="submit()">
+    {{ i18n.get('ok') }}
+  </button>
+</mat-dialog-actions>
