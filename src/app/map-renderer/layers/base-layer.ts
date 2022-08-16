@@ -5,6 +5,7 @@ import { ZsMapStateService } from '../../state/state.service';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';
+import { DrawStyle } from '../draw-style';
 
 export abstract class ZsMapBaseLayer {
   protected _layer: Observable<ZsMapLayerState | undefined>;
@@ -13,6 +14,9 @@ export abstract class ZsMapBaseLayer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected _olLayer: VectorLayer<any> = new VectorLayer({
     source: this._olSource,
+    style: (feature, resolution) => {
+      return DrawStyle.styleFunction(feature, resolution);
+    },
   });
 
   constructor(protected _id: string, protected _state: ZsMapStateService) {

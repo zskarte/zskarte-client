@@ -1,25 +1,26 @@
 import { Draw } from 'ol/interaction';
+import { Sign } from '../core/entity/sign';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { ZsMapLineDrawElement } from '../map-renderer/elements/line-draw-element';
 import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
 import { ZsMapSymbolDrawElement } from '../map-renderer/elements/symbol-draw-element';
 import { ZsMapTextDrawElement } from '../map-renderer/elements/text-draw-element';
-import { ZsMapDrawElementStateType } from '../state/interfaces';
+import { ZsMapDrawElementStateType, ZsMapElementToDraw } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 
 export class DrawElementHelper {
-  public static createDrawHandlerForType(type: ZsMapDrawElementStateType, state: ZsMapStateService, layer: string): Draw {
-    switch (type) {
+  public static createDrawHandlerForType(element: ZsMapElementToDraw, state: ZsMapStateService): Draw {
+    switch (element.type) {
       case ZsMapDrawElementStateType.TEXT:
-        return ZsMapTextDrawElement.getOlDrawHandler(state, layer);
+        return ZsMapTextDrawElement.getOlDrawHandler(state, element);
       case ZsMapDrawElementStateType.POLYGON:
-        return ZsMapPolygonDrawElement.getOlDrawHandler(state, layer);
+        return ZsMapPolygonDrawElement.getOlDrawHandler(state, element);
       case ZsMapDrawElementStateType.LINE:
-        return ZsMapLineDrawElement.getOlDrawHandler(state, layer);
+        return ZsMapLineDrawElement.getOlDrawHandler(state, element);
       case ZsMapDrawElementStateType.SYMBOL:
-        return ZsMapSymbolDrawElement.getOlDrawHandler(state, layer);
+        return ZsMapSymbolDrawElement.getOlDrawHandler(state, element);
     }
-    throw new Error(`Could not create draw handler for type ${type}`);
+    throw new Error(`Could not create draw handler for type ${element.type}`);
   }
 
   public static createInstance(id: string, state: ZsMapStateService): ZsMapBaseDrawElement {

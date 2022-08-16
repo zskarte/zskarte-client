@@ -1,4 +1,5 @@
 import { GeoFeature } from '../core/entity/geoFeature';
+import { Sign } from '../core/entity/sign';
 
 export enum ZsMapStateSource {
   OPEN_STREET_MAP = 'openStreetMap',
@@ -97,13 +98,6 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   name?: string;
 }
 
-export interface IZsMapSymbolState {
-  id: string;
-  color?: string;
-  rotation?: number;
-  // TODO add overwrite props
-}
-
 export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.TEXT;
   fontSize?: string;
@@ -111,21 +105,28 @@ export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
 
 export interface ZsMapSymbolDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.SYMBOL;
-  symbol: IZsMapSymbolState;
+  symbolId?: number;
   coordinates: number[] | number[][];
 }
 
 export interface ZsMapLineDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.LINE;
-  symbol?: IZsMapSymbolState;
+  symbolId?: number;
 }
 
 export interface ZsMapPolygonDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.POLYGON;
-  symbol?: IZsMapSymbolState;
+  symbolId?: number;
 }
 
 export enum SidebarContext {
   Layers,
   Filters,
+}
+
+export interface ZsMapElementToDraw {
+  type: ZsMapDrawElementStateType;
+  layer: string;
+  symbolId?: number;
+  text?: string;
 }

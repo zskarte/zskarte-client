@@ -10,11 +10,12 @@ import {
   ZsMapDisplayMode,
   ZsMapDrawElementState,
   ZsMapDrawElementStateType,
+  ZsMapElementToDraw,
   ZsMapLayerState,
   ZsMapLayerStateType,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map, takeUntil, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
@@ -23,6 +24,10 @@ import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 import { GeoFeature } from '../core/entity/geoFeature';
 import { IZsSession } from '../core/entity/session';
+import { MatDialog } from '@angular/material/dialog';
+import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { Sign } from '../core/entity/sign';
+import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 
 // TODO move this to right position
 enablePatches();
@@ -41,15 +46,11 @@ export class ZsMapStateService {
 
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
-  private _elementToDraw = new BehaviorSubject<
-    | {
-        type: ZsMapDrawElementStateType;
-        layer: string;
-      }
-    | undefined
-  >(undefined);
+  private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
 
   private _session = new BehaviorSubject<IZsSession | null>(produce<IZsSession | null>(null, (draft) => draft));
+
+  constructor(private drawDialog: MatDialog, private textDialog: MatDialog) {}
 
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,20 +77,30 @@ export class ZsMapStateService {
 
   // drawing
   public drawElement(type: ZsMapDrawElementStateType, layer: string): void {
-    this._elementToDraw.next({ type, layer });
+    if (type === ZsMapDrawElementStateType.SYMBOL) {
+      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
+
+      dialogRef.afterClosed().subscribe((result: Sign) => {
+        this._elementToDraw.next({ type, layer, symbolId: result.id });
+      });
+    } else if (type === ZsMapDrawElementStateType.TEXT) {
+      const dialogRef = this.textDialog.open(TextDialogComponent, {
+        maxWidth: '80vw',
+        maxHeight: '70vh',
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        this._elementToDraw.next({ type, layer, text: result });
+      });
+    } else {
+      this._elementToDraw.next({ type, layer });
+    }
   }
 
   public cancelDrawing(): void {
     this._elementToDraw.next(undefined);
   }
 
-  public observeElementToDraw(): Observable<
-    | {
-        type: ZsMapDrawElementStateType;
-        layer: string;
-      }
-    | undefined
-  > {
+  public observeElementToDraw(): Observable<ZsMapElementToDraw | undefined> {
     return this._elementToDraw.asObservable();
   }
 
