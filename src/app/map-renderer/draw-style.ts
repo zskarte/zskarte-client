@@ -517,11 +517,12 @@ export class DrawStyle {
         iconStyles.push(
           new Style({
             stroke: dashedStroke,
-            geometry: function (feature) {
+            opacity: signature.iconOpacity || 1,
+            geometry: function (feature: any) {
               return DrawStyle.createLineToIcon(feature, resolution);
             },
             zIndex: zIndex,
-          }),
+          } as any),
         );
 
         // Draw a circle below the icon
@@ -792,8 +793,8 @@ export class DrawStyle {
   }
 
   private static imageStyleFunction(feature: any, resolution: any, signature: any, selected: any, editMode: any): any {
-    signature = { ...signature };
     defineDefaultValuesForSignature(signature);
+    console.log(signature);
     const scale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
     const vectorStyles = this.getVectorStyles(feature, resolution, signature, selected, scale, editMode);
     const iconStyles = this.getIconStyle(feature, resolution, signature, selected, scale);

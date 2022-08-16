@@ -105,21 +105,28 @@ export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
 
 export interface ZsMapSymbolDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.SYMBOL;
-  symbol: Sign;
+  symbolId?: number;
   coordinates: number[] | number[][];
 }
 
 export interface ZsMapLineDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.LINE;
-  symbol?: Sign;
+  symbolId?: number;
 }
 
 export interface ZsMapPolygonDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.POLYGON;
-  symbol?: Sign;
+  symbolId?: number;
 }
 
 export enum SidebarContext {
   Layers,
   Filters,
+}
+
+export interface ZsMapElementToDraw {
+  type: ZsMapDrawElementStateType;
+  layer: string;
+  symbolId?: number;
+  text?: string;
 }

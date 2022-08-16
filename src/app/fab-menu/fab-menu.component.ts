@@ -48,21 +48,12 @@ export class FabMenuComponent {
   openDrawDialog(): void {
     // this.sharedState.disableFreeHandDraw();
     this.layer?.draw(ZsMapDrawElementStateType.SYMBOL);
+    this.closeBackdrop();
   }
 
   openTextDialog(): void {
-    const dialogRef = this.textDialog.open(TextDialogComponent, {
-      maxWidth: '80vw',
-      maxHeight: '70vh',
-      data: {
-        layer: this.layer,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      this.text = result;
-      this.closeBackdrop();
-    });
+    this.layer?.draw(ZsMapDrawElementStateType.TEXT);
+    this.closeBackdrop();
   }
 
   polygon(): void {

@@ -154,7 +154,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._state.observeElementToDraw().subscribe((element) => {
       if (element) {
-        const interaction = DrawElementHelper.createDrawHandlerForType(element.type, this._state, element.layer, element.symbol);
+        const interaction = DrawElementHelper.createDrawHandlerForType(element, this._state);
         interaction.on('drawend', () => {
           this._state.cancelDrawing();
         });

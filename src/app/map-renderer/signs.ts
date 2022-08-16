@@ -1601,12 +1601,16 @@ export class Signs {
     },
   ];
 
-  public static getSignBySource(src: string) {
+  public static getSignBySource(src: string): Sign | null {
     for (const sig of Signs.SIGNS) {
       if (sig.src === src) {
-        return sig;
+        return { ...sig };
       }
     }
     return null;
+  }
+
+  public static getSignById(id: number | undefined): Sign | undefined {
+    return Signs.SIGNS.find((s) => s.id === id);
   }
 }

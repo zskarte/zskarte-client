@@ -3,13 +3,11 @@ import { ZsMapDrawElementStateType, ZsMapSymbolDrawElementState } from '../../st
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { Point } from 'ol/geom';
-import { Fill, RegularShape, Style } from 'ol/style';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
 import { checkCoordinates } from '../../helper/coordinates';
-import { Sign } from 'src/app/core/entity/sign';
-import { DrawStyle } from '../draw-style';
 import { StyleLike } from 'ol/style/Style';
+import { Signs } from '../signs';
 
 export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDrawElementState> {
   protected _olPoint!: Point;
@@ -29,8 +27,8 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
   protected _initialize(element: ZsMapSymbolDrawElementState): void {
     this._olPoint = new Point(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olPoint);
-    this._olFeature.set('sig', element.symbol);
-    this._olStyles = DrawStyle.styleFunction(this._olFeature, 250);
+    this._olFeature.set('sig', Signs.getSignById(element.symbolId));
+
     // (this._olStyles as Style[]).push(
     //   new Style({
     //     image: new RegularShape({
@@ -41,8 +39,10 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
     //     }),
     //   }),
     // );
-    this._olFeature.setStyle(this._olStyles);
-    console.log(this._olStyles);
+    // this._olFeature.setStyle((feature, resolution) => {
+    //   const x = DrawStyle.styleFunction(feature, resolution);
+    //   return x;
+    // });
     // handle changes on the map, eg. translate
     this._olFeature.on('change', () => {
       this.setCoordinates(this._olPoint?.getCoordinates());
@@ -51,16 +51,17 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
     return;
   }
 
-  protected static override _getOlDrawType(): Type {
-    return 'Point';
+  protected static override _getOlDrawType(symbolId?: number): Type {
+    const symbol = Signs.getSignById(symbolId);
+    return (symbol?.type as Type) ?? 'Point';
   }
 
-  protected static override _parseFeature(feature: Feature<Point>, state: ZsMapStateService, layer: string, symbol: Sign): void {
+  protected static override _parseFeature(feature: Feature<Point>, state: ZsMapStateService, layer: string, symbolId: number): void {
     state.addDrawElement({
       type: ZsMapDrawElementStateType.SYMBOL,
       coordinates: feature.getGeometry()?.getCoordinates() || [],
       layer,
-      symbol,
+      symbolId,
     });
   }
 }
