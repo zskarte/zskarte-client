@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { GeoadminService } from '../../core/geoadmin.service';
-import { I18NService } from '../../core/i18n.service';
+import { I18NService } from '../../state/i18n.service';
 
 @Component({
   selector: 'app-map-legend-display',

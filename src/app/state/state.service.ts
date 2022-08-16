@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import produce, { enablePatches, Patch } from 'immer';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import produce, {enablePatches, Patch} from 'immer';
 import {
   IZsMapDisplayState,
   IZsMapSaveFileState,
@@ -13,15 +13,14 @@ import {
   ZsMapLayerStateType,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
-import { v4 as uuidv4 } from 'uuid';
-import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
-import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
-import { DrawElementHelper } from '../helper/draw-element-helper';
-import { areArraysEqual } from '../helper/array';
-import { GeoFeature, GeoFeatures } from '../core/entity/geoFeature';
+import {distinctUntilChanged, map} from 'rxjs/operators';
+import {ZsMapBaseLayer} from '../map-renderer/layers/base-layer';
+import {v4 as uuidv4} from 'uuid';
+import {ZsMapDrawLayer} from '../map-renderer/layers/draw-layer';
+import {ZsMapBaseDrawElement} from '../map-renderer/elements/base/base-draw-element';
+import {DrawElementHelper} from '../helper/draw-element-helper';
+import {areArraysEqual} from '../helper/array';
+import {GeoFeature} from '../core/entity/geoFeature';
 import {IZsSession} from '../core/entity/session';
 
 // TODO move this to right position
@@ -121,6 +120,16 @@ export class ZsMapStateService {
 
   public loadDisplayState(state: IZsMapDisplayState): void {
     this.resetDisplayState(state);
+  }
+
+  public toggleDisplayMode(): void {
+    this.updateDisplayState((draft) => {
+      if (draft.displayMode == ZsMapDisplayMode.HISTORY) {
+        draft.displayMode = ZsMapDisplayMode.DRAW;
+      } else {
+        draft.displayMode = ZsMapDisplayMode.HISTORY;
+      }
+    });
   }
 
   public saveDisplayState(): void {

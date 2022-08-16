@@ -13,11 +13,12 @@ import {
 } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Md5 } from 'ts-md5';
-import {I18NService, LOCALES} from "../core/i18n.service";
+import {I18NService, LOCALES} from "../state/i18n.service";
 import {IZsSession} from "../core/entity/session";
 import {getZSOById, LIST_OF_ZSO, ZSO} from "../core/entity/zso";
 import {SessionsService} from "../state/sessions.service";
 import {ZsMapStateService} from "../state/state.service";
+import {PreferencesService} from "../state/preferences.service";
 
 @Component({
   selector: 'app-session-creator',
@@ -44,16 +45,17 @@ export class SessionCreatorComponent implements OnInit {
     public dialogRef: MatDialogRef<SessionCreatorComponent>,
     public dialog: MatDialog,
     public zsMapStateService: ZsMapStateService,
+    public preferences: PreferencesService,
   ) {
     this.session = data ? data.session : null;
     this.editMode = data ? data.edit : null;
+    console.log(this.session);
     if (!this.session) {
-      //const defaultZSO = preferences.getZSO();
+      const defaultZSO = preferences.getZSO();
       this.session = {
         title: "",
         uuid: uuidv4(),
-        //zsoId: defaultZSO ? defaultZSO.id : null,
-        zsoId: "",
+        zsoId: defaultZSO ? defaultZSO.id : "",
         start: new Date(),
       };
       this.editMode = false;
@@ -86,7 +88,7 @@ export class SessionCreatorComponent implements OnInit {
         this.session.uuid != '' &&
         !this.editMode
       ) {
-        //this.preferences.removeSessionSpecificPreferences(this.session.uuid);
+        this.preferences.removeSessionSpecificPreferences(this.session.uuid);
         this.session.uuid = uuidv4();
         this.session.start = new Date();
       } else if (
@@ -97,7 +99,7 @@ export class SessionCreatorComponent implements OnInit {
         this.session.uuid = uuidv4();
         this.session.start = new Date();
       }
-      //this.preferences.setZSO(this.session.zsoId);
+      this.preferences.setZSO(this.session.zsoId);
       this.sessions.saveSession(this.session);
       this.zsMapStateService.loadSession(this.session);
       this.dialogRef.close();
@@ -121,7 +123,7 @@ export class SessionCreatorComponent implements OnInit {
   }
 
   loadSession(session: IZsSession) {
-    //this.preferences.setZSO(session.zsoId);
+    this.preferences.setZSO(session.zsoId);
     this.zsMapStateService.loadSession(session);
   }
 

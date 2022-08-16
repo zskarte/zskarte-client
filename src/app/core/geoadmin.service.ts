@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { I18NService } from './i18n.service';
+import { I18NService } from '../state/i18n.service';
 import { tap, Observable, of } from 'rxjs';
 import { GeoFeatures } from './entity/geoFeature';
 

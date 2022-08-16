@@ -12,7 +12,7 @@ import { ZsMapBaseLayer } from './layers/base-layer';
 import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
-import { I18NService } from '../core/i18n.service';
+import { I18NService } from '../state/i18n.service';
 import { SidebarContext } from '../state/interfaces';
 
 @Component({

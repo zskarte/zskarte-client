@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PreferencesService } from './preferences.service';
-import { Sign } from './entity/sign';
+import { Sign } from '../core/entity/sign';
 
 export const LOCALES: string[] = ['de', 'fr', 'en'];
 export const DEFAULT_LOCALE: string = LOCALES[0];

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {I18NService} from "../core/i18n.service";
+import {I18NService} from "../state/i18n.service";
 import {ZsMapStateService} from "../state/state.service";
 import {IZsSession} from "../core/entity/session";
 

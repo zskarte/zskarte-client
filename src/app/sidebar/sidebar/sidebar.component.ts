@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { I18NService } from '../../core/i18n.service';
+import { I18NService } from '../../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
 import { MatSnackBar } from '@angular/material/snack-bar';

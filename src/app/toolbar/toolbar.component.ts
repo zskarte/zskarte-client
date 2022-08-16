@@ -1,13 +1,17 @@
 import {ChangeDetectorRef, Component, OnInit,} from '@angular/core';
-import {I18NService, LOCALES} from '../core/i18n.service';
+import {I18NService, LOCALES} from '../state/i18n.service';
 import {MatDialog} from '@angular/material/dialog';
 import {HelpComponent} from '../help/help.component';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ZsMapStateService} from "../state/state.service";
-import {ZsMapDisplayMode} from '../state/interfaces';
+import {IZsMapDisplayState, ZsMapDisplayMode} from '../state/interfaces';
 import {IZsSession} from '../core/entity/session';
 import {SessionCreatorComponent} from "../session-creator/session-creator.component";
-import {Observable} from "rxjs";
+import {firstValueFrom, lastValueFrom, Observable} from "rxjs";
+import {map} from "rxjs/operators";
+import {ConfirmationDialogComponent} from "../confirmation-dialog/confirmation-dialog.component";
+import {PreferencesService} from "../state/preferences.service";
+import {SessionsService} from "../state/sessions.service";
 
 @Component({
   selector: 'app-toolbar',
@@ -18,8 +22,8 @@ export class ToolbarComponent implements OnInit {
 
   static ONBOARDING_VERSION = '1.0';
 
-  historyMode: ZsMapDisplayMode = ZsMapDisplayMode.DRAW;
   session: Observable<IZsSession | null>;
+  historyMode: Observable<boolean>;
   exportEnabled = true;
   downloadData = null;
   downloadCSVData = null;
@@ -32,8 +36,12 @@ export class ToolbarComponent implements OnInit {
     public dialog: MatDialog,
     private sanitizer: DomSanitizer,
     public zsMapStateService: ZsMapStateService,
+    public preferences: PreferencesService,
+    private sessions: SessionsService,
   ) {
     this.session = this.zsMapStateService.observeSession();
+    this.historyMode = this.zsMapStateService.observeDisplayState().pipe(map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY));
+
     /*
     this.zsMapStateService.observeDisplayState().subscribe((mode) => {
       this.historyMode = ZsMapDisplayMode.HISTORY;
@@ -93,29 +101,30 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit() {
     this.zsMapStateService.observeSession().subscribe((s) => {
-      /*this.session = s;
-      if (s) {
+      if (s !== null) {
+        console.log(s.uuid);
         const currentZSO = this.preferences.getZSO();
         this.exportEnabled = currentZSO != null && currentZSO.id != 'zso_guest';
         this.preferences.setLastSessionId(s.uuid);
-      }*/
+      }
     });
-    /*
+
     const lastSession = this.preferences.getLastSessionId();
     if (lastSession) {
       const session = this.sessions.getSession(lastSession);
       if (session) {
-        this.sharedState.loadSession(JSON.parse(session));
+        this.zsMapStateService.loadSession(JSON.parse(session));
         return;
       }
-    }*/
+    }
     this.createInitialSession();
   }
 
-  private createInitialSession() {
+  private async createInitialSession() {
+    const currentSession = await firstValueFrom(this.session);
     this.dialog.open(SessionCreatorComponent, {
       data: {
-        session: this.session,
+        session: currentSession,
         edit: false,
       },
       disableClose: true,
@@ -124,7 +133,7 @@ export class ToolbarComponent implements OnInit {
     });
   }
 
-  /*
+
   createOrLoadSession() {
     this.dialog.open(SessionCreatorComponent, {
       data: {
@@ -134,9 +143,8 @@ export class ToolbarComponent implements OnInit {
       width: '80vw',
       maxWidth: '80vw',
     });
-  }*/
+  }
 
-  /*
   editSession() {
     this.dialog.open(SessionCreatorComponent, {
       data: {
@@ -146,9 +154,8 @@ export class ToolbarComponent implements OnInit {
       width: '80vw',
       maxWidth: '80vw',
     });
-  }*/
+  }
 
-  /*
   deleteSession(): void {
     if (this.session) {
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -156,39 +163,36 @@ export class ToolbarComponent implements OnInit {
       });
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
+          /*
           this.mapStore.removeMap(this.session.uuid, true);
           this.sessions.removeSession(this.session.uuid);
           this.preferences.removeSessionSpecificPreferences(this.session.uuid);
           this.sharedState.loadSession(null);
-          this.createInitialSession();
+          this.createInitialSession();*/
         }
       });
     }
-  }*/
+  }
 
-  /*
   exportSession(): void {
+    /*
     const features = this.drawLayer.writeFeatures();
     this.dialog.open(ExportDialogComponent, {
       data: features,
-    });
-  }*/
+    });*/
+  }
 
-  /*
   toggleHistory(): void {
-    if (this.zsMapStateService.displayMode.getValue() == DisplayMode.HISTORY) {
-      this.sharedState.displayMode.next(DisplayMode.DRAW);
-    } else {
-      this.sharedState.displayMode.next(DisplayMode.HISTORY);
-    }
-  }*/
+    this.zsMapStateService.toggleDisplayMode();
+  }
 
   help(): void {
     this.dialog.open(HelpComponent, { data: false });
   }
 
-  /*
+
   importData(): void {
+    /*
     const dialogRef = this.dialog.open(ImportDialogComponent, {
       maxWidth: '80vw',
       maxHeight: '80vh',
@@ -204,40 +208,41 @@ export class ToolbarComponent implements OnInit {
           .afterClosed()
           .subscribe((confirmed) => {
             if (confirmed) {
-              this.drawLayer.loadFromString(result.value, true, result.replace);
+              //this.drawLayer.loadFromString(result.value, true, result.replace);
             }
           });
       }
-    });
-  }*/
+    });*/
+  }
 
   getDownloadFileName() {
     return 'zskarte_' + new Date().toISOString() + '.geojson';
   }
 
-  /*
+
   download(): void {
+    /*
     this.downloadData = this.sanitizer.bypassSecurityTrustUrl(
       this.drawLayer.toDataUrl()
-    );
-  }*/
+    );*/
+  }
 
   getDownloadFileNameCSV() {
     return 'zskarte_' + new Date().toISOString() + '.csv';
   }
 
-  /*
+
   downloadCSV(): void {
+    /*
     this.downloadCSVData = this.sanitizer.bypassSecurityTrustUrl(
       this.drawLayer.toCSVDataUrl()
-    );
-  }*/
+    );*/
+  }
 
   print(): void {
     window.print();
   }
 
-  /*
   clear(): void {
     this.dialog
       .open(ConfirmationDialogComponent, {
@@ -246,20 +251,20 @@ export class ToolbarComponent implements OnInit {
       .afterClosed()
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.drawLayer.removeAll();
+          //this.drawLayer.removeAll();
         }
       });
-  }*/
+  }
 
-  /*
   tagState(): void {
+    /*
     const dialogRef = this.dialog.open(TagStateComponent);
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.mapStore.setTag(result).then(() => {});
       }
-    });
-  }*/
+    });*/
+  }
 
   setLocale(locale: string) {
     this.i18n.locale = locale;

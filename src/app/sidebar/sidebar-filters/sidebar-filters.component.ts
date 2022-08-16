@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DisplayMode } from '../../core/entity/displayMode';
-import { I18NService } from '../../core/i18n.service';
+import { I18NService } from '../../state/i18n.service';
 import { signCategories } from '../../core/entity/sign';
 import capitalizeFirstLetter from '../../helper/capitalizeFirstLetter';
 
