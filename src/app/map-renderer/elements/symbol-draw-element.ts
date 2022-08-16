@@ -2,32 +2,49 @@ import { Feature } from 'ol';
 import { ZsMapDrawElementStateType, ZsMapSymbolDrawElementState } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapBaseDrawElement } from './base/base-draw-element';
-import { Point } from 'ol/geom';
+import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
 import { checkCoordinates } from '../../helper/coordinates';
 import { StyleLike } from 'ol/style/Style';
 import { Signs } from '../signs';
+import { DrawStyle } from '../draw-style';
 
 export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDrawElementState> {
-  protected _olPoint!: Point;
+  protected _olGeometryItem!: SimpleGeometry;
   protected _olStyles!: StyleLike;
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.SYMBOL);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates().subscribe((coordinates) => {
-      if (this._olPoint && checkCoordinates(coordinates, this._olPoint.getCoordinates())) {
+      if (this._olGeometryItem && checkCoordinates(coordinates, this._olGeometryItem.getCoordinates())) {
         // only update coordinates if they are not matching to prevent loops
-        this._olPoint?.setCoordinates(coordinates as number[]);
+        this._olGeometryItem?.setCoordinates(coordinates as number[]);
       }
     });
   }
 
   protected _initialize(element: ZsMapSymbolDrawElementState): void {
-    this._olPoint = new Point(element.coordinates as number[]);
-    this._olFeature.setGeometry(this._olPoint);
+    const symbol = Signs.getSignById(element.symbolId);
+
+    switch (symbol?.type) {
+      case 'LineString':
+        this._olGeometryItem = new LineString(element.coordinates);
+        break;
+      case 'Polygon':
+        this._olGeometryItem = new Polygon(element.coordinates as number[]);
+        break;
+      default:
+        this._olGeometryItem = new Point(element.coordinates as number[]);
+        break;
+    }
+
+    this._olFeature.setGeometry(this._olGeometryItem);
     this._olFeature.set('sig', Signs.getSignById(element.symbolId));
+    this._olFeature.setStyle((feature, resolution) => {
+      return DrawStyle.styleFunction(feature, resolution);
+    });
 
     // (this._olStyles as Style[]).push(
     //   new Style({
@@ -45,7 +62,7 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
     // });
     // handle changes on the map, eg. translate
     this._olFeature.on('change', () => {
-      this.setCoordinates(this._olPoint?.getCoordinates());
+      this.setCoordinates(this._olGeometryItem?.getCoordinates() ?? []);
     });
     this._isInitialized = true;
     return;
