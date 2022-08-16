@@ -1,84 +1,56 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { I18NService } from '../state/i18n.service';
 import { ZsMapStateService } from '../state/state.service';
-import { IZsSession } from '../core/entity/session';
 import { PreferencesService } from '../state/preferences.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, interval, Subject } from 'rxjs';
+import { map, take, takeUntil } from 'rxjs/operators';
+import { SessionsService } from '../state/sessions.service';
 
 @Component({
   selector: 'app-clock',
   templateUrl: './clock.component.html',
-  styleUrls: ['./clock.component.css'],
+  styleUrls: ['./clock.component.scss'],
 })
-export class ClockComponent implements OnInit {
-  historyDate: Date | null = null;
-  session: IZsSession | null = null;
-  timeOffset = 3600000; // 1h = 60m = 3600s = 3600000ms
-  doCheckTimeout = 0;
-  sessionTimeLeft = '';
-  now: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
-  timerProgressValue = 100;
-  exportEnabled = false;
+export class ClockComponent {
+  private _durationInSeconds = 1 * 60 * 60;
+  public now: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
+  public timerProgress = new BehaviorSubject({ percentage: 1000, text: '60:00' });
+  private _ngUnsubscribe = new Subject();
 
-  constructor(public i18n: I18NService, public zsMapStateService: ZsMapStateService, public preferences: PreferencesService) {
-    /*
-    this.sharedState.historyDate.subscribe((s) => {
-      this.historyDate = s && s !== 'now' ? new Date(s) : null;
-      this.redefine();
-    });
+  constructor(
+    public i18n: I18NService,
+    public zsMapStateService: ZsMapStateService,
+    public preferences: PreferencesService,
+    public session: SessionsService,
+  ) {
+    interval(1000)
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(() => {
+        this.now.next(new Date());
+      });
 
-    this.zsMapStateService.observeSession().subscribe((s) => {
-      this.session = s;
-      if (s) {
-        const currentZSO = this.preferences.getZSO();
-        this.exportEnabled = currentZSO != null && currentZSO.id != 'zso_guest';
-        this.preferences.setLastSessionId(s.uuid);
-      }
-    });*/
-  }
-
-  ngOnInit() {
-    this.update();
-  }
-
-  refreshSessionData() {
-    if (this.session === null) {
-      return;
-    }
-
-    this.doCheckTimeout =
-      this.session.zsoId == 'zso_guest' && this.session.startDateTime != null
-        ? new Date(this.session.startDateTime).getTime() + this.timeOffset
-        : 0;
-    //this.sharedState.sessionOutdated.next(false);
-  }
-
-  redefine() {
-    this.now.next(new Date());
-    /*
-    if (
-      this.sessionId != this.preferences.getLastSessionId() ||
-      this.sessionZsoId != this.preferences.getLastZsoId()
-    ) {
-      this.refreshSessionData();
-    }*/
-    /*
-    if (this.doCheckTimeout != 0) {
-      const sessionSecondsLeft: number = Math.floor((this.doCheckTimeout - this.now.getTime()) / 1000);
-      this.timerProgressValue = Math.floor((sessionSecondsLeft / 3600) * 100);
-      if (sessionSecondsLeft > 0) {
-        this.sessionTimeLeft = sessionSecondsLeft > 60 ? Math.floor(sessionSecondsLeft / 60) + 'm' : sessionSecondsLeft + 's';
-      } else {
-        this.sessionTimeLeft = this.i18n.get('sessionOverdue');
-        if (!this.sharedState.sessionOutdated.value) {
-          this.sharedState.sessionOutdated.next(true);
-        }
-      }
-    }*/
-  }
-
-  update() {
-    this.redefine();
-    setTimeout(() => this.update(), 1000);
+    // TODO move to session
+    interval(1000)
+      .pipe(
+        take(this._durationInSeconds),
+        map((count) => this._durationInSeconds - count),
+        takeUntil(this._ngUnsubscribe),
+      )
+      .subscribe({
+        next: (countdown) => {
+          const mins = (~~((countdown % 3600) / 60)).toString();
+          const secs = (~~countdown % 60).toString();
+          this.timerProgress.next({
+            percentage: (100 / this._durationInSeconds) * countdown,
+            text: `${mins.padStart(2, '0')}:${secs.padStart(2, '0')}`,
+          });
+          console.log();
+          return `${mins.padStart(2, '0')}:${secs.padStart(2, '0')}`;
+        },
+        complete: () => {
+          // TODO logout
+          console.warn('TODO logout');
+        },
+      });
   }
 }

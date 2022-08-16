@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { IZsSession, IZsSessionState } from '../core/entity/session';
-import {BehaviorSubject, Observable} from 'rxjs';
-import produce from 'immer';
+import { IZsSession } from '../core/entity/session';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionsService {
-  private _session = new BehaviorSubject<IZsSessionState>(produce<IZsSessionState>(this._getDefaultSessionState(), (draft) => draft));
+  private _session = new BehaviorSubject<IZsSession>(this._getDefaultSession());
 
   public saveSession(session: IZsSession) {
     localStorage.setItem('session_' + session.uuid, JSON.stringify(session));
@@ -21,31 +20,29 @@ export class SessionsService {
     localStorage.removeItem('session_' + sessionId);
   }
 
+  public observeIsGuest(): Observable<boolean> {
+    return this._session.pipe(map((session) => session.isGuest));
+  }
+
   public getAllSessions() {
     const result: IZsSession[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      // @ts-ignore
-      if (key.startsWith('session_')) {
-        // @ts-ignore
-        result.push(JSON.parse(localStorage.getItem(key)));
+
+      if (key?.startsWith('session_')) {
+        result.push(JSON.parse(localStorage.getItem(key) || '{}'));
       }
     }
     return result;
   }
 
-  private _getDefaultSessionState(): IZsSessionState {
+  private _getDefaultSession(): IZsSession {
     return {
-      session: new BehaviorSubject<IZsSession>({
-        title: '',
-        uuid: '',
-        zsoId: '',
-        startDateTime: new Date(),
-      }),
-      isOutdated(): boolean {
-        return false;
-        //return Math.abs(this.session.start - new Date()) > 0;
-      },
+      title: '',
+      isGuest: true,
+      uuid: '',
+      zsoId: '',
+      startDateTime: new Date(),
     };
   }
 }

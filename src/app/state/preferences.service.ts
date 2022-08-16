@@ -1,26 +1,24 @@
 import { Injectable } from '@angular/core';
-import {Viewport} from "../core/entity/viewport";
-import {LIST_OF_ZSO, ZSO} from "../core/entity/zso";
+import { Viewport } from '../core/entity/viewport';
+import { LIST_OF_ZSO, ZSO } from '../core/entity/zso';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PreferencesService {
-  constructor() {}
-
   static fallbackViewport: Viewport = {
     coordinates: [905336.3755895211, 5935224.7522306945],
     zoomLevel: 8,
   };
 
-  static guestSessionTimeout: number = 3600000; // 1h = 60m = 3600s = 3600000ms
+  static guestSessionTimeout = 3600000; // 1h = 60m = 3600s = 3600000ms
 
   public setLastSessionId(lastSessionId: string) {
     localStorage.setItem('lastSession', lastSessionId);
   }
 
   public getLastSessionId(): string {
-    return localStorage.getItem('lastSession') || "";
+    return localStorage.getItem('lastSession') || '';
   }
 
   public setLocale(locale: string) {
@@ -36,7 +34,7 @@ export class PreferencesService {
       if (zso) {
         return zso.defaultLocale;
       } else {
-        return "de";
+        return 'de';
       }
     }
   }
@@ -86,6 +84,6 @@ export class PreferencesService {
   }
 
   public getLastZsoId(): string {
-    return localStorage.getItem('zso') || "";
+    return localStorage.getItem('zso') || '';
   }
 }
