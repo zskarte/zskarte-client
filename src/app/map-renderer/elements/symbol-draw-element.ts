@@ -9,10 +9,11 @@ import { Type } from 'ol/geom/Geometry';
 import { checkCoordinates } from '../../helper/coordinates';
 import { Sign } from 'src/app/core/entity/sign';
 import { DrawStyle } from '../draw-style';
+import { StyleLike } from 'ol/style/Style';
 
 export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDrawElementState> {
   protected _olPoint!: Point;
-  protected _olStyles!: Style;
+  protected _olStyles!: StyleLike;
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.SYMBOL);
@@ -28,9 +29,20 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
   protected _initialize(element: ZsMapSymbolDrawElementState): void {
     this._olPoint = new Point(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olPoint);
-    this._olFeature.setStyle(this._olStyles);
     this._olFeature.set('sig', element.symbol);
     this._olStyles = DrawStyle.styleFunction(this._olFeature, 250);
+    // (this._olStyles as Style[]).push(
+    //   new Style({
+    //     image: new RegularShape({
+    //       fill: new Fill({ color: 'red' }),
+    //       points: 4,
+    //       radius: 10,
+    //       angle: Math.PI / 4,
+    //     }),
+    //   }),
+    // );
+    this._olFeature.setStyle(this._olStyles);
+    console.log(this._olStyles);
     // handle changes on the map, eg. translate
     this._olFeature.on('change', () => {
       this.setCoordinates(this._olPoint?.getCoordinates());

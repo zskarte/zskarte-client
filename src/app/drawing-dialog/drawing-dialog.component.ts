@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Sign, signCategories } from '../core/entity/sign';
 import capitalizeFirstLetter from '../helper/capitalizeFirstLetter';
+import { DrawStyle } from '../map-renderer/draw-style';
 // import { DrawStyle } from '../map-renderer/draw-style';
 import { Signs } from '../map-renderer/signs';
 import { I18NService } from '../state/i18n.service';
@@ -59,6 +60,7 @@ export class DrawingDialogComponent implements OnInit {
       //   return customImageDataUrl;
       // }
       // return DrawStyle.getImageUrl(file);
+      return DrawStyle.getImageUrl(file);
     }
     return null;
   }

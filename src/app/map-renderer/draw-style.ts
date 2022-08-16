@@ -792,6 +792,7 @@ export class DrawStyle {
   }
 
   private static imageStyleFunction(feature: any, resolution: any, signature: any, selected: any, editMode: any): any {
+    signature = { ...signature };
     defineDefaultValuesForSignature(signature);
     const scale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
     const vectorStyles = this.getVectorStyles(feature, resolution, signature, selected, scale, editMode);
