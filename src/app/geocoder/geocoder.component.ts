@@ -101,6 +101,7 @@ export class GeocoderComponent {
       this.http.get(this.geocoderUrl + this.inputText).subscribe((result) => {
         if (this.inputText === originalInput) {
           this.foundLocations = [];
+          // TODO: Why is this code needed?
           /*
           this.drawLayer.source
             .getFeatures()
@@ -126,7 +127,7 @@ export class GeocoderComponent {
       });
     } else {
       this.foundLocations = [];
-      //this.sharedState.gotoCoordinate(null);
+      this.zsMapStateService.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
     }
   }
 
@@ -135,7 +136,6 @@ export class GeocoderComponent {
   }
 
   geoCodeSelected(event: any) {
-    console.log(event);
     this.selected = event.option.value;
     this.goToCoordinate(true);
     this.inputText = '';
