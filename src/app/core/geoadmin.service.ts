@@ -3,6 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { I18NService } from '../state/i18n.service';
 import { tap, Observable, of } from 'rxjs';
 import { GeoFeatures } from './entity/geoFeature';
+import OlTileLayer from 'ol/layer/Tile';
+import OlTileGridWMTS from 'ol/tilegrid/WMTS';
+import OlTileWMTS from 'ol/source/WMTS';
+import { swissProjection } from '../helper/projections';
 
 @Injectable({
   providedIn: 'root',
@@ -70,5 +74,25 @@ export class GeoadminService {
           }
         }),
     );
+  }
+
+  createGeoAdminLayer(layerId: string, timestamp: string, extension: string, zIndex: number) {
+    return new OlTileLayer({
+      source: new OlTileWMTS({
+        projection: swissProjection,
+        url: 'https://wmts10.geo.admin.ch/1.0.0/{Layer}/default/' + timestamp + '/2056/{TileMatrix}/{TileCol}/{TileRow}.' + extension,
+        tileGrid: new OlTileGridWMTS({
+          origin: [swissProjection.getExtent()[0], swissProjection.getExtent()[3]],
+          resolutions: swissProjection.resolutions,
+          matrixIds: swissProjection.matrixIds,
+        }),
+        layer: layerId,
+        requestEncoding: 'REST',
+        style: '',
+        matrixSet: '',
+      }),
+      opacity: 0.6,
+      zIndex: zIndex,
+    });
   }
 }

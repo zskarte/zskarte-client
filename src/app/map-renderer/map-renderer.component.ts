@@ -14,6 +14,7 @@ import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
 import { SidebarContext } from '../state/interfaces';
+import { GeoFeature } from '../core/entity/geoFeature';
 
 @Component({
   selector: 'app-map-renderer',
@@ -35,6 +36,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
+  private _featureLayerCache: GeoFeature[] = [];
 
   constructor(private _state: ZsMapStateService, public i18n: I18NService) {}
 
@@ -183,6 +185,27 @@ export class MapRendererComponent implements AfterViewInit {
             });
           }
         }
+      });
+
+    this._state
+      .observeSelectedFeatures()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((features) => {
+        // removed features
+        this._featureLayerCache
+          .filter((feature) => !features.includes(feature))
+          .forEach((feature) => {
+            this._map.removeLayer(feature.layer);
+          });
+
+        // added features
+        features
+          .filter((el) => !this._featureLayerCache.includes(el))
+          .forEach((feature) => {
+            this._map.addLayer(feature.layer);
+          });
+
+        this._featureLayerCache = features;
       });
   }
 
