@@ -1,6 +1,6 @@
 import { Feature } from 'ol';
 import { Observable } from 'rxjs';
-import { IZsMapBaseDrawElementState } from '../../../state/interfaces';
+import { IZsMapBaseDrawElementState, ZsMapElementToDraw } from '../../../state/interfaces';
 import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapBaseElement } from './base-element';
 import { Draw } from 'ol/interaction';
@@ -27,9 +27,9 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
     );
   }
 
-  private _doInitialize(coordinates: number[] | number[][] | undefined): void {
+  private _doInitialize(element: IZsMapBaseDrawElementState): void {
     if (!this._isInitialized) {
-      this._initialize(coordinates);
+      this._initialize(element);
     }
     this._isInitialized = true;
   }
@@ -38,7 +38,7 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
     return this._element.pipe(
       map((o) => {
         if (o?.coordinates) {
-          this._doInitialize(o?.coordinates);
+          this._doInitialize(o);
         }
         return o?.coordinates;
       }),
@@ -77,26 +77,26 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
   }
 
   // static handlers for drawing
-  public static getOlDrawHandler(state: ZsMapStateService, layer: string): Draw {
+  public static getOlDrawHandler(state: ZsMapStateService, element: ZsMapElementToDraw): Draw {
     const draw = new Draw(
       this._enhanceOlDrawOptions({
         source: new VectorSource({ wrapX: false }),
-        type: this._getOlDrawType(),
+        type: this._getOlDrawType(element.symbolId),
       }),
     );
     draw.on('drawend', (event) => {
-      this._parseFeature(event.feature, state, layer);
+      this._parseFeature(event.feature, state, element.layer, element.symbolId);
     });
     return draw;
   }
-  protected static _getOlDrawType(): Type {
+  protected static _getOlDrawType(symbolId?: number): Type {
     throw new Error('static fn _getOlDrawType is not implemented');
   }
   protected static _enhanceOlDrawOptions(options: Options) {
     return options;
   }
-  protected static _parseFeature(event: Feature<Geometry>, state: ZsMapStateService, layer: string): void {
-    console.log('static fn _parseFeature is not implemented', { event, state, layer });
+  protected static _parseFeature(event: Feature<Geometry>, state: ZsMapStateService, layer: string, symbolId?: number): void {
+    console.log('static fn _parseFeature is not implemented', { event, state, layer, symbolId });
     throw new Error('static fn _parseFeature is not implemented');
   }
 }

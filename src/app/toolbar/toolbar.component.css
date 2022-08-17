@@ -1,0 +1,98 @@
+.flexContainer {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.alignCenter {
+  align-items: center;
+}
+
+mat-card-title {
+  margin-bottom: 0;
+  white-space: nowrap;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 300px;
+  flex-shrink: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.credits {
+  align-items: flex-start;
+}
+
+app-credits {
+  height: 2.5em;
+}
+
+.tools {
+  flex: 1;
+  margin-left: 0.5em;
+}
+
+.flex-gap {
+  display: flex;
+  gap: 0.5em;
+}
+
+.clock {
+  align-items: flex-end;
+  font-size: 0.9em;
+}
+
+.mat-card-content {
+  margin-bottom: 0;
+}
+
+.edit {
+  height: 42px;
+  width: 42px;
+  min-width: 0;
+  padding: 0;
+}
+
+.hamburger {
+  font-size: 29px;
+  line-height: 27px;
+  height: 29px;
+  width: 29px;
+}
+
+.toolbar {
+  padding: 0.5em;
+  border-radius: 0;
+}
+
+.mat-menu-item {
+  display: flex;
+  align-items: center;
+  column-gap: 1em;
+}
+
+@media print {
+  .noprint {
+    display: none;
+  }
+}
+
+.mat-stroked-button.active {
+  background-color: #d3d3d3;
+}
+
+.justifySpace {
+  justify-content: space-between;
+}
+
+app-geocoder {
+  max-width: 300px;
+}
+
+.right-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}

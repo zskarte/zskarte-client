@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g visibility="visible" id="MasterSlide_1_Standard">
+  <g id="Drawing_1">
+  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 210,41 L 907,41 907,1095 210,1095 210,41 Z M 291,1054 L 250,1012 866,1012 825,1054 825,83 866,124 250,124 291,83 291,1054 Z"/>
+  <path fill="rgb(0,0,255)" stroke="none" d="M 581,83 L 589,1056 535,1056 528,84 581,83 Z"/>
+  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 581,83 L 589,1056 535,1056 528,84 581,83 Z"/>
+  </g>
+ </g>
+</svg>

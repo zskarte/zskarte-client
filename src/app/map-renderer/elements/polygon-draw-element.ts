@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import { ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../../state/interfaces';
+import { ZsMapDrawElementStateType, ZsMapSymbolDrawElementState, ZsMapTextDrawElementState } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { Polygon } from 'ol/geom';
@@ -24,9 +24,14 @@ export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawE
   }
 
   // TODO types
-  protected _initialize(coordinates: any): void {
-    this._olPolygon = new Polygon(coordinates);
+  protected _initialize(element: ZsMapSymbolDrawElementState): void {
+    this._olPolygon = new Polygon(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olPolygon);
+    this._olFeature.set('sig', {
+      type: 'Polygon',
+      src: null,
+      filterValue: 'not_labeled_polygon',
+    });
     this._olFeature.on('change', () => {
       // TODO types
       this.setCoordinates(this._olPolygon.getCoordinates() as any);

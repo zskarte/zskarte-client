@@ -1,69 +1,16 @@
 <main>
-  <div class="map">
-    <app-map-renderer></app-map-renderer>
+  <div style="z-index: 10; position: relative">
+    <app-toolbar></app-toolbar>
   </div>
-  <div class="debug">
-    <h3>Name: {{ state.observeMapName() | async }}</h3>
-    <input #mapName type="text" [ngModel]="state.observeMapName() | async" (ngModelChange)="state.setMapName($event)" />
-    <!-- <button (click)="state.setMapName('New test')">set name</button> -->
-    <h3>Maps</h3>
-    <div class="actions">
-      <button (click)="state.setMapSource(ZsMapStateSource.OPEN_STREET_MAP)">Open Street Map</button>
-      <button (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_SWISS_IMAGE)">Swiss Image</button>
-      <button (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_PIXEL)">Pixel</button>
-      <button (click)="state.setMapSource(ZsMapStateSource.GEO_ADMIN_PIXEL_BW)">Pixel B/W</button>
-    </div>
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="0.01"
-      [ngModel]="state.observeMapOpacity() | async"
-      (ngModelChange)="state.setMapOpacity($event)"
-    />
-
-    <h3>Draw</h3>
-    <div class="actions">
-      <ng-container *ngIf="state.observeActiveLayer() | async as layer; else selectDrawLayerMsg">
-        <button *ngFor="let element of drawElements" (click)="layer.draw(element.type)">
-          {{ element.text }}
-        </button>
-      </ng-container>
-      <ng-template #selectDrawLayerMsg><div>Please select a draw layer</div></ng-template>
-    </div>
-
-    <h3>Layers</h3>
-    <button (click)="state.addDrawLayer()">add draw layer</button>
-    <div class="layers">
-      <div class="layer" *ngFor="let layer of state.observeLayers() | async">
-        <!-- <h4>{{ layer.observeName() | async }}</h4> -->
-        <input #layerName type="text" [ngModel]="layer.observeName() | async" (ngModelChange)="layer.setName($event)" />
-        <div>Is visible: {{ layer.observeIsVisible() | async }}</div>
-        <div>Is active: {{ layer.observeIsActive() | async }}</div>
-        <div>Position: {{ layer.observePosition() | async }}</div>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          [ngModel]="layer.observeOpacity() | async"
-          (ngModelChange)="layer.setOpacity($event)"
-        />
-        <div class="actions">
-          <!-- <button (click)="layer.setName('Test 123')">set name</button> -->
-          <button (click)="layer.activate()">activate</button>
-          <button (click)="layer.show()">show</button>
-          <button (click)="layer.hide()">hide</button>
-          <button (click)="layer.moveUp()">up</button>
-          <button (click)="layer.moveDown()">down</button>
-          <button (click)="layer.remove()">remove</button>
-        </div>
+  <mat-sidenav-container style="flex: 1">
+    <mat-sidenav position="end" mode="side" #sidenav style="width: 350px" [opened]="sidebarOpen$ | async">
+        <app-sidebar></app-sidebar>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="map">
+        <app-map-renderer></app-map-renderer>
       </div>
-    </div>
-
-    <h3>States</h3>
-    <button (click)="state.reset()">reset</button>
-    <button (click)="saveMapToFile()">save map to file</button>
-    <button (click)="openMapFromFile()">open map from file</button>
-  </div>
+      <app-fab-menu [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </main>

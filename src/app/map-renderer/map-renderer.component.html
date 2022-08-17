@@ -1,1 +1,31 @@
 <div #mapElement id="map" class="map"></div>
+<div class="zoom noprint">
+  <button
+    mat-icon-button
+    (click)="zoomIn()"
+    [attr.aria-label]="i18n.get('zoomIn')"
+  >
+    <mat-icon>zoom_in</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    (click)="zoomOut()"
+    [attr.aria-label]="i18n.get('zoomOut')"
+  >
+    <mat-icon>zoom_out</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    (click)="setSidebarContext(sidebarContext.Layers)"
+    [attr.aria-label]="i18n.get('layers')"
+  >
+    <mat-icon>layers</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    (click)="setSidebarContext(sidebarContext.Filters)"
+    [attr.aria-label]="i18n.get('filters')"
+  >
+    <mat-icon>filter_alt</mat-icon>
+  </button>
+</div>

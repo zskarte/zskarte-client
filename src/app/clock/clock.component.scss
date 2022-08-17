@@ -1,0 +1,47 @@
+.clock {
+  display: inline-block;
+}
+
+.time {
+  font-weight: bold;
+}
+.date {
+  font-style: italic;
+}
+
+div {
+  display: inline-block;
+  text-align: center;
+}
+
+.flexContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeLeft {
+  color: #3f51b5;
+  position: relative;
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+  size: 12px;
+  align-items: end;
+}

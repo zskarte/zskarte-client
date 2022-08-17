@@ -2,20 +2,7 @@ main {
   height: 100%;
   width: 100%;
   display: flex;
-  flex-direction: row;
-
-  .map {
-    flex: 0 0 60%;
-  }
-
-  .debug {
-    display: flex;
-    flex-direction: column;
-    flex: 0 0 40%;
-    padding: 12px;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
+  flex-direction: column;
 }
 
 button,

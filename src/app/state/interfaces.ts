@@ -1,8 +1,12 @@
+import { GeoFeature } from '../core/entity/geoFeature';
+import { Sign } from '../core/entity/sign';
+
 export enum ZsMapStateSource {
   OPEN_STREET_MAP = 'openStreetMap',
   GEO_ADMIN_SWISS_IMAGE = 'geoAdminSwissImage',
   GEO_ADMIN_PIXEL = 'geoAdminPixel',
   GEO_ADMIN_PIXEL_BW = 'geoAdminPixelBW',
+  OFFLINE = 'offline',
 }
 
 export interface IZsMapSaveFileState {
@@ -11,6 +15,7 @@ export interface IZsMapSaveFileState {
 }
 
 export interface IZsMapState {
+  version: number;
   id: string;
   name?: string;
   source: ZsMapStateSource;
@@ -19,12 +24,18 @@ export interface IZsMapState {
   center: [number, number];
 }
 
+export interface IPositionFlag {
+  coordinates: number[];
+  isVisible: boolean;
+}
+
 export enum ZsMapDisplayMode {
   DRAW = 'draw',
   HISTORY = 'history',
 }
 
 export interface IZsMapDisplayState {
+  version: number;
   displayMode: ZsMapDisplayMode;
   mapOpacity: number;
   mapCenter: number[];
@@ -35,6 +46,9 @@ export interface IZsMapDisplayState {
   layerOrder: string[];
   elementOpacity: Record<string, number>;
   elementVisibility: Record<string, boolean>;
+  features: GeoFeature[];
+  sidebarContext: SidebarContext | null;
+  positionFlag: IPositionFlag;
 }
 
 export type ZsMapLayerState = IZsMapDrawLayerState | IZsMapGeoDataLayerState;
@@ -56,7 +70,6 @@ export interface IZsMapDrawLayerState extends IZsMapBaseLayerState {
 
 export interface IZsMapGeoDataLayerState extends IZsMapBaseLayerState {
   type: ZsMapLayerStateType.GEO_DATA;
-  // TODO additional props
 }
 
 export enum ZsMapDrawElementStateType {
@@ -86,13 +99,6 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   name?: string;
 }
 
-export interface IZsMapSymbolState {
-  id: string;
-  color?: string;
-  rotation?: number;
-  // TODO add overwrite props
-}
-
 export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.TEXT;
   fontSize?: string;
@@ -100,16 +106,28 @@ export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
 
 export interface ZsMapSymbolDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.SYMBOL;
-  symbol: IZsMapSymbolState;
+  symbolId?: number;
   coordinates: number[] | number[][];
 }
 
 export interface ZsMapLineDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.LINE;
-  symbol?: IZsMapSymbolState;
+  symbolId?: number;
 }
 
 export interface ZsMapPolygonDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.POLYGON;
-  symbol?: IZsMapSymbolState;
+  symbolId?: number;
+}
+
+export enum SidebarContext {
+  Layers,
+  Filters,
+}
+
+export interface ZsMapElementToDraw {
+  type: ZsMapDrawElementStateType;
+  layer: string;
+  symbolId?: number;
+  text?: string;
 }

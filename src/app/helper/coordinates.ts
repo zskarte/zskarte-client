@@ -1,6 +1,6 @@
 export const checkCoordinates = (
-  c1: undefined | number | number[] | number[][],
-  c2: undefined | number | number[] | number[][],
+  c1: undefined | null | number | number[] | number[][] | any[],
+  c2: undefined | null | number | number[] | number[][] | any[],
 ): boolean => {
   if (!c1 || !c2) {
     return false;

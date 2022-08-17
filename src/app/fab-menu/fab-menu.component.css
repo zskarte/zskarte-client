@@ -1,0 +1,42 @@
+.fab-menu {
+  position: absolute;
+  right: 20px;
+  bottom: 45px;
+  z-index: 50;
+}
+
+.fab-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.3);
+  transition: 150ms all ease-in-out;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.fab-menu-list {
+  margin: 0;
+  padding: 0;
+}
+
+.fab-menu-list > li {
+  list-style-type: none;
+  padding: 8px 0;
+}
+
+.add-icon {
+  transition: 150ms all ease-in-out;
+}
+
+.skewed {
+  transform: rotate(45deg);
+}
+
+.isOpen {
+  opacity: 1;
+  visibility: visible;
+}

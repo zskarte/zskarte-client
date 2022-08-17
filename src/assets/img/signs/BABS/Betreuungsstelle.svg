@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g visibility="visible" id="MasterSlide_1_Standard">
+  <g id="Drawing_1">
+  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 222,35 L 937,35 937,1113 222,1113 222,35 Z M 305,1071 L 263,1029 895,1029 852,1071 852,77 895,120 263,120 305,77 305,1071 Z"/>
+  <path fill="rgb(0,0,255)" stroke="none" d="M 289,600 L 857,600 857,655 289,655 289,600 Z"/>
+  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 289,600 L 857,600 857,655 289,655 289,600 Z"/>
+  <path fill="rgb(0,0,255)" stroke="none" d="M 296,471 L 864,471 864,527 296,527 296,471 Z"/>
+  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 296,471 L 864,471 864,527 296,527 296,471 Z"/>
+  <path fill="rgb(0,0,255)" stroke="none" d="M 327,350 L 582,137 617,179 363,392 327,350 Z"/>
+  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 327,350 L 582,137 617,179 363,392 327,350 Z"/>
+  <path fill="rgb(0,0,255)" stroke="none" d="M 579,133 L 833,347 799,389 543,175 579,133 Z"/>
+  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 579,133 L 833,347 799,389 543,175 579,133 Z"/>
+  </g>
+ </g>
+</svg>

@@ -1,0 +1,24 @@
+<div class="flexContainer">
+  <div class="timeLeft" *ngIf="session.observeIsGuest() | async">
+    <div
+      class="flexContainer"
+      mat-raised-button
+      #tooltip="matTooltip"
+      matTooltip="{{ i18n.get('tooltipSession') }}"
+      matTooltipPosition="below"
+      matTooltipHideDelay="100"
+    >
+      <ng-container *ngIf="timerProgress | async as progress">
+        <mat-progress-spinner class="spinner" color="primary" mode="determinate" diameter="35" [value]="progress.percentage">
+        </mat-progress-spinner>
+        <div class="overlay">
+          <strong>{{ progress.text }}</strong>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="flexColumn">
+    <span class="date">{{ now | async | date: 'dd.MM.yyyy' }}</span>
+    <span class="time">{{ now | async | date: 'HH:mm:ss' }}</span>
+  </div>
+</div>
