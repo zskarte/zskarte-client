@@ -1,0 +1,221 @@
+mat-card.selection {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #f1f1f1;
+  margin-bottom: 0;
+  max-height: 100%;
+  min-width: 20vw;
+  max-width: 25vw;
+  overflow: auto;
+  border-radius: 0;
+}
+
+@media screen and (max-width: 768px) {
+  mat-card.selection {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    max-width: 40vw;
+  }
+}
+
+.titleCard {
+  min-height: 10vh;
+}
+
+mat-card,
+mat-expansion-panel {
+  margin-bottom: 1em;
+}
+
+mat-card.featureGroup .mat-expansion-panel-header-title {
+  font-weight: bold;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+mat-form-field {
+  display: block;
+}
+
+mat-slider {
+  width: 100%;
+}
+
+.imgwrapper {
+  text-align: center;
+  margin-bottom: 1em;
+  cursor: pointer;
+}
+
+.featureGroup .imgwrapper img {
+  max-height: 5em;
+  max-width: 5em;
+}
+
+.imgwrapper img {
+  max-height: 5em;
+  max-width: 5em;
+}
+
+.buttonPanel {
+  margin-top: 0.5em;
+  text-align: center;
+}
+
+.label {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.label-light {
+  text-align: center;
+  margin-bottom: 1em;
+  color: #787878;
+  white-space: nowrap;
+  border-top: 1px solid #787878;
+  line-height: 1.2em;
+  padding-top: 5px;
+}
+.label-left {
+  float: left;
+}
+.label-right {
+  float: right;
+}
+.clearfix::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.title {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.menu-wrapper {
+  text-align: right;
+}
+
+.menu {
+  transform: scale(0.6);
+}
+
+#functionsPanel .mat-expansion-panel-header {
+  background-color: #3f51b5;
+}
+
+#functionsPanel .mat-expansion-panel-header * {
+  color: white;
+}
+
+mat-expansion-panel button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+mat-expansion-panel .filter {
+  margin-top: 1em;
+}
+
+mat-expansion-panel button i {
+  margin-right: 1em;
+}
+
+.separator {
+  border-bottom: 1px solid;
+}
+
+.primarybutton {
+  width: 100%;
+}
+
+.markdownEditor {
+  position: relative;
+  margin-bottom: 2.5em;
+}
+
+.markdownEditor .fab {
+  font-size: 1.5em;
+  margin-left: 1em;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.markdownEditor textarea {
+  min-height: 5em;
+}
+
+.markdownEditor a {
+  font-size: 0.8em;
+  position: absolute;
+  bottom: -0.6em;
+  right: 0;
+}
+
+.markdown .preview {
+  border-bottom: 1px dashed;
+  border-left: 1px dashed;
+  border-right: 1px dashed;
+  margin-bottom: 1em;
+  padding: 1em;
+}
+
+.images {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow-x: auto;
+  padding: 0.5em;
+}
+.images > div {
+  display: inline-block;
+  margin-right: 2em;
+  margin-top: 1em;
+  position: relative;
+}
+
+.images .material-icons {
+  cursor: pointer;
+}
+
+.images img {
+  max-height: 2.5em;
+  max-width: 2.5em;
+  cursor: pointer;
+}
+
+.images .removeButton {
+  position: absolute;
+  top: -1em;
+  right: -1em;
+}
+
+.images i.removeButton {
+  font-size: 1.2em;
+}
+
+.color-display {
+  min-width: 1em;
+  margin-right: 0.7em;
+}
+
+.color-option {
+  padding-left: 0;
+}
+
+div.flex {
+  display: flex;
+}
+
+.mat-slide-toggle {
+  padding-bottom: 1.25em;
+}

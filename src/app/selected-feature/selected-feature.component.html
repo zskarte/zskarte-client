@@ -1,0 +1,539 @@
+<mat-card class="selection" *ngIf="selectedSignature">
+  <mat-card-content *ngIf="!mergeMode">
+    <div>
+      <!--
+      <mat-card
+        *ngFor="let featureGroup of featureGroups"
+        class="featureGroup titleCard"
+      >
+        <mat-card-content>
+          <div class="imgwrapper" *ngIf="featureGroup.src">
+            <img
+              [src]="getImageUrl(featureGroup.src)"
+              (click)="openImageDetail(findSigBySrc(featureGroup.src))"
+            />
+          </div>
+          <div class="label">{{ featureGroup.label }}</div>
+
+          <mat-expansion-panel
+            *ngFor="let feature of featureGroup.features"
+            (mouseover)="showFeature(feature)"
+            (mouseleave)="hideFeature()"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{
+                feature.get('sig').label
+                  ? feature.get('sig').label
+                  : i18n.get('unknown')
+              }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div
+              class="images"
+              *ngIf="
+                feature.get('sig').images &&
+                feature.get('sig').images.length > 0
+              "
+            >
+              <div *ngFor="let img of feature.get('sig').images">
+                <img
+                  [src]="getImageUrl(img)"
+                  (click)="openImageDetail(findSigBySrc(img))"
+                />
+              </div>
+            </div>
+            <div
+              *ngIf="feature.get('sig').description"
+              class="description"
+              [innerHTML]="feature.get('sig').description | nl2br"
+            ></div>
+          </mat-expansion-panel>
+        </mat-card-content>
+      </mat-card>-->
+
+      <mat-card *ngIf="!featureGroups" class="titleCard">
+        <mat-card-content>
+          <div
+            class="imgwrapper"
+            *ngIf="selectedSignature.src"
+            (click)="openImageDetail(selectedSignature)"
+          >
+            <img [src]="getImageUrl(selectedSignature.src)" />
+          </div>
+          <div *ngIf="i18n.getLabelForSign(selectedSignature)" class="label">
+            {{ i18n.getLabelForSign(selectedSignature) }}
+          </div>
+          <mat-form-field *ngIf="editMode">
+            <mat-label>{{ i18n.get('name') }}</mat-label>
+            <input
+              type="text"
+              matInput
+              [(ngModel)]="selectedSignature.label"
+              *ngIf="!selectedSignature.text"
+              (ngModelChange)="redraw()"
+            />
+            <textarea
+              matInput
+              [(ngModel)]="selectedSignature.text"
+              (ngModelChange)="redraw()"
+              *ngIf="selectedSignature.text"
+            ></textarea>
+          </mat-form-field>
+          <div *ngIf="!editMode" class="title">
+            <div *ngIf="!selectedSignature.text">
+              {{ selectedSignature.label }}
+            </div>
+            <div *ngIf="selectedSignature.text">
+              {{ selectedSignature.text }}
+            </div>
+          </div>
+          <div
+            *ngIf="!editMode && selectedSignature.description"
+            class="description"
+            [innerHTML]="selectedSignature.description | nl2br"
+          ></div>
+          <div
+            class="images"
+            *ngIf="
+              !editMode &&
+              selectedSignature.images &&
+              selectedSignature.images.length > 0
+            "
+          >
+            <div *ngFor="let img of selectedSignature.images">
+              <img
+                [src]="getImageUrl(img)"
+                (click)="openImageDetail(findSigBySrc(img))"
+              />
+            </div>
+          </div>
+
+          <mat-form-field *ngIf="editMode && colorPicker">
+            <mat-label>{{ i18n.get('color') }}:</mat-label>
+            <input
+              matInput
+              type="color"
+              name="color"
+              [(ngModel)]="selectedSignature.color"
+              (ngModelChange)="redraw()"
+            />
+          </mat-form-field>
+          <mat-form-field *ngIf="editMode && !colorPicker">
+            <mat-label>{{ i18n.get('color') }}:</mat-label>
+            <mat-select
+              [(ngModel)]="selectedSignature.color"
+              (ngModelChange)="redraw()"
+            >
+              <mat-option
+                class="color-option"
+                *ngFor="let color of quickColors"
+                [value]="color.value"
+              >
+                <div class="flex">
+                  <div
+                    class="color-display"
+                    [style.background-color]="color.value"
+                  ></div>
+                  <span>{{ i18n.get(color.viewValue) }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-slide-toggle
+            *ngIf="editMode"
+            (toggleChange)="toggleColorSelection()"
+            [checked]="colorPicker"
+          >
+            {{ i18n.get('colorPickerMode') }}
+          </mat-slide-toggle>
+          <br />
+          <mat-checkbox
+            [(ngModel)]="selectedSignature.protected"
+            (ngModelChange)="toggleLockOfFeature()"
+            *ngIf="editMode"
+            >{{ i18n.get('lockFeature') }}</mat-checkbox
+          ><br />
+          <mat-checkbox
+            [(ngModel)]="selectedSignature.labelShow"
+            (ngModelChange)="redraw()"
+            *ngIf="editMode"
+            >{{ i18n.get('labelShow') }}</mat-checkbox
+          >
+          <div class="label-light">
+            <div *ngIf="selectedSignature.createdAt" class="label-right">
+              {{ selectedSignature.createdAt | date: 'dd.MM.yyyy, HH:mm' }}
+            </div>
+            <div class="clearfix"></div>
+            <div *ngIf="selectedSignature.size" class="label-right">
+              {{
+                selectedSignature.type === 'LineString'
+                  ? i18n.get('distance')
+                  : i18n.get('area')
+              }}: <span [innerHTML]="selectedSignature.size"></span>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-expansion-panel *ngIf="editMode && !selectedSignature.text">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ i18n.get('description') }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-form-field>
+          <mat-label>{{ i18n.get('images') }}</mat-label>
+          <input type="text" matInput hidden value="-" />
+          <div class="images">
+            <div *ngFor="let img of selectedSignature.images">
+              <img
+                [src]="getImageUrl(img)"
+                (click)="openImageDetail(findSigBySrc(img))"
+              /><i
+                class="material-icons removeButton"
+                (click)="removeImage(img)"
+                >clear</i
+              >
+            </div>
+            <i class="material-icons" (click)="addImage()">add</i>
+          </div>
+        </mat-form-field>
+
+        <div class="markdown" *ngIf="editMode">
+          <div class="markdownEditor">
+            <mat-form-field>
+              <mat-label>{{ i18n.get('description') }}</mat-label>
+              <textarea
+                matInput
+                [(ngModel)]="selectedSignature.description"
+                (ngModelChange)="redraw()"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel
+        *ngIf="editMode && !selectedSignature.text"
+        class="noPadding"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ i18n.get('symbol') }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <button
+          mat-flat-button
+          *ngIf="!selectedSignature.src"
+          (click)="chooseSymbol()"
+        >
+          <i class="material-icons">stars</i
+          ><span>{{ i18n.get('selectSymbol') }}</span>
+        </button>
+        <button
+          mat-flat-button
+          *ngIf="selectedSignature.src"
+          (click)="chooseSymbol()"
+        >
+          <i class="material-icons">cached</i
+          ><span>{{ i18n.get('replaceSymbol') }}</span>
+        </button>
+        <div class="filter">
+          <mat-checkbox
+            *ngIf="selectedSignature.src"
+            [(ngModel)]="selectedSignature.hideIcon"
+            class="filter"
+            (ngModelChange)="redraw()"
+            >{{ i18n.get('hideSymbol') }}</mat-checkbox
+          >
+        </div>
+        <mat-form-field *ngIf="selectedSignature.src"
+          ><input type="text" matInput hidden value="-" />
+        </mat-form-field>
+        <mat-form-field *ngIf="selectedSignature.src">
+          <mat-label>{{ i18n.get('symbolSize') }}</mat-label>
+          <mat-slider
+            [max]="2"
+            [min]="0.5"
+            [step]="0.1"
+            [ngModel]="selectedSignature.iconSize"
+            (input)="setSliderValueOnSignature('iconSize', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+
+        <mat-form-field *ngIf="selectedSignature.src">
+          <mat-label>{{ i18n.get('symbolOffset') }}</mat-label>
+          <mat-slider
+            [max]="5000"
+            [min]="0.1"
+            [step]="100"
+            [ngModel]="selectedSignature.iconOffset"
+            (input)="setSliderValueOnSignature('iconOffset', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+          <mat-checkbox
+            [(ngModel)]="selectedSignature.flipIcon"
+            class="filter"
+            (ngModelChange)="redraw()"
+            >{{ i18n.get('symbolAlignRight') }}</mat-checkbox
+          >
+        </mat-form-field>
+
+        <mat-form-field
+          *ngIf="selectedSignature.src && !selectedSignature.hideIcon"
+        >
+          <mat-label>{{ i18n.get('rotate') }}</mat-label>
+          <mat-slider
+            [max]="180"
+            [min]="-180"
+            [step]="1"
+            [ngModel]="selectedSignature.rotation"
+            (input)="setSliderValueOnSignature('rotation', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+
+        <mat-form-field
+          *ngIf="selectedSignature.src && !selectedSignature.hideIcon"
+        >
+          <mat-label>{{ i18n.get('opacity') }}:</mat-label>
+          <mat-slider
+            #ctrl="ngModel"
+            [max]="1"
+            [min]="0.01"
+            [step]="0.05"
+            [ngModel]="selectedSignature.iconOpacity"
+            (input)="setSliderValueOnSignature('iconOpacity', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel
+        *ngIf="
+          editMode &&
+          selectedSignature.type !== 'Point' &&
+          !selectedSignature.text
+        "
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ i18n.get('line') }}</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-form-field>
+          <mat-label>{{ i18n.get('type') }}:</mat-label>
+          <select
+            #ctrl="ngModel"
+            matNativeControl
+            [(ngModel)]="selectedSignature.style"
+            (ngModelChange)="redraw()"
+          >
+            <option value="solid">{{ i18n.get('solidLine') }}</option>
+            <option value="dash">{{ i18n.get('dashedLine') }}</option>
+            <option value="thindash">{{ i18n.get('thinDashedLine') }}</option>
+            <option value="dotted">{{ i18n.get('dottedLine') }}</option>
+          </select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ i18n.get('width') }}</mat-label>
+          <mat-slider
+            [max]="4"
+            [min]="0.1"
+            [step]="0.1"
+            [ngModel]="selectedSignature.strokeWidth"
+            (input)="setSliderValueOnSignature('strokeWidth', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+
+        <mat-form-field *ngIf="isLine">
+          <mat-label>{{ i18n.get('arrow') }}:</mat-label>
+          <select
+            #ctrl="ngModel"
+            matNativeControl
+            [(ngModel)]="selectedSignature.arrow"
+            (ngModelChange)="redraw()"
+          >
+            <option value="none">{{ i18n.get('none') }}</option>
+            <option value="thin">{{ i18n.get('thin') }}</option>
+            <option value="filled">{{ i18n.get('filled') }}</option>
+          </select>
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel *ngIf="editMode && isPolygon">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ i18n.get('fillPattern') }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <!--
+       <mat-form-field>
+         <mat-label>{{ i18n.get('type') }}:</mat-label>
+
+         <select
+           #ctrl="ngModel"
+           matNativeControl
+           [(ngModel)]="selectedSignature.fillStyle.name"
+           (ngModelChange)="redraw()"
+         >
+           <option value="filled">{{ i18n.get('filled') }}</option>
+           <option value="hatch">{{ i18n.get('hatched') }}</option>
+           <option value="cross">{{ i18n.get('crossed') }}</option>
+         </select>
+        </mat-form-field>-->
+        <mat-form-field>
+          <mat-label>{{ i18n.get('opacity') }}:</mat-label>
+          <mat-slider
+            #ctrl="ngModel"
+            [max]="1"
+            [min]="0.01"
+            [step]="0.05"
+            [ngModel]="selectedSignature.fillOpacity"
+            (input)="setSliderValueOnSignature('fillOpacity', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+        <mat-form-field
+          *ngIf="
+            selectedSignature.fillStyle &&
+            selectedSignature.fillStyle.name &&
+            selectedSignature.fillStyle.name !== 'filled'
+          "
+        >
+          <mat-label>{{ i18n.get('width') }}</mat-label>
+          <mat-slider
+            [max]="10"
+            [min]="1"
+            [step]="0.1"
+            [ngModel]="selectedSignature.fillStyle.size"
+            (input)="setSliderValueOnSignature('fillStyle.size', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+
+        <mat-form-field
+          *ngIf="
+            selectedSignature.fillStyle &&
+            selectedSignature.fillStyle.name &&
+            selectedSignature.fillStyle.name !== 'filled'
+          "
+        >
+          <mat-label>{{ i18n.get('spacing') }}</mat-label>
+          <mat-slider
+            [max]="20"
+            [min]="5"
+            [step]="0.1"
+            [ngModel]="selectedSignature.fillStyle.spacing"
+            (input)="setSliderValueOnSignature('fillStyle.spacing', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+
+        <mat-form-field
+          *ngIf="
+            selectedSignature.fillStyle &&
+            selectedSignature.fillStyle.name &&
+            selectedSignature.fillStyle.name === 'hatch'
+          "
+        >
+          <mat-label>{{ i18n.get('angle') }}</mat-label>
+          <mat-slider
+            [max]="180"
+            [min]="0.1"
+            [step]="0.1"
+            [ngModel]="selectedSignature.fillStyle.angle"
+            (input)="setSliderValueOnSignature('fillStyle.angle', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel *ngIf="editMode && selectedSignature.text">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ i18n.get('font') }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-form-field>
+          <mat-label>{{ i18n.get('fontSize') }}</mat-label>
+          <mat-slider
+            [max]="4"
+            [min]="0.1"
+            [step]="0.1"
+            [ngModel]="selectedSignature.fontSize"
+            (input)="setSliderValueOnSignature('fontSize', $event)"
+          >
+          </mat-slider>
+          <input type="text" matInput hidden value="-" />
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel
+        id="functionsPanel"
+        class="noPadding"
+        *ngIf="editMode"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <button mat-flat-button (click)="bringToFront()">
+          <i class="material-icons">arrow_upward</i
+          ><span>{{ i18n.get('moveToTop') }}</span>
+        </button>
+        <button mat-flat-button (click)="sendToBack()">
+          <i class="material-icons">arrow_downward</i
+          ><span>{{ i18n.get('moveToBottom') }}</span>
+        </button>
+        <button mat-flat-button (click)="split()" *ngIf="canSplit">
+          <i class="material-icons">call_split</i
+          ><span>{{ i18n.get('ungroup') }}</span>
+        </button>
+        <button mat-flat-button (click)="merge(true)" *ngIf="isPolygon">
+          <i class="material-icons">call_merge</i
+          ><span>{{ i18n.get('group') }}</span>
+        </button>
+        <button
+          mat-flat-button
+          (click)="drawHole()"
+          [disabled]="drawHoleMode"
+          *ngIf="isPolygon"
+        >
+          <i class="material-icons">vignette</i
+          ><span>{{ i18n.get('drawHole') }}</span>
+        </button>
+        <button
+          mat-flat-button
+          (click)="editCoordinates()"
+        >
+          <i class="material-icons">format_shapes</i
+          ><span>{{ i18n.get('defineCoordinates') }}</span>
+        </button>
+      </mat-expansion-panel>
+    </div>
+    <button
+      class="primarybutton"
+      mat-raised-button
+      color="warn"
+      (click)="delete()"
+      *ngIf="editMode"
+    >
+      <i class="material-icons">delete</i><span>{{ i18n.get('delete') }}</span>
+    </button>
+  </mat-card-content>
+  <mat-card-content *ngIf="editMode && mergeMode">
+    <div>{{ i18n.get('chooseGroupingArea') }}</div>
+    <button
+      mat-raised-button
+      (click)="merge(false)"
+      [disabled]="drawHoleMode"
+      *ngIf="isPolygon"
+    >
+      <i class="material-icons">cancel</i
+      ><span> {{ i18n.get('cancelGrouping') }}</span>
+    </button>
+  </mat-card-content>
+</mat-card>

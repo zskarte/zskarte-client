@@ -1,5 +1,6 @@
 import { GeoFeature } from '../core/entity/geoFeature';
 import { Sign } from '../core/entity/sign';
+import {Feature} from "ol";
 
 export enum ZsMapStateSource {
   OPEN_STREET_MAP = 'openStreetMap',

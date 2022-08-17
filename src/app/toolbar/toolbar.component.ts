@@ -23,7 +23,6 @@ export class ToolbarComponent {
   historyMode: Observable<boolean>;
   exportEnabled = true;
   downloadData: SafeUrl | null = null;
-  downloadCSVData = null;
   locales: string[] = LOCALES;
 
   constructor(

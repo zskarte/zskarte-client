@@ -1,0 +1,10 @@
+img {
+  max-width: 80vw;
+  max-height: 80vh;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+}

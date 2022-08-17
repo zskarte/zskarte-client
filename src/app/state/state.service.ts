@@ -27,7 +27,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
 import { Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
-import { Signs } from '../map-renderer/signs';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +43,13 @@ export class ZsMapStateService {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
+  private _selectedFeature = new BehaviorSubject<Feature | null>(null);
+
+  private _session = new BehaviorSubject<IZsSession | null>(produce<IZsSession | null>(null, (draft) => draft));
+
+  private _mergeMode = new BehaviorSubject<boolean>(false);
+  private _splitMode = new BehaviorSubject<boolean>(false);
+  private _reorderMode = new BehaviorSubject<boolean>(false);
 
   constructor(private drawDialog: MatDialog, private textDialog: MatDialog) {}
 
@@ -177,6 +183,14 @@ export class ZsMapStateService {
     this.updateDisplayState((draft) => {
       draft.positionFlag = positionFlag;
     });
+  }
+
+  public setSelectedFeature(feature: Feature) {
+    this._selectedFeature.next(feature);
+  }
+
+  public resetSelectedFeature() {
+    this._selectedFeature.next(null);
   }
 
   public setMapZoom(zoom: number) {
@@ -346,6 +360,10 @@ export class ZsMapStateService {
     );
   }
 
+  public observeSelectedFeature(): Observable<Feature | null> {
+    return this._selectedFeature.asObservable();
+  }
+
   public addFeature(feature: GeoFeature) {
     this.updateDisplayState((draft) => {
       let maxIndex = Math.max(...(draft.features.map((f) => f.zIndex).filter(Boolean) as number[]));
@@ -408,6 +426,18 @@ export class ZsMapStateService {
         draft.drawElements.push(element);
       });
     }
+  }
+
+  public removeDrawElement(id: string) {
+    const index = this._map.value.drawElements?.findIndex((o) => o.id === id);
+    if (index === undefined) {
+      throw new Error('Id not correct');
+    }
+    this.updateMapState((draft) => {
+      if (draft.drawElements) {
+        draft.drawElements.splice(index, 1);
+      }
+    });
   }
 
   public getDrawElementState(id: string): ZsMapDrawElementState | undefined {
@@ -590,5 +620,17 @@ export class ZsMapStateService {
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public setMergeMode(mergeMode: boolean) {
+    this._mergeMode.next(mergeMode);
+  }
+
+  public setSplitMode(splitMode: boolean) {
+    this._splitMode.next(splitMode);
+  }
+
+  public setReorderMode(reorderMode: boolean) {
+    this._reorderMode.next(reorderMode);
   }
 }

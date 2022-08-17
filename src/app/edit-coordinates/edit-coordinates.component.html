@@ -1,0 +1,13 @@
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>{{ i18n.get('defineCoordinates') }}</mat-label>
+    <textarea matInput [(ngModel)]="coordinates"></textarea>
+  </mat-form-field>
+</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button (click)="cancel()">{{ i18n.get('cancel') }}</button>
+  <button mat-raised-button color="primary" (click)="ok()">
+    {{ i18n.get('ok') }}
+  </button>
+</div>
