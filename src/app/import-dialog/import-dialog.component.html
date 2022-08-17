@@ -4,49 +4,18 @@
     i18n.get('replaceByImport')
   }}</mat-checkbox>
 
-  <mat-tab-group [dynamicHeight]="true">
-    <mat-tab [label]="i18n.get('importFromFile')">
-      <input
-        id="loadFromFile"
-        type="file"
-        accept=".json,.geojson,.zsjson"
-        #fileInput
-      />
-      <div mat-dialog-actions align="end" class="buttons">
-        <button mat-raised-button (click)="onNoClick()">
-          {{ i18n.get('cancel') }}
-        </button>
-        <button mat-raised-button color="primary" (click)="readFromFile()">
-          {{ i18n.get('import') }}
-        </button>
-      </div>
-    </mat-tab>
-    <mat-tab [label]="i18n.get('importFromGeoadmin')">
-      <p>{{ i18n.get('importFromGeoadminDescription') }}</p>
-      <mat-form-field>
-        <mat-label>{{ i18n.get('geoadminImportLayer') }}</mat-label>
-        <input type="text" matInput [(ngModel)]="geoadminLayer" />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{ i18n.get('geoadminImportKey') }}</mat-label>
-        <input type="text" matInput [(ngModel)]="geoadminKey" />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{ i18n.get('geoadminImportValue') }}</mat-label>
-        <input type="text" matInput [(ngModel)]="geoadminValue" />
-      </mat-form-field>
-      <div mat-dialog-actions align="end" class="buttons">
-        <button mat-raised-button (click)="onNoClick()">
-          {{ i18n.get('cancel') }}
-        </button>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="importFromGeoadmin()"
-        >
-          {{ i18n.get('import') }}
-        </button>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+  <input
+    id="loadFromFile"
+    type="file"
+    accept=".json,.geojson,.zsjson"
+    #fileInput
+  />
+  <div mat-dialog-actions align="end" class="buttons">
+    <button mat-raised-button (click)="onNoClick()">
+      {{ i18n.get('cancel') }}
+    </button>
+    <button mat-raised-button color="primary" (click)="readFromFile()">
+      {{ i18n.get('import') }}
+    </button>
+  </div>
 </div>

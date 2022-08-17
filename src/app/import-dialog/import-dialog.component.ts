@@ -10,10 +10,6 @@ import { GeoadminService } from '../core/geoadmin.service';
 })
 export class ImportDialogComponent {
   @ViewChild('fileInput', { static: false }) el!: ElementRef;
-
-  geoadminLayer = '';
-  geoadminKey = '';
-  geoadminValue = '';
   replace = true;
 
   constructor(public dialogRef: MatDialogRef<ImportDialogComponent>, public i18n: I18NService, private geoadminService: GeoadminService) {}
@@ -32,18 +28,5 @@ export class ImportDialogComponent {
       };
       reader.readAsText(this.el.nativeElement.files[index], 'UTF-8');
     }
-  }
-
-  importFromGeoadmin() {
-    this.geoadminService.queryPolygons(this.geoadminLayer, this.geoadminKey, this.geoadminValue).then((features: any) => {
-      const featureWrapper = {
-        type: 'FeatureCollection',
-        features: features,
-      };
-      this.dialogRef.close({
-        replace: this.replace,
-        value: JSON.stringify(featureWrapper),
-      });
-    });
   }
 }

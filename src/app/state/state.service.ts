@@ -460,6 +460,68 @@ export class ZsMapStateService {
     };
   }
 
+  public exportMap(): string {
+    return 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify(this._map.value));
+  }
+
+  public exportMapWithSession(): string {
+    return (
+      'data:text/json;charset=UTF-8,' +
+      encodeURIComponent(JSON.stringify({ map: this._map.value, display: this._display.value, session: this._session.value }))
+    );
+  }
+
+  public exportMapCsv(): string {
+    let lines: string[] = new Array<string>();
+    /*
+    const result: { features: Feature } = this.writeFeatures();
+    const features: Feature[] = result.features;
+
+    // header
+    let row: string[] = new Array<string>();
+    row.push(this.i18n.get('csvID'));
+    row.push(this.i18n.get('csvDate'));
+    row.push(this.i18n.get('csvGroup'));
+    row.push(this.i18n.get('csvSignatur'));
+    row.push(this.i18n.get('csvLocation'));
+    row.push(this.i18n.get('csvSize'));
+    row.push(this.i18n.get('csvLabel'));
+    row.push(this.i18n.get('csvDescription'));
+    lines.push('"' + row.join('";"') + '"');
+
+    // entry
+    for (let i = 0, l = features.length; i < l; i++) {
+      let f: Feature = features[i];
+      if (!f.properties || !f.properties.sig) continue;
+      let s: Sign = f.properties.sig;
+      let sk: string = s.kat
+        ? 'sign' + this.capitalizeFirstLetter(s.kat)
+        : 'csvGroupArea';
+      //console.log('row', f);
+
+      row = new Array<string>();
+      row.push(f.id);
+      row.push(s.createdAt.toString());
+      row.push(sk && this.i18n.has(sk) ? this.i18n.get(sk) : '');
+      row.push(
+        this.i18n.locale == 'fr' ? s.fr : this.i18n.locale == 'en' ? s.en : s.de
+      );
+      row.push(JSON.stringify(f.geometry));
+      row.push(s.size ? s.size.replace('<sup>2</sup>', '2') : '');
+      row.push(s.label);
+      row.push(s.description);
+
+      for (let ii = 0, ll = row.length; ii < ll; ii++) {
+        row[ii] = row[ii] ? row[ii].replace(/"/g, '""') : '';
+      }
+      lines.push('"' + row.join('";"') + '"');
+    }*/
+
+    return (
+      'data:text/csv;charset=UTF-8,' + encodeURIComponent(lines.join('\r\n'))
+    );
+  }
+
   public loadSaveFileState(state: IZsMapSaveFileState): void {
     this.loadMapState(state.map);
     this.loadDisplayState(state.display);
@@ -480,6 +542,10 @@ export class ZsMapStateService {
 
   public observeSession(): Observable<IZsSession | null> {
     return this._session.asObservable();
+  }
+
+  public getCurrentSession(): IZsSession | null {
+    return this._session.value;
   }
 
   public loadSession(session: IZsSession | null) {

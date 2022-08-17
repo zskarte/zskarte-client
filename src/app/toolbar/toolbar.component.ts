@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/cor
 import { I18NService, LOCALES } from '../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ZsMapStateService } from '../state/state.service';
 import { ZsMapDisplayMode } from '../state/interfaces';
 import { IZsSession } from '../core/entity/session';
@@ -13,7 +13,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { PreferencesService } from '../state/preferences.service';
 import { SessionsService } from '../state/sessions.service';
 import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
-import {TagStateComponent} from "../tag-state/tag-state.component";
+import { ExportDialogComponent } from '../export-dialog/export-dialog.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -26,7 +26,7 @@ export class ToolbarComponent implements OnInit {
   session: Observable<IZsSession | null>;
   historyMode: Observable<boolean>;
   exportEnabled = true;
-  downloadData = null;
+  downloadData: SafeUrl | null = null;
   downloadCSVData = null;
   locales: string[] = LOCALES;
 
@@ -169,11 +169,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   exportSession(): void {
-    /*
-    const features = this.drawLayer.writeFeatures();
-    this.dialog.open(ExportDialogComponent, {
-      data: features,
-    });*/
+    this.dialog.open(ExportDialogComponent);
   }
 
   toggleHistory(): void {
@@ -198,7 +194,7 @@ export class ToolbarComponent implements OnInit {
           .afterClosed()
           .subscribe((confirmed) => {
             if (confirmed) {
-              //this.drawLayer.loadFromString(result.value, true, result.replace);
+              this.zsMapStateService.loadMapState(JSON.parse(result.value));
             }
           });
       }
@@ -210,21 +206,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   download(): void {
-    /*
-    this.downloadData = this.sanitizer.bypassSecurityTrustUrl(
-      this.drawLayer.toDataUrl()
-    );*/
-  }
-
-  getDownloadFileNameCSV() {
-    return 'zskarte_' + new Date().toISOString() + '.csv';
-  }
-
-  downloadCSV(): void {
-    /*
-    this.downloadCSVData = this.sanitizer.bypassSecurityTrustUrl(
-      this.drawLayer.toCSVDataUrl()
-    );*/
+    this.downloadData = this.sanitizer.bypassSecurityTrustUrl(this.zsMapStateService.exportMap());
   }
 
   print(): void {
@@ -239,18 +221,9 @@ export class ToolbarComponent implements OnInit {
       .afterClosed()
       .subscribe((confirmed) => {
         if (confirmed) {
-          //this.drawLayer.removeAll();
+          this.zsMapStateService.reset();
         }
       });
-  }
-
-  tagState(): void {
-    const dialogRef = this.dialog.open(TagStateComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        //this.mapStore.setTag(result).then(() => {});
-      }
-    });
   }
 
   setLocale(locale: string) {
