@@ -25,6 +25,7 @@ export class AppComponent {
   }
 
   public defaultMap: IZsMapState = {
+    version: 1,
     id: 'testid',
     center: [849861.97, 5905812.55],
     source: ZsMapStateSource.OPEN_STREET_MAP,
