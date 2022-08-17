@@ -46,6 +46,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _positionFlag!: Feature;
   private _positionFlagLocation!: Point;
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
+  private _allLayers: VectorLayer<VectorSource>[] = [];
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
   private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
@@ -68,6 +69,7 @@ export class MapRendererComponent implements AfterViewInit {
       style: (feature, resolution) => {
         return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
+      layers: this._allLayers,
     });
     select.on('select', (event) => {
       this._modifyCache.clear();
@@ -237,6 +239,7 @@ export class MapRendererComponent implements AfterViewInit {
         for (const layer of layers) {
           if (!this._layerCache[layer.getId()]) {
             this._layerCache[layer.getId()] = layer;
+            this._allLayers.push(layer.getOlLayer());
             this._map.addLayer(layer.getOlLayer());
           }
         }
@@ -312,8 +315,7 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   areFeaturesModifiable() {
-    return this._modifyCache.getArray()
-      .every((feature) => feature && feature.get('sig') && !feature.get('sig').protected)
+    return this._modifyCache.getArray().every((feature) => feature && feature.get('sig') && !feature.get('sig').protected);
   }
 
   zoomIn() {
