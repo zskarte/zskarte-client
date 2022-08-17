@@ -1,5 +1,10 @@
 import { Feature } from 'ol';
-import { ZsMapDrawElementStateType, ZsMapSymbolDrawElementState, ZsMapTextDrawElementState } from '../../state/interfaces';
+import {
+  ZsMapDrawElementStateType,
+  ZsMapElementToDraw,
+  ZsMapSymbolDrawElementState,
+  ZsMapTextDrawElementState,
+} from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { Polygon } from 'ol/geom';
@@ -41,12 +46,12 @@ export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawE
   protected static override _getOlDrawType(): Type {
     return 'Polygon';
   }
-  protected static override _parseFeature(feature: Feature<Polygon>, state: ZsMapStateService, layer: string): void {
+  protected static override _parseFeature(feature: Feature<Polygon>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
     state.addDrawElement({
       type: ZsMapDrawElementStateType.POLYGON,
       // TODO types
       coordinates: (feature.getGeometry()?.getCoordinates() as any) || [],
-      layer,
+      layer: element.layer,
     });
   }
 }

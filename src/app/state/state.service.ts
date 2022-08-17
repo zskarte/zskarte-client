@@ -79,7 +79,9 @@ export class ZsMapStateService {
       const dialogRef = this.drawDialog.open(DrawingDialogComponent);
 
       dialogRef.afterClosed().subscribe((result: Sign) => {
-        this._elementToDraw.next({ type, layer, symbolId: result.id });
+        if (result) {
+          this._elementToDraw.next({ type, layer, symbolId: result.id });
+        }
       });
     } else if (type === ZsMapDrawElementStateType.TEXT) {
       const dialogRef = this.textDialog.open(TextDialogComponent, {
@@ -87,7 +89,9 @@ export class ZsMapStateService {
         maxHeight: '70vh',
       });
       dialogRef.afterClosed().subscribe((result) => {
-        this._elementToDraw.next({ type, layer, text: result });
+        if (result) {
+          this._elementToDraw.next({ type, layer, text: result });
+        }
       });
     } else {
       this._elementToDraw.next({ type, layer });

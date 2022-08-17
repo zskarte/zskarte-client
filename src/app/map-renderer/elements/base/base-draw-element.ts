@@ -85,7 +85,7 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
       }),
     );
     draw.on('drawend', (event) => {
-      this._parseFeature(event.feature, state, element.layer, element.symbolId);
+      this._parseFeature(event.feature, state, element);
     });
     return draw;
   }
@@ -95,8 +95,8 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
   protected static _enhanceOlDrawOptions(options: Options) {
     return options;
   }
-  protected static _parseFeature(event: Feature<Geometry>, state: ZsMapStateService, layer: string, symbolId?: number): void {
-    console.log('static fn _parseFeature is not implemented', { event, state, layer, symbolId });
+  protected static _parseFeature(event: Feature<Geometry>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
+    console.log('static fn _parseFeature is not implemented', { event, state, element });
     throw new Error('static fn _parseFeature is not implemented');
   }
 }
