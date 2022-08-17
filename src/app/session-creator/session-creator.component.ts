@@ -44,6 +44,7 @@ export class SessionCreatorComponent implements OnInit {
       this.session = {
         title: '',
         uuid: uuidv4(),
+        isGuest: true,
         zsoId: defaultZSO ? defaultZSO.id : '',
         startDateTime: new Date(),
       };

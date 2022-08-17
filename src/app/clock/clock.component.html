@@ -1,5 +1,5 @@
 <div class="flexContainer">
-  <div class="timeLeft" *ngIf="doCheckTimeout !== 0">
+  <div class="timeLeft" *ngIf="session.observeIsGuest() | async">
     <div
       class="flexContainer"
       mat-raised-button
@@ -8,17 +8,13 @@
       matTooltipPosition="below"
       matTooltipHideDelay="100"
     >
-      <mat-progress-spinner
-        class="spinner"
-        color="primary"
-        mode="determinate"
-        diameter="35"
-        [value]="timerProgressValue"
-      >
-      </mat-progress-spinner>
-      <div class="overlay">
-        <strong class="timer">{{ sessionTimeLeft }}</strong>
-      </div>
+      <ng-container *ngIf="timerProgress | async as progress">
+        <mat-progress-spinner class="spinner" color="primary" mode="determinate" diameter="35" [value]="progress.percentage">
+        </mat-progress-spinner>
+        <div class="overlay">
+          <strong>{{ progress.text }}</strong>
+        </div>
+      </ng-container>
     </div>
   </div>
   <div class="flexColumn">

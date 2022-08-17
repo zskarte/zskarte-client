@@ -47,6 +47,7 @@ import { ExportDialogComponent } from './export-dialog/export-dialog.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
+import {CreditsComponent} from "./credits/credits.component";
 registerLocaleData(localeCH);
 
 @NgModule({
@@ -68,6 +69,7 @@ registerLocaleData(localeCH);
     DrawingDialogComponent,
     TextDialogComponent,
     ExportDialogComponent,
+    CreditsComponent,
   ],
   imports: [
     BrowserModule,

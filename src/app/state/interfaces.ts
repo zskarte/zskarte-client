@@ -15,6 +15,7 @@ export interface IZsMapSaveFileState {
 }
 
 export interface IZsMapState {
+  version: number;
   id: string;
   name?: string;
   source: ZsMapStateSource;
@@ -34,6 +35,7 @@ export enum ZsMapDisplayMode {
 }
 
 export interface IZsMapDisplayState {
+  version: number;
   displayMode: ZsMapDisplayMode;
   mapOpacity: number;
   mapCenter: number[];

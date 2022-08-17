@@ -59,6 +59,7 @@ export class ZsMapStateService {
 
   private _getDefaultDisplayState(): IZsMapDisplayState {
     return {
+      version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
       positionFlag: { coordinates: [0, 0], isVisible: false },
