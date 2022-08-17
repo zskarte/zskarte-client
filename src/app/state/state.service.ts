@@ -50,6 +50,7 @@ export class ZsMapStateService {
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
   private _reorderMode = new BehaviorSubject<boolean>(false);
+  private _drawHoleMode = new BehaviorSubject<boolean>(false);
 
   constructor(private drawDialog: MatDialog, private textDialog: MatDialog) {}
 
@@ -624,6 +625,18 @@ export class ZsMapStateService {
 
   public setMergeMode(mergeMode: boolean) {
     this._mergeMode.next(mergeMode);
+  }
+
+  public observeMergeMode(): Observable<boolean> {
+    return this._mergeMode.asObservable();
+  }
+
+  public observeSplitMode(): Observable<boolean> {
+    return this._splitMode.asObservable();
+  }
+
+  public observeDrawHoleMode(): Observable<boolean> {
+    return this._drawHoleMode.asObservable();
   }
 
   public setSplitMode(splitMode: boolean) {

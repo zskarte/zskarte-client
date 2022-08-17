@@ -28,8 +28,8 @@ export class SelectedFeatureComponent {
   editMode: Observable<boolean>;
   selectedFeature: Observable<Feature | null>;
   selectedSignature: Sign | null = null;
-  drawHoleMode = false;
-  mergeMode = false;
+  drawHoleMode: Observable<boolean>;
+  mergeMode: Observable<boolean>;
 
   quickColors = [
     {
@@ -49,8 +49,6 @@ export class SelectedFeatureComponent {
       viewValue: 'effects',
     },
   ];
-
-  colorPicker = false;
 
   constructor(public dialog: MatDialog, public i18n: I18NService, public zsMapStateService: ZsMapStateService) {
     this.selectedFeature = this.zsMapStateService.observeSelectedFeature();
@@ -73,17 +71,11 @@ export class SelectedFeatureComponent {
       .observeDisplayState()
       .pipe(map((displayState) => displayState.displayMode === ZsMapDisplayMode.DRAW));
 
-    /*
-    this.sharedState.drawHoleMode.subscribe(
-      (drawHoleMode) => (this.drawHoleMode = drawHoleMode)
-    );
-    this.sharedState.mergeMode.subscribe((m) => {
-      this.mergeMode = m;
-    });*/
+    this.drawHoleMode = this.zsMapStateService.observeDrawHoleMode();
+    this.mergeMode = this.zsMapStateService.observeMergeMode();
   }
 
   get featureGroups() {
-    // @ts-ignore
     return this.groupedFeatures ? Object.values(this.groupedFeatures).sort((a: any, b: any) => a.label.localeCompare(b.label)) : null;
   }
 
@@ -102,10 +94,6 @@ export class SelectedFeatureComponent {
     const isPolygon = await this.isPolygon();
     const point = <Point>feature?.getGeometry();
     return isPolygon && this.selectedFeature != null && point?.getCoordinates().length > 1;
-  }
-
-  toggleColorSelection() {
-    this.colorPicker = !this.colorPicker;
   }
 
   /*

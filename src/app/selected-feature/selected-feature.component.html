@@ -107,17 +107,7 @@
             </div>
           </div>
 
-          <mat-form-field *ngIf="editMode && colorPicker">
-            <mat-label>{{ i18n.get('color') }}:</mat-label>
-            <input
-              matInput
-              type="color"
-              name="color"
-              [(ngModel)]="selectedSignature.color"
-              (ngModelChange)="redraw()"
-            />
-          </mat-form-field>
-          <mat-form-field *ngIf="editMode && !colorPicker">
+          <mat-form-field *ngIf="editMode | async">
             <mat-label>{{ i18n.get('color') }}:</mat-label>
             <mat-select
               [(ngModel)]="selectedSignature.color"
@@ -138,14 +128,6 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-slide-toggle
-            *ngIf="editMode"
-            (toggleChange)="toggleColorSelection()"
-            [checked]="colorPicker"
-          >
-            {{ i18n.get('colorPickerMode') }}
-          </mat-slide-toggle>
-          <br />
           <mat-checkbox
             [(ngModel)]="selectedSignature.protected"
             (ngModelChange)="toggleLockOfFeature()"
@@ -505,13 +487,15 @@
           <i class="material-icons">vignette</i
           ><span>{{ i18n.get('drawHole') }}</span>
         </button>
+        <!--
         <button
           mat-flat-button
           (click)="editCoordinates()"
+          *ngIf="!sharedState.defineCoordinates.getValue()"
         >
           <i class="material-icons">format_shapes</i
           ><span>{{ i18n.get('defineCoordinates') }}</span>
-        </button>
+        </button>-->
       </mat-expansion-panel>
     </div>
     <button
