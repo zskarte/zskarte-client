@@ -2,19 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, lastValueFrom, map, Observable } from 'rxjs';
 import { db } from '../db/db';
-import { IAuthResult, IZsMapSession } from './session.interfaces';
+import { IAuthResult, IZsMapSession, IZso } from './session.interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
-import { environment } from '../../environments/environment';
+import { ApiService } from '../api/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
-  private _apiUrl = environment.apiUrl;
   private _session = new BehaviorSubject<IZsMapSession | undefined>(undefined);
 
-  constructor(private _http: HttpClient, private _router: Router) {}
+  constructor(private _http: HttpClient, private _router: Router, private _api: ApiService) {}
 
   public async loadSavedSession(): Promise<void> {
     const sessions = await db.table('session').toArray();
@@ -29,7 +28,7 @@ export class SessionService {
   }
 
   public async login(params: { identifier: string; password: string }): Promise<void> {
-    const result = await lastValueFrom(this._http.post<IAuthResult>(`${this._apiUrl}/api/auth/local`, params));
+    const result = await this._api.post<IAuthResult>('/api/auth/local', params);
     const session: IZsMapSession = { id: uuidv4(), auth: result };
     this._session.next(session);
     await db.table('session').put(session);

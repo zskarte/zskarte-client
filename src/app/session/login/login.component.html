@@ -1,6 +1,15 @@
 <form class="login-form">
   <mat-form-field class="example-full-width" appearance="fill">
-    <mat-label>E-Mail / Benutzername</mat-label>
+    <mat-label>ZSO</mat-label>
+    <input type="text" placeholder="ZSO auswählen" aria-label="Number" matInput [matAutocomplete]="auto" />
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+      <mat-option *ngFor="let option of organizations | async" [value]="option.identifier">
+        {{ option.name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>ZSO</mat-label>
     <input matInput [(ngModel)]="identifier" name="identifier" />
   </mat-form-field>
 

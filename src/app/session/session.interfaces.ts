@@ -3,6 +3,11 @@ export interface IZsMapSession {
   auth: IAuthResult;
 }
 
+export interface IZso {
+  name: string;
+  identifier: string;
+}
+
 export interface IAuthResult {
   jwt: string;
   user: {
