@@ -5,7 +5,7 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class SessionsService {
+export class SessionService {
   private _session = new BehaviorSubject<IZsSession>(this._getDefaultSession());
 
   public saveSession(session: IZsSession) {

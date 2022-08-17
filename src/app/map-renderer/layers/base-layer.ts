@@ -10,9 +10,8 @@ import { DrawStyle } from '../draw-style';
 export abstract class ZsMapBaseLayer {
   protected _layer: Observable<ZsMapLayerState | undefined>;
   protected _olSource = new VectorSource();
-  // TODO types
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected _olLayer: VectorLayer<any> = new VectorLayer({
+
+  protected _olLayer: VectorLayer<VectorSource> = new VectorLayer({
     source: this._olSource,
     style: (feature, resolution) => {
       return DrawStyle.styleFunction(feature, resolution);
@@ -47,14 +46,12 @@ export abstract class ZsMapBaseLayer {
     return this._id;
   }
 
-  // TODO types
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public getOlLayer(): VectorLayer<any> {
+  public getOlLayer(): VectorLayer<VectorSource> {
     return this._olLayer;
   }
 
   public addOlFeature(feature: Feature): void {
-    console.log('add feature', feature)
+    console.log('add feature', feature);
     this._olSource.addFeature(feature);
   }
 

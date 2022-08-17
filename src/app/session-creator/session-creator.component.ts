@@ -6,7 +6,7 @@ import { Md5 } from 'ts-md5';
 import { I18NService, LOCALES } from '../state/i18n.service';
 import { IZsSession } from '../core/entity/session';
 import { getZSOById, LIST_OF_ZSO, ZSO } from '../core/entity/zso';
-import { SessionsService } from '../state/sessions.service';
+import { SessionService } from '../state/session.service';
 import { ZsMapStateService } from '../state/state.service';
 import { PreferencesService } from '../state/preferences.service';
 
@@ -31,7 +31,7 @@ export class SessionCreatorComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public i18n: I18NService,
-    private sessions: SessionsService,
+    private sessions: SessionService,
     public dialogRef: MatDialogRef<SessionCreatorComponent>,
     public dialog: MatDialog,
     public zsMapStateService: ZsMapStateService,

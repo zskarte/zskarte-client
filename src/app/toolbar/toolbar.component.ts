@@ -11,9 +11,9 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { PreferencesService } from '../state/preferences.service';
-import { SessionsService } from '../state/sessions.service';
+import { SessionService } from '../state/session.service';
 import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
-import {TagStateComponent} from "../tag-state/tag-state.component";
+import { TagStateComponent } from '../tag-state/tag-state.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -38,7 +38,7 @@ export class ToolbarComponent implements OnInit {
     private sanitizer: DomSanitizer,
     public zsMapStateService: ZsMapStateService,
     public preferences: PreferencesService,
-    private sessions: SessionsService,
+    private sessions: SessionService,
   ) {
     this.session = this.zsMapStateService.observeSession();
     this.historyMode = this.zsMapStateService

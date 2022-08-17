@@ -70,7 +70,6 @@ export interface IZsMapDrawLayerState extends IZsMapBaseLayerState {
 
 export interface IZsMapGeoDataLayerState extends IZsMapBaseLayerState {
   type: ZsMapLayerStateType.GEO_DATA;
-  // TODO additional props
 }
 
 export enum ZsMapDrawElementStateType {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import produce, { enablePatches, Patch } from 'immer';
+import produce, { Patch } from 'immer';
 import {
   IPositionFlag,
   IZsMapDisplayState,
@@ -28,9 +28,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
 import { Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
-
-// TODO move this to right position
-enablePatches();
 
 @Injectable({
   providedIn: 'root',
@@ -279,18 +276,20 @@ export class ZsMapStateService {
       map((o) => {
         if (o?.layers) {
           const layers: ZsMapBaseLayer[] = [];
+          const cache = {};
           for (const i of o.layers) {
             if (i.id) {
               if (this._layerCache[i.id]) {
                 layers.push(this._layerCache[i.id]);
+                cache[i.id] = this._layerCache[i.id];
               } else {
                 const layer = new ZsMapDrawLayer(i.id, this);
-                this._layerCache[i.id] = layer;
                 layers.push(layer);
+                cache[i.id] = layer;
               }
             }
           }
-          // TODO update cache
+          this._layerCache = cache;
           return layers;
         }
         return [];
@@ -308,7 +307,8 @@ export class ZsMapStateService {
   private _addLayer(layer: ZsMapLayerState): void {
     layer.id = uuidv4();
     if (!layer.name) {
-      layer.name = 'Layer ' + layer.id; // TODO count
+      const layerCount = (this._map.value.layers?.length || 0) + 1;
+      layer.name = 'Layer ' + layerCount;
     }
     this.updateMapState((draft) => {
       if (!draft.layers) {
@@ -390,15 +390,21 @@ export class ZsMapStateService {
     this.setFeatureOpacity(index, opacity);
   }
 
+  public getActiveLayerState(): ZsMapLayerState | undefined {
+    return this._map.value.layers?.find((layer) => layer.id === this._display.value.activeLayer);
+  }
+
   public addDrawElement(element: ZsMapDrawElementState): void {
-    element.id = uuidv4();
-    this.updateMapState((draft) => {
-      if (!draft.drawElements) {
-        draft.drawElements = [];
-      }
-      draft.drawElements.push(element);
-    });
-    // TODO check if layer is drawing layer
+    const activeLayerState = this.getActiveLayerState();
+    if (activeLayerState?.type === ZsMapLayerStateType.DRAW) {
+      element.id = uuidv4();
+      this.updateMapState((draft) => {
+        if (!draft.drawElements) {
+          draft.drawElements = [];
+        }
+        draft.drawElements.push(element);
+      });
+    }
   }
 
   public getDrawElementState(id: string): ZsMapDrawElementState | undefined {
@@ -410,18 +416,20 @@ export class ZsMapStateService {
       map((o) => {
         if (o?.drawElements) {
           const elements: ZsMapBaseDrawElement[] = [];
+          const cache = {};
           for (const i of o.drawElements) {
             if (i.id) {
               if (this._drawElementCache[i.id]) {
                 elements.push(this._drawElementCache[i.id]);
+                cache[i.id] = this._drawElementCache[i.id];
               } else {
                 const element = DrawElementHelper.createInstance(i.id, this);
-                this._drawElementCache[i.id] = element;
                 elements.push(element);
+                cache[i.id] = element;
               }
             }
           }
-          // TODO update cache
+          this._drawElementCache = cache;
           return elements;
         }
         return [];

@@ -4,7 +4,7 @@ import { ZsMapStateService } from '../state/state.service';
 import { PreferencesService } from '../state/preferences.service';
 import { BehaviorSubject, interval, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
-import { SessionsService } from '../state/sessions.service';
+import { SessionService } from '../state/session.service';
 
 @Component({
   selector: 'app-clock',
@@ -21,7 +21,7 @@ export class ClockComponent {
     public i18n: I18NService,
     public zsMapStateService: ZsMapStateService,
     public preferences: PreferencesService,
-    public session: SessionsService,
+    public session: SessionService,
   ) {
     interval(1000)
       .pipe(takeUntil(this._ngUnsubscribe))
