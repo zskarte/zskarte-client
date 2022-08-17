@@ -7,6 +7,7 @@ import OlTileLayer from 'ol/layer/Tile';
 import OlTileGridWMTS from 'ol/tilegrid/WMTS';
 import OlTileWMTS from 'ol/source/WMTS';
 import { swissProjection } from '../helper/projections';
+import { SessionService } from '../session/session.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,14 +16,15 @@ export class GeoadminService {
   private _featuresCache: GeoFeatures | undefined;
   private _legendCache: any;
 
-  constructor(private http: HttpClient, public i18n: I18NService) {}
+  constructor(private http: HttpClient, public i18n: I18NService, private _session: SessionService) {}
 
   getFeatures(): Observable<GeoFeatures> {
     if (this._featuresCache) {
       return of(this._featuresCache);
     }
+
     return this.http
-      .get<GeoFeatures>(`https://api3.geo.admin.ch/rest/services/api/MapServer/layersConfig?lang=${this.i18n.locale}`)
+      .get<GeoFeatures>(`https://api3.geo.admin.ch/rest/services/api/MapServer/layersConfig?lang=${this._session.getLanguage()}`)
       .pipe(tap((data) => (this._featuresCache = data)));
   }
 
@@ -32,7 +34,9 @@ export class GeoadminService {
     }
 
     return this.http
-      .get(`https://api3.geo.admin.ch/rest/services/api/MapServer/${layerId}/legend?lang=` + this.i18n.locale, { responseType: 'text' })
+      .get(`https://api3.geo.admin.ch/rest/services/api/MapServer/${layerId}/legend?lang=` + this._session.getLanguage(), {
+        responseType: 'text',
+      })
       .pipe(tap((data) => (this._legendCache = data)));
   }
 

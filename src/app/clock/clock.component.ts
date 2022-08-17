@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { I18NService } from '../state/i18n.service';
 import { ZsMapStateService } from '../state/state.service';
-import { PreferencesService } from '../state/preferences.service';
 import { BehaviorSubject, interval, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
-import { SessionService } from '../state/session.service';
+import { SessionService } from '../session/session.service';
 
 @Component({
   selector: 'app-clock',
@@ -17,12 +16,7 @@ export class ClockComponent {
   public timerProgress = new BehaviorSubject({ percentage: 1000, text: '60:00' });
   private _ngUnsubscribe = new Subject();
 
-  constructor(
-    public i18n: I18NService,
-    public zsMapStateService: ZsMapStateService,
-    public preferences: PreferencesService,
-    public session: SessionService,
-  ) {
+  constructor(public i18n: I18NService, public zsMapStateService: ZsMapStateService, public session: SessionService) {
     interval(1000)
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(() => {

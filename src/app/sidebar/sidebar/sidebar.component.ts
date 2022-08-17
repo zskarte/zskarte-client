@@ -10,7 +10,7 @@ import { GeoadminService } from 'src/app/core/geoadmin.service';
 import { GeoFeature } from '../../core/entity/geoFeature';
 import { map, Observable, tap, share, combineLatest, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import {I18NService} from '../../state/i18n.service';
+import { I18NService } from '../../state/i18n.service';
 
 @Component({
   selector: 'app-sidebar',

@@ -24,6 +24,7 @@
     "@angular/platform-browser-dynamic": "^14.1.2",
     "@angular/router": "^14.1.2",
     "@types/geojson": "^7946.0.10",
+    "dexie": "^3.2.2",
     "immer": "^9.0.15",
     "luxon": "^3.0.1",
     "material-icons": "^1.11.10",

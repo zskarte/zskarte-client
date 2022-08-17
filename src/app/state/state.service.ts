@@ -23,7 +23,6 @@ import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-el
 import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 import { GeoFeature } from '../core/entity/geoFeature';
-import { IZsSession } from '../core/entity/session';
 import { MatDialog } from '@angular/material/dialog';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
 import { Sign } from '../core/entity/sign';
@@ -44,8 +43,6 @@ export class ZsMapStateService {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
-
-  private _session = new BehaviorSubject<IZsSession | null>(produce<IZsSession | null>(null, (draft) => draft));
 
   constructor(private drawDialog: MatDialog, private textDialog: MatDialog) {}
 
@@ -474,14 +471,11 @@ export class ZsMapStateService {
   }
 
   public exportMapWithSession(): string {
-    return (
-      'data:text/json;charset=UTF-8,' +
-      encodeURIComponent(JSON.stringify({ map: this._map.value, display: this._display.value, session: this._session.value }))
-    );
+    return 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify({ map: this._map.value, display: this._display.value }));
   }
 
   public exportMapCsv(): string {
-    let lines: string[] = new Array<string>();
+    const lines: string[] = new Array<string>();
     /*
     const result: { features: Feature } = this.writeFeatures();
     const features: Feature[] = result.features;
@@ -526,9 +520,7 @@ export class ZsMapStateService {
       lines.push('"' + row.join('";"') + '"');
     }*/
 
-    return (
-      'data:text/csv;charset=UTF-8,' + encodeURIComponent(lines.join('\r\n'))
-    );
+    return 'data:text/csv;charset=UTF-8,' + encodeURIComponent(lines.join('\r\n'));
   }
 
   public loadSaveFileState(state: IZsMapSaveFileState): void {
@@ -547,17 +539,5 @@ export class ZsMapStateService {
       map((o) => o?.sidebarContext),
       distinctUntilChanged((x, y) => x === y),
     );
-  }
-
-  public observeSession(): Observable<IZsSession | null> {
-    return this._session.asObservable();
-  }
-
-  public getCurrentSession(): IZsSession | null {
-    return this._session.value;
-  }
-
-  public loadSession(session: IZsSession | null) {
-    this._session.next(session);
   }
 }
