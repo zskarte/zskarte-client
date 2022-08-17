@@ -8,7 +8,6 @@ import { Type } from 'ol/geom/Geometry';
 import { checkCoordinates } from '../../helper/coordinates';
 import { StyleLike } from 'ol/style/Style';
 import { Signs } from '../signs';
-import { DrawStyle } from '../draw-style';
 
 export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDrawElementState> {
   protected _olGeometryItem!: SimpleGeometry;
@@ -42,24 +41,6 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
 
     this._olFeature.setGeometry(this._olGeometryItem);
     this._olFeature.set('sig', Signs.getSignById(element.symbolId));
-    this._olFeature.setStyle((feature, resolution) => {
-      return DrawStyle.styleFunction(feature, resolution);
-    });
-
-    // (this._olStyles as Style[]).push(
-    //   new Style({
-    //     image: new RegularShape({
-    //       fill: new Fill({ color: 'red' }),
-    //       points: 4,
-    //       radius: 10,
-    //       angle: Math.PI / 4,
-    //     }),
-    //   }),
-    // );
-    // this._olFeature.setStyle((feature, resolution) => {
-    //   const x = DrawStyle.styleFunction(feature, resolution);
-    //   return x;
-    // });
     // handle changes on the map, eg. translate
     this._olFeature.on('change', () => {
       this.setCoordinates(this._olGeometryItem?.getCoordinates() ?? []);

@@ -2,9 +2,7 @@
   <div class="flexContainer alignCenter">
     <div class="credits">
       <div class="flexContainer">
-        <!--
         <app-credits></app-credits>
-        -->
       </div>
     </div>
     <div class="tools">
@@ -14,11 +12,6 @@
           <app-geocoder
             style="flex: 1; margin-top: -0.08em"
           ></app-geocoder>
-        </div>
-        <div>
-          <!--
-          <app-recently-used></app-recently-used>
-          -->
         </div>
         <div class="right-header">
           <div class="clock">
@@ -105,7 +98,7 @@
             >
             {{ i18n.get('importMap') }}
           </button>
-          <button mat-menu-item (click)="clear()">
+          <button mat-menu-item (click)="clear()" *ngIf="!(historyMode | async)">
             <mat-icon
               aria-hidden="false"
               [attr.aria-label]="i18n.get('deleteMap')"
@@ -114,19 +107,6 @@
             {{ i18n.get('deleteMap') }}
           </button>
           <mat-divider></mat-divider>
-          <button
-            mat-menu-item
-            class="tools-menu-item"
-            (click)="tagState()"
-            *ngIf="!(historyMode | async)"
-          >
-            <mat-icon
-              aria-hidden="false"
-              [attr.aria-label]="i18n.get('tagState')"
-              >note</mat-icon
-            >
-            {{ i18n.get('tagState') }}
-          </button>
           <button
             mat-menu-item
             class="tools-menu-item"
@@ -150,20 +130,6 @@
             >
             {{ i18n.get('print') }}
           </button>
-          <a
-            mat-menu-item
-            [download]="getDownloadFileNameCSV()"
-            id="exportCSV"
-            class="tools-menu-item"
-            (click)="downloadCSV()"
-            [href]="downloadCSVData"
-            ><mat-icon
-              aria-hidden="false"
-              [attr.aria-label]="i18n.get('downloadMapCSV')"
-              >save</mat-icon
-            >
-            {{ i18n.get('downloadMapCSV') }}</a
-          >
           <button mat-menu-item (click)="help()">
             <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('help')"
               >help</mat-icon

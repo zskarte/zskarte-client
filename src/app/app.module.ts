@@ -39,14 +39,15 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
 import { SessionCreatorComponent } from './session-creator/session-creator.component';
 import { GeocoderComponent } from './geocoder/geocoder.component';
 import { ImportDialogComponent } from './import-dialog/import-dialog.component';
-import { TagStateComponent } from './tag-state/tag-state.component';
 import { ClockComponent } from './clock/clock.component';
 import { FabMenuComponent } from './fab-menu/fab-menu.component';
 import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
+import { ExportDialogComponent } from './export-dialog/export-dialog.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
+import {CreditsComponent} from "./credits/credits.component";
 registerLocaleData(localeCH);
 
 @NgModule({
@@ -59,7 +60,6 @@ registerLocaleData(localeCH);
     SessionCreatorComponent,
     GeocoderComponent,
     ImportDialogComponent,
-    TagStateComponent,
     ClockComponent,
     // sidebar
     SidebarComponent,
@@ -68,6 +68,8 @@ registerLocaleData(localeCH);
     FabMenuComponent,
     DrawingDialogComponent,
     TextDialogComponent,
+    ExportDialogComponent,
+    CreditsComponent,
   ],
   imports: [
     BrowserModule,

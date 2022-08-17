@@ -1,0 +1,17 @@
+.credits {
+  height: 100%;
+  display: inline-block;
+}
+
+.credits a {
+  color: white;
+}
+
+.credits img {
+  height: 100%;
+}
+
+.credits span {
+  margin: 0.5em;
+  display: inline-block;
+}

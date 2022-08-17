@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Draw, Select, Translate, defaults } from 'ol/interaction';
+import { Draw, Select, Translate, defaults, Modify } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
@@ -17,7 +17,7 @@ import { I18NService } from '../state/i18n.service';
 import { SidebarContext } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { Feature } from 'ol';
+import { Collection, Feature } from 'ol';
 import { Point } from 'ol/geom';
 import { Icon, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
@@ -47,6 +47,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
   private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
+  private _modifyCache = new Collection<Feature>([]);
 
   constructor(private _state: ZsMapStateService, public i18n: I18NService, private geoAdminService: GeoadminService) {}
 
@@ -64,7 +65,9 @@ export class MapRendererComponent implements AfterViewInit {
       },
     });
     select.on('select', (event) => {
+      this._modifyCache.clear();
       for (const feature of event.selected) {
+        this._modifyCache.push(feature);
         console.log('selected element', {
           isDrawElement: feature.get(ZsMapOLFeatureProps.IS_DRAW_ELEMENT),
           type: feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE),
@@ -72,6 +75,17 @@ export class MapRendererComponent implements AfterViewInit {
         });
         // TODO write to display state selectedDrawElements
       }
+    });
+
+    const modify = new Modify({
+      features: this._modifyCache,
+      condition: () => {
+        if (modify['vertexFeature_'] && modify['lastPointerEvent_'] && this.areFeaturesModifiable()) {
+          // todo toggle edit buttons
+          return true;
+        }
+        return false;
+      },
     });
 
     // TODO
@@ -92,7 +106,7 @@ export class MapRendererComponent implements AfterViewInit {
         doubleClickZoom: false,
         pinchRotate: false,
         shiftDragZoom: false,
-      }).extend([select, translate]),
+      }).extend([select, translate, modify]),
     });
 
     this._positionFlagLocation = new Point([0, 0]);
@@ -264,6 +278,11 @@ export class MapRendererComponent implements AfterViewInit {
       this._positionFlagLocation.setCoordinates(positionFlag.coordinates);
       this._positionFlag.changed();
     });
+  }
+
+  areFeaturesModifiable() {
+    return this._modifyCache.getArray()
+      .every((feature) => feature && feature.get('sig') && !feature.get('sig').protected)
   }
 
   zoomIn() {
