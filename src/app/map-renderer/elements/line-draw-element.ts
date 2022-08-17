@@ -23,6 +23,11 @@ export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
   protected _initialize(element: IZsMapBaseDrawElementState): void {
     this._olLine = new LineString(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olLine);
+    this._olFeature.set('sig', {
+      type: 'LineString',
+      src: null,
+      filterValue: 'not_labeled_line',
+    });
     this._olFeature.on('change', () => {
       this.setCoordinates(this._olLine.getCoordinates());
     });
