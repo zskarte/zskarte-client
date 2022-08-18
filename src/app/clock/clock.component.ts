@@ -38,7 +38,6 @@ export class ClockComponent {
             percentage: (100 / this._durationInSeconds) * countdown,
             text: `${mins.padStart(2, '0')}:${secs.padStart(2, '0')}`,
           });
-          console.log();
           return `${mins.padStart(2, '0')}:${secs.padStart(2, '0')}`;
         },
         complete: () => {
