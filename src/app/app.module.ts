@@ -42,6 +42,7 @@ import { FabMenuComponent } from './fab-menu/fab-menu.component';
 import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
 import { ExportDialogComponent } from './export-dialog/export-dialog.component';
+import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filters.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
@@ -57,7 +58,6 @@ export function appFactory(session: SessionService) {
     await session.loadSavedSession();
   };
 }
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,7 +70,7 @@ export function appFactory(session: SessionService) {
     ClockComponent,
     // sidebar
     SidebarComponent,
-    // SidebarFiltersComponent,
+    SidebarFiltersComponent,
     MapLegendDisplayComponent,
     FabMenuComponent,
     DrawingDialogComponent,

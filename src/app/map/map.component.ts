@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { Observable, map } from 'rxjs';
 import { IpcService } from '../ipc/ipc.service';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
-import { ZsMapStateSource, ZsMapDrawElementStateType, IZsMapState } from '../state/interfaces';
+import { ZsMapStateSource, ZsMapDrawElementStateType, IZsMapState, SidebarContext } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 
 @Component({
@@ -14,12 +14,13 @@ import { ZsMapStateService } from '../state/state.service';
 export class MapComponent {
   ZsMapStateSource = ZsMapStateSource;
   ZsMapDrawElementStateType = ZsMapDrawElementStateType;
-  sidebarOpen$: Observable<boolean>;
+  sidebarContext = SidebarContext;
+  sidebarContext$: Observable<SidebarContext | null>;
   activeLayer$: Observable<ZsMapBaseLayer | undefined>;
 
   constructor(public state: ZsMapStateService, public ipc: IpcService) {
     state.addDrawLayer();
-    this.sidebarOpen$ = state.observeSidebarContext().pipe(map((context) => (context === null ? false : true)));
+    this.sidebarContext$ = state.observeSidebarContext();
     this.activeLayer$ = state.observeActiveLayer();
   }
 

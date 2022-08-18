@@ -49,6 +49,7 @@ export interface IZsMapDisplayState {
   features: GeoFeature[];
   sidebarContext: SidebarContext | null;
   positionFlag: IPositionFlag;
+  hiddenSymbols: number[];
 }
 
 export type ZsMapLayerState = IZsMapDrawLayerState | IZsMapGeoDataLayerState;

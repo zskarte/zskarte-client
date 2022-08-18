@@ -27,6 +27,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
 import { Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
+import { Signs } from '../map-renderer/signs';
 
 @Injectable({
   providedIn: 'root',
@@ -67,6 +68,7 @@ export class ZsMapStateService {
       elementOpacity: {},
       features: [],
       sidebarContext: null,
+      hiddenSymbols: [],
     };
   }
 
@@ -541,6 +543,51 @@ export class ZsMapStateService {
   public observeSidebarContext(): Observable<SidebarContext | null> {
     return this._display.pipe(
       map((o) => o?.sidebarContext),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public filterCategory(category: string) {
+    this.updateDisplayState((draft) => {
+      const ids = Signs.SIGNS.filter((s) => s.kat === category).map((symbol) => symbol.id);
+
+      ids.forEach((id) => {
+        if (!id) return;
+        this.toggleInArray(draft.hiddenSymbols, id);
+      });
+    });
+  }
+
+  public filterAllSymbols(active: boolean) {
+    this.updateDisplayState((draft) => {
+      draft.hiddenSymbols = active ? Signs.SIGNS.map((s) => s.id!) : [];
+    });
+  }
+
+  public toggleSymbol(symbolId?: number) {
+    if (!symbolId) {
+      return;
+    }
+
+    this.updateDisplayState((draft) => {
+      this.toggleInArray(draft.hiddenSymbols, symbolId);
+    });
+  }
+
+  private toggleInArray(symbols: number[], id: number) {
+    const index = symbols.indexOf(id);
+    if (index > -1) {
+      symbols.splice(index, 1);
+    } else {
+      symbols.push(id);
+    }
+  }
+
+  public observeHiddenSymbols() {
+    return this._display.pipe(
+      map((o) => {
+        return o?.hiddenSymbols;
+      }),
       distinctUntilChanged((x, y) => x === y),
     );
   }

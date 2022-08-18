@@ -3,8 +3,9 @@
     <app-toolbar></app-toolbar>
   </div>
   <mat-sidenav-container style="flex: 1">
-    <mat-sidenav position="end" mode="side" #sidenav style="width: 350px" [opened]="sidebarOpen$ | async">
-      <app-sidebar></app-sidebar>
+    <mat-sidenav position="end" mode="side" #sidenav style="width: 350px" [opened]="(sidebarContext$ | async) !== null">
+        <app-sidebar [hidden]="(sidebarContext$ | async) === sidebarContext.Filters"></app-sidebar>
+        <app-sidebar-filters [hidden]="(sidebarContext$ | async) === sidebarContext.Layers"></app-sidebar-filters>
     </mat-sidenav>
     <mat-sidenav-content>
       <div class="map">
