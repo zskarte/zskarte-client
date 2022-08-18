@@ -33,7 +33,6 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MapLegendDisplayComponent } from './sidebar/map-legend-display/map-legend-display.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HelpComponent } from './help/help.component';
-import { Nl2BrPipeModule } from 'nl2br-pipe';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { GeocoderComponent } from './geocoder/geocoder.component';
 import { ImportDialogComponent } from './import-dialog/import-dialog.component';
@@ -111,7 +110,6 @@ export function appFactory(session: SessionService) {
     MatRadioModule,
     MatListModule,
     MatButtonModule,
-    Nl2BrPipeModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-CH' },

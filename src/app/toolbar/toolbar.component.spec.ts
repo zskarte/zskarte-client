@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
-
 import { ToolbarComponent } from './toolbar.component';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -10,13 +9,11 @@ import { FormsModule } from '@angular/forms';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HelpComponent } from '../help/help.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { SessionCreatorComponent } from '../session-creator/session-creator.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Nl2BrPipeModule } from 'nl2br-pipe';
 
 describe('ToolbarComponent', () => {
   let component: ToolbarComponent;
@@ -33,7 +30,6 @@ describe('ToolbarComponent', () => {
         NoopAnimationsModule,
         FormsModule,
         HttpClientTestingModule,
-        Nl2BrPipeModule,
       ],
       providers: [
         {
