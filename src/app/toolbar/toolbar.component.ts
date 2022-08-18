@@ -98,7 +98,7 @@ export class ToolbarComponent {
           .afterClosed()
           .subscribe((confirmed) => {
             if (confirmed) {
-              this.zsMapStateService.loadMapState(JSON.parse(result.value));
+              this.zsMapStateService.setMapState(JSON.parse(result.value));
             }
           });
       }
