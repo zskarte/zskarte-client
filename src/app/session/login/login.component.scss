@@ -12,5 +12,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 300px;
+  width: 80%;
+  max-width: 300px;
+
+  .full-width {
+    width: 100%;
+  }
 }
