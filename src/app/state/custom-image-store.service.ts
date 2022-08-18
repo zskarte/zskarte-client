@@ -80,7 +80,8 @@ export class CustomImageStoreService {
   }
 
   private isValidForCurrentSession(image: any) {
-    return !image.sign.onlyForSessionId || image.sign.onlyForSessionId === this.zsMapStateService.getCurrentSession()?.uuid;
+    // TODO session rewrite to organization id or something
+    return !image.sign.onlyForSessionId || image.sign.onlyForSessionId === 'this.zsMapStateService.getCurrentSession()?.uuid';
   }
 
   public loadSignsInMemory(): Promise<any> {
@@ -92,7 +93,6 @@ export class CustomImageStoreService {
           CustomImageStoreService.inMemoryCache = {};
           images.forEach((image: any) => {
             if (this.isValidForCurrentSession(image)) {
-              // @ts-ignore
               CustomImageStoreService.inMemoryCache[image.sign.src] = image;
             }
           });

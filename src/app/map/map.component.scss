@@ -1,0 +1,28 @@
+.content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+button,
+input {
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.layer {
+  box-sizing: border-box;
+  padding: 12px;
+  border-bottom: 1px solid gray;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+}
+
+.actions button {
+  margin-right: 6px;
+}

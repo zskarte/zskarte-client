@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { PreferencesService } from './preferences.service';
 import { Sign } from '../core/entity/sign';
+import { SessionService } from '../session/session.service';
 
 export const LOCALES: string[] = ['de', 'fr', 'en'];
 export const DEFAULT_LOCALE: string = LOCALES[0];
@@ -10,22 +10,7 @@ export const DEFAULT_LOCALE: string = LOCALES[0];
   providedIn: 'root',
 })
 export class I18NService {
-  constructor(private preferences: PreferencesService) {
-    this.locale = preferences.getLocale();
-  }
-
-  set locale(newLocale: string | null) {
-    this._locale = newLocale ? newLocale : DEFAULT_LOCALE;
-    if (this._locale) {
-      this.preferences.setLocale(this._locale);
-    }
-    this.localeSource.next(this._locale);
-  }
-
-  get locale(): string {
-    return this._locale;
-  }
-
+  constructor(private _session: SessionService) {}
   private static TRANSLATIONS = {
     de: {
       de: 'Deutsch',
@@ -1196,7 +1181,7 @@ export class I18NService {
   public currentLocale = this.localeSource.asObservable();
 
   public getLabelForSign(sign: Sign) {
-    const chosenLang = sign[this.locale];
+    const chosenLang = sign[this._session.getLanguage()];
     if (chosenLang) {
       return chosenLang;
     } else {
@@ -1212,7 +1197,7 @@ export class I18NService {
   public get(key: string): string {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this.locale];
+      const chosenLang = element[this._session.getLanguage()];
       if (chosenLang) {
         return chosenLang;
       } else {
@@ -1228,7 +1213,7 @@ export class I18NService {
   public has(key: string): boolean {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this.locale];
+      const chosenLang = element[this._session.getLanguage()];
       if (chosenLang) {
         return true;
       } else {

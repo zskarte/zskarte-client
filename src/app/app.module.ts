@@ -1,4 +1,4 @@
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { MapRendererComponent } from './map-renderer/map-renderer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SidebarComponent } from './sidebar/sidebar/sidebar.component';
-import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filters.component';
 import { HttpClientModule } from '@angular/common/http';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,7 +35,6 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HelpComponent } from './help/help.component';
 import { Nl2BrPipeModule } from 'nl2br-pipe';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-import { SessionCreatorComponent } from './session-creator/session-creator.component';
 import { GeocoderComponent } from './geocoder/geocoder.component';
 import { ImportDialogComponent } from './import-dialog/import-dialog.component';
 import { ClockComponent } from './clock/clock.component';
@@ -47,8 +45,18 @@ import { ExportDialogComponent } from './export-dialog/export-dialog.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
-import {CreditsComponent} from "./credits/credits.component";
+import { CreditsComponent } from './credits/credits.component';
+import { LoginComponent } from './session/login/login.component';
+import { MapComponent } from './map/map.component';
+import { AppRoutingModule } from './app-routing.module';
+import { SessionService } from './session/session.service';
 registerLocaleData(localeCH);
+
+export function appFactory(session: SessionService) {
+  return async () => {
+    await session.loadSavedSession();
+  };
+}
 
 @NgModule({
   declarations: [
@@ -57,7 +65,6 @@ registerLocaleData(localeCH);
     ToolbarComponent,
     HelpComponent,
     ConfirmationDialogComponent,
-    SessionCreatorComponent,
     GeocoderComponent,
     ImportDialogComponent,
     ClockComponent,
@@ -70,10 +77,13 @@ registerLocaleData(localeCH);
     TextDialogComponent,
     ExportDialogComponent,
     CreditsComponent,
+    LoginComponent,
+    MapComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
     HttpClientModule,
     MatAutocompleteModule,
     FormsModule,
@@ -103,7 +113,15 @@ registerLocaleData(localeCH);
     MatButtonModule,
     Nl2BrPipeModule,
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'de-CH' }],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'de-CH' },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appFactory,
+      deps: [SessionService],
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

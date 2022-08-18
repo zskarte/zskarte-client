@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Session } from 'electron';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Sign, signCategories } from '../core/entity/sign';
 import capitalizeFirstLetter from '../helper/capitalizeFirstLetter';
 import { DrawStyle } from '../map-renderer/draw-style';
 // import { DrawStyle } from '../map-renderer/draw-style';
 import { Signs } from '../map-renderer/signs';
+import { SessionService } from '../session/session.service';
 import { I18NService } from '../state/i18n.service';
 
 @Component({
@@ -23,6 +25,13 @@ export class DrawingDialogComponent implements OnInit {
 
   capitalizeFirstLetter = capitalizeFirstLetter;
 
+  constructor(
+    public dialogRef: MatDialogRef<DrawingDialogComponent>,
+    public i18n: I18NService,
+    public dialog: MatDialog,
+    private _session: SessionService,
+  ) {}
+
   isCustomImage(sign: Sign) {
     return false;
     // return CustomImageStoreService.isCustomImage(sign.src);
@@ -35,8 +44,8 @@ export class DrawingDialogComponent implements OnInit {
     // )
 
     this.allSigns = Signs.SIGNS.sort((a, b) => {
-      let aValue = a[this.i18n.locale];
-      let bValue = b[this.i18n.locale];
+      let aValue = a[this._session.getLanguage()];
+      let bValue = b[this._session.getLanguage()];
       aValue = aValue ? aValue.toLowerCase() : '';
       bValue = bValue ? bValue.toLowerCase() : '';
       return aValue.localeCompare(bValue);
@@ -50,8 +59,6 @@ export class DrawingDialogComponent implements OnInit {
         (!this.filter || this.i18n.getLabelForSign(s).toLowerCase().includes(this.filter)) && (!this.selected || this.selected === s.kat),
     );
   }
-
-  constructor(public dialogRef: MatDialogRef<DrawingDialogComponent>, public i18n: I18NService, public dialog: MatDialog) {}
 
   getImageUrl(file: string) {
     if (file) {

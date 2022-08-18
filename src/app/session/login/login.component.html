@@ -1,0 +1,30 @@
+<form class="login-form">
+  <mat-form-field class="full-width" appearance="fill">
+    <mat-label>ZSO</mat-label>
+    <input
+      type="text"
+      #organizationTrigger
+      placeholder="ZSO auswählen"
+      aria-label="ZSO auswählen"
+      matInput
+      [matAutocomplete]="auto"
+      [ngModel]="organization"
+      (ngModelChange)="filterOrganizations($event)"
+      name="identifier"
+    />
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+      <mat-option
+        *ngFor="let option of filteredOrganizations | async"
+        [value]="option.identifier"
+        (onSelectionChange)="organizationSelected(option)"
+      >
+        {{ option.name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <mat-form-field class="full-width" appearance="fill">
+    <mat-label>Passwort</mat-label>
+    <input matInput type="password" placeholder="Passwort eingeben" [(ngModel)]="password" name="password" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="login()">Login</button>
+</form>

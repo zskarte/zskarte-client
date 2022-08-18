@@ -1,8 +1,9 @@
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { I18NService } from '../state/i18n.service';
 import { ZsMapStateService } from '../state/state.service';
 import { transform } from 'ol/proj';
+import { SessionService } from '../session/session.service';
 
 interface IFoundLocation {
   attrs: IFoundLocationAttrs;
@@ -45,8 +46,13 @@ export class GeocoderComponent {
     }
   }*/
 
-  constructor(private http: HttpClient, public i18n: I18NService, public zsMapStateService: ZsMapStateService) {
-    this.zsMapStateService.observeSession().subscribe((s) => {
+  constructor(
+    private http: HttpClient,
+    public i18n: I18NService,
+    public zsMapStateService: ZsMapStateService,
+    private _session: SessionService,
+  ) {
+    this._session.observeAuthenticated().subscribe(() => {
       this.selected = null;
     });
   }
@@ -132,7 +138,7 @@ export class GeocoderComponent {
   }
 
   getLabel(selected: IFoundLocationAttrs): string {
-    return selected ? selected.label.replace(/<[^>]*>/g, '') : "";
+    return selected ? selected.label.replace(/<[^>]*>/g, '') : '';
   }
 
   geoCodeSelected(event: any) {

@@ -45,7 +45,7 @@ export class ExportDialogComponent implements OnInit {
   }
 
   getDownloadFileName() {
-    return 'zskarte_' + this.zsMapStateService.getCurrentSession()?.uuid + '_' + new Date().toISOString() + '.zsjson';
+    return 'zskarte_' + new Date().toISOString() + '.zsjson';
   }
 
   exportSession(): void {

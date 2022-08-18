@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { I18NService } from '../state/i18n.service';
-import { getZSOById, ZSO } from '../core/entity/zso';
 import { ZsMapStateService } from '../state/state.service';
 
 @Component({
@@ -8,16 +7,6 @@ import { ZsMapStateService } from '../state/state.service';
   templateUrl: './credits.component.html',
   styleUrls: ['./credits.component.css'],
 })
-export class CreditsComponent implements OnInit {
+export class CreditsComponent {
   constructor(public i18n: I18NService, public zsMapStateService: ZsMapStateService) {}
-
-  zso: ZSO | null = null;
-
-  ngOnInit() {
-    this.zsMapStateService.observeSession().subscribe((s) => {
-      if (s) {
-        this.zso = getZSOById(s.zsoId);
-      }
-    });
-  }
 }
