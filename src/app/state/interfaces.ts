@@ -113,6 +113,7 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   fillStyle?: FillStyle;
   fillOpacity?: number;
   fontSize?: number;
+  images?: string[];
 }
 
 export const drawElementDefaults = {

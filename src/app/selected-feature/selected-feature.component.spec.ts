@@ -7,7 +7,6 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 
 import { SelectedFeatureComponent } from './selected-feature.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Nl2BrPipeModule } from 'nl2br-pipe';
 
 describe('SelectedFeatureComponent', () => {
   let component: SelectedFeatureComponent;
@@ -15,7 +14,7 @@ describe('SelectedFeatureComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MatDialogModule, HttpClientTestingModule, Nl2BrPipeModule],
+      imports: [MatDialogModule, HttpClientTestingModule],
       declarations: [
         SelectedFeatureComponent,
         DrawingDialogComponent,

@@ -45,7 +45,7 @@
               <div
                 *ngIf="feature.get('sig').description"
                 class="description"
-                [innerHTML]="feature.get('sig').description | nl2br"
+                [innerHTML]="feature.get('sig').description"
               ></div>
             </mat-expansion-panel>
           </mat-card-content>
@@ -156,25 +156,25 @@
           </mat-card-content>
         </mat-card>
 
-        <mat-expansion-panel *ngIf="(editMode | async) && !selectedSignature.text">
+        <mat-expansion-panel *ngIf="(editMode | async) && !isText(drawElement)">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('description') }}</mat-panel-title>
           </mat-expansion-panel-header>
-          <mat-form-field>
+          <mat-form-field *ngIf="selectedFeature | async as selectedFeature">
             <mat-label>{{ i18n.get('images') }}</mat-label>
             <input type="text" matInput hidden value="-" />
             <div class="images">
-              <div *ngFor="let img of selectedSignature.images">
+              <div *ngFor="let img of drawElement.images">
                 <img
                   [src]="getImageUrl(img)"
                   (click)="openImageDetail(findSigBySrc(img))"
                 /><i
                   class="material-icons removeButton"
-                  (click)="removeImage(img)"
+                  (click)="removeImage(drawElement, selectedFeature, img)"
                   >clear</i
                 >
               </div>
-              <i class="material-icons" (click)="addImage()">add</i>
+              <i class="material-icons" (click)="addImage(drawElement, selectedFeature)">add</i>
             </div>
           </mat-form-field>
 

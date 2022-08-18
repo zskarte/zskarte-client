@@ -234,22 +234,24 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
   }
 
-  addImage() {
-    /*
+  addImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature) {
     const dialogRef = this.dialog.open(DrawingDialogComponent);
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.src) {
-        this.selectedSignature.images.push(result.src);
-        this.redraw();
+        this.updateProperty(drawElement, 'images', [...(drawElement.images ?? []), result.src]);
+        this.zsMapStateService.setSelectedFeature(selectedFeature);
       }
-    });*/
+    });
   }
 
-  removeImage(src: string) {
-    /*
-    this.selectedSignature.images.splice(this.selectedSignature.images.indexOf(src), 1);
-    this.redraw();
-    */
+  removeImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature, src: string) {
+    const images = drawElement.images ?? [];
+    this.updateProperty(
+      drawElement,
+      'images',
+      images.filter((img) => img !== src),
+    );
+    this.zsMapStateService.setSelectedFeature(selectedFeature);
   }
 
   chooseSymbol(drawElement: ZsMapDrawElementState, selectedFeature: Feature) {
