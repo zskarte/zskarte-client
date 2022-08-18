@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { map, takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs/internal/Observable';
-import { IZsMapBaseDrawElementState, ZsMapDisplayMode } from 'src/app/state/interfaces';
+import { ZsMapDisplayMode, ZsMapDrawElementState } from 'src/app/state/interfaces';
 import { combineLatest, Subject } from 'rxjs';
 import { I18NService } from 'src/app/state/i18n.service';
 import capitalizeFirstLetter from 'src/app/helper/capitalizeFirstLetter';
@@ -48,7 +48,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  updateFilterSymbols(elements: ZsMapBaseDrawElement<IZsMapBaseDrawElementState>[], hiddenSymbols: number[]) {
+  updateFilterSymbols(elements: ZsMapBaseDrawElement<ZsMapDrawElementState>[], hiddenSymbols: number[]) {
     const symbols = {};
     if (elements && elements.length > 0) {
       elements.forEach((element) => this.extractSymbol(element.getOlFeature(), symbols));

@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import produce, { Patch } from 'immer';
 import {
+  drawElementDefaults,
   IPositionFlag,
+  IZsMapBaseDrawElementState,
   IZsMapDisplayState,
   IZsMapSaveFileState,
   IZsMapState,
@@ -25,8 +27,10 @@ import { areArraysEqual } from '../helper/array';
 import { GeoFeature } from '../core/entity/geoFeature';
 import { MatDialog } from '@angular/material/dialog';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
-import { Sign } from '../core/entity/sign';
+import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
+import { Signs } from '../map-renderer/signs';
+import Feature from 'ol/Feature';
 
 @Injectable({
   providedIn: 'root',
@@ -44,8 +48,6 @@ export class ZsMapStateService {
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
   private _selectedFeature = new BehaviorSubject<Feature | null>(null);
-
-  private _session = new BehaviorSubject<IZsSession | null>(produce<IZsSession | null>(null, (draft) => draft));
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
@@ -419,12 +421,33 @@ export class ZsMapStateService {
   public addDrawElement(element: ZsMapDrawElementState): void {
     const activeLayerState = this.getActiveLayerState();
     if (activeLayerState?.type === ZsMapLayerStateType.DRAW) {
-      element.id = uuidv4();
+      const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
+      defineDefaultValuesForSignature(sign);
+      const drawElement = {
+        color: sign.color,
+        protected: sign.protected,
+        iconSize: sign.iconSize,
+        hideIcon: sign.hideIcon,
+        iconOffset: sign.iconOffset,
+        flipIcon: sign.flipIcon,
+        rotation: sign.rotation,
+        iconOpacity: sign.iconOpacity,
+        style: sign.style,
+        arrow: sign.arrow,
+        strokeWidth: sign.strokeWidth,
+        fillStyle: { ...sign.fillStyle },
+        fillOpacity: sign.fillOpacity,
+        fontSize: sign.fontSize,
+        id: uuidv4(),
+        nameShow: true,
+        ...element,
+      };
+
       this.updateMapState((draft) => {
         if (!draft.drawElements) {
           draft.drawElements = [];
         }
-        draft.drawElements.push(element);
+        draft.drawElements.push(drawElement as ZsMapDrawElementState);
       });
     }
   }
@@ -437,6 +460,15 @@ export class ZsMapStateService {
     this.updateMapState((draft) => {
       if (draft.drawElements) {
         draft.drawElements.splice(index, 1);
+      }
+    });
+  }
+
+  public updateDrawElementState<T extends keyof ZsMapDrawElementState>(id: string, field: T, value: ZsMapDrawElementState[T]) {
+    this.updateMapState((draft) => {
+      const index = draft.drawElements?.findIndex((e) => e.id === id);
+      if (index !== undefined && index > -1 && draft.drawElements) {
+        draft.drawElements[index][field] = value;
       }
     });
   }

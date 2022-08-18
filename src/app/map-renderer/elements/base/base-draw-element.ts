@@ -1,6 +1,6 @@
 import { Feature } from 'ol';
 import { Observable } from 'rxjs';
-import { IZsMapBaseDrawElementState, ZsMapElementToDraw } from '../../../state/interfaces';
+import { IZsMapBaseDrawElementState, ZsMapDrawElementState, ZsMapElementToDraw } from '../../../state/interfaces';
 import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapBaseElement } from './base-element';
 import { Draw } from 'ol/interaction';
@@ -12,8 +12,11 @@ import { IZsMapDrawElementUi } from './draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
 import { checkCoordinates } from '../../../helper/coordinates';
+import { Signs } from '../../signs';
 
-export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState = IZsMapBaseDrawElementState> extends ZsMapBaseElement<T> {
+export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsMapDrawElementState> extends ZsMapBaseElement<T> {
+  public elementState?: T;
+
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.IS_DRAW_ELEMENT, true);
@@ -25,6 +28,37 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+    this._element.subscribe((element) => {
+      this._setSignatureState(element);
+    });
+  }
+
+  private _setSignatureState(state: T | undefined) {
+    this.elementState = state;
+    if (!state) return;
+    const symbol = Signs.getSignById(state.symbolId) ?? {};
+    const sig = this._olFeature.get('sig');
+    this._olFeature.set('sig', {
+      ...sig,
+      ...symbol,
+      label: state.name,
+      labelShow: state.nameShow,
+      color: state.color,
+      protected: state.protected,
+      iconSize: state.iconSize,
+      hideIcon: state.hideIcon,
+      iconOffset: state.iconOffset,
+      flipIcon: state.flipIcon,
+      rotation: state.rotation,
+      iconOpacity: state.iconOpacity,
+      style: state.style,
+      arrow: state.arrow,
+      strokeWidth: state.strokeWidth,
+      fillStyle: { ...state.fillStyle },
+      fillOpacity: state.fillOpacity,
+      fontSize: state.fontSize,
+      text: state['text'],
+    });
   }
 
   private _doInitialize(element: IZsMapBaseDrawElementState): void {

@@ -1,35 +1,40 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
 import { MatSliderChange } from '@angular/material/slider';
 import { I18NService } from '../state/i18n.service';
-import { defineDefaultValuesForSignature, getColorForCategory, Sign } from '../core/entity/sign';
+import { FillStyle, getColorForCategory, Sign } from '../core/entity/sign';
 import { ZsMapStateService } from '../state/state.service';
 import { Signs } from '../map-renderer/signs';
 import { CustomImageStoreService } from '../state/custom-image-store.service';
 import { DrawStyle } from '../map-renderer/draw-style';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom, Observable, Subject } from 'rxjs';
 import { Feature } from 'ol';
 import { Point } from 'ol/geom';
-import { map } from 'rxjs/operators';
-import { ZsMapDisplayMode } from '../state/interfaces';
+import { map, takeUntil } from 'rxjs/operators';
+import { ZsMapDisplayMode, ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
 import { ZsMapOLFeatureProps } from '../map-renderer/elements/base/ol-feature-props';
 import { EditCoordinatesComponent } from '../edit-coordinates/edit-coordinates.component';
+import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
+import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
 
 @Component({
   selector: 'app-selected-feature',
   templateUrl: './selected-feature.component.html',
   styleUrls: ['./selected-feature.component.css'],
 })
-export class SelectedFeatureComponent {
+export class SelectedFeatureComponent implements OnDestroy {
   groupedFeatures = null;
   editMode: Observable<boolean>;
   selectedFeature: Observable<Feature | null>;
-  selectedSignature: Sign | null = null;
+  selectedSignature: Observable<Sign | undefined>;
+  selectedDrawElement: Observable<ZsMapDrawElementState | undefined>;
   drawHoleMode: Observable<boolean>;
   mergeMode: Observable<boolean>;
+  featureType?: string;
+  private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
+  private _ngUnsubscribe = new Subject<void>();
 
   quickColors = [
     {
@@ -51,49 +56,82 @@ export class SelectedFeatureComponent {
   ];
 
   constructor(public dialog: MatDialog, public i18n: I18NService, public zsMapStateService: ZsMapStateService) {
-    this.selectedFeature = this.zsMapStateService.observeSelectedFeature();
+    this.selectedFeature = this.zsMapStateService.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe));
+    this.selectedDrawElement = this.selectedFeature.pipe(
+      map((feature) => {
+        const id = feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
+        return this._drawElementCache[id]?.elementState;
+      }),
+    );
+    this.selectedSignature = this.selectedFeature.pipe(
+      map((feature) => {
+        const sig = feature?.get('sig');
+        if (sig) {
+          return sig.id ? Signs.getSignById(sig.id) : { ...sig };
+        }
+        return null;
+      }),
+    );
 
     this.selectedFeature.subscribe((feature) => {
       if (feature && feature.get('features')) {
         if (feature.get('features').length === 1) {
           this.groupedFeatures = null;
-          this.activeFeatureSelect(feature.get('features')[0]);
+          this.featureType = feature.get('features')[0].getGeometry()?.getType();
         } else {
           this.groupedFeatures = this.extractFeatureGroups(feature.get('features'));
         }
       } else {
         this.groupedFeatures = null;
-        this.activeFeatureSelect(feature);
+        this.featureType = feature?.getGeometry()?.getType();
       }
     });
 
-    this.editMode = this.zsMapStateService
-      .observeDisplayState()
-      .pipe(map((displayState) => displayState.displayMode === ZsMapDisplayMode.DRAW));
+    this.editMode = this.zsMapStateService.observeDisplayState().pipe(
+      takeUntil(this._ngUnsubscribe),
+      map((displayState) => displayState.displayMode === ZsMapDisplayMode.DRAW),
+    );
 
-    this.drawHoleMode = this.zsMapStateService.observeDrawHoleMode();
-    this.mergeMode = this.zsMapStateService.observeMergeMode();
+    this.zsMapStateService
+      .observeDrawElements()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((drawElements) => {
+        for (const element of drawElements) {
+          if (!this._drawElementCache[element.getId()]) {
+            this._drawElementCache[element.getId()] = element;
+          }
+        }
+      });
+
+    this.drawHoleMode = this.zsMapStateService.observeDrawHoleMode().pipe(takeUntil(this._ngUnsubscribe));
+    this.mergeMode = this.zsMapStateService.observeMergeMode().pipe(takeUntil(this._ngUnsubscribe));
+  }
+
+  public ngOnDestroy(): void {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   get featureGroups() {
     return this.groupedFeatures ? Object.values(this.groupedFeatures).sort((a: any, b: any) => a.label.localeCompare(b.label)) : null;
   }
 
-  async isPolygon() {
-    const feature = await firstValueFrom(this.selectedFeature);
-    return ['Polygon', 'MultiPolygon'].includes(feature?.getGeometry()?.getType() ?? '');
+  isPolygon() {
+    return ['Polygon', 'MultiPolygon'].includes(this.featureType ?? '');
   }
 
-  async isLine() {
-    const feature = await firstValueFrom(this.selectedFeature);
-    return feature?.getGeometry()?.getType() === 'LineString';
+  isLine() {
+    return this.featureType === 'LineString';
+  }
+
+  isText(element: ZsMapDrawElementState) {
+    return element.type === ZsMapDrawElementStateType.TEXT;
   }
 
   async canSplit() {
     const feature = await firstValueFrom(this.selectedFeature);
-    const isPolygon = await this.isPolygon();
     const point = <Point>feature?.getGeometry();
-    return isPolygon && this.selectedFeature != null && point?.getCoordinates().length > 1;
+    return this.isPolygon() && this.selectedFeature != null && point?.getCoordinates().length > 1;
   }
 
   /*
@@ -179,22 +217,21 @@ export class SelectedFeatureComponent {
     // this.sharedState.gotoCoordinate(null);
   }
 
-  private activeFeatureSelect(feature: Feature | null) {
-    this.selectedSignature = feature ? feature.get('sig') : null;
-    if (this.selectedSignature) {
-      defineDefaultValuesForSignature(this.selectedSignature);
+  updateProperty<T extends keyof ZsMapDrawElementState>(
+    element: ZsMapDrawElementState,
+    field: T | string,
+    value: ZsMapDrawElementState[T],
+  ) {
+    if (element.id) {
+      this.zsMapStateService.updateDrawElementState(element.id, field as T, value);
     }
   }
 
-  toggleLockOfFeature() {
-    /*
-    // Reselect so the locking is handled appropriately
-    this.sharedState.featureSource.next(this.selectedFeature);
-    this.redraw();*/
-  }
-
-  redraw() {
-    //this.selectedFeature.changed();
+  updateFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]) {
+    if (element.id) {
+      const fillStyle = { ...element.fillStyle, [field]: value } as FillStyle;
+      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', fillStyle);
+    }
   }
 
   addImage() {
@@ -215,18 +252,14 @@ export class SelectedFeatureComponent {
     */
   }
 
-  chooseSymbol() {
-    /*
+  chooseSymbol(drawElement: ZsMapDrawElementState, selectedFeature: Feature) {
     const dialogRef = this.dialog.open(DrawingDialogComponent);
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: Sign) => {
       if (result) {
-        this.selectedSignature.src = result.src;
-        this.selectedSignature.de = result.de;
-        this.selectedSignature.fr = result.fr;
-        this.selectedSignature.en = result.en;
-        this.redraw();
+        this.updateProperty(drawElement, 'symbolId', result.id);
+        this.zsMapStateService.setSelectedFeature(selectedFeature);
       }
-    });*/
+    });
   }
 
   async editCoordinates() {
@@ -247,14 +280,17 @@ export class SelectedFeatureComponent {
     }
   }
 
-  delete() {
+  delete(drawElement: ZsMapDrawElementState) {
+    if (!drawElement.id) {
+      return;
+    }
+
     const confirm = this.dialog.open(ConfirmationDialogComponent, {
       data: this.i18n.get('removeFeatureFromMapConfirm'),
     });
     confirm.afterClosed().subscribe(async (r) => {
-      if (r) {
-        const feature = await firstValueFrom(this.selectedFeature);
-        this.zsMapStateService.removeDrawElement(feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
+      if (r && drawElement.id) {
+        this.zsMapStateService.removeDrawElement(drawElement.id);
         this.zsMapStateService.resetSelectedFeature();
       }
     });

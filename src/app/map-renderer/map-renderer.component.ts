@@ -74,7 +74,9 @@ export class MapRendererComponent implements AfterViewInit {
     select.on('select', (event) => {
       this._modifyCache.clear();
       for (const feature of event.selected) {
-        this._modifyCache.push(feature);
+        if (!feature.get('sig').protected) {
+          this._modifyCache.push(feature);
+        }
         this._state.setSelectedFeature(feature);
       }
 
