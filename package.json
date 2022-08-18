@@ -29,7 +29,6 @@
     "luxon": "^3.0.1",
     "material-icons": "^1.11.10",
     "ngx-indexed-db": "^11.0.2",
-    "nl2br-pipe": "^1.2.3",
     "ol": "^6.15.1",
     "ol-ext": "^3.2.29",
     "proj4": "^2.8.0",

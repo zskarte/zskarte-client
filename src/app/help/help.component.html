@@ -1,72 +1,47 @@
 <div mat-dialog-content>
   <mat-vertical-stepper>
     <mat-step [label]="i18n.get('docWelcomeTitle')" completed="false">
-      <div [innerHTML]="i18n.get('docWelcome') | nl2br"></div>
+      <div class="description" [innerHTML]="i18n.get('docWelcome')"></div>
     </mat-step>
     <mat-step [label]="i18n.get('createOrLoad')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docNewMap') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docNewMap')"></div>
         <div class="screenshot"><img src="assets/doc/create_map.png" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docInitialViewTitle')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docInitialView') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docInitialView')"></div>
         <div class="screenshot"><img src="assets/doc/initial_view.jpg" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docMainMenuTitle')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docMainMenu') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docMainMenu')"></div>
         <div class="screenshot"><img src="assets/doc/main_menu.jpg" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('findPlace')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docSearch') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docSearch')"></div>
         <div class="screenshot"><img src="assets/doc/search.jpg" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('draw')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docDraw') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docDraw')"></div>
         <div class="screenshot"><img src="assets/doc/draw.jpg" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docSymbolSelectionTitle')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docSymbolSelection') | nl2br"
-        ></div>
-        <div class="screenshot">
-          <img src="assets/doc/symbolselection.jpg" /><img
-            src="assets/doc/custom_image.jpg"
-          />
-        </div>
+        <div class="description" [innerHTML]="i18n.get('docSymbolSelection')"></div>
+        <div class="screenshot"><img src="assets/doc/symbolselection.jpg" /><img src="assets/doc/custom_image.jpg" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docSelectionTitle')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docSelection') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docSelection')"></div>
         <div class="screenshot">
           <img src="assets/doc/selectiontext.jpg" />
           <img src="assets/doc/selectiondescription.jpg" />
@@ -78,19 +53,13 @@
     </mat-step>
     <mat-step [label]="i18n.get('filter')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docFilter') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docFilter')"></div>
         <div class="screenshot"><img src="assets/doc/filter.jpg" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('currentDrawing')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docCurrentDrawing') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docCurrentDrawing')"></div>
         <div class="screenshot">
           <img src="assets/doc/currentdrawing.jpg" />
         </div>
@@ -98,19 +67,13 @@
     </mat-step>
     <mat-step [label]="i18n.get('layers')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docLayers') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docLayers')"></div>
         <div class="screenshot"><img src="assets/doc/layers.jpg" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('history')" completed="false">
       <div class="section">
-        <div
-          class="description"
-          [innerHTML]="i18n.get('docHistory') | nl2br"
-        ></div>
+        <div class="description" [innerHTML]="i18n.get('docHistory')"></div>
         <div class="screenshot"><img src="assets/doc/historymode.jpg" /></div>
       </div>
     </mat-step>
@@ -122,11 +85,5 @@
   </mat-vertical-stepper>
 </div>
 <div mat-dialog-actions align="end">
-  <button
-    mat-raised-button
-    color="primary"
-    [mat-dialog-close]="true"
-    cdkFocusInitial
-    [innerText]="i18n.get('ok')"
-  ></button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="true" cdkFocusInitial [innerText]="i18n.get('ok')"></button>
 </div>
