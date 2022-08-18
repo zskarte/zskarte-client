@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, lastValueFrom, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { db } from '../db/db';
-import { IAuthResult, IZsMapSession, IZso } from './session.interfaces';
+import { IAuthResult, IZsMapSession } from './session.interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
+import jwtDecode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -41,11 +42,27 @@ export class SessionService {
   }
 
   public observeAuthenticated(): Observable<boolean> {
-    return this._session.pipe(map((session) => !!session?.auth?.jwt));
+    return this._session.pipe(
+      map((session) => {
+        if (!session?.auth?.jwt) {
+          return false;
+        }
+        const token = jwtDecode<{ exp: number }>(session.auth.jwt);
+        if (token.exp < Date.now() / 1000) {
+          return false;
+        }
+        return true;
+      }),
+    );
   }
 
   public observeIsGuest(): Observable<boolean> {
-    return this._session.pipe(map((session) => true));
+    return this._session.pipe(
+      map((session) => {
+        // TODO handle this once we decided how it should work
+        return true;
+      }),
+    );
   }
 
   public getLanguage(): string {
