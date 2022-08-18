@@ -1,5 +1,10 @@
 import { Feature } from 'ol';
-import { IZsMapBaseDrawElementState, ZsMapDrawElementStateType, ZsMapTextDrawElementState } from '../../state/interfaces';
+import {
+  IZsMapBaseDrawElementState,
+  ZsMapDrawElementStateType,
+  ZsMapElementToDraw,
+  ZsMapTextDrawElementState,
+} from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString } from 'ol/geom';
@@ -37,11 +42,11 @@ export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
   protected static override _getOlDrawType(): Type {
     return 'LineString';
   }
-  protected static override _parseFeature(feature: Feature<LineString>, state: ZsMapStateService, layer: string): void {
+  protected static override _parseFeature(feature: Feature<LineString>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
     state.addDrawElement({
       type: ZsMapDrawElementStateType.LINE,
       coordinates: feature.getGeometry()?.getCoordinates() || [],
-      layer,
+      layer: element.layer,
     });
   }
 }

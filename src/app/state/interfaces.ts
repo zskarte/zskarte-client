@@ -102,6 +102,7 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
 export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.TEXT;
   fontSize?: string;
+  text?: string;
 }
 
 export interface ZsMapSymbolDrawElementState extends IZsMapBaseDrawElementState {

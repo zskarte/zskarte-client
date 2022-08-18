@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import { ZsMapDrawElementStateType, ZsMapSymbolDrawElementState } from '../../state/interfaces';
+import { ZsMapDrawElementStateType, ZsMapElementToDraw, ZsMapSymbolDrawElementState } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
@@ -54,12 +54,12 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
     return (symbol?.type as Type) ?? 'Point';
   }
 
-  protected static override _parseFeature(feature: Feature<Point>, state: ZsMapStateService, layer: string, symbolId: number): void {
+  protected static override _parseFeature(feature: Feature<Point>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
     state.addDrawElement({
       type: ZsMapDrawElementStateType.SYMBOL,
       coordinates: feature.getGeometry()?.getCoordinates() || [],
-      layer,
-      symbolId,
+      layer: element.layer,
+      symbolId: element.symbolId,
     });
   }
 }

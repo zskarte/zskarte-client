@@ -1004,7 +1004,7 @@ export class Signs {
     {
       id: 99,
       kat: 'incident',
-      type: 'Polygon',
+      type: 'LineString',
       color: '#FF0000',
       src: 'BABS/Stau.svg',
       de: 'Stau',

@@ -31,3 +31,19 @@
   height: auto;
   width: auto;
 }
+
+.tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  color: white;
+  padding: 4px 8px;
+  opacity: 0.7;
+  white-space: nowrap;
+  font-size: 12px;
+  cursor: default;
+  pointer-events: none;
+  user-select: none;
+  margin-left: 1em;
+  margin-top: -10px;
+}

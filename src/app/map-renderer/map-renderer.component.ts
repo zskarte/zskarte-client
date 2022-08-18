@@ -4,7 +4,7 @@ import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
-import { Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { areArraysEqual } from '../helper/array';
@@ -14,14 +14,16 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { SidebarContext } from '../state/interfaces';
+import { SidebarContext, ZsMapDisplayMode, ZsMapElementToDraw } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature } from 'ol';
-import { Point } from 'ol/geom';
+import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { Icon, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
+import { formatArea, formatLength } from '../helper/coordinates';
+import { FeatureLike } from 'ol/Feature';
 
 @Component({
   selector: 'app-map-renderer',
@@ -44,10 +46,14 @@ export class MapRendererComponent implements AfterViewInit {
   private _positionFlag!: Feature;
   private _positionFlagLocation!: Point;
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
+  private _allLayers: VectorLayer<VectorSource>[] = [];
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
   private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
   private _modifyCache = new Collection<Feature>([]);
+  private _currentSketch: FeatureLike | undefined;
+  public currentSketchSize = new BehaviorSubject<string | null>(null);
+  public mousePosition = new BehaviorSubject<number[]>([0, 0]);
 
   constructor(private _state: ZsMapStateService, public i18n: I18NService, private geoAdminService: GeoadminService) {}
 
@@ -63,16 +69,17 @@ export class MapRendererComponent implements AfterViewInit {
       style: (feature, resolution) => {
         return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
+      layers: this._allLayers,
     });
     select.on('select', (event) => {
       this._modifyCache.clear();
       for (const feature of event.selected) {
-        this._modifyCache.push(feature);
         console.log('selected element', {
           isDrawElement: feature.get(ZsMapOLFeatureProps.IS_DRAW_ELEMENT),
           type: feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE),
           id: feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID),
         });
+        this._modifyCache.push(feature);
         // TODO write to display state selectedDrawElements
       }
     });
@@ -86,6 +93,14 @@ export class MapRendererComponent implements AfterViewInit {
         }
         return false;
       },
+    });
+
+    modify.on('modifystart', (event) => {
+      this._currentSketch = event.features.getArray()[0];
+    });
+
+    modify.on('modifyend', () => {
+      this._currentSketch = undefined;
     });
 
     // TODO
@@ -139,6 +154,20 @@ export class MapRendererComponent implements AfterViewInit {
       this._state.setMapCenter(this._view.getCenter() || [0, 0]);
     });
 
+    this._map.on('pointermove', (event) => {
+      this.mousePosition.next(event.pixel);
+      let sketchSize = null;
+      if (this._currentSketch) {
+        const geom = this._currentSketch.getGeometry();
+        if (geom instanceof Polygon) {
+          sketchSize = formatArea(geom);
+        } else if (geom instanceof LineString) {
+          sketchSize = formatLength(geom);
+        }
+      }
+      this.currentSketchSize.next(sketchSize);
+    });
+
     const debouncedZoomSave = debounce(() => {
       this._state.setMapZoom(this._view.getZoom() || 10);
     }, 1000);
@@ -172,7 +201,11 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.observeElementToDraw().subscribe((element) => {
       if (element) {
         const interaction = DrawElementHelper.createDrawHandlerForType(element, this._state);
+        interaction.on('drawstart', (event) => {
+          this._currentSketch = event.feature;
+        });
         interaction.on('drawend', () => {
+          this._currentSketch = undefined;
           this._state.cancelDrawing();
         });
         this._currentDrawInteraction = interaction;
@@ -206,6 +239,7 @@ export class MapRendererComponent implements AfterViewInit {
         for (const layer of layers) {
           if (!this._layerCache[layer.getId()]) {
             this._layerCache[layer.getId()] = layer;
+            this._allLayers.push(layer.getOlLayer());
             this._map.addLayer(layer.getOlLayer());
           }
         }
@@ -281,8 +315,7 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   areFeaturesModifiable() {
-    return this._modifyCache.getArray()
-      .every((feature) => feature && feature.get('sig') && !feature.get('sig').protected)
+    return this._modifyCache.getArray().every((feature) => feature && feature.get('sig') && !feature.get('sig').protected);
   }
 
   zoomIn() {

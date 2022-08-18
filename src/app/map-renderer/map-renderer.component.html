@@ -29,3 +29,12 @@
     <mat-icon>filter_alt</mat-icon>
   </button>
 </div>
+<ng-container *ngIf="mousePosition | async as mousePosition">
+  <div
+    class="tooltip noprint"
+    *ngIf="currentSketchSize | async as sketchSize"
+    [style.left.px]="mousePosition[0]"
+    [style.top.px]="mousePosition[1]"
+    [innerHTML]="sketchSize"
+  ></div>
+</ng-container>

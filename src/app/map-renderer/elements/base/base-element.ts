@@ -18,5 +18,5 @@ export abstract class ZsMapBaseElement<T> {
     return this._id;
   }
 
-  protected abstract _initialize(coordinates: IZsMapBaseDrawElementState): void;
+  protected abstract _initialize(element: IZsMapBaseDrawElementState): void;
 }
