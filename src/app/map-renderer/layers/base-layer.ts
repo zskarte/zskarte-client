@@ -14,7 +14,7 @@ export abstract class ZsMapBaseLayer {
   protected _olLayer: VectorLayer<VectorSource> = new VectorLayer({
     source: this._olSource,
     style: (feature, resolution) => {
-      return DrawStyle.styleFunction(feature, resolution);
+      return feature.get('hidden') === true ? null : DrawStyle.styleFunction(feature, resolution);
     },
   });
 

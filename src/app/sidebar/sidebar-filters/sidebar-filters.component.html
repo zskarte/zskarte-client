@@ -1,4 +1,4 @@
-<!-- <mat-accordion multi displayMode="flat">
+<mat-accordion multi displayMode="flat">
   <mat-expansion-panel
     class="mat-elevation-z0"
     (opened)="filtersGeneralOpenState = true"
@@ -39,7 +39,7 @@
           <button
             mat-button
             class="filterItem"
-            (click)="drawLayer.toggleFilter(symbol)"
+            (click)="toggleFilter(symbol)"
           >
             <div
               style="
@@ -51,21 +51,21 @@
               "
             >
               <img
-                [class.opaque]="drawLayer.isSigFiltered(symbol)"
+                [class.opaque]="symbol.hidden"
                 *ngIf="symbol.src"
                 [src]="symbol.src"
                 [title]="symbol.label"
                 style="max-width: 100%; height: auto"
               />
               <mat-icon
-                [class.opaque]="drawLayer.isSigFiltered(symbol)"
+                [class.opaque]="symbol.hidden"
                 aria-hidden="false"
                 *ngIf="symbol.icon"
                 >{{ symbol.icon }}</mat-icon
               >
               <mat-icon
                 class="eyeOverlay"
-                *ngIf="drawLayer.isSigFiltered(symbol)"
+                *ngIf="symbol.hidden"
                 >visibility_off</mat-icon
               >
             </div>
@@ -99,9 +99,9 @@
           {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }} ({{
             i18n.get('hideShow')
           }})
-          <mat-icon>visibility_off</mat-icon>
+          <!--<mat-icon>visibility_off</mat-icon>-->
         </button>
       </mat-list-item>
     </mat-selection-list>
   </mat-expansion-panel>
-</mat-accordion> -->
+</mat-accordion>

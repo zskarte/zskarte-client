@@ -4,7 +4,7 @@ import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { areArraysEqual } from '../helper/array';
@@ -67,7 +67,7 @@ export class MapRendererComponent implements AfterViewInit {
     const select = new Select({
       hitTolerance: 10,
       style: (feature, resolution) => {
-        return DrawStyle.styleFunctionSelect(feature, resolution, true);
+        return feature.get('hidden') === true ? null : DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
       layers: this._allLayers,
     });
@@ -242,6 +242,17 @@ export class MapRendererComponent implements AfterViewInit {
             this._allLayers.push(layer.getOlLayer());
             this._map.addLayer(layer.getOlLayer());
           }
+        }
+      });
+
+    this._state
+      .observeHiddenSymbols()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((hiddenSymbols) => {
+        for (const key in this._drawElementCache) {
+          const feature = this._drawElementCache[key].element.getOlFeature();
+          const hidden = hiddenSymbols.includes(feature?.get('sig')?.id);
+          feature?.set('hidden', hidden);
         }
       });
 
