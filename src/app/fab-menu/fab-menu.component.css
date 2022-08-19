@@ -5,6 +5,12 @@
   z-index: 50;
 }
 
+@media print {
+  .fab-menu {
+    display: none;
+  }
+}
+
 .fab-background {
   position: absolute;
   top: 0;
