@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
-  drawElementDefaults,
   IPositionFlag,
-  IZsMapBaseDrawElementState,
   IZsMapDisplayState,
   IZsMapSaveFileState,
   IZsMapState,
