@@ -67,9 +67,8 @@ export class OperationsComponent {
       operation.status = 'active';
     }
 
-    console.log('arsch', { data: { ...operation, organization: this._session.getOperationId() } });
-
     const result = await this._api.post('/api/operations', { data: { ...operation, organization: this._session.getOrganizationId() } });
+    this._reload();
   }
 
   public logout(): void {

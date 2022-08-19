@@ -82,7 +82,6 @@ export class SessionService {
     const result = await this._api.post<IAuthResult>('/api/auth/local', params);
     const meResult = await this._api.get<{ organization: { id: number } }>('/api/users/me?populate[0]=organization', { token: result.jwt });
     const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined, organizationId: meResult.organization.id };
-    console.log('arsch', session);
     this._session.next(session);
     this._router.navigateByUrl('/map');
   }
