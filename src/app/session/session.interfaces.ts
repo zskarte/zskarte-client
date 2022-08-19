@@ -1,5 +1,6 @@
 export interface IZsMapSession {
   id: string;
+  operationId: number | undefined;
   auth: IAuthResult;
 }
 

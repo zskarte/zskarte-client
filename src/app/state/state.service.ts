@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import produce, { Patch } from 'immer';
+import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
   IZsMapDisplayState,
@@ -28,6 +28,8 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 import { Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
+import { SyncService } from '../sync/sync.service';
+import { SessionService } from '../session/session.service';
 
 @Injectable({
   providedIn: 'root',
@@ -45,7 +47,10 @@ export class ZsMapStateService {
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
 
-  constructor(private drawDialog: MatDialog, private textDialog: MatDialog) {}
+  constructor(private drawDialog: MatDialog, private textDialog: MatDialog, private _sync: SyncService, private _session: SessionService) {
+    this._sync.setStateService(this);
+    this._session.setStateService(this);
+  }
 
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,8 +111,28 @@ export class ZsMapStateService {
   }
 
   public reset(newMapState?: IZsMapState, newDisplayState?: IZsMapDisplayState): void {
-    this.resetDisplayState(newDisplayState);
     this.setMapState(newMapState);
+    if (newDisplayState) {
+      this.setDisplayState(newDisplayState);
+    } else {
+      // generate display style based on map state
+      if (newMapState) {
+        const displayState = this._getDefaultDisplayState();
+        if (newMapState.layers) {
+          for (const layer of newMapState?.layers) {
+            if (layer.id) {
+              if (!displayState.activeLayer) {
+                displayState.activeLayer = layer.id;
+              }
+              displayState.layerOrder.push(layer.id);
+              displayState.layerVisibility[layer.id] = true;
+              displayState.layerOpacity[layer.id] = 1;
+            }
+          }
+        }
+        this.setDisplayState(displayState);
+      }
+    }
   }
 
   public setMapState(newState?: IZsMapState): void {
@@ -118,22 +143,14 @@ export class ZsMapStateService {
     });
   }
 
-  public resetDisplayState(newState?: IZsMapDisplayState): void {
+  public setDisplayState(newState?: IZsMapDisplayState): void {
     this.updateDisplayState(() => {
       return newState || this._getDefaultDisplayState();
     });
   }
 
-  public loadMapState(state: IZsMapState) {
-    this.reset(state);
-  }
-
   public observeMapState(): Observable<IZsMapState> {
     return this._map.asObservable();
-  }
-
-  public loadDisplayState(state: IZsMapDisplayState): void {
-    this.resetDisplayState(state);
   }
 
   public toggleDisplayMode(): void {
@@ -449,8 +466,13 @@ export class ZsMapStateService {
       this._mapPatches.next(this._mapPatches.value);
       this._mapInversePatches.value.push(...inversePatches);
       this._mapInversePatches.next(this._mapInversePatches.value);
+      this._sync.publishMapStatePatches(patches);
     });
-    console.log('updated map state', newState);
+    this._map.next(newState);
+  }
+
+  public applyMapStatePatches(patches: Patch[]) {
+    const newState = applyPatches(this._map.value, patches);
     this._map.next(newState);
   }
 
@@ -461,7 +483,6 @@ export class ZsMapStateService {
       this._displayInversePatches.value.push(...inversePatches);
       this._displayInversePatches.next(this._displayInversePatches.value);
     });
-    console.log('updated display state', newState);
     this._display.next(newState);
   }
 
@@ -530,8 +551,7 @@ export class ZsMapStateService {
   }
 
   public loadSaveFileState(state: IZsMapSaveFileState): void {
-    this.loadMapState(state.map);
-    this.loadDisplayState(state.display);
+    this.reset(state.map, state.display);
   }
 
   toggleSidebarContext(context: SidebarContext | null) {

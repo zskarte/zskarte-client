@@ -11,7 +11,8 @@ import { distinctUntilChanged, map } from 'rxjs/operators';
 import { IZsMapDrawElementUi } from './draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
-import { checkCoordinates } from '../../../helper/coordinates';
+import { areCoordinatesEqual } from '../../../helper/coordinates';
+import { debounce } from '../../../helper/debounce';
 
 export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState = IZsMapBaseDrawElementState> extends ZsMapBaseElement<T> {
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
@@ -42,17 +43,21 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
         }
         return o?.coordinates;
       }),
-      distinctUntilChanged((x, y) => checkCoordinates(x, y)),
+      distinctUntilChanged((x, y) => areCoordinatesEqual(x, y)),
     );
   }
 
-  public setCoordinates(coordinates: number[] | number[][] | undefined): void {
+  private _debouncedSetCoordinates = debounce((coordinates: number[] | number[][] | undefined) => {
     this._state.updateMapState((draft) => {
       const element = draft.drawElements?.find((o) => o.id === this._id);
       if (element) {
         element.coordinates = coordinates;
       }
     });
+  }, 250);
+
+  public setCoordinates(coordinates: number[] | number[][] | undefined): void {
+    this._debouncedSetCoordinates(coordinates);
   }
 
   public observeLayer(): Observable<string | undefined> {

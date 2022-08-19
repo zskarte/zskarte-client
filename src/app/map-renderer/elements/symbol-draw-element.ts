@@ -5,7 +5,7 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
-import { checkCoordinates } from '../../helper/coordinates';
+import { areCoordinatesEqual } from '../../helper/coordinates';
 import { StyleLike } from 'ol/style/Style';
 import { Signs } from '../signs';
 
@@ -17,10 +17,7 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.SYMBOL);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates().subscribe((coordinates) => {
-      if (this._olGeometryItem && checkCoordinates(coordinates, this._olGeometryItem.getCoordinates())) {
-        // only update coordinates if they are not matching to prevent loops
-        this._olGeometryItem?.setCoordinates(coordinates as number[]);
-      }
+      this._olGeometryItem?.setCoordinates(coordinates as number[]);
     });
   }
 
