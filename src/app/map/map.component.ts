@@ -11,7 +11,7 @@ import { ZsMapStateService } from '../state/state.service';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent implements OnInit{
+export class MapComponent implements OnInit {
   ZsMapStateSource = ZsMapStateSource;
   ZsMapDrawElementStateType = ZsMapDrawElementStateType;
   sidebarContext = SidebarContext;

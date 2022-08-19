@@ -1,9 +1,6 @@
 <div class="geocoder">
   <div class="mat-form-field-appearance-fill inputField">
-    <div
-      class="mat-form-field-flex"
-      style="padding: 0.75em; align-items: center"
-    >
+    <div class="mat-form-field-flex" style="padding: 0.75em; align-items: center">
       <input
         mat-input
         class="mat-input-element input"
@@ -16,21 +13,14 @@
       <mat-icon aria-hidden="false" aria-label="Search">search</mat-icon>
     </div>
   </div>
-  <mat-autocomplete
-    #auto="matAutocomplete"
-    [displayWith]="getLabel"
-    (optionSelected)="geoCodeSelected($event)"
-  >
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="getLabel" (optionSelected)="geoCodeSelected($event)">
     <mat-option
       *ngFor="let location of foundLocations"
       [value]="location.attrs"
       (mouseenter)="previewCoordinate(location.attrs)"
       (mouseleave)="goToCoordinate(false)"
     >
-      <span
-        [innerHTML]="location.attrs.label"
-        [title]="getLabel(location.attrs)"
-      ></span>
+      <span [innerHTML]="location.attrs.label" [title]="getLabel(location.attrs)"></span>
     </mat-option>
   </mat-autocomplete>
 
