@@ -9,11 +9,7 @@
   background-position: cover;
 }
 
-.title {
-  padding-bottom: 1.5em;
-}
-
-.login-form {
+.card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,11 +17,31 @@
   width: 80%;
   max-width: 400px;
 
+  .title {
+    padding-bottom: 1.5em;
+  }
+
+  mat-card {
+    width: 100%;
+  }
+
   .full-width {
     width: 100%;
   }
 
-  .login-button {
+  .button {
     width: 100%;
+    margin: 0;
+
+    &:not(:last-child) {
+      margin-bottom: 1em;
+    }
+  }
+
+  .operation {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 }

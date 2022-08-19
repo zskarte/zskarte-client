@@ -10,6 +10,7 @@ mat-card.selection {
   max-width: 25vw;
   overflow: auto;
   border-radius: 0;
+  z-index: 55;
 }
 
 @media screen and (max-width: 768px) {
@@ -17,7 +18,8 @@ mat-card.selection {
     top: 0;
     left: 0;
     bottom: 0;
-    max-width: 40vw;
+    max-width: initial;
+    width: 218;
   }
 }
 

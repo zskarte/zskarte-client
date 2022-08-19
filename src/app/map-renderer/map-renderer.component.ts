@@ -4,7 +4,7 @@ import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
-import { BehaviorSubject, combineLatest, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { areArraysEqual } from '../helper/array';
@@ -18,12 +18,16 @@ import { SidebarContext, ZsMapDisplayMode, ZsMapElementToDraw } from '../state/i
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature } from 'ol';
-import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
+import { Geometry, LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { Icon, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength } from '../helper/coordinates';
 import { FeatureLike } from 'ol/Feature';
+import { availableProjections, mercatorProjection } from '../helper/projections';
+import { getCenter } from 'ol/extent';
+import { transform } from 'ol/proj';
+import { Coordinate } from 'ol/coordinate';
 
 @Component({
   selector: 'app-map-renderer',
@@ -34,7 +38,8 @@ import { FeatureLike } from 'ol/Feature';
 export class MapRendererComponent implements AfterViewInit {
   @ViewChild('mapElement') mapElement!: ElementRef;
 
-  sidebarContext = SidebarContext;
+  sidebarContextValues = SidebarContext;
+  sidebarContext: Observable<SidebarContext | null>;
 
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
@@ -54,8 +59,31 @@ export class MapRendererComponent implements AfterViewInit {
   private _currentSketch: FeatureLike | undefined;
   public currentSketchSize = new BehaviorSubject<string | null>(null);
   public mousePosition = new BehaviorSubject<number[]>([0, 0]);
+  public mouseCoordinates = new BehaviorSubject<number[]>([0, 0]);
+  public mouseProjection: Observable<string>;
+  public availableProjections = availableProjections;
+  public selectedProjectionIndex = 0;
+  public selectedFeature: Observable<Feature | null>;
+  public selectedFeatureCoordinates: Observable<string>;
+  public coordinates = new BehaviorSubject<number[]>([0, 0]);
 
-  constructor(private _state: ZsMapStateService, public i18n: I18NService, private geoAdminService: GeoadminService) {}
+  constructor(private _state: ZsMapStateService, public i18n: I18NService, private geoAdminService: GeoadminService) {
+    this.selectedFeature = _state.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe));
+    this.sidebarContext = this._state.observeSidebarContext();
+    this.selectedFeatureCoordinates = this.selectedFeature.pipe(
+      map((feature) => {
+        const coords = this.getFeatureCoodrinates(feature);
+        return this.availableProjections[this.selectedProjectionIndex].translate(coords);
+      }),
+    );
+    this.mouseProjection = this.mouseCoordinates.asObservable().pipe(
+      takeUntil(this._ngUnsubscribe),
+      map((coords) => {
+        const transform = this.transformToCurrentProjection(coords) ?? [];
+        return this.availableProjections[this.selectedProjectionIndex].translate(transform);
+      }),
+    );
+  }
 
   public ngOnDestroy(): void {
     this._ngUnsubscribe.next();
@@ -157,6 +185,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._map.on('pointermove', (event) => {
       this.mousePosition.next(event.pixel);
+      this.mouseCoordinates.next(event.coordinate);
       let sketchSize = null;
       if (this._currentSketch) {
         const geom = this._currentSketch.getGeometry();
@@ -338,7 +367,30 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.updateMapZoom(-1);
   }
 
-  setSidebarContext(context: SidebarContext) {
+  setSidebarContext(context: SidebarContext | null) {
     this._state.toggleSidebarContext(context);
+  }
+
+  async rotateProjection() {
+    const nextIndex = this.selectedProjectionIndex + 1;
+    this.selectedProjectionIndex = nextIndex >= availableProjections.length ? 0 : nextIndex;
+    const feature = await firstValueFrom(this.selectedFeature);
+    if (feature) {
+      // trigger selectedFeature to enable projection rotation while a feature is selected
+      this._state.setSelectedFeature(feature);
+    }
+  }
+
+  getFeatureCoodrinates(feature: Feature | null): number[] {
+    const center = getCenter(feature?.getGeometry()?.getExtent() ?? []);
+    return this.transformToCurrentProjection(center) ?? [];
+  }
+
+  transformToCurrentProjection(coordinates: Coordinate) {
+    const projection = availableProjections[this.selectedProjectionIndex].projection;
+    if (projection && mercatorProjection) {
+      return transform(coordinates, mercatorProjection, projection);
+    }
+    return undefined;
   }
 }

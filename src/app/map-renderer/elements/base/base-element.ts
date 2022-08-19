@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { IZsMapBaseDrawElementState } from 'src/app/state/interfaces';
 import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
@@ -9,6 +9,7 @@ export abstract class ZsMapBaseElement<T> {
   protected _element!: Observable<T | undefined>;
   protected _olFeature: Feature = new Feature();
   protected _isInitialized = false;
+  protected _unsubscribe = new Subject<void>();
 
   constructor(protected _id: string, protected _state: ZsMapStateService) {
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, _id);
@@ -23,4 +24,9 @@ export abstract class ZsMapBaseElement<T> {
   }
 
   protected abstract _initialize(element: IZsMapBaseDrawElementState): void;
+
+  public unsubscribe(): void {
+    this._unsubscribe.next();
+    this._unsubscribe.complete();
+  }
 }

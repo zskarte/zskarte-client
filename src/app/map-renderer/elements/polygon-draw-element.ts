@@ -11,6 +11,7 @@ import { Polygon } from 'ol/geom';
 import { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import { areCoordinatesEqual } from '../../helper/coordinates';
+import { takeUntil } from 'rxjs';
 
 export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
   protected _olPolygon!: Polygon;
@@ -18,10 +19,12 @@ export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawE
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.POLYGON);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
-    this.observeCoordinates().subscribe((coordinates) => {
-      // TODO types
-      this._olPolygon?.setCoordinates(coordinates as any);
-    });
+    this.observeCoordinates()
+      .pipe(takeUntil(this._unsubscribe))
+      .subscribe((coordinates) => {
+        // TODO types
+        this._olPolygon?.setCoordinates(coordinates as any);
+      });
   }
 
   // TODO types

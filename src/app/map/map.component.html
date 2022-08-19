@@ -2,8 +2,8 @@
   <div style="z-index: 10; position: relative">
     <app-toolbar></app-toolbar>
   </div>
-  <mat-sidenav-container style="flex: 1">
-    <mat-sidenav position="end" mode="side" #sidenav style="width: 350px" [opened]="(sidebarContext$ | async) !== null">
+  <mat-sidenav-container style="flex: 1" [hasBackdrop]="width < 800">
+    <mat-sidenav class="sidenav" position="end" mode="side" #sidenav [opened]="(sidebarContext$ | async) !== null">
       <app-sidebar [hidden]="(sidebarContext$ | async) === sidebarContext.Filters"></app-sidebar>
       <app-sidebar-filters [hidden]="(sidebarContext$ | async) === sidebarContext.Layers"></app-sidebar-filters>
     </mat-sidenav>

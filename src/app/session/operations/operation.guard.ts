@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { SessionService } from '../session/session.service';
-import { ZsMapStateService } from '../state/state.service';
+import { SessionService } from '../session.service';
+import { ZsMapStateService } from '../../state/state.service';
 
 @Injectable({
   providedIn: 'root',

@@ -1,0 +1,55 @@
+<div class="card">
+  <mat-card>
+    <ng-container *ngIf="operationToEdit | async as edit; else list">
+      <div class="title">
+        <mat-card-title-group>
+          <mat-card-title>Bearbeiten</mat-card-title>
+        </mat-card-title-group>
+      </div>
+      <mat-card-content>
+        <form class="edit-form">
+          <mat-form-field class="full-width" appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput type="text" placeholder="Name eingeben" [(ngModel)]="edit.name" name="name" />
+          </mat-form-field>
+          <mat-form-field class="full-width" appearance="fill">
+            <mat-label>Beschreibung</mat-label>
+            <input matInput type="text" placeholder="Beschreibung eingeben" [(ngModel)]="edit.description" name="description" />
+          </mat-form-field>
+        </form>
+      </mat-card-content>
+      <mat-card-actions>
+        <button class="button" mat-raised-button color="primary" (click)="saveOperation(edit)">Speichern</button>
+        <button class="button" mat-raised-button color="error" (click)="deleteOperation()">Löschen</button>
+        <button class="button" mat-button (click)="operationToEdit.next(undefined)">Abbrechen</button>
+      </mat-card-actions>
+    </ng-container>
+
+    <ng-template #list>
+      <div class="title">
+        <mat-card-title-group>
+          <mat-card-title>Ereignis auswählen</mat-card-title>
+        </mat-card-title-group>
+      </div>
+      <mat-card-content>
+        <mat-selection-list [multiple]="false">
+          <mat-list-option *ngFor="let o of operations | async" [value]="o" (click)="selectOperation(o)">
+            <div class="operation">
+              <div class="infos">
+                <div mat-line>{{ o.name }}</div>
+                <div mat-line *ngIf="o.description">{{ o.description }}</div>
+              </div>
+              <div class="edit">
+                <mat-icon aria-hidden="false" aria-label="Edit" (click)="operationToEdit.next(o)">edit</mat-icon>
+              </div>
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+      </mat-card-content>
+      <mat-card-actions>
+        <button class="button" mat-raised-button color="primary" (click)="newOperation()">Neues Ereignis</button>
+        <button class="button" mat-button (click)="logout()">Logout</button>
+      </mat-card-actions>
+    </ng-template>
+  </mat-card>
+</div>

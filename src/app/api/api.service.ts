@@ -34,6 +34,11 @@ export class ApiService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async put<RESPONSE = any, REQUEST = any>(subUrl: string, params: REQUEST, options?: IApiRequestOptions): Promise<RESPONSE> {
+    return await lastValueFrom(this._http.put<RESPONSE>(`${this._apiUrl}${subUrl}`, params, { headers: this._getDefaultHeaders(options) }));
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async get<RESPONSE = any>(subUrl: string, options?: IApiRequestOptions): Promise<RESPONSE> {
     return await lastValueFrom(this._http.get<RESPONSE>(`${this._apiUrl}${subUrl}`, { headers: this._getDefaultHeaders(options) }));
   }

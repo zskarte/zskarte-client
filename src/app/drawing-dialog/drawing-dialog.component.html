@@ -22,6 +22,7 @@
       </mat-form-field>
     </div>
   </div>
+  <app-recently-used-signs [dialog]="this" (selectSign)="select($event)"> </app-recently-used-signs>
   <table mat-table class="selectionTable" [dataSource]="filteredSigns">
     <ng-container matColumnDef="symbol">
       <th mat-header-cell *matHeaderCellDef>{{ i18n.get('symbol') }}</th>
