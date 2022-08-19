@@ -10,7 +10,7 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { Polygon } from 'ol/geom';
 import { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
-import { checkCoordinates } from '../../helper/coordinates';
+import { areCoordinatesEqual } from '../../helper/coordinates';
 
 export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
   protected _olPolygon!: Polygon;
@@ -20,11 +20,7 @@ export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawE
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates().subscribe((coordinates) => {
       // TODO types
-      if (this._olPolygon && checkCoordinates(coordinates, this._olPolygon.getCoordinates() as any)) {
-        // only update coordinates if they are not matching to prevent loops
-        // TODO types
-        this._olPolygon?.setCoordinates(coordinates as any);
-      }
+      this._olPolygon?.setCoordinates(coordinates as any);
     });
   }
 

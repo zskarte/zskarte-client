@@ -10,7 +10,7 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString } from 'ol/geom';
 import { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
-import { checkCoordinates } from '../../helper/coordinates';
+import { areCoordinatesEqual } from '../../helper/coordinates';
 
 export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
   protected _olLine!: LineString;
@@ -19,10 +19,7 @@ export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.LINE);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates().subscribe((coordinates) => {
-      if (this._olLine && checkCoordinates(coordinates, this._olLine.getCoordinates())) {
-        // only update coordinates if they are not matching to prevent loops
-        this._olLine?.setCoordinates(coordinates as number[][]);
-      }
+      this._olLine?.setCoordinates(coordinates as number[][]);
     });
   }
   protected _initialize(element: IZsMapBaseDrawElementState): void {

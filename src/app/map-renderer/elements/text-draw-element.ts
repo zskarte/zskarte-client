@@ -5,7 +5,7 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString, SimpleGeometry } from 'ol/geom';
 import { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
-import { checkCoordinates } from 'src/app/helper/coordinates';
+import { areCoordinatesEqual } from 'src/app/helper/coordinates';
 
 export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
   protected _olGeometryItem!: SimpleGeometry;
@@ -14,10 +14,7 @@ export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.TEXT);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates().subscribe((coordinates) => {
-      if (this._olGeometryItem && checkCoordinates(coordinates, this._olGeometryItem.getCoordinates())) {
-        // only update coordinates if they are not matching to prevent loops
-        this._olGeometryItem?.setCoordinates(coordinates as number[]);
-      }
+      this._olGeometryItem?.setCoordinates(coordinates as number[]);
     });
   }
   protected _initialize(element: ZsMapTextDrawElementState): void {

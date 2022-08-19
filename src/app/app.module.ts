@@ -47,13 +47,14 @@ import { DetailImageViewComponent } from './detail-image-view/detail-image-view.
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { EditCoordinatesComponent } from './edit-coordinates/edit-coordinates.component';
 import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filters.component';
-import { AppRoutingModule } from './app-routing.module';
-import { LoginComponent } from './session/login/login.component';
-import { MapComponent } from './map/map.component';
 import { SessionService } from './session/session.service';
 
 import { registerLocaleData } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
+import { LoginComponent } from './session/login/login.component';
+import { MapComponent } from './map/map.component';
+import { AppRoutingModule } from './app-routing.module';
+import { OperationsComponent } from './operations/operations.component';
 registerLocaleData(localeCH);
 
 export function appFactory(session: SessionService) {
@@ -85,6 +86,7 @@ export function appFactory(session: SessionService) {
     EditCoordinatesComponent,
     LoginComponent,
     MapComponent,
+    OperationsComponent,
   ],
   imports: [
     BrowserModule,
