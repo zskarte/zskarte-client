@@ -96,3 +96,21 @@ app-geocoder {
   gap: 10px;
   align-items: center;
 }
+
+.grow {
+  flex-grow: 1;
+}
+
+@media (max-width: 800px) {
+  .clock,
+  mat-card-title,
+  .credits {
+    display: none;
+  }
+  app-geocoder {
+    width: 100%;
+  }
+  .inputField {
+    width: 100%;
+  }
+}

@@ -552,6 +552,7 @@ export class DrawStyle {
             font: 20 + 'px sans-serif',
             scale: iconTextScale,
             fill: this.getColorFill(signature.color),
+            backgroundFill: DrawStyle.getColorFill(`rgba(255, 255, 255, ${signature.iconOpacity})`),
             padding: [5, 5, 5, 5],
           });
 
@@ -560,7 +561,7 @@ export class DrawStyle {
               text: iconLabel,
               geometry: function (feature) {
                 const coordinates = DrawStyle.getIconCoordinates(feature, resolution)[1];
-                return new Point([coordinates[0], coordinates[1] - 35 / iconTextScale]);
+                return new Point([coordinates[0], coordinates[1] - (35 / iconTextScale) * Math.max(resolution / 3, 1)]);
               },
               zIndex: zIndex,
             }),
