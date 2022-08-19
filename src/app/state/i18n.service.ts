@@ -1175,6 +1175,11 @@ export class I18NService {
       en: 'Period of validity of your guest session',
       fr: 'Période de validité de votre session',
     },
+    recentlyUsedSigns: {
+      de: 'Kürzlich verwendete Signaturen',
+      en: 'Recently used signatures',
+      fr: 'Signatures récemment utilisées',
+    },
   };
   private _locale: string = DEFAULT_LOCALE;
   private localeSource = new BehaviorSubject<string | null>(null);

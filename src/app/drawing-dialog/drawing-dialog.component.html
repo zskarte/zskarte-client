@@ -1,4 +1,5 @@
 <form class="signSelect">
+  <app-recently-used-signs [dialog]="this" (selectSign)="select($event)"> </app-recently-used-signs>
   <table class="selectionTable">
     <tr>
       <th class="symbolCol">{{ i18n.get('symbol') }}</th>
@@ -8,8 +9,7 @@
     <tr>
       <td>
         <button mat-stroked-button (click)="addSymbol()" class="addButton">
-          <i class="material-icons">add_circle</i
-          ><span>{{ i18n.get('addSymbol') }}</span>
+          <i class="material-icons">add_circle</i><span>{{ i18n.get('addSymbol') }}</span>
         </button>
       </td>
       <td class="filter">
@@ -25,21 +25,11 @@
       <td class="filter">
         <mat-form-field>
           <mat-label>{{ i18n.get('filterByCategory') }}</mat-label>
-          <mat-select
-            [(value)]="selected"
-            (selectionChange)="updateAvailableSigns()"
-          >
+          <mat-select [(value)]="selected" (selectionChange)="updateAvailableSigns()">
             <mat-option>{{ i18n.get('allCategories') }}</mat-option>
-            <mat-option
-              *ngFor="let category of signCategories"
-              value="{{ category.name }}"
-              class="noPadding"
-            >
+            <mat-option *ngFor="let category of signCategories" value="{{ category.name }}" class="noPadding">
               <div class="categoryElement">
-                <div
-                  class="categoryDot"
-                  style="background-color:{{ category.color }};"
-                ></div>
+                <div class="categoryDot" style="background-color:{{ category.color }};"></div>
                 <span>
                   {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
                 </span>
@@ -49,27 +39,15 @@
         </mat-form-field>
       </td>
     </tr>
-    <tr
-      *ngFor="let sign of filteredSigns"
-      (click)="select(sign)"
-      class="selectRow"
-    >
+    <tr *ngFor="let sign of filteredSigns" (click)="select(sign)" class="selectRow">
       <td>
         <div class="imageWrapper"><img [src]="getImageUrl(sign.src)" /></div>
       </td>
       <td>{{ i18n.getLabelForSign(sign) }}</td>
       <td class="buttonCell">
-        <button
-          mat-stroked-button
-          *ngIf="isCustomImage(sign)"
-          (click)="$event.stopPropagation(); editSymbol(sign)"
-        >
+        <button mat-stroked-button *ngIf="isCustomImage(sign)" (click)="$event.stopPropagation(); editSymbol(sign)">
           <i class="material-icons">edit</i></button
-        ><button
-          mat-stroked-button
-          *ngIf="isCustomImage(sign)"
-          (click)="$event.stopPropagation(); deleteSymbol(sign)"
-        >
+        ><button mat-stroked-button *ngIf="isCustomImage(sign)" (click)="$event.stopPropagation(); deleteSymbol(sign)">
           <i class="material-icons">delete_forever</i>
         </button>
         <mat-icon aria-hidden="false">
