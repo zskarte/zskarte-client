@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { SessionService } from '../session/session.service';
 import io, { Socket } from 'socket.io-client';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Patch } from 'immer';
 import { debounce } from '../helper/debounce';
@@ -13,7 +12,6 @@ import { ZsMapStateService } from '../state/state.service';
 })
 export class SyncService {
   private _connectionId = '';
-  private _isConnected = new BehaviorSubject(false);
   private _socket: Socket | undefined;
   private _mapStatePatchQueue: Patch[] = [];
   private _state!: ZsMapStateService;
@@ -37,7 +35,7 @@ export class SyncService {
   }
 
   private async _connect(): Promise<void> {
-    if (this._isConnected.value) {
+    if (this._socket?.connected) {
       return;
     }
 
@@ -45,6 +43,9 @@ export class SyncService {
       this._connectionId = uuidv4();
       const token = this._session.getToken();
       const url = this._api.getUrl();
+
+      console.log('arsch', 'connecting socket', { identifier: this._connectionId, operationId: this._session.getOperationId() });
+
       this._socket = io(url, {
         auth: {
           token: token,
@@ -60,10 +61,11 @@ export class SyncService {
         reject(err);
       });
       this._socket.on('connect', () => {
-        this._isConnected.next(true);
+        console.log('Successfully created websocket connection');
         resolve();
       });
       this._socket.on('disconnect', () => {
+        console.warn('Disconnected from websocket');
         this._disconnect();
       });
       this._socket.on('state:patches', (patches) => {
@@ -74,7 +76,7 @@ export class SyncService {
   }
 
   private async _disconnect(): Promise<void> {
-    if (!this._isConnected.value) {
+    if (!this._socket?.connected) {
       return;
     }
     if (this._socket) {
@@ -84,11 +86,6 @@ export class SyncService {
       }
     }
     this._socket = undefined;
-    this._isConnected.next(false);
-  }
-
-  public observeIsConnected(): Observable<boolean> {
-    return this._isConnected.asObservable();
   }
 
   public publishMapStatePatches(patches: Patch[]): void {
@@ -97,21 +94,19 @@ export class SyncService {
   }
 
   private _publishPatches = debounce(async () => {
-    if (this._isConnected.value) {
-      if (this._mapStatePatchQueue.length > 0) {
-        const patches = [...this._mapStatePatchQueue];
-        this._mapStatePatchQueue = [];
-        try {
-          // TODO implement retry logic
-          await this._api.post('/api/operations/mapstate/patch', patches, {
-            headers: {
-              operationId: this._session.getOperationId() + '',
-              identifier: this._connectionId,
-            },
-          });
-        } catch (err) {
-          console.error('Error while publishing patches', err);
-        }
+    if (this._mapStatePatchQueue.length > 0 && this._session.getToken()) {
+      const patches = [...this._mapStatePatchQueue];
+      this._mapStatePatchQueue = [];
+      try {
+        // TODO implement retry logic
+        await this._api.post('/api/operations/mapstate/patch', patches, {
+          headers: {
+            operationId: this._session.getOperationId() + '',
+            identifier: this._connectionId,
+          },
+        });
+      } catch (err) {
+        console.error('Error while publishing patches', err);
       }
     }
   }, 500);

@@ -146,6 +146,12 @@ export class ZsMapStateService {
 
   public setMapState(newState?: IZsMapState): void {
     this._layerCache = {};
+    if (this._drawElementCache) {
+      for (const key in this._drawElementCache) {
+        this._drawElementCache[key].unsubscribe();
+      }
+    }
+
     this._drawElementCache = {};
     this.updateMapState(() => {
       return newState || this._getDefaultMapState();
