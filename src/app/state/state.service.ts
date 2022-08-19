@@ -33,6 +33,7 @@ import { Signs } from '../map-renderer/signs';
 import Feature from 'ol/Feature';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import { SimpleGeometry } from 'ol/geom';
 
 @Injectable({
   providedIn: 'root',
@@ -85,6 +86,12 @@ export class ZsMapStateService {
       sidebarContext: null,
       hiddenSymbols: [],
     };
+  }
+
+  public copySymbol(symbolId: number, layer?: string) {
+    if (layer) {
+      this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId });
+    }
   }
 
   // drawing
@@ -212,7 +219,7 @@ export class ZsMapStateService {
     });
   }
 
-  public setSelectedFeature(feature: Feature) {
+  public setSelectedFeature(feature: Feature<SimpleGeometry>) {
     this._selectedFeature.next(feature);
   }
 
@@ -387,7 +394,7 @@ export class ZsMapStateService {
     );
   }
 
-  public observeSelectedFeature(): Observable<Feature | null> {
+  public observeSelectedFeature(): Observable<Feature<SimpleGeometry> | null> {
     return this._selectedFeature.asObservable();
   }
 
