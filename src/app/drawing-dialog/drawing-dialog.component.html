@@ -1,81 +1,63 @@
 <form class="signSelect">
-  <table class="selectionTable">
-    <tr>
-      <th class="symbolCol">{{ i18n.get('symbol') }}</th>
-      <th class="name">{{ i18n.get('name') }}</th>
-      <th></th>
-    </tr>
-    <tr>
-      <td>
-        <button mat-stroked-button (click)="addSymbol()" class="addButton">
-          <i class="material-icons">add_circle</i
-          ><span>{{ i18n.get('addSymbol') }}</span>
-        </button>
-      </td>
-      <td class="filter">
-        <mat-form-field
-          ><input
-            name="filter"
-            matInput
-            [(ngModel)]="filter"
-            (ngModelChange)="updateAvailableSigns()"
-            placeholder="{{ i18n.get('filter') }}"
-        /></mat-form-field>
-      </td>
-      <td class="filter">
-        <mat-form-field>
-          <mat-label>{{ i18n.get('filterByCategory') }}</mat-label>
-          <mat-select
-            [(value)]="selected"
-            (selectionChange)="updateAvailableSigns()"
+  <div class="filter">
+    <div>
+      <mat-form-field
+      ><input
+        name="filter"
+        matInput
+        [(ngModel)]="filter"
+        (ngModelChange)="updateAvailableSigns()"
+        placeholder="{{ i18n.get('filter') }}"
+      /></mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <mat-label>{{ i18n.get('filterByCategory') }}</mat-label>
+        <mat-select
+          [(value)]="selected"
+          (selectionChange)="updateAvailableSigns()"
+        >
+          <mat-option>{{ i18n.get('allCategories') }}</mat-option>
+          <mat-option
+            *ngFor="let category of signCategories"
+            value="{{ category.name }}"
+            class="noPadding"
           >
-            <mat-option>{{ i18n.get('allCategories') }}</mat-option>
-            <mat-option
-              *ngFor="let category of signCategories"
-              value="{{ category.name }}"
-              class="noPadding"
-            >
-              <div class="categoryElement">
-                <div
-                  class="categoryDot"
-                  style="background-color:{{ category.color }};"
-                ></div>
-                <span>
+            <div class="categoryElement">
+              <div
+                class="categoryDot"
+                style="background-color:{{ category.color }};"
+              ></div>
+              <span>
                   {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
                 </span>
-              </div>
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </td>
-    </tr>
-    <tr
-      *ngFor="let sign of filteredSigns"
-      (click)="select(sign)"
-      class="selectRow"
-    >
-      <td>
-        <div class="imageWrapper"><img [src]="getImageUrl(sign.src)" /></div>
-      </td>
-      <td>{{ i18n.getLabelForSign(sign) }}</td>
-      <td class="buttonCell">
-        <button
-          mat-stroked-button
-          *ngIf="isCustomImage(sign)"
-          (click)="$event.stopPropagation(); editSymbol(sign)"
-        >
-          <i class="material-icons">edit</i></button
-        ><button
-          mat-stroked-button
-          *ngIf="isCustomImage(sign)"
-          (click)="$event.stopPropagation(); deleteSymbol(sign)"
-        >
-          <i class="material-icons">delete_forever</i>
-        </button>
-        <mat-icon aria-hidden="false">
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <table mat-table class="selectionTable" [dataSource]="filteredSigns">
+    <ng-container matColumnDef="symbol">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('symbol') }}</th>
+      <td mat-cell *matCellDef="let sign"><img class="row-image" [src]="getImageUrl(sign.src)" /></td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('name') }}</th>
+      <td mat-cell *matCellDef="let sign">{{ i18n.getLabelForSign(sign) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let sign">
+        <mat-icon aria-hidden="false" class="row-action">
           {{ getIconFromType(sign.type) }}
-        </mat-icon>
-      </td>
-    </tr>
+        </mat-icon></td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="['symbol', 'name', 'actions']"></tr>
+    <tr mat-row class="selectRow" *matRowDef="let row; columns: ['symbol', 'name', 'actions'];" (click)="select(row)"></tr>
   </table>
 </form>
