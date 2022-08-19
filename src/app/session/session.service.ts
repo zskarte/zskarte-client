@@ -42,6 +42,14 @@ export class SessionService {
     this._state = state;
   }
 
+  public getOrganizationId(): number | undefined {
+    return this._session.value?.organizationId;
+  }
+
+  public observeOrganizationId(): Observable<number | undefined> {
+    return this._session.pipe(map((session) => session?.organizationId));
+  }
+
   public setOperationId(id: number): void {
     if (this._session?.value) {
       this._session.value.operationId = id;
@@ -72,7 +80,8 @@ export class SessionService {
 
   public async login(params: { identifier: string; password: string }): Promise<void> {
     const result = await this._api.post<IAuthResult>('/api/auth/local', params);
-    const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined };
+    const meResult = await this._api.get<{ organization: { id: number } }>('/api/users/me?populate[0]=organization', { token: result.jwt });
+    const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined, organizationId: meResult.organization.id };
     this._session.next(session);
     this._router.navigateByUrl('/map');
   }

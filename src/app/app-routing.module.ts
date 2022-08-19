@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MapComponent } from './map/map.component';
-import { OperationsComponent } from './operations/operations.component';
-import { OperationGuard } from './operations/operation.guard';
+import { OperationsComponent } from './session/operations/operations.component';
+import { OperationGuard } from './session/operations/operation.guard';
 import { SessionGuard } from './session/session.guard';
 import { LoginComponent } from './session/login/login.component';
 
