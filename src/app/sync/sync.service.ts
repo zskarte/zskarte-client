@@ -44,8 +44,6 @@ export class SyncService {
       const token = this._session.getToken();
       const url = this._api.getUrl();
 
-      console.log('arsch', 'connecting socket', { identifier: this._connectionId, operationId: this._session.getOperationId() });
-
       this._socket = io(url, {
         auth: {
           token: token,
