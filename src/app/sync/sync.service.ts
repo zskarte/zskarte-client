@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { SessionService } from '../session/session.service';
 import io, { Socket } from 'socket.io-client';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Patch } from 'immer';
 import { debounce } from '../helper/debounce';
@@ -16,11 +16,10 @@ export class SyncService {
   private _isConnected = new BehaviorSubject(false);
   private _socket: Socket | undefined;
   private _mapStatePatchQueue: Patch[] = [];
-  private _incomingMapPatches = new Subject<Patch[]>();
   private _state!: ZsMapStateService;
   constructor(private _api: ApiService, private _session: SessionService) {
-    this._session.observeAuthenticated().subscribe((authenticated) => {
-      if (authenticated) {
+    this._session.observeOperationId().subscribe((operationId) => {
+      if (operationId) {
         this._reconnect();
       } else {
         this._disconnect();
@@ -51,7 +50,7 @@ export class SyncService {
           token: token,
         },
         transports: ['websocket'],
-        query: { identifier: this._connectionId, operationId: 1 },
+        query: { identifier: this._connectionId, operationId: this._session.getOperationId() },
         forceNew: true,
       });
 
@@ -68,8 +67,6 @@ export class SyncService {
         this._disconnect();
       });
       this._socket.on('state:patches', (patches) => {
-        // console.log('socket patches', patches);
-        this._incomingMapPatches.next(patches);
         this._state.applyMapStatePatches(patches);
       });
       this._socket.connect();
@@ -102,18 +99,19 @@ export class SyncService {
   private _publishPatches = debounce(async () => {
     if (this._isConnected.value) {
       if (this._mapStatePatchQueue.length > 0) {
-        // console.log('publish patches', this._mapStatePatchQueue);
+        const patches = [...this._mapStatePatchQueue];
+        this._mapStatePatchQueue = [];
         try {
-          await this._api.post('/api/operations/state/patch', this._mapStatePatchQueue, {
+          // TODO implement retry logic
+          await this._api.post('/api/operations/mapstate/patch', patches, {
             headers: {
-              operationId: '1',
+              operationId: this._session.getOperationId() + '',
               identifier: this._connectionId,
             },
           });
         } catch (err) {
           console.error('Error while publishing patches', err);
         }
-        this._mapStatePatchQueue = [];
       }
     }
   }, 500);

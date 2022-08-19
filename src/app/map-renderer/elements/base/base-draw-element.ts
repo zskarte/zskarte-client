@@ -11,7 +11,7 @@ import { distinctUntilChanged, map } from 'rxjs/operators';
 import { IZsMapDrawElementUi } from './draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
-import { checkCoordinates } from '../../../helper/coordinates';
+import { areCoordinatesEqual } from '../../../helper/coordinates';
 import { debounce } from '../../../helper/debounce';
 
 export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState = IZsMapBaseDrawElementState> extends ZsMapBaseElement<T> {
@@ -43,7 +43,7 @@ export abstract class ZsMapBaseDrawElement<T extends IZsMapBaseDrawElementState 
         }
         return o?.coordinates;
       }),
-      distinctUntilChanged((x, y) => checkCoordinates(x, y)),
+      distinctUntilChanged((x, y) => areCoordinatesEqual(x, y)),
     );
   }
 

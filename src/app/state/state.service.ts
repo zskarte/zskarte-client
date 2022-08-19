@@ -468,7 +468,6 @@ export class ZsMapStateService {
       this._mapInversePatches.next(this._mapInversePatches.value);
       this._sync.publishMapStatePatches(patches);
     });
-    console.log('updated map state', newState);
     this._map.next(newState);
   }
 
@@ -484,7 +483,6 @@ export class ZsMapStateService {
       this._displayInversePatches.value.push(...inversePatches);
       this._displayInversePatches.next(this._displayInversePatches.value);
     });
-    console.log('updated display state', newState);
     this._display.next(newState);
   }
 
