@@ -56,6 +56,11 @@
   color: white;
   user-select: text;
 }
+
+.coordinates span {
+  cursor: text;
+}
+
 .coordinates .material-icons {
   user-select: none;
   margin-left: 5px;
