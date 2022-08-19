@@ -4,7 +4,7 @@ import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
-import { BehaviorSubject, combineLatest, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { areArraysEqual } from '../helper/array';
@@ -34,7 +34,8 @@ import { FeatureLike } from 'ol/Feature';
 export class MapRendererComponent implements AfterViewInit {
   @ViewChild('mapElement') mapElement!: ElementRef;
 
-  sidebarContext = SidebarContext;
+  sidebarContextValues = SidebarContext;
+  sidebarContext: Observable<SidebarContext | null>;
 
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
@@ -55,7 +56,9 @@ export class MapRendererComponent implements AfterViewInit {
   public currentSketchSize = new BehaviorSubject<string | null>(null);
   public mousePosition = new BehaviorSubject<number[]>([0, 0]);
 
-  constructor(private _state: ZsMapStateService, public i18n: I18NService, private geoAdminService: GeoadminService) {}
+  constructor(private _state: ZsMapStateService, public i18n: I18NService, private geoAdminService: GeoadminService) {
+    this.sidebarContext = this._state.observeSidebarContext();
+  }
 
   public ngOnDestroy(): void {
     this._ngUnsubscribe.next();
@@ -338,7 +341,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.updateMapZoom(-1);
   }
 
-  setSidebarContext(context: SidebarContext) {
+  setSidebarContext(context: SidebarContext | null) {
     this._state.toggleSidebarContext(context);
   }
 }
