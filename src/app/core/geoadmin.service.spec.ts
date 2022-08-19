@@ -7,7 +7,7 @@ describe('GeoadminService', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-    })
+    }),
   );
 
   it('should be created', () => {

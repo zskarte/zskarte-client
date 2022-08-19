@@ -2,35 +2,20 @@
   <div class="filter">
     <div>
       <mat-form-field
-      ><input
-        name="filter"
-        matInput
-        [(ngModel)]="filter"
-        (ngModelChange)="updateAvailableSigns()"
-        placeholder="{{ i18n.get('filter') }}"
+        ><input name="filter" matInput [(ngModel)]="filter" (ngModelChange)="updateAvailableSigns()" placeholder="{{ i18n.get('filter') }}"
       /></mat-form-field>
     </div>
     <div>
       <mat-form-field>
         <mat-label>{{ i18n.get('filterByCategory') }}</mat-label>
-        <mat-select
-          [(value)]="selected"
-          (selectionChange)="updateAvailableSigns()"
-        >
+        <mat-select [(value)]="selected" (selectionChange)="updateAvailableSigns()">
           <mat-option>{{ i18n.get('allCategories') }}</mat-option>
-          <mat-option
-            *ngFor="let category of signCategories"
-            value="{{ category.name }}"
-            class="noPadding"
-          >
+          <mat-option *ngFor="let category of signCategories" value="{{ category.name }}" class="noPadding">
             <div class="categoryElement">
-              <div
-                class="categoryDot"
-                style="background-color:{{ category.color }};"
-              ></div>
+              <div class="categoryDot" style="background-color:{{ category.color }};"></div>
               <span>
-                  {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
-                </span>
+                {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
+              </span>
             </div>
           </mat-option>
         </mat-select>
@@ -53,11 +38,11 @@
       <td mat-cell *matCellDef="let sign">
         <mat-icon aria-hidden="false" class="row-action">
           {{ getIconFromType(sign.type) }}
-        </mat-icon></td>
+        </mat-icon>
+      </td>
     </ng-container>
 
-
     <tr mat-header-row *matHeaderRowDef="['symbol', 'name', 'actions']"></tr>
-    <tr mat-row class="selectRow" *matRowDef="let row; columns: ['symbol', 'name', 'actions'];" (click)="select(row)"></tr>
+    <tr mat-row class="selectRow" *matRowDef="let row; columns: ['symbol', 'name', 'actions']" (click)="select(row)"></tr>
   </table>
 </form>

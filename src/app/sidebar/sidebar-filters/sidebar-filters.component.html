@@ -1,9 +1,5 @@
 <mat-accordion multi displayMode="flat">
-  <mat-expansion-panel
-    class="mat-elevation-z0"
-    (opened)="filtersGeneralOpenState = true"
-    (closed)="filtersGeneralOpenState = false"
-  >
+  <mat-expansion-panel class="mat-elevation-z0" (opened)="filtersGeneralOpenState = true" (closed)="filtersGeneralOpenState = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
         {{ i18n.get('generalFilters') }}
@@ -20,36 +16,17 @@
     </div>
   </mat-expansion-panel>
   <mat-divider></mat-divider>
-  <mat-expansion-panel
-    class="mat-elevation-z0"
-    (opened)="filtersOpenState = true"
-    (closed)="filtersOpenState = false"
-  >
+  <mat-expansion-panel class="mat-elevation-z0" (opened)="filtersOpenState = true" (closed)="filtersOpenState = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
         {{ i18n.get('filter') }}
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <div
-      class="filterButtons"
-      *ngIf="filterSymbols && filterSymbols.length > 0"
-    >
+    <div class="filterButtons" *ngIf="filterSymbols && filterSymbols.length > 0">
       <mat-grid-list cols="5" gutterSize="4">
         <mat-grid-tile *ngFor="let symbol of filterSymbols">
-          <button
-            mat-button
-            class="filterItem"
-            (click)="toggleFilter(symbol)"
-          >
-            <div
-              style="
-                position: relative;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              "
-            >
+          <button mat-button class="filterItem" (click)="toggleFilter(symbol)">
+            <div style="position: relative; height: 100%; display: flex; justify-content: center; align-items: center">
               <img
                 [class.opaque]="symbol.hidden"
                 *ngIf="symbol.src"
@@ -57,17 +34,8 @@
                 [title]="symbol.label"
                 style="max-width: 100%; height: auto"
               />
-              <mat-icon
-                [class.opaque]="symbol.hidden"
-                aria-hidden="false"
-                *ngIf="symbol.icon"
-                >{{ symbol.icon }}</mat-icon
-              >
-              <mat-icon
-                class="eyeOverlay"
-                *ngIf="symbol.hidden"
-                >visibility_off</mat-icon
-              >
+              <mat-icon [class.opaque]="symbol.hidden" aria-hidden="false" *ngIf="symbol.icon">{{ symbol.icon }}</mat-icon>
+              <mat-icon class="eyeOverlay" *ngIf="symbol.hidden">visibility_off</mat-icon>
             </div>
           </button>
         </mat-grid-tile>
@@ -75,30 +43,16 @@
     </div>
   </mat-expansion-panel>
   <mat-divider></mat-divider>
-  <mat-expansion-panel
-    class="mat-elevation-z0"
-    (opened)="filtersOpenState = true"
-    (closed)="filtersOpenState = false"
-  >
+  <mat-expansion-panel class="mat-elevation-z0" (opened)="filtersOpenState = true" (closed)="filtersOpenState = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
         {{ i18n.get('categories') }}
       </mat-panel-title>
     </mat-expansion-panel-header>
     <mat-selection-list>
-      <mat-list-item
-        *ngFor="let category of signCategories"
-        class="category-list-item"
-      >
-        <button
-          mat-button
-          class="category-list-item-button"
-          style="width: 100%; text-align: left"
-          (click)="filterCategory(category.name)"
-        >
-          {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }} ({{
-            i18n.get('hideShow')
-          }})
+      <mat-list-item *ngFor="let category of signCategories" class="category-list-item">
+        <button mat-button class="category-list-item-button" style="width: 100%; text-align: left" (click)="filterCategory(category.name)">
+          {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }} ({{ i18n.get('hideShow') }})
           <!--<mat-icon>visibility_off</mat-icon>-->
         </button>
       </mat-list-item>
