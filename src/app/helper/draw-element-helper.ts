@@ -1,6 +1,7 @@
 import { Draw } from 'ol/interaction';
 import { Sign } from '../core/entity/sign';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
+import { ZsMapFreehandDrawElement } from '../map-renderer/elements/freehand-draw.element';
 import { ZsMapLineDrawElement } from '../map-renderer/elements/line-draw-element';
 import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
 import { ZsMapSymbolDrawElement } from '../map-renderer/elements/symbol-draw-element';
@@ -19,6 +20,8 @@ export class DrawElementHelper {
         return ZsMapLineDrawElement.getOlDrawHandler(state, element);
       case ZsMapDrawElementStateType.SYMBOL:
         return ZsMapSymbolDrawElement.getOlDrawHandler(state, element);
+      case ZsMapDrawElementStateType.FREEHAND:
+        return ZsMapFreehandDrawElement.getOlDrawHandler(state, element);
     }
     throw new Error(`Could not create draw handler for type ${element.type}`);
   }
@@ -35,6 +38,8 @@ export class DrawElementHelper {
           return new ZsMapLineDrawElement(element.id, state);
         case ZsMapDrawElementStateType.SYMBOL:
           return new ZsMapSymbolDrawElement(element.id, state);
+        case ZsMapDrawElementStateType.FREEHAND:
+          return new ZsMapFreehandDrawElement(element.id, state);
       }
     }
 

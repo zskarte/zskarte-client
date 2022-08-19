@@ -1,0 +1,13 @@
+textarea {
+  width: 100%;
+  height: 50vh;
+  font-size: 0.8em;
+}
+
+.error {
+  color: red;
+}
+
+mat-form-field {
+  width: 30vw;
+}

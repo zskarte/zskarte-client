@@ -23,7 +23,6 @@ export class ToolbarComponent {
   historyMode: Observable<boolean>;
   exportEnabled = true;
   downloadData: SafeUrl | null = null;
-  downloadCSVData = null;
   locales: string[] = LOCALES;
 
   constructor(
@@ -98,7 +97,7 @@ export class ToolbarComponent {
           .afterClosed()
           .subscribe((confirmed) => {
             if (confirmed) {
-              this.zsMapStateService.loadMapState(JSON.parse(result.value));
+              this.zsMapStateService.setMapState(JSON.parse(result.value));
             }
           });
       }

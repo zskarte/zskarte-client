@@ -51,7 +51,6 @@ export abstract class ZsMapBaseLayer {
   }
 
   public addOlFeature(feature: Feature): void {
-    console.log('add feature', feature);
     this._olSource.addFeature(feature);
   }
 
