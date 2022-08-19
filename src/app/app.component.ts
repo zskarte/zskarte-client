@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +6,17 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  height = window.innerHeight;
+  width = window.innerWidth;
+
+  ngOnInit(): void {
+    this.setSize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  setSize(): void {
+    this.height = document.documentElement?.clientHeight || window.innerHeight;
+    this.width = window.innerWidth;
+  }
+}
