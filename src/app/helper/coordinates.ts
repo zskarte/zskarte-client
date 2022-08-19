@@ -47,3 +47,13 @@ export function formatArea(polygon: Geometry) {
   }
   return output;
 }
+
+export function indexOfPointInCoordinateGroup(coordinateGroup: number[][], compareCoordinate: number[]) {
+  for (let i = 0; i < coordinateGroup.length; i++) {
+    const coordinate = coordinateGroup[i];
+    if (coordinate[0] === compareCoordinate[0] && coordinate[1] === compareCoordinate[1]) {
+      return i;
+    }
+  }
+  return -1;
+}

@@ -33,6 +33,7 @@ import { Signs } from '../map-renderer/signs';
 import Feature from 'ol/Feature';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import { SimpleGeometry } from 'ol/geom';
 
 @Injectable({
   providedIn: 'root',
@@ -49,7 +50,7 @@ export class ZsMapStateService {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
-  private _selectedFeature = new BehaviorSubject<Feature | null>(null);
+  private _selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | null>(null);
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
@@ -84,6 +85,12 @@ export class ZsMapStateService {
       sidebarContext: null,
       hiddenSymbols: [],
     };
+  }
+
+  public copySymbol(symbolId: number, layer?: string) {
+    if (layer) {
+      this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId });
+    }
   }
 
   // drawing
@@ -205,7 +212,7 @@ export class ZsMapStateService {
     });
   }
 
-  public setSelectedFeature(feature: Feature) {
+  public setSelectedFeature(feature: Feature<SimpleGeometry>) {
     this._selectedFeature.next(feature);
   }
 
@@ -380,7 +387,7 @@ export class ZsMapStateService {
     );
   }
 
-  public observeSelectedFeature(): Observable<Feature | null> {
+  public observeSelectedFeature(): Observable<Feature<SimpleGeometry> | null> {
     return this._selectedFeature.asObservable();
   }
 

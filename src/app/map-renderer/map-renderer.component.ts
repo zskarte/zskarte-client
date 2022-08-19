@@ -1,12 +1,11 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Draw, Select, Translate, defaults, Modify } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
-import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, last, lastValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
-import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
 import { ZsMapBaseLayer } from './layers/base-layer';
@@ -14,20 +13,25 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { SidebarContext, ZsMapDisplayMode, ZsMapElementToDraw } from '../state/interfaces';
+import { SidebarContext } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { Collection, Feature } from 'ol';
+import { Collection, Feature, Overlay } from 'ol';
 import { Geometry, LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { Icon, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
-import { formatArea, formatLength } from '../helper/coordinates';
+import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
 import { FeatureLike } from 'ol/Feature';
 import { availableProjections, mercatorProjection } from '../helper/projections';
 import { getCenter } from 'ol/extent';
 import { transform } from 'ol/proj';
 import { Coordinate } from 'ol/coordinate';
+import { getFirstCoordinate, Sign } from '../core/entity/sign';
+import { MatButton } from '@angular/material/button';
+import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-map-renderer',
@@ -37,6 +41,14 @@ import { Coordinate } from 'ol/coordinate';
 })
 export class MapRendererComponent implements AfterViewInit {
   @ViewChild('mapElement') mapElement!: ElementRef;
+  @ViewChild('delete') deleteElement!: MatButton;
+  @ViewChild('rotate') rotateElement!: MatButton;
+  @ViewChild('copy') copyElement!: MatButton;
+  removeButton?: Overlay;
+  rotateButton?: Overlay;
+  copyButton?: Overlay;
+  ROTATE_OFFSET_X = 30;
+  ROTATE_OFFSET_Y = -30;
 
   sidebarContextValues = SidebarContext;
   sidebarContext: Observable<SidebarContext | null>;
@@ -44,6 +56,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
   private _view!: OlView;
+  private _modify!: Modify;
   private _mapLayer = new OlTileLayer({
     zIndex: 0,
   });
@@ -57,17 +70,25 @@ export class MapRendererComponent implements AfterViewInit {
   private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
   private _modifyCache = new Collection<Feature>([]);
   private _currentSketch: FeatureLike | undefined;
+  private _rotating = false;
+  private _initialRotation = 0;
+  private _lastModificationPointCoordinates: number[] = [];
   public currentSketchSize = new BehaviorSubject<string | null>(null);
   public mousePosition = new BehaviorSubject<number[]>([0, 0]);
   public mouseCoordinates = new BehaviorSubject<number[]>([0, 0]);
   public mouseProjection: Observable<string>;
   public availableProjections = availableProjections;
   public selectedProjectionIndex = 0;
-  public selectedFeature: Observable<Feature | null>;
+  public selectedFeature: Observable<Feature<SimpleGeometry> | null>;
   public selectedFeatureCoordinates: Observable<string>;
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
 
-  constructor(private _state: ZsMapStateService, public i18n: I18NService, private geoAdminService: GeoadminService) {
+  constructor(
+    private _state: ZsMapStateService,
+    public i18n: I18NService,
+    private geoAdminService: GeoadminService,
+    private dialog: MatDialog,
+  ) {
     this.selectedFeature = _state.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe));
     this.sidebarContext = this._state.observeSidebarContext();
     this.selectedFeatureCoordinates = this.selectedFeature.pipe(
@@ -101,11 +122,12 @@ export class MapRendererComponent implements AfterViewInit {
     });
     select.on('select', (event) => {
       this._modifyCache.clear();
+      this.toggleEditButtons(false);
       for (const feature of event.selected) {
         if (!feature.get('sig').protected) {
           this._modifyCache.push(feature);
         }
-        this._state.setSelectedFeature(feature);
+        this._state.setSelectedFeature(feature as Feature<SimpleGeometry>);
       }
 
       if (event.selected.length === 0) {
@@ -113,22 +135,31 @@ export class MapRendererComponent implements AfterViewInit {
       }
     });
 
-    const modify = new Modify({
+    this._modify = new Modify({
       features: this._modifyCache,
-      condition: () => {
-        if (modify['vertexFeature_'] && modify['lastPointerEvent_'] && this.areFeaturesModifiable()) {
-          // todo toggle edit buttons
-          return true;
+      condition: (event) => {
+        if (this._modify['vertexFeature_'] && this._modify['lastPointerEvent_'] && this.areFeaturesModifiable()) {
+          this.removeButton?.setPosition(event.coordinate);
+          this.rotateButton?.setPosition(event.coordinate);
+          this.copyButton?.setPosition(event.coordinate);
+          this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+          this.toggleEditButtons(true);
         }
-        return false;
+        return true;
       },
     });
 
-    modify.on('modifystart', (event) => {
+    this._modify.on('modifystart', (event) => {
       this._currentSketch = event.features.getArray()[0];
+      this.toggleEditButtons(false);
     });
 
-    modify.on('modifyend', () => {
+    this._modify.on('modifyend', (e) => {
+      this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+      this.removeButton?.setPosition(e.mapBrowserEvent.coordinate);
+      this.copyButton?.setPosition(e.mapBrowserEvent.coordinate);
+      this.rotateButton?.setPosition(e.mapBrowserEvent.coordinate);
+      this.toggleEditButtons(true);
       this._currentSketch = undefined;
     });
 
@@ -150,7 +181,7 @@ export class MapRendererComponent implements AfterViewInit {
         doubleClickZoom: false,
         pinchRotate: false,
         shiftDragZoom: false,
-      }).extend([select, translate, modify]),
+      }).extend([select, translate, this._modify]),
     });
 
     this._positionFlagLocation = new Point([0, 0]);
@@ -353,6 +384,204 @@ export class MapRendererComponent implements AfterViewInit {
       this._positionFlagLocation.setCoordinates(positionFlag.coordinates);
       this._positionFlag.changed();
     });
+
+    this.initButtons();
+  }
+
+  initButtons() {
+    this.removeButton = new Overlay({
+      element: this.deleteElement._elementRef.nativeElement,
+      positioning: 'center-center',
+      offset: [30, 30],
+    });
+    this.copyButton = new Overlay({
+      element: this.copyElement._elementRef.nativeElement,
+      positioning: 'center-center',
+      offset: [-30, 30],
+    });
+    this.rotateButton = new Overlay({
+      element: this.rotateElement._elementRef.nativeElement,
+      positioning: 'center-center',
+      offset: [this.ROTATE_OFFSET_X, this.ROTATE_OFFSET_Y],
+    });
+
+    this.rotateButton.getElement()?.addEventListener('mousedown', () => this.startRotating());
+    this.rotateButton.getElement()?.addEventListener('touchstart', () => this.startRotating());
+    this.removeButton.getElement()?.addEventListener('click', () => this.removeFeature());
+    this.copyButton.getElement()?.addEventListener('click', async () => {
+      const coordinationGroup = await this.getCoordinationGroupOfLastPoint();
+      this.toggleEditButtons(false);
+      if (coordinationGroup) {
+        this.doCopySign(coordinationGroup?.feature);
+      }
+    });
+
+    this._map.addOverlay(this.removeButton);
+    this._map.addOverlay(this.rotateButton);
+    this._map.addOverlay(this.copyButton);
+  }
+
+  async startRotating() {
+    const feature = await firstValueFrom(this.selectedFeature);
+    if (!feature?.get('sig')) {
+      return;
+    }
+    this._rotating = true;
+    this._initialRotation = feature.get('sig').rotation;
+  }
+
+  @HostListener('document:mouseup')
+  @HostListener('document:touchend')
+  @HostListener('document:touchcancel')
+  stopRotating() {
+    this._rotating = false;
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  async onMouseMove(event: MouseEvent | TouchEvent) {
+    if (!this._rotating) {
+      return;
+    }
+
+    if (window.TouchEvent && event instanceof TouchEvent && event.targetTouches.length <= 0) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const feature = await firstValueFrom(this.selectedFeature);
+
+    if (!feature?.get('sig')) {
+      return;
+    }
+
+    let pageX = 0,
+      pageY = 0;
+    if (window.TouchEvent && event instanceof TouchEvent) {
+      pageX = event.targetTouches[event.targetTouches.length - 1].pageX;
+      pageY = event.targetTouches[event.targetTouches.length - 1].pageY;
+    } else if (event instanceof MouseEvent) {
+      pageX = event.pageX;
+      pageY = event.pageY;
+    }
+
+    const rect = this.rotateButton?.getElement()?.getBoundingClientRect() ?? { x: 0, y: 0 };
+
+    const radians = Math.atan2(pageX - (rect.x - this.ROTATE_OFFSET_X), pageY - (rect.y - this.ROTATE_OFFSET_Y));
+    const degrees = Math.round(radians * (180 / Math.PI) * -1 + 100);
+    let rotation = degrees + this._initialRotation;
+
+    // keep the rotation between -180 and 180
+    rotation = rotation > 180 ? rotation - 360 : rotation;
+    const id = feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
+
+    this._state.updateDrawElementState(id, 'rotation', rotation);
+  }
+
+  async removeFeature() {
+    const coordinationGroup = await this.getCoordinationGroupOfLastPoint();
+    if (coordinationGroup) {
+      if (!coordinationGroup.minimalAmountOfPoints) {
+        this._modify.removePoint();
+      } else if (coordinationGroup.otherCoordinationGroupCount == 0) {
+        // It's the last coordination group - we can remove the feature.
+        const confirm = this.dialog.open(ConfirmationDialogComponent, {
+          data: this.i18n.get('removeFeatureFromMapConfirm'), // this.i18n.get('deleteLastPointOnFeature') + " " + this.i18n.get('removeFeatureFromMapConfirm')
+        });
+        confirm.afterClosed().subscribe((r) => {
+          if (r) {
+            this._state.removeDrawElement(coordinationGroup.feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
+            this._state.resetSelectedFeature();
+          }
+        });
+      } else if (coordinationGroup.coordinateGroupIndex) {
+        // It's not the last coordination group - so we need to get rid of the coordination group inside the feature
+        const oldCoordinates = coordinationGroup.feature.getGeometry()?.getCoordinates();
+        const newCoordinates = [];
+
+        if (oldCoordinates) {
+          for (let i = 0; i < oldCoordinates.length; i++) {
+            if (i != coordinationGroup.coordinateGroupIndex) {
+              newCoordinates.push(oldCoordinates[i]);
+            }
+          }
+          const id = coordinationGroup.feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
+          this._state.updateDrawElementState(id, 'coordinates', newCoordinates);
+        }
+      }
+    }
+    this.toggleEditButtons(false);
+  }
+
+  private async getCoordinationGroupOfLastPoint() {
+    const feature = await firstValueFrom(this.selectedFeature);
+    // Since we're working with single select, this should be only one - we iterate it nevertheless for being defensive
+    const coordinates = feature?.getGeometry()?.getCoordinates();
+    if (coordinates) {
+      switch (feature?.getGeometry()?.getType()) {
+        case 'Polygon':
+          for (let i = 0; i < coordinates.length; i++) {
+            const coordinateGroup = coordinates[i];
+            if (indexOfPointInCoordinateGroup(coordinateGroup, this._lastModificationPointCoordinates) != -1) {
+              return {
+                feature: feature,
+                coordinateGroupIndex: i,
+                otherCoordinationGroupCount: coordinates.length - 1,
+                minimalAmountOfPoints: coordinateGroup.length <= 4,
+              };
+            }
+          }
+          return null;
+        case 'LineString':
+          return {
+            feature: feature,
+            coordinateGroupIndex: null,
+            otherCoordinationGroupCount: 0,
+            minimalAmountOfPoints: coordinates.length <= 2,
+          };
+        case 'Point':
+          return {
+            feature: feature,
+            coordinateGroupIndex: null,
+            otherCoordinationGroupCount: 0,
+            minimalAmountOfPoints: true,
+          };
+      }
+    }
+    return null;
+  }
+
+  async doCopySign(feature: Feature<SimpleGeometry>) {
+    const sign = feature?.get('sig') as Sign;
+    if (!sign || !sign.id) {
+      return;
+    }
+    const layer = await firstValueFrom(this._state.observeActiveLayer());
+    this._state.copySymbol(sign.id, layer?.getId());
+  }
+
+  async toggleEditButtons(show: boolean) {
+    let allowRotation = false;
+    if (show && this._lastModificationPointCoordinates) {
+      const selectedFeature = await firstValueFrom(this.selectedFeature);
+
+      const [pointX, pointY] = this._lastModificationPointCoordinates;
+      const [iconX, iconY] = getFirstCoordinate(selectedFeature);
+
+      // only show rotateButton if the feature has an icon and the selected point is where the icon is placed
+      allowRotation = selectedFeature?.get('sig')?.src && pointX === iconX && pointY === iconY;
+    }
+
+    this.toggleButton(show, this.removeButton?.getElement());
+    this.toggleButton(allowRotation, this.rotateButton?.getElement());
+    this.toggleButton(allowRotation, this.copyButton?.getElement());
+  }
+
+  toggleButton(allow: boolean, el?: HTMLElement) {
+    if (el) {
+      // TODO: include historyMode
+      el.style.display = allow ? 'block' : 'none';
+    }
   }
 
   areFeaturesModifiable() {
@@ -388,7 +617,7 @@ export class MapRendererComponent implements AfterViewInit {
 
   transformToCurrentProjection(coordinates: Coordinate) {
     const projection = availableProjections[this.selectedProjectionIndex].projection;
-    if (projection && mercatorProjection) {
+    if (projection && mercatorProjection && coordinates.every((c) => !isNaN(c))) {
       return transform(coordinates, mercatorProjection, projection);
     }
     return undefined;

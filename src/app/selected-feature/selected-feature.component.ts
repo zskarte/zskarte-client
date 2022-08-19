@@ -11,7 +11,7 @@ import { CustomImageStoreService } from '../state/custom-image-store.service';
 import { DrawStyle } from '../map-renderer/draw-style';
 import { firstValueFrom, Observable, Subject } from 'rxjs';
 import { Feature } from 'ol';
-import { Point } from 'ol/geom';
+import { Point, SimpleGeometry } from 'ol/geom';
 import { map, takeUntil } from 'rxjs/operators';
 import { ZsMapDisplayMode, ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
 import { ZsMapOLFeatureProps } from '../map-renderer/elements/base/ol-feature-props';
@@ -27,7 +27,7 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 export class SelectedFeatureComponent implements OnDestroy {
   groupedFeatures = null;
   editMode: Observable<boolean>;
-  selectedFeature: Observable<Feature | null>;
+  selectedFeature: Observable<Feature<SimpleGeometry> | null>;
   selectedSignature: Observable<Sign | undefined>;
   selectedDrawElement: Observable<ZsMapDrawElementState | undefined>;
   drawHoleMode: Observable<boolean>;
@@ -234,7 +234,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
   }
 
-  addImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature) {
+  addImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
     const dialogRef = this.dialog.open(DrawingDialogComponent);
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.src) {
@@ -244,7 +244,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     });
   }
 
-  removeImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature, src: string) {
+  removeImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>, src: string) {
     const images = drawElement.images ?? [];
     this.updateProperty(
       drawElement,
@@ -254,7 +254,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     this.zsMapStateService.setSelectedFeature(selectedFeature);
   }
 
-  chooseSymbol(drawElement: ZsMapDrawElementState, selectedFeature: Feature) {
+  chooseSymbol(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
     const dialogRef = this.dialog.open(DrawingDialogComponent);
     dialogRef.afterClosed().subscribe((result: Sign) => {
       if (result) {
