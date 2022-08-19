@@ -8,6 +8,7 @@ import { Type } from 'ol/geom/Geometry';
 import { areCoordinatesEqual } from '../../helper/coordinates';
 import { StyleLike } from 'ol/style/Style';
 import { Signs } from '../signs';
+import { takeUntil } from 'rxjs';
 
 export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDrawElementState> {
   protected _olGeometryItem!: SimpleGeometry;
@@ -16,9 +17,11 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.SYMBOL);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
-    this.observeCoordinates().subscribe((coordinates) => {
-      this._olGeometryItem?.setCoordinates(coordinates as number[]);
-    });
+    this.observeCoordinates()
+      .pipe(takeUntil(this._unsubscribe))
+      .subscribe((coordinates) => {
+        this._olGeometryItem?.setCoordinates(coordinates as number[]);
+      });
   }
 
   protected _initialize(element: ZsMapSymbolDrawElementState): void {

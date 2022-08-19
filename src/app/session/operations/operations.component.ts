@@ -25,7 +25,9 @@ export class OperationsComponent {
   }
 
   private async _reload(): Promise<void> {
-    const result = await this._api.get('/api/operations?filters[organization][id][$eq]=' + this._session.getOrganizationId());
+    const result = await this._api.get(
+      '/api/operations?filters[organization][id][$eq]=' + this._session.getOrganizationId() + '&filters[status][$eq]=active',
+    );
     const operations: IZsMapOperation[] = [];
     for (const o of result?.data) {
       operations.push({
@@ -50,6 +52,19 @@ export class OperationsComponent {
     this.operationToEdit.next({ id: undefined } as any);
   }
 
+  public async deleteOperation(): Promise<void> {
+    if (!this.operationToEdit.value) {
+      return;
+    }
+    if (this.operationToEdit.value) {
+      this.operationToEdit.value.status = 'archived';
+    }
+    await this._api.put('/api/operations/' + this.operationToEdit.value.id, {
+      data: { ...this.operationToEdit.value, organization: this._session.getOrganizationId() },
+    });
+    this._reload();
+  }
+
   public async saveOperation(operation: IZsMapOperation): Promise<void> {
     if (!operation.mapState) {
       // TODO encapsulate this
@@ -67,7 +82,11 @@ export class OperationsComponent {
       operation.status = 'active';
     }
 
-    const result = await this._api.post('/api/operations', { data: { ...operation, organization: this._session.getOrganizationId() } });
+    if (!operation.id) {
+      await this._api.post('/api/operations', { data: { ...operation, organization: this._session.getOrganizationId() } });
+    } else {
+      await this._api.put('/api/operations/' + operation.id, { data: { ...operation, organization: this._session.getOrganizationId() } });
+    }
     this._reload();
   }
 

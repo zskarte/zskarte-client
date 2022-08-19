@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { IZsMapBaseDrawElementState, ZsMapDrawElementState, ZsMapElementToDraw } from '../../../state/interfaces';
 import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapBaseElement } from './base-element';
@@ -7,7 +7,7 @@ import { Draw } from 'ol/interaction';
 import VectorSource from 'ol/source/Vector';
 import { Options } from 'ol/interaction/Draw';
 import { Geometry } from 'ol/geom';
-import { distinctUntilChanged, map } from 'rxjs/operators';
+import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { IZsMapDrawElementUi } from './draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
@@ -28,8 +28,9 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
         return o.drawElements?.find((o) => o.id === this._id) as any;
       }),
       distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
     );
-    this._element.subscribe((element) => {
+    this._element.pipe(takeUntil(this._unsubscribe)).subscribe((element) => {
       this._setSignatureState(element);
     });
   }
@@ -78,6 +79,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
         return o?.coordinates;
       }),
       distinctUntilChanged((x, y) => areCoordinatesEqual(x, y)),
+      takeUntil(this._unsubscribe),
     );
   }
 
@@ -100,6 +102,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
         return o?.layer;
       }),
       distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
     );
   }
 

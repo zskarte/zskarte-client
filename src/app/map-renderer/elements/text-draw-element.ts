@@ -6,6 +6,7 @@ import { LineString, SimpleGeometry } from 'ol/geom';
 import { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import { areCoordinatesEqual } from 'src/app/helper/coordinates';
+import { takeUntil } from 'rxjs';
 
 export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
   protected _olGeometryItem!: SimpleGeometry;
@@ -13,9 +14,11 @@ export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.TEXT);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
-    this.observeCoordinates().subscribe((coordinates) => {
-      this._olGeometryItem?.setCoordinates(coordinates as number[]);
-    });
+    this.observeCoordinates()
+      .pipe(takeUntil(this._unsubscribe))
+      .subscribe((coordinates) => {
+        this._olGeometryItem?.setCoordinates(coordinates as number[]);
+      });
   }
   protected _initialize(element: ZsMapTextDrawElementState): void {
     this._olGeometryItem = new LineString(element.coordinates as number[]);
