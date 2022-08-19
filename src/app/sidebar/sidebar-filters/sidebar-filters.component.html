@@ -86,21 +86,30 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <mat-selection-list>
-      <mat-list-item
+     <mat-list-item 
         *ngFor="let category of signCategories"
         class="category-list-item"
       >
         <button
-          mat-button
-          class="category-list-item-button"
-          style="width: 100%; text-align: left"
-          (click)="filterCategory(category.name)"
-        >
-          {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }} ({{
-            i18n.get('hideShow')
-          }})
-          <!--<mat-icon>visibility_off</mat-icon>-->
-        </button>
+        mat-button
+        class="category-list-item-button"
+        style="width: 100%; text-align: left"
+        (click)="filterCategory(category.name)"
+      >
+        <div
+          [ngStyle]="{ 'background-color': category.color }"
+          class="category-color"
+        ></div>
+        {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
+        <div class="icon-wrapper">
+          <mat-icon *ngIf="isCategoryFiltered(category.name)"
+            >visibility_off</mat-icon
+          >
+          <mat-icon *ngIf="!isCategoryFiltered(category.name)"
+            >visibility_on</mat-icon
+          >
+        </div>
+      </button>
       </mat-list-item>
     </mat-selection-list>
   </mat-expansion-panel>
