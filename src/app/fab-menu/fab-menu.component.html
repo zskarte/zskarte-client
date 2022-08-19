@@ -1,59 +1,26 @@
 <div class="fab-menu" [hidden]="historyMode$ | async">
-  <button
-    mat-fab
-    color="primary"
-    aria-label="Add"
-    (click)="isOpen = !isOpen"
-    cdkOverlayOrigin
-    #trigger="cdkOverlayOrigin"
-  >
+  <button mat-fab color="primary" aria-label="Add" (click)="isOpen = !isOpen" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
     <mat-icon class="add-icon" [class.skewed]="isOpen">add</mat-icon>
   </button>
 </div>
 
-<div
-  class="fab-background"
-  [class.isOpen]="isOpen"
-  (click)="closeBackdrop()"
-></div>
+<div class="fab-background" [class.isOpen]="isOpen" (click)="closeBackdrop()"></div>
 
 <!-- This template displays the overlay content and is connected to the button -->
-<ng-template
-  cdkConnectedOverlay
-  [cdkConnectedOverlayOrigin]="trigger"
-  [cdkConnectedOverlayOpen]="isOpen"
->
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOpen">
   <ul class="fab-menu-list">
     <li>
-      <button
-        mat-raised-button
-        class="mat-fab"
-        (click)="openTextDialog()"
-        [matTooltip]="i18n.get('text')"
-        matTooltipPosition="left"
-      >
+      <button mat-raised-button class="mat-fab" (click)="openTextDialog()" [matTooltip]="i18n.get('text')" matTooltipPosition="left">
         <mat-icon>font_download</mat-icon>
       </button>
     </li>
     <li>
-      <button
-        mat-raised-button
-        class="mat-fab"
-        (click)="polygon()"
-        [matTooltip]="i18n.get('polygon')"
-        matTooltipPosition="left"
-      >
+      <button mat-raised-button class="mat-fab" (click)="polygon()" [matTooltip]="i18n.get('polygon')" matTooltipPosition="left">
         <mat-icon>widgets</mat-icon>
       </button>
     </li>
     <li>
-      <button
-        mat-raised-button
-        class="mat-fab"
-        (click)="line()"
-        [matTooltip]="i18n.get('line')"
-        matTooltipPosition="left"
-      >
+      <button mat-raised-button class="mat-fab" (click)="line()" [matTooltip]="i18n.get('line')" matTooltipPosition="left">
         <mat-icon>show_chart</mat-icon>
       </button>
     </li>
@@ -69,13 +36,7 @@
       </button>
     </li>
     <li>
-      <button
-        mat-raised-button
-        class="mat-fab"
-        (click)="openDrawDialog()"
-        [matTooltip]="i18n.get('symbol')"
-        matTooltipPosition="left"
-      >
+      <button mat-raised-button class="mat-fab" (click)="openDrawDialog()" [matTooltip]="i18n.get('symbol')" matTooltipPosition="left">
         <mat-icon>stars</mat-icon>
       </button>
     </li>

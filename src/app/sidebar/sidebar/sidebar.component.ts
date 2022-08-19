@@ -25,7 +25,14 @@ export class SidebarComponent implements OnInit {
   mapSources = Object.values(ZsMapStateSource);
   filteredAvailableFeatures$: Observable<GeoFeature[]>;
   favouriteFeatures$: Observable<GeoFeature[]>;
-  favouriteFeaturesList = ['auengebiete', 'gemeindegrenzen', 'gewässer swisstlm3d', 'hangneigung ab 30°', 'strassen und wege swisstlm3d'];
+  favouriteFeaturesList = [
+    'auengebiete',
+    'gemeindegrenzen',
+    'gewässer swisstlm3d',
+    'hangneigung ab 30°',
+    'strassen und wege swisstlm3d',
+    'kgs inventar',
+  ];
 
   layerFilter = new FormControl('');
 

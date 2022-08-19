@@ -60,7 +60,6 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
       .map((symbol: any) => ({ ...symbol, hidden: hiddenSymbols.includes(symbol.id) }));
   }
 
-
   extractSymbol(f: FeatureLike, symbols: Record<string, any>) {
     const sig = f.get('sig');
     if (sig) {
