@@ -77,6 +77,10 @@ app-credits {
   .noprint {
     display: none;
   }
+
+  .toolbar {
+    display: none;
+  }
 }
 
 .mat-stroked-button.active {

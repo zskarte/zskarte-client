@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, ViewChild } from '@angular/core';
 import { I18NService, LOCALES } from '../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
@@ -11,6 +11,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { SessionService } from '../session/session.service';
 import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
 import { ExportDialogComponent } from '../export-dialog/export-dialog.component';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-toolbar',
@@ -18,6 +19,8 @@ import { ExportDialogComponent } from '../export-dialog/export-dialog.component'
   styleUrls: ['./toolbar.component.css'],
 })
 export class ToolbarComponent {
+  @ViewChild(MatMenuTrigger) menu!: MatMenuTrigger;
+
   static ONBOARDING_VERSION = '1.0';
 
   historyMode: Observable<boolean>;
@@ -113,7 +116,10 @@ export class ToolbarComponent {
   }
 
   print(): void {
-    window.print();
+    this.menu.closeMenu();
+    setTimeout(() => {
+      window.print();
+    }, 0);
   }
 
   clear(): void {
