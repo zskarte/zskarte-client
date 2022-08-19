@@ -20,7 +20,7 @@
           </button>
         </div>
         <mat-menu #mainMenu="matMenu" class="burger-menu">
-          <button mat-menu-item (click)="$event.stopPropagation()">
+          <button mat-menu-item id="historyButton" (click)="toggleHistoryIfButton($event)" title="ALT+H">
             <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')">history</mat-icon>
             {{ i18n.get('history') }}
             <mat-slide-toggle (toggleChange)="toggleHistory()" [checked]="historyMode | async" color="primary"></mat-slide-toggle>
