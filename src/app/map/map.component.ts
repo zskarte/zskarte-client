@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 import { IpcService } from '../ipc/ipc.service';
@@ -11,16 +11,26 @@ import { ZsMapStateService } from '../state/state.service';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent {
+export class MapComponent implements OnInit{
   ZsMapStateSource = ZsMapStateSource;
   ZsMapDrawElementStateType = ZsMapDrawElementStateType;
   sidebarContext = SidebarContext;
   sidebarContext$: Observable<SidebarContext | null>;
   activeLayer$: Observable<ZsMapBaseLayer | undefined>;
+  width = window.innerWidth;
 
   constructor(public state: ZsMapStateService, public ipc: IpcService) {
     this.sidebarContext$ = state.observeSidebarContext();
     this.activeLayer$ = state.observeActiveLayer();
+  }
+
+  ngOnInit(): void {
+    this.setWidth();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  setWidth(): void {
+    this.width = window.innerWidth;
   }
 
   public drawElements = [
