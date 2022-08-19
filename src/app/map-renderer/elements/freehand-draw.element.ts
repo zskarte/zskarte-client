@@ -12,6 +12,7 @@ import Geometry, { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import VectorSource from 'ol/source/Vector';
 import { Draw } from 'ol/interaction';
+import { takeUntil } from 'rxjs';
 
 export class ZsMapFreehandDrawElement extends ZsMapBaseDrawElement<ZsMapFreehandDrawElementState> {
   protected _olLine!: LineString;
@@ -19,9 +20,11 @@ export class ZsMapFreehandDrawElement extends ZsMapBaseDrawElement<ZsMapFreehand
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.LINE);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
-    this.observeCoordinates().subscribe((coordinates) => {
-      this._olLine?.setCoordinates(coordinates as number[][]);
-    });
+    this.observeCoordinates()
+      .pipe(takeUntil(this._unsubscribe))
+      .subscribe((coordinates) => {
+        this._olLine?.setCoordinates(coordinates as number[][]);
+      });
   }
   protected _initialize(element: IZsMapBaseDrawElementState): void {
     this._olLine = new LineString(element.coordinates as number[]);

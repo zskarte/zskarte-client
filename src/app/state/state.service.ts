@@ -50,7 +50,8 @@ export class ZsMapStateService {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
-  private _selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | null>(null);
+  private _selectedFeature = new BehaviorSubject<Feature | null>(null);
+  private _recentlyUsedElement = new BehaviorSubject<ZsMapDrawElementState[]>([]);
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
@@ -153,6 +154,12 @@ export class ZsMapStateService {
 
   public setMapState(newState?: IZsMapState): void {
     this._layerCache = {};
+    if (this._drawElementCache) {
+      for (const key in this._drawElementCache) {
+        this._drawElementCache[key].unsubscribe();
+      }
+    }
+
     this._drawElementCache = {};
     this.updateMapState(() => {
       return newState || this._getDefaultMapState();
@@ -473,7 +480,26 @@ export class ZsMapStateService {
         }
         draft.drawElements.push(drawElement as ZsMapDrawElementState);
       });
+
+      this.addRecentlyUsedElement(element);
     }
+  }
+
+  private addRecentlyUsedElement(element: ZsMapDrawElementState) {
+    if (!element) {
+      return;
+    }
+
+    let elements = this._recentlyUsedElement.getValue();
+    elements = elements.filter((e) => e.symbolId !== element.symbolId);
+    elements.unshift(element);
+
+    elements.splice(10, elements.length - 10);
+    this._recentlyUsedElement.next(elements);
+  }
+
+  public observableRecentlyUsedElement() {
+    return this._recentlyUsedElement.asObservable();
   }
 
   public updateDrawElementState<T extends keyof ZsMapDrawElementState>(id: string, field: T, value: ZsMapDrawElementState[T]) {

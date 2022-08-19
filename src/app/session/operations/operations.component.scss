@@ -32,5 +32,16 @@
   .button {
     width: 100%;
     margin: 0;
+
+    &:not(:last-child) {
+      margin-bottom: 1em;
+    }
+  }
+
+  .operation {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 }
