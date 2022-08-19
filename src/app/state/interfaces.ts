@@ -85,7 +85,8 @@ export type ZsMapDrawElementState =
   | ZsMapTextDrawElementState
   | ZsMapSymbolDrawElementState
   | ZsMapLineDrawElementState
-  | ZsMapPolygonDrawElementState;
+  | ZsMapPolygonDrawElementState
+  | ZsMapFreehandDrawElementState;
 
 export interface IZsMapBaseElementState {
   id?: string;
@@ -139,6 +140,10 @@ export interface ZsMapLineDrawElementState extends IZsMapBaseDrawElementState {
 
 export interface ZsMapPolygonDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.POLYGON;
+}
+
+export interface ZsMapFreehandDrawElementState extends IZsMapBaseDrawElementState {
+  type: ZsMapDrawElementStateType.FREEHAND;
 }
 
 export enum SidebarContext {
