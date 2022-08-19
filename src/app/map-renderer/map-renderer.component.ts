@@ -74,13 +74,14 @@ export class MapRendererComponent implements AfterViewInit {
     select.on('select', (event) => {
       this._modifyCache.clear();
       for (const feature of event.selected) {
-        console.log('selected element', {
-          isDrawElement: feature.get(ZsMapOLFeatureProps.IS_DRAW_ELEMENT),
-          type: feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE),
-          id: feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID),
-        });
-        this._modifyCache.push(feature);
-        // TODO write to display state selectedDrawElements
+        if (!feature.get('sig').protected) {
+          this._modifyCache.push(feature);
+        }
+        this._state.setSelectedFeature(feature);
+      }
+
+      if (event.selected.length === 0) {
+        this._state.resetSelectedFeature();
       }
     });
 

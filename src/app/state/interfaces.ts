@@ -1,5 +1,5 @@
 import { GeoFeature } from '../core/entity/geoFeature';
-import { Sign } from '../core/entity/sign';
+import { FillStyle } from '../core/entity/sign';
 
 export enum ZsMapStateSource {
   OPEN_STREET_MAP = 'openStreetMap',
@@ -85,7 +85,8 @@ export type ZsMapDrawElementState =
   | ZsMapTextDrawElementState
   | ZsMapSymbolDrawElementState
   | ZsMapLineDrawElementState
-  | ZsMapPolygonDrawElementState;
+  | ZsMapPolygonDrawElementState
+  | ZsMapFreehandDrawElementState;
 
 export interface IZsMapBaseElementState {
   id?: string;
@@ -95,31 +96,54 @@ export interface IZsMapBaseElementState {
 
 export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   type: ZsMapDrawElementStateType;
-  fixedPosition?: boolean;
+  protected?: boolean;
   color?: string;
   name?: string;
+  nameShow?: boolean;
+  iconOpacity?: number;
+  description?: string;
+  iconSize?: number;
+  rotation?: number;
+  symbolId?: number;
+  hideIcon?: boolean;
+  iconOffset?: number;
+  flipIcon?: boolean;
+  style?: string;
+  arrow?: string;
+  strokeWidth?: number;
+  fillStyle?: FillStyle;
+  fillOpacity?: number;
+  fontSize?: number;
+  images?: string[];
 }
+
+export const drawElementDefaults = {
+  nameShow: true,
+  size: 1,
+  opacity: 0.5,
+  rotation: 1,
+};
 
 export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.TEXT;
-  fontSize?: string;
   text?: string;
 }
 
 export interface ZsMapSymbolDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.SYMBOL;
-  symbolId?: number;
   coordinates: number[] | number[][];
 }
 
 export interface ZsMapLineDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.LINE;
-  symbolId?: number;
 }
 
 export interface ZsMapPolygonDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.POLYGON;
-  symbolId?: number;
+}
+
+export interface ZsMapFreehandDrawElementState extends IZsMapBaseDrawElementState {
+  type: ZsMapDrawElementStateType.FREEHAND;
 }
 
 export enum SidebarContext {

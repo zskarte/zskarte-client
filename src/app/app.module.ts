@@ -41,15 +41,19 @@ import { FabMenuComponent } from './fab-menu/fab-menu.component';
 import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
 import { ExportDialogComponent } from './export-dialog/export-dialog.component';
+import { CreditsComponent } from './credits/credits.component';
+import { SelectedFeatureComponent } from './selected-feature/selected-feature.component';
+import { DetailImageViewComponent } from './detail-image-view/detail-image-view.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { EditCoordinatesComponent } from './edit-coordinates/edit-coordinates.component';
 import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filters.component';
+import { SessionService } from './session/session.service';
 
 import { registerLocaleData } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
-import { CreditsComponent } from './credits/credits.component';
 import { LoginComponent } from './session/login/login.component';
 import { MapComponent } from './map/map.component';
 import { AppRoutingModule } from './app-routing.module';
-import { SessionService } from './session/session.service';
 import { OperationsComponent } from './operations/operations.component';
 registerLocaleData(localeCH);
 
@@ -77,6 +81,9 @@ export function appFactory(session: SessionService) {
     TextDialogComponent,
     ExportDialogComponent,
     CreditsComponent,
+    SelectedFeatureComponent,
+    DetailImageViewComponent,
+    EditCoordinatesComponent,
     LoginComponent,
     MapComponent,
     OperationsComponent,
@@ -112,6 +119,7 @@ export function appFactory(session: SessionService) {
     MatRadioModule,
     MatListModule,
     MatButtonModule,
+    MatFormFieldModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-CH' },
