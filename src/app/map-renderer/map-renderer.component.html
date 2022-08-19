@@ -41,3 +41,19 @@
     [innerHTML]="sketchSize"
   ></div>
 </ng-container>
+
+<div class="mat-button coordinates">
+  <div class="mat-button-wrapper" *ngIf="{ feature: selectedFeature | async} as context">
+    <span *ngIf="!context.feature">
+      <ng-container *ngIf="mouseProjection | async as mouseProjection">{{mouseProjection}}</ng-container>
+    </span>
+    <span *ngIf="context.feature">
+      <ng-container *ngIf="selectedFeatureCoordinates | async as selectedFeatureCoordinates">
+        {{selectedFeatureCoordinates}}
+      </ng-container>
+    </span>
+    <i class="material-icons" (click)="rotateProjection()"
+      >photo_size_select_small</i
+    >
+  </div>
+</div>
