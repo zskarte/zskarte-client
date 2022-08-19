@@ -10,7 +10,6 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString } from 'ol/geom';
 import Geometry, { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
-import { checkCoordinates } from '../../helper/coordinates';
 import VectorSource from 'ol/source/Vector';
 import { Draw } from 'ol/interaction';
 
@@ -21,10 +20,7 @@ export class ZsMapFreehandDrawElement extends ZsMapBaseDrawElement<ZsMapFreehand
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.LINE);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates().subscribe((coordinates) => {
-      if (this._olLine && checkCoordinates(coordinates, this._olLine.getCoordinates())) {
-        // only update coordinates if they are not matching to prevent loops
-        this._olLine?.setCoordinates(coordinates as number[][]);
-      }
+      this._olLine?.setCoordinates(coordinates as number[][]);
     });
   }
   protected _initialize(element: IZsMapBaseDrawElementState): void {
