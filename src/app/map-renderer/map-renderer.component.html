@@ -23,14 +23,14 @@
     <mat-icon>filter_alt</mat-icon>
   </button>
   <button
-  mat-icon-button
-  *ngIf="(sidebarContext | async) !== null"
-  (click)="setSidebarContext(null)"
-  color="accent"
-  [attr.aria-label]="i18n.get('close')"
->
-  <mat-icon>close</mat-icon>
-</button>
+    mat-icon-button
+    *ngIf="(sidebarContext | async) !== null"
+    (click)="setSidebarContext(null)"
+    color="accent"
+    [attr.aria-label]="i18n.get('close')"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
 </div>
 <ng-container *ngIf="mousePosition | async as mousePosition">
   <div
@@ -43,13 +43,13 @@
 </ng-container>
 
 <div class="mat-button coordinates">
-  <div class="mat-button-wrapper" *ngIf="{ feature: selectedFeature | async} as context">
+  <div class="mat-button-wrapper" *ngIf="{ feature: selectedFeature | async } as context">
     <span *ngIf="!context.feature">
-      <ng-container *ngIf="mouseProjection | async as mouseProjection">{{mouseProjection}}</ng-container>
+      <ng-container *ngIf="mouseProjection | async as mouseProjection">{{ mouseProjection }}</ng-container>
     </span>
     <span *ngIf="context.feature">
       <ng-container *ngIf="selectedFeatureCoordinates | async as selectedFeatureCoordinates">
-        {{selectedFeatureCoordinates}}
+        {{ selectedFeatureCoordinates }}
       </ng-container>
     </span>
     <i class="material-icons" (click)="rotateProjection()">change_circle</i>

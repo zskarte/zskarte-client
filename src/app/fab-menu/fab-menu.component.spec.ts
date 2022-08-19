@@ -14,17 +14,8 @@ describe('FabMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        FabMenuComponent,
-        TextDialogComponent,
-        DrawingDialogComponent,
-      ],
-      imports: [
-        MatDialogModule,
-        HttpClientModule,
-        MatMenuModule,
-        OverlayModule,
-      ],
+      declarations: [FabMenuComponent, TextDialogComponent, DrawingDialogComponent],
+      imports: [MatDialogModule, HttpClientModule, MatMenuModule, OverlayModule],
     }).compileComponents();
   });
 
