@@ -20,6 +20,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   historyMode$: Observable<boolean>;
   filterKeys: any[] = [];
   hiddenSymbols$: Observable<number[]>;
+  filteredCategories: string[] = [];
 
   filtersOpenState = false;
   filtersGeneralOpenState = false;
@@ -58,6 +59,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
       .sort((a: any, b: any) => a.label.localeCompare(b.label))
       .map((symbol: any) => ({ ...symbol, hidden: hiddenSymbols.includes(symbol.id) }));
   }
+
 
   extractSymbol(f: FeatureLike, symbols: Record<string, any>) {
     const sig = f.get('sig');
@@ -111,9 +113,19 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
 
   public filterCategory(category: string) {
     this.mapState.filterCategory(category);
+    const index = this.filteredCategories.findIndex((c) => c === category);
+    if (index !== -1) {
+      this.filteredCategories.splice(index, 1);
+    } else {
+      this.filteredCategories.push(category);
+    }
   }
 
   public toggleFilter(symbol: Sign) {
     this.mapState.toggleSymbol(symbol.id);
+  }
+
+  public isCategoryFiltered(category: string): boolean {
+    return this.filteredCategories.findIndex((c) => c === category) !== -1;
   }
 }
