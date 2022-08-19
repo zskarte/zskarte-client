@@ -62,3 +62,14 @@
   margin-left: 5px;
   transform: scale(-1, 1);
 }
+
+@media (max-width: 650px) {
+  .coordinates {
+    font-size: 10px;
+    padding: 0 5px;
+    line-height: 0;
+  }
+  .coordinates .material-icons {
+    transform: scale(-0.75, 0.75);
+  }
+}
