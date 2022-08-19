@@ -50,7 +50,7 @@ export class ZsMapStateService {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
-  private _selectedFeature = new BehaviorSubject<Feature | null>(null);
+  private _selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | null>(null);
   private _recentlyUsedElement = new BehaviorSubject<ZsMapDrawElementState[]>([]);
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
