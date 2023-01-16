@@ -56,6 +56,7 @@ import { MapComponent } from './map/map.component';
 import { AppRoutingModule } from './app-routing.module';
 import { RecentlyUsedSignsComponent } from './recently-used-signs/recently-used-signs.component';
 import { OperationsComponent } from './session/operations/operations.component';
+import { StackComponent } from './stack/stack.component';
 registerLocaleData(localeCH);
 
 export function appFactory(session: SessionService) {
@@ -89,6 +90,7 @@ export function appFactory(session: SessionService) {
     MapComponent,
     OperationsComponent,
     RecentlyUsedSignsComponent,
+    StackComponent,
   ],
   imports: [
     BrowserModule,
