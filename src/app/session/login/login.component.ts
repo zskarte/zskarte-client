@@ -19,7 +19,7 @@ export class LoginComponent {
 
   async ngOnInit() {
     const { error, result } = await this._api.get<IZsMapOrganization[]>(
-      '/api/organizations?fields[0]=name&populate[users][fields][0]=username&populate[users][fields][1]=email&pagination[limit]=-1',
+      '/api/organizations?fields[0]=name&populate[users][fields][0]=username&populate[users][fields][1]=email&pagination[limit]=-1&sort[0]=name',
     );
     if (error || !result) return;
     const orgs: IZso[] = [];
