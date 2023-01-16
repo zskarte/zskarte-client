@@ -6,7 +6,6 @@ export enum ZsMapStateSource {
   GEO_ADMIN_SWISS_IMAGE = 'geoAdminSwissImage',
   GEO_ADMIN_PIXEL = 'geoAdminPixel',
   GEO_ADMIN_PIXEL_BW = 'geoAdminPixelBW',
-  OFFLINE = 'offline',
 }
 
 export interface IZsMapSaveFileState {
