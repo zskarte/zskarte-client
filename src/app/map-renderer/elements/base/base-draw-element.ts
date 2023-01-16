@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IZsMapBaseDrawElementState, ZsMapDrawElementState, ZsMapElementToDraw } from '../../../state/interfaces';
 import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapBaseElement } from './base-element';
@@ -21,6 +21,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.IS_DRAW_ELEMENT, true);
+    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, _id);
     this._element = this._state.observeMapState().pipe(
       map((o) => {
         // TODO typings
