@@ -8,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class StackComponent implements OnInit {
   @Input() spacing: number = 1;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     this.spacing = this.spacing * 4;
