@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { ApiService } from '../../api/api.service';
 import { SessionService } from '../session.service';
 import { ZsMapStateService } from '../../state/state.service';
 import { IZsMapOperation } from './operation.interfaces';
-import { ZsMapLayerStateType, ZsMapStateSource } from '../../state/interfaces';
+import { ZsMapLayerStateType } from '../../state/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 
 @Component({
@@ -71,7 +71,6 @@ export class OperationsComponent {
       operation.mapState = {
         version: 1,
         id: uuidv4(),
-        source: ZsMapStateSource.OPEN_STREET_MAP,
         // TODO get map center from organization
         center: [0, 0],
         name: operation.name,

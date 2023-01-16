@@ -75,6 +75,7 @@ export class ZsMapStateService {
       mapCenter: [0, 0],
       mapZoom: 16,
       activeLayer: undefined,
+      source: ZsMapStateSource.OPEN_STREET_MAP,
       layerOpacity: {},
       layerVisibility: {},
       layerOrder: [],
@@ -255,7 +256,7 @@ export class ZsMapStateService {
 
   // source
   public observeMapSource(): Observable<ZsMapStateSource> {
-    return this._map.pipe(
+    return this._display.pipe(
       map((o) => {
         return o?.source;
       }),
@@ -264,7 +265,7 @@ export class ZsMapStateService {
   }
 
   public setMapSource(source: ZsMapStateSource) {
-    this.updateMapState((draft) => {
+    this.updateDisplayState((draft) => {
       draft.source = source;
     });
   }
