@@ -1,12 +1,20 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { SessionService } from '../session/session.service';
+import transformResponse, { TransformerOptions } from './transformer';
 
 export interface IApiRequestOptions {
   headers?: { [key: string]: string };
   token?: string;
+  retries?: number;
+  transformerOptions?: TransformerOptions;
+}
+
+export interface ApiResponse<T> {
+  result?: T;
+  error?: HttpErrorResponse | undefined;
 }
 
 @Injectable({
@@ -26,21 +34,45 @@ export class ApiService {
     return this._apiUrl;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async post<RESPONSE = any, REQUEST = any>(subUrl: string, params: REQUEST, options?: IApiRequestOptions): Promise<RESPONSE> {
-    return await lastValueFrom(
-      this._http.post<RESPONSE>(`${this._apiUrl}${subUrl}`, params, { headers: this._getDefaultHeaders(options) }),
-    );
+  private async _retry<RESPONSE>(fn: Observable<RESPONSE>, options?: IApiRequestOptions): Promise<ApiResponse<RESPONSE>> {
+    const maxRetries = options?.retries || 3;
+    let lastError: HttpErrorResponse = new HttpErrorResponse({ status: 0 });
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        return {
+          result: transformResponse(await lastValueFrom(fn)),
+        };
+      } catch (error) {
+        if (error instanceof HttpErrorResponse) {
+          lastError = error;
+          if (error.status && error.status >= 400 && error.status < 500) break;
+        }
+      }
+    }
+    return { error: lastError };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async put<RESPONSE = any, REQUEST = any>(subUrl: string, params: REQUEST, options?: IApiRequestOptions): Promise<RESPONSE> {
-    return await lastValueFrom(this._http.put<RESPONSE>(`${this._apiUrl}${subUrl}`, params, { headers: this._getDefaultHeaders(options) }));
+  public async post<RESPONSE = any, REQUEST = any>(
+    subUrl: string,
+    params: REQUEST,
+    options?: IApiRequestOptions,
+  ): Promise<ApiResponse<RESPONSE>> {
+    return await this._retry(this._http.post<RESPONSE>(`${this._apiUrl}${subUrl}`, params, { headers: this._getDefaultHeaders(options) }));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async get<RESPONSE = any>(subUrl: string, options?: IApiRequestOptions): Promise<RESPONSE> {
-    return await lastValueFrom(this._http.get<RESPONSE>(`${this._apiUrl}${subUrl}`, { headers: this._getDefaultHeaders(options) }));
+  public async put<RESPONSE = any, REQUEST = any>(
+    subUrl: string,
+    params: REQUEST,
+    options?: IApiRequestOptions,
+  ): Promise<ApiResponse<RESPONSE>> {
+    return await this._retry(this._http.put<RESPONSE>(`${this._apiUrl}${subUrl}`, params, { headers: this._getDefaultHeaders(options) }));
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async get<RESPONSE = any>(subUrl: string, options?: IApiRequestOptions): Promise<ApiResponse<RESPONSE>> {
+    return await this._retry(this._http.get<RESPONSE>(`${this._apiUrl}${subUrl}`, { headers: this._getDefaultHeaders(options) }));
   }
 
   private _getDefaultHeaders(options?: IApiRequestOptions): { [key: string]: string } {
