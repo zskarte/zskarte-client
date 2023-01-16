@@ -10,26 +10,11 @@
     <mat-card-content>
       <mat-form-field class="full-width" appearance="fill">
         <mat-label>ZSO</mat-label>
-        <input
-          type="text"
-          #organizationTrigger
-          placeholder="ZSO auswählen"
-          aria-label="ZSO auswählen"
-          matInput
-          [matAutocomplete]="auto"
-          [ngModel]="organization"
-          (ngModelChange)="filterOrganizations($event)"
-          name="identifier"
-        />
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option
-            *ngFor="let option of filteredOrganizations | async"
-            [value]="option.identifier"
-            (onSelectionChange)="organizationSelected(option)"
-          >
-            {{ option.name }}
-          </mat-option>
-        </mat-autocomplete>
+        <mat-select [(ngModel)]="identifier" name="identifier">
+          <mat-option *ngFor="let organization of organizations | async" [value]="organization.identifier">{{
+            organization.name
+          }}</mat-option>
+        </mat-select>
       </mat-form-field>
       <mat-form-field class="full-width" appearance="fill">
         <mat-label>Passwort</mat-label>
