@@ -234,26 +234,6 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
   }
 
-  addImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
-    const dialogRef = this.dialog.open(DrawingDialogComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result && result.src) {
-        this.updateProperty(drawElement, 'images', [...(drawElement.images ?? []), result.src]);
-        this.zsMapStateService.setSelectedFeature(selectedFeature);
-      }
-    });
-  }
-
-  removeImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>, src: string) {
-    const images = drawElement.images ?? [];
-    this.updateProperty(
-      drawElement,
-      'images',
-      images.filter((img) => img !== src),
-    );
-    this.zsMapStateService.setSelectedFeature(selectedFeature);
-  }
-
   chooseSymbol(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
     const dialogRef = this.dialog.open(DrawingDialogComponent);
     dialogRef.afterClosed().subscribe((result: Sign) => {

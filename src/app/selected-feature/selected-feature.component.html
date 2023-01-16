@@ -2,55 +2,6 @@
   <mat-card class="selection" *ngIf="selectedSignature | async as selectedSignature">
     <mat-card-content *ngIf="!(mergeMode | async)">
       <div>
-        <!--
-        <mat-card
-          *ngFor="let featureGroup of featureGroups"
-          class="featureGroup titleCard"
-        >
-          <mat-card-content>
-            <div class="imgwrapper" *ngIf="featureGroup.src">
-              <img
-                [src]="getImageUrl(featureGroup.src)"
-                (click)="openImageDetail(findSigBySrc(featureGroup.src))"
-              />
-            </div>
-            <div class="label">{{ featureGroup.label }}</div>
-
-            <mat-expansion-panel
-              *ngFor="let feature of featureGroup.features"
-              (mouseover)="showFeature(feature)"
-              (mouseleave)="hideFeature()"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title>{{
-                  feature.get('sig').label
-                    ? feature.get('sig').label
-                    : i18n.get('unknown')
-                }}</mat-panel-title>
-              </mat-expansion-panel-header>
-              <div
-                class="images"
-                *ngIf="
-                  feature.get('sig').images &&
-                  feature.get('sig').images.length > 0
-                "
-              >
-                <div *ngFor="let img of feature.get('sig').images">
-                  <img
-                    [src]="getImageUrl(img)"
-                    (click)="openImageDetail(findSigBySrc(img))"
-                  />
-                </div>
-              </div>
-              <div
-                *ngIf="feature.get('sig').description"
-                class="description"
-                [innerHTML]="feature.get('sig').description"
-              ></div>
-            </mat-expansion-panel>
-          </mat-card-content>
-        </mat-card>-->
-
         <mat-card *ngIf="!featureGroups" class="titleCard">
           <mat-card-content>
             <div class="imgwrapper" *ngIf="selectedSignature.src" (click)="openImageDetail(selectedSignature)">
@@ -84,11 +35,6 @@
               </div>
             </div>
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
-            <div class="images" *ngIf="!editMode && selectedSignature.images && selectedSignature.images.length > 0">
-              <div *ngFor="let img of selectedSignature.images">
-                <img [src]="getImageUrl(img)" (click)="openImageDetail(findSigBySrc(img))" />
-              </div>
-            </div>
 
             <mat-form-field *ngIf="editMode | async">
               <mat-label>{{ i18n.get('color') }}:</mat-label>
@@ -131,21 +77,6 @@
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('description') }}</mat-panel-title>
           </mat-expansion-panel-header>
-          <mat-form-field *ngIf="selectedFeature | async as selectedFeature">
-            <mat-label>{{ i18n.get('images') }}</mat-label>
-            <input type="text" matInput hidden value="-" />
-            <div class="images">
-              <div *ngFor="let img of drawElement.images">
-                <img [src]="getImageUrl(img)" (click)="openImageDetail(findSigBySrc(img))" /><i
-                  class="material-icons removeButton"
-                  (click)="removeImage(drawElement, selectedFeature, img)"
-                  >clear</i
-                >
-              </div>
-              <i class="material-icons" (click)="addImage(drawElement, selectedFeature)">add</i>
-            </div>
-          </mat-form-field>
-
           <div class="markdown" *ngIf="editMode | async">
             <div class="markdownEditor">
               <mat-form-field>
