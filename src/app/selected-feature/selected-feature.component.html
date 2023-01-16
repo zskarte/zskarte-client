@@ -383,7 +383,7 @@
           </button>-->
         </mat-expansion-panel>
       </div>
-      <app-stack>
+      <stack  [spacing]="1">
         <button
           class="primarybutton"
           mat-raised-button
@@ -398,7 +398,7 @@
           <mat-icon>delete</mat-icon>
           {{ i18n.get('delete') }}
         </button>
-      </app-stack>
+      </stack>
     </mat-card-content>
     <mat-card-content *ngIf="(editMode | async) && (mergeMode | async)">
       <div>{{ i18n.get('chooseGroupingArea') }}</div>

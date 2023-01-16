@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-stack',
+  selector: 'stack',
   templateUrl: './stack.component.html',
-  styleUrls: ['./stack.component.css']
+  styleUrls: ['./stack.component.css'],
 })
 export class StackComponent implements OnInit {
+  @Input() spacing: number = 1;
 
   constructor() { }
 
   ngOnInit(): void {
+    this.spacing = this.spacing * 4;
   }
 
 }
