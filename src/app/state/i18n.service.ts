@@ -692,6 +692,16 @@ export class I18NService {
       en: 'Print',
       fr: 'Imprimer',
     },
+    protocol: {
+      de: 'Protokoll',
+      en: 'Protocol',
+      fr: 'Protocole',
+    },
+    protocolTable: {
+      de: 'Tabelle anzeigen',
+      en: 'Show Table',
+      fr: 'Afficher Tableau',
+    },
     save: {
       de: 'Speichern',
       en: 'Save',
