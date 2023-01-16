@@ -115,15 +115,6 @@ export class SessionService {
     );
   }
 
-  public observeIsGuest(): Observable<boolean> {
-    return this._session.pipe(
-      map((session) => {
-        // TODO handle this once we decided how it should work
-        return true;
-      }),
-    );
-  }
-
   public getLanguage(): string {
     return 'de-CH';
   }
