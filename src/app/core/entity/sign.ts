@@ -108,6 +108,7 @@ export function getMostTopCoordinate(feature: any) {
 export const signCategories: Map<string, { name: string; color: string }> = new Map([
   ['place', { name: 'place', color: '#0000FF' }],
   ['formation', { name: 'formation', color: '#0000FF' }],
+  ['vehicles', { name: 'vehicles', color: '#0000FF' }],
   ['action', { name: 'action', color: '#0000FF' }],
   ['damage', { name: 'damage', color: '#FF0000' }],
   ['incident', { name: 'incident', color: '#FF0000' }],

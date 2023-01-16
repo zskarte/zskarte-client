@@ -1036,9 +1036,9 @@ export class I18NService {
       fr: 'TBD',
     },
     signPlace: {
-      de: 'Platz',
-      en: 'Place',
-      fr: 'Place',
+      de: 'Einrichtungen',
+      en: 'Facilities',
+      fr: 'Équipement',
     },
     signFks: {
       de: 'Feuerwehr',
@@ -1064,6 +1064,11 @@ export class I18NService {
       de: 'Formationen',
       en: 'Formations',
       fr: 'Formations',
+    },
+    signVehicles: {
+      de: 'Fahrzeuge',
+      en: 'Vehicles',
+      fr: 'Véhicules',
     },
     signEffect: {
       de: 'Auswirkungen',
