@@ -3,6 +3,7 @@ export interface IZsMapSession {
   operationId: number | undefined;
   organizationId: number | undefined;
   auth: IAuthResult;
+  guestLoginDateTime?: Date | undefined;
 }
 
 export interface IZso {

@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
 import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
+import {GUEST_USER_IDENTIFIER} from "./userLogic";
 
 @Injectable({
   providedIn: 'root',
@@ -82,6 +83,10 @@ export class SessionService {
     const result = await this._api.post<IAuthResult>('/api/auth/local', params);
     const meResult = await this._api.get<{ organization: { id: number } }>('/api/users/me?populate[0]=organization', { token: result.jwt });
     const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined, organizationId: meResult.organization.id };
+    if (params.identifier === GUEST_USER_IDENTIFIER) {
+      session.guestLoginDateTime = new Date();
+    }
+
     this._session.next(session);
     this._router.navigateByUrl('/map');
   }
@@ -121,5 +126,9 @@ export class SessionService {
 
   public getLanguage(): string {
     return 'de-CH';
+  }
+
+  public getGuestLoginDateTime() {
+    return this._session.value?.guestLoginDateTime;
   }
 }
