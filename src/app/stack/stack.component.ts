@@ -13,5 +13,4 @@ export class StackComponent implements OnInit {
   ngOnInit(): void {
     this.spacing = this.spacing * 4;
   }
-
 }
