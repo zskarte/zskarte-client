@@ -150,13 +150,18 @@ export class ZsMapStateService {
   }
 
   public setMapState(newState?: IZsMapState): void {
-    this._layerCache = {};
+    const cached = Object.keys(this._layerCache);
+    for (const c of cached) {
+      if (!newState?.layers?.find((l) => l.id === c)) {
+        this._layerCache[c].unsubscribe();
+        delete this._layerCache[c];
+      }
+    }
     if (this._drawElementCache) {
       for (const key in this._drawElementCache) {
         this._drawElementCache[key].unsubscribe();
       }
     }
-
     this._drawElementCache = {};
     this.updateMapState(() => {
       return newState || this._getDefaultMapState();
