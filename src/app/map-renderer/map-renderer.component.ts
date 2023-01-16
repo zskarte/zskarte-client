@@ -13,7 +13,7 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { SidebarContext } from '../state/interfaces';
+import {SidebarContext, ZsMapDisplayMode} from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Overlay } from 'ol';
@@ -82,6 +82,7 @@ export class MapRendererComponent implements AfterViewInit {
   public selectedFeature: Observable<Feature<SimpleGeometry> | null>;
   public selectedFeatureCoordinates: Observable<string>;
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
+  public historyMode = new BehaviorSubject<boolean>(false);
 
   constructor(
     private _state: ZsMapStateService,
@@ -115,6 +116,14 @@ export class MapRendererComponent implements AfterViewInit {
         return this.availableProjections[this.selectedProjectionIndex].translate(transform);
       }),
     );
+
+    this._state.observeHistoryMode().subscribe(historyMode => {
+      if (historyMode) {
+        this.toggleEditButtons(false);
+      }
+    });
+
+    this._state.observeHistoryMode().subscribe(this.historyMode);
   }
 
   public ngOnDestroy(): void {
@@ -178,9 +187,9 @@ export class MapRendererComponent implements AfterViewInit {
       }
     });
 
-    // TODO
     const translate = new Translate({
       features: select.getFeatures(),
+      condition: () => !this.historyMode.value
     });
 
     this._view = new OlView({
@@ -594,8 +603,7 @@ export class MapRendererComponent implements AfterViewInit {
 
   toggleButton(allow: boolean, el?: HTMLElement) {
     if (el) {
-      // TODO: include historyMode
-      el.style.display = allow ? 'block' : 'none';
+      el.style.display = allow && !this.historyMode.value ? 'block' : 'none';
     }
   }
 
