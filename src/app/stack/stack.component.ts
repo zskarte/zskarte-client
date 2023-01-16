@@ -3,13 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-stack',
   templateUrl: './stack.component.html',
-  styleUrls: ['./stack.component.css']
+  styleUrls: ['./stack.component.css'],
 })
 export class StackComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }
