@@ -50,12 +50,14 @@ import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filte
 import { SessionService } from './session/session.service';
 
 import { registerLocaleData } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
 import { LoginComponent } from './session/login/login.component';
 import { MapComponent } from './map/map.component';
 import { AppRoutingModule } from './app-routing.module';
 import { RecentlyUsedSignsComponent } from './recently-used-signs/recently-used-signs.component';
 import { OperationsComponent } from './session/operations/operations.component';
+import { ProtocolTableComponent } from './protocol-table/protocol-table.component';
 registerLocaleData(localeCH);
 
 export function appFactory(session: SessionService) {
@@ -89,6 +91,7 @@ export function appFactory(session: SessionService) {
     MapComponent,
     OperationsComponent,
     RecentlyUsedSignsComponent,
+    ProtocolTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -130,6 +133,7 @@ export function appFactory(session: SessionService) {
       deps: [SessionService],
       multi: true,
     },
+    DatePipe,
   ],
   bootstrap: [AppComponent],
 })

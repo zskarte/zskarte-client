@@ -474,6 +474,7 @@ export class ZsMapStateService {
         id: uuidv4(),
         nameShow: true,
         ...element,
+        createdAt: new Date(),
       };
 
       this.updateMapState((draft) => {
