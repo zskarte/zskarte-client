@@ -7,3 +7,24 @@ export interface IZsMapOperation {
   mapState: IZsMapState;
   status: 'active' | 'archived';
 }
+
+export interface IZsMapOrganization {
+  id: number;
+  name: string;
+  mapLongitude: number;
+  mapLatitude: number;
+  mapZoomLevel: number;
+  defaultLocale: string;
+  url: string;
+  logoUrl: string;
+  mapXCoord: number;
+  mapYCoord: number;
+  operations: IZsMapOperation[];
+  users: IZsMapUser[];
+}
+
+export interface IZsMapUser {
+  id: number;
+  username: string;
+  email: string;
+}

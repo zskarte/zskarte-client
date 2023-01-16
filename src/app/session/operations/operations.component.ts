@@ -25,19 +25,10 @@ export class OperationsComponent {
   }
 
   private async _reload(): Promise<void> {
-    const result = await this._api.get(
+    const { error, result: operations } = await this._api.get<IZsMapOperation[]>(
       '/api/operations?filters[organization][id][$eq]=' + this._session.getOrganizationId() + '&filters[status][$eq]=active',
     );
-    const operations: IZsMapOperation[] = [];
-    for (const o of result?.data) {
-      operations.push({
-        id: o.id,
-        name: o.attributes.name,
-        description: o.attributes.description,
-        mapState: o.attributes.mapState,
-        status: o.attributes.status,
-      });
-    }
+    if (error || !operations) return;
     this.operations.next(operations);
     this.operationToEdit.next(undefined);
   }

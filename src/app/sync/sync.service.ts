@@ -93,19 +93,15 @@ export class SyncService {
 
   private _publishPatches = debounce(async () => {
     if (this._mapStatePatchQueue.length > 0 && this._session.getToken()) {
-      const patches = [...this._mapStatePatchQueue];
+      const patches = this._mapStatePatchQueue.map((p) => ({ ...p, timestamp: new Date() }));
+      const { error } = await this._api.post('/api/operations/mapstate/patch', patches, {
+        headers: {
+          operationId: this._session.getOperationId() + '',
+          identifier: this._connectionId,
+        },
+      });
+      if (error) return;
       this._mapStatePatchQueue = [];
-      try {
-        // TODO implement retry logic
-        await this._api.post('/api/operations/mapstate/patch', patches, {
-          headers: {
-            operationId: this._session.getOperationId() + '',
-            identifier: this._connectionId,
-          },
-        });
-      } catch (err) {
-        console.error('Error while publishing patches', err);
-      }
     }
   }, 500);
 }
