@@ -34,6 +34,7 @@ export class ToolbarComponent {
   downloadTime?: string = undefined;
   downloadCSVData?: SafeUrl = undefined;
   protocolEntries: ProtocolEntry[] = [];
+  currentLang?: string;
 
   constructor(
     public i18n: I18NService,
@@ -58,8 +59,11 @@ export class ToolbarComponent {
       });
     }
 
+    this.i18n.currentLocale.subscribe((currentLang: string | null) => {
+      if (currentLang !== null) this.currentLang = currentLang;
+    });
     this.zsMapStateService.observeDrawElements().subscribe((elements: ZsMapBaseDrawElement[]) => {
-      this.protocolEntries = mapProtocolEntry(elements, this.datePipe, this.i18n);
+      this.protocolEntries = mapProtocolEntry(elements, this.datePipe, this.i18n, this.currentLang === undefined ? 'de' : this.currentLang);
     });
   }
 
