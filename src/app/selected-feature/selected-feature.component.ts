@@ -282,6 +282,17 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
   }
 
+  copy(drawElement: ZsMapDrawElementState) {
+    if (!drawElement.symbolId) {
+      return;
+    }
+    const layer = this.zsMapStateService.getActiveLayer();
+    if (layer) {
+      this.zsMapStateService.copySymbol(drawElement.symbolId, layer.getId());
+      this.zsMapStateService.resetSelectedFeature();
+    }
+  }
+
   delete(drawElement: ZsMapDrawElementState) {
     if (!drawElement.id) {
       return;

@@ -115,7 +115,7 @@
             >
             <div class="label-light">
               <div *ngIf="selectedSignature.createdAt" class="label-right">
-                {{ selectedSignature.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
+                {{ selectedSignature.createdAt | date: 'dd.MM.yyyy, HH:mm' }}
               </div>
               <div class="clearfix"></div>
               <div *ngIf="selectedSignature.size" class="label-right">
@@ -383,14 +383,26 @@
           </button>-->
         </mat-expansion-panel>
       </div>
+      <button
+        class="primarybutton"
+        mat-raised-button
+        color="primary"
+        (click)="copy(drawElement)"
+        *ngIf="(editMode | async) && selectedSignature.type === 'Point' && drawElement.symbolId"
+      >
+      <mat-icon>content_copy</mat-icon>
+      {{ i18n.get('copy') }}
+      </button>
       <button class="primarybutton" mat-raised-button color="warn" (click)="delete(drawElement)" *ngIf="editMode | async">
-        <i class="material-icons">delete</i><span>{{ i18n.get('delete') }}</span>
+        <mat-icon>delete</mat-icon>
+        {{ i18n.get('delete') }}
       </button>
     </mat-card-content>
     <mat-card-content *ngIf="(editMode | async) && (mergeMode | async)">
       <div>{{ i18n.get('chooseGroupingArea') }}</div>
       <button mat-raised-button (click)="merge(false)" [disabled]="drawHoleMode" *ngIf="isPolygon()">
-        <i class="material-icons">cancel</i><span> {{ i18n.get('cancelGrouping') }}</span>
+        <mat-icon>cancel</mat-icon>
+        {{ i18n.get('cancelGrouping') }}
       </button>
     </mat-card-content>
   </mat-card>
