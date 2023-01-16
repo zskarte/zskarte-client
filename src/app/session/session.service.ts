@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
 import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
-import {GUEST_USER_IDENTIFIER} from "./userLogic";
+import { GUEST_USER_IDENTIFIER } from './userLogic';
 
 @Injectable({
   providedIn: 'root',

@@ -32,13 +32,11 @@ export class ClockComponent {
 
     if (guestLoginDateTime) {
       interval(1000)
-        .pipe(
-          takeUntil(this._ngUnsubscribe),
-        )
+        .pipe(takeUntil(this._ngUnsubscribe))
         .subscribe({
           next: () => {
             const countdown = this._durationInSeconds - Math.abs(new Date().getTime() - guestLoginDateTime.getTime()) / 1000;
-            if(countdown < 0) {
+            if (countdown < 0) {
               this._ngUnsubscribe.next();
             }
             const mins = (~~((countdown % 3600) / 60)).toString();
