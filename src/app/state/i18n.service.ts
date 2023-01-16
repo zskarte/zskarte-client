@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { Sign } from '../core/entity/sign';
 import { SessionService } from '../session/session.service';
 
@@ -1191,12 +1190,9 @@ export class I18NService {
       fr: 'Signatures récemment utilisées',
     },
   };
-  private _locale: string = DEFAULT_LOCALE;
-  private localeSource = new BehaviorSubject<string | null>(null);
-  public currentLocale = this.localeSource.asObservable();
 
   public getLabelForSign(sign: Sign) {
-    const chosenLang = sign[this._session.getLanguage()];
+    const chosenLang = sign[this._session.getLocale()];
     if (chosenLang) {
       return chosenLang;
     } else {
@@ -1212,7 +1208,7 @@ export class I18NService {
   public get(key: string): string {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this._session.getLanguage()];
+      const chosenLang = element[this._session.getLocale()];
       if (chosenLang) {
         return chosenLang;
       } else {
@@ -1228,7 +1224,7 @@ export class I18NService {
   public has(key: string): boolean {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this._session.getLanguage()];
+      const chosenLang = element[this._session.getLocale()];
       if (chosenLang) {
         return true;
       } else {

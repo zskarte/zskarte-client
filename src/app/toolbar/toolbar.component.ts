@@ -202,6 +202,10 @@ export class ToolbarComponent {
     console.error('todo');
   }
 
+  setLocale(locale: string) {
+    this.session.setLocale(locale);
+  }
+
   toggleHistoryIfButton(event: MouseEvent) {
     const element = event.target as HTMLElement;
     if (element.id === 'historyButton') {

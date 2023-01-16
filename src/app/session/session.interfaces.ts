@@ -4,6 +4,7 @@ export interface IZsMapSession {
   organizationId: number | undefined;
   auth: IAuthResult;
   guestLoginDateTime?: Date | undefined;
+  locale: string;
 }
 
 export interface IZso {
