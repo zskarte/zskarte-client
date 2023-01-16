@@ -55,11 +55,18 @@
   background: rgba(0, 0, 0, 0.5);
   color: white;
   user-select: text;
+  cursor: default;
 }
+
+.coordinates span {
+  cursor: text;
+}
+
 .coordinates .material-icons {
   user-select: none;
   margin-left: 5px;
   transform: scale(-1, 1);
+  cursor: pointer;
 }
 
 @media (max-width: 650px) {

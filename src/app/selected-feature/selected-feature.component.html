@@ -110,7 +110,7 @@
             <mat-checkbox
               [ngModel]="drawElement.nameShow"
               (ngModelChange)="updateProperty(drawElement, 'nameShow', $event)"
-              *ngIf="editMode | async"
+              *ngIf="editMode && (selectedSignature.type === 'Point' || selectedSignature.src)"
               >{{ i18n.get('labelShow') }}</mat-checkbox
             >
             <div class="label-light">

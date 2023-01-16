@@ -34,11 +34,6 @@
   vertical-align: middle;
   line-height: 3em;
 }
-.imageWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .symbolCol {
   width: 7em;
@@ -50,6 +45,14 @@
 
 .selectRow:hover {
   background-color: lightgray;
+}
+
+.row-image {
+  vertical-align: middle;
+}
+
+.row-action {
+  vertical-align: middle;
 }
 
 .imgdrop {
@@ -74,8 +77,20 @@
   margin-right: 0.5em;
 }
 
-.filter mat-form-field {
-  width: 100%;
+.filter {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+@media screen and (max-width: 700px) {
+  .filter {
+    flex-direction: column;
+  }
+}
+
+.mat-column-symbol {
+  padding-left: 0 !important;
 }
 
 .categoryDot {
