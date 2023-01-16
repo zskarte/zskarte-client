@@ -55,11 +55,8 @@ app-credits {
   padding: 0;
 }
 
-.hamburger {
-  font-size: 29px;
-  line-height: 27px;
-  height: 29px;
-  width: 29px;
+.edit .mat-icon {
+  margin: 0;
 }
 
 .toolbar {

@@ -37,6 +37,13 @@
 .inputField {
   width: 100%;
   max-width: 350px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.mat-mdc-form-field-bottom-align {
+  height: 0;
 }
 
 @media (max-width: 550px) {
@@ -45,4 +52,8 @@
     justify-content: flex-start;
     align-items: flex-start;
   }
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  height: 0;
 }
