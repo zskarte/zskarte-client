@@ -11,7 +11,9 @@
       <mat-form-field class="full-width" appearance="fill">
         <mat-label>ZSO</mat-label>
         <mat-select [(ngModel)]="identifier" name="identifier">
-          <mat-option *ngFor="let organization of organizations | async" [value]="organization.identifier">{{organization.name}}</mat-option>
+          <mat-option *ngFor="let organization of organizations | async" [value]="organization.identifier">{{
+            organization.name
+          }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field class="full-width" appearance="fill">
