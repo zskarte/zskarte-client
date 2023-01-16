@@ -113,8 +113,8 @@ export class SessionService {
   public observeIsGuest(): Observable<boolean> {
     return this._session.pipe(
       map((session) => {
-        // TODO handle this once we decided how it should work
-        return true;
+        if (!session?.auth?.user?.username) return false;
+        return session.auth.user.username === 'zso_guest';
       }),
     );
   }
