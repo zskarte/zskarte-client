@@ -4,7 +4,7 @@ import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from 
 import { ZsMapStateService } from '../../state/state.service';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import Feature from 'ol/Feature';
+import Feature, { FeatureLike } from 'ol/Feature';
 import { DrawStyle } from '../draw-style';
 
 export abstract class ZsMapBaseLayer {
@@ -14,8 +14,11 @@ export abstract class ZsMapBaseLayer {
 
   protected _olLayer: VectorLayer<VectorSource> = new VectorLayer({
     source: this._olSource,
-    style: (feature, resolution) => {
-      return feature.get('hidden') === true ? null : DrawStyle.styleFunction(feature, resolution);
+    style: (feature: FeatureLike, resolution: number) => {
+      if (feature.get('hidden') === true) {
+        return undefined;
+      }
+      return DrawStyle.styleFunction(feature, resolution);
     },
   });
 

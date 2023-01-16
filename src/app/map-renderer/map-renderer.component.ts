@@ -126,8 +126,11 @@ export class MapRendererComponent implements AfterViewInit {
     // TODO
     const select = new Select({
       hitTolerance: 10,
-      style: (feature, resolution) => {
-        return feature.get('hidden') === true ? null : DrawStyle.styleFunctionSelect(feature, resolution, true);
+      style: (feature: FeatureLike, resolution: number) => {
+        if (feature.get('hidden') === true) {
+          return undefined;
+        }
+        return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
       layers: this._allLayers,
     });
