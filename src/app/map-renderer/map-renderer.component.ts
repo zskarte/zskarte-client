@@ -13,7 +13,7 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import {SidebarContext, ZsMapDisplayMode} from '../state/interfaces';
+import { SidebarContext, ZsMapDisplayMode } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Overlay } from 'ol';
@@ -117,7 +117,7 @@ export class MapRendererComponent implements AfterViewInit {
       }),
     );
 
-    this._state.observeHistoryMode().subscribe(historyMode => {
+    this._state.observeHistoryMode().subscribe((historyMode) => {
       if (historyMode) {
         this.toggleEditButtons(false);
       }
@@ -189,7 +189,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     const translate = new Translate({
       features: select.getFeatures(),
-      condition: () => !this.historyMode.value
+      condition: () => !this.historyMode.value,
     });
 
     this._view = new OlView({
