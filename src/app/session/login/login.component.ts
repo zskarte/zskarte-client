@@ -18,7 +18,7 @@ export class LoginComponent {
 
   async ngOnInit() {
     const result = await this._api.get(
-      '/api/organizations?fields[0]=name&populate[users][fields][0]=username&populate[users][fields][1]=email',
+      '/api/organizations?fields[0]=name&populate[users][fields][0]=username&populate[users][fields][1]=email&pagination[limit]=-1',
     );
 
     const orgs: IZso[] = [];
