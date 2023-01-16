@@ -61,7 +61,7 @@
             >
             <div class="label-light">
               <div *ngIf="selectedSignature.createdAt" class="label-right">
-                {{ selectedSignature.createdAt | date: 'dd.MM.yyyy, HH:mm' }}
+                {{ selectedSignature.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
               </div>
               <div class="clearfix"></div>
               <div *ngIf="selectedSignature.size" class="label-right">
