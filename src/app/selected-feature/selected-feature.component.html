@@ -183,26 +183,24 @@
             <mat-form-field *ngIf="drawElement.symbolId"><input type="text" matInput hidden value="-" /> </mat-form-field>
             <mat-form-field *ngIf="drawElement.symbolId">
               <mat-label>{{ i18n.get('symbolSize') }}</mat-label>
-              <mat-slider
-                [max]="2"
-                [min]="0.5"
-                [step]="0.1"
-                [ngModel]="drawElement.iconSize"
-                (input)="updateProperty(drawElement, 'iconSize', $event.value ?? undefined)"
-              >
+              <mat-slider [max]="2" [min]="0.5" [step]="0.1">
+                <input
+                  matSliderThumb
+                  [ngModel]="drawElement.iconSize"
+                  (ngModelChange)="updateProperty(drawElement, 'iconSize', $event)"
+                />
               </mat-slider>
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
 
             <mat-form-field *ngIf="drawElement.symbolId">
               <mat-label>{{ i18n.get('symbolOffset') }}</mat-label>
-              <mat-slider
-                [max]="5000"
-                [min]="0.1"
-                [step]="100"
-                [ngModel]="drawElement.iconOffset"
-                (input)="updateProperty(drawElement, 'iconOffset', $event.value ?? undefined)"
-              >
+              <mat-slider [max]="5000" [min]="0.1" [step]="100">
+                <input
+                  matSliderThumb
+                  [ngModel]="drawElement.iconOffset"
+                  (ngModelChange)="updateProperty(drawElement, 'iconOffset', $event)"
+                />
               </mat-slider>
               <input type="text" matInput hidden value="-" />
               <mat-checkbox
@@ -215,27 +213,24 @@
 
             <mat-form-field *ngIf="drawElement && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('rotate') }}</mat-label>
-              <mat-slider
-                [max]="180"
-                [min]="-180"
-                [step]="1"
-                [ngModel]="drawElement.rotation"
-                (input)="updateProperty(drawElement, 'rotation', $event.value ?? undefined)"
-              >
+              <mat-slider [max]="180" [min]="-180" [step]="1">
+                <input
+                  matSliderThumb
+                  [ngModel]="drawElement.rotation"
+                  (ngModelChange)="updateProperty(drawElement, 'rotation', $event)"
+                />
               </mat-slider>
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
 
             <mat-form-field *ngIf="drawElement && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('opacity') }}:</mat-label>
-              <mat-slider
-                #ctrl="ngModel"
-                [max]="1"
-                [min]="0.01"
-                [step]="0.05"
-                [ngModel]="drawElement.iconOpacity"
-                (input)="updateProperty(drawElement, 'iconOpacity', $event.value ?? undefined)"
-              >
+              <mat-slider [max]="1" [min]="0.01" [step]="0.05">
+                <input
+                  matSliderThumb
+                  [ngModel]="drawElement.iconOpacity"
+                  (ngModelChange)="updateProperty(drawElement, 'iconOpacity', $event)"
+                />
               </mat-slider>
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
@@ -263,13 +258,12 @@
 
           <mat-form-field>
             <mat-label>{{ i18n.get('width') }}</mat-label>
-            <mat-slider
-              [max]="4"
-              [min]="0.1"
-              [step]="0.1"
-              [ngModel]="drawElement.strokeWidth"
-              (input)="updateProperty(drawElement, 'strokeWidth', $event.value ?? undefined)"
-            >
+            <mat-slider [max]="4" [min]="0.1" [step]="0.1">
+              <input
+                matSliderThumb
+                [ngModel]="drawElement.strokeWidth"
+                (ngModelChange)="updateProperty(drawElement, 'strokeWidth', $event)"
+              />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
@@ -311,52 +305,47 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ i18n.get('opacity') }}:</mat-label>
-            <mat-slider
-              #ctrl="ngModel"
-              [max]="1"
-              [min]="0.01"
-              [step]="0.05"
-              [ngModel]="drawElement.fillOpacity"
-              (input)="updateProperty(drawElement, 'fillOpacity', $event.value ?? undefined)"
-            >
+            <mat-slider [max]="1" [min]="0.01" [step]="0.05">
+              <input
+                matSliderThumb
+                [ngModel]="drawElement.fillOpacity"
+                (ngModelChange)="updateProperty(drawElement, 'fillOpacity', $event)"
+              />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
           <mat-form-field *ngIf="drawElement.fillStyle?.name && drawElement.fillStyle?.name !== 'filled'">
             <mat-label>{{ i18n.get('width') }}</mat-label>
-            <mat-slider
-              [max]="10"
-              [min]="1"
-              [step]="0.1"
-              [ngModel]="drawElement.fillStyle?.size"
-              (input)="updateFillStyle(drawElement, 'size', $event.value ?? undefined)"
-            >
+            <mat-slider [max]="10" [min]="1" [step]="0.1">
+              <input
+                matSliderThumb
+                [ngModel]="drawElement.fillStyle?.size"
+                (ngModelChange)="updateProperty(drawElement, 'size', $event)"
+              />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
 
           <mat-form-field *ngIf="drawElement.fillStyle?.name && drawElement.fillStyle?.name !== 'filled'">
             <mat-label>{{ i18n.get('spacing') }}</mat-label>
-            <mat-slider
-              [max]="20"
-              [min]="5"
-              [step]="0.1"
-              [ngModel]="drawElement.fillStyle?.spacing"
-              (input)="updateFillStyle(drawElement, 'spacing', $event.value ?? undefined)"
-            >
+            <mat-slider [max]="20" [min]="5" [step]="0.1">
+              <input
+                matSliderThumb
+                [ngModel]="drawElement.fillStyle?.spacing"
+                (ngModelChange)="updateProperty(drawElement, 'spacing', $event)"
+              />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
 
           <mat-form-field *ngIf="drawElement.fillStyle?.name && drawElement.fillStyle?.name === 'hatch'">
             <mat-label>{{ i18n.get('angle') }}</mat-label>
-            <mat-slider
-              [max]="180"
-              [min]="0.1"
-              [step]="0.1"
-              [ngModel]="drawElement.fillStyle?.angle"
-              (input)="updateFillStyle(drawElement, 'angle', $event.value ?? undefined)"
-            >
+            <mat-slider [max]="180" [min]="0.1" [step]="0.1">
+              <input
+                matSliderThumb
+                [ngModel]="drawElement.fillStyle?.angle"
+                (ngModelChange)="updateProperty(drawElement, 'angle', $event)"
+              />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
@@ -368,13 +357,12 @@
           </mat-expansion-panel-header>
           <mat-form-field>
             <mat-label>{{ i18n.get('fontSize') }}</mat-label>
-            <mat-slider
-              [max]="4"
-              [min]="0.1"
-              [step]="0.1"
-              [ngModel]="drawElement.fontSize"
-              (input)="updateProperty(drawElement, 'fontSize', $event.value ?? undefined)"
-            >
+            <mat-slider [max]="4" [min]="0.1" [step]="0.1">
+              <input
+                matSliderThumb
+                [ngModel]="drawElement.fontSize"
+                (ngModelChange)="updateProperty(drawElement, 'fontSize', $event)"
+              />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>

@@ -120,7 +120,6 @@ export function appFactory(session: SessionService) {
     MatTableModule,
     MatRadioModule,
     MatListModule,
-    MatButtonModule,
     MatFormFieldModule,
   ],
   providers: [
