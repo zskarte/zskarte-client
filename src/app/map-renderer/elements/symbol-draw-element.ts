@@ -5,7 +5,6 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
-import { areCoordinatesEqual } from '../../helper/coordinates';
 import { StyleLike } from 'ol/style/Style';
 import { Signs } from '../signs';
 import { takeUntil } from 'rxjs';
@@ -16,7 +15,6 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.SYMBOL);
-    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates()
       .pipe(takeUntil(this._unsubscribe))
       .subscribe((coordinates) => {
@@ -55,11 +53,12 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
   }
 
   protected static override _parseFeature(feature: Feature<Point>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
-    state.addDrawElement({
+    const drawElement = state.addDrawElement({
       type: ZsMapDrawElementStateType.SYMBOL,
       coordinates: feature.getGeometry()?.getCoordinates() || [],
       layer: element.layer,
       symbolId: element.symbolId,
     });
+    state.setSelectedFeature(drawElement?.id);
   }
 }

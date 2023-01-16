@@ -5,7 +5,6 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString, SimpleGeometry } from 'ol/geom';
 import { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
-import { areCoordinatesEqual } from 'src/app/helper/coordinates';
 import { takeUntil } from 'rxjs';
 
 export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
@@ -13,7 +12,6 @@ export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.TEXT);
-    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates()
       .pipe(takeUntil(this._unsubscribe))
       .subscribe((coordinates) => {
@@ -39,11 +37,12 @@ export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
     return 'LineString';
   }
   protected static override _parseFeature(feature: Feature<LineString>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
-    state.addDrawElement({
+    const drawElement = state.addDrawElement({
       type: ZsMapDrawElementStateType.TEXT,
       layer: element.layer,
       text: element.text,
       coordinates: feature.getGeometry()?.getCoordinates(),
     });
+    state.setSelectedFeature(drawElement?.id);
   }
 }
