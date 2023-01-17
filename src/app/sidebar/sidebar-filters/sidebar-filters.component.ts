@@ -113,7 +113,10 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   }
 
   public filterAll(active: boolean) {
-    this.mapState.filterAllSymbols(active);
+    this.mapState.filterAll(
+      active,
+      this.filterSymbols.map((symbol) => symbol.filterValue),
+    );
   }
 
   public filterCategory(category: string) {

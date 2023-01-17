@@ -703,9 +703,10 @@ export class ZsMapStateService {
     });
   }
 
-  public filterAllSymbols(active: boolean) {
+  public filterAll(active: boolean, featureTypes: string[]) {
     this.updateDisplayState((draft) => {
       draft.hiddenSymbols = active ? Signs.SIGNS.map((s) => s.id!) : [];
+      draft.hiddenFeatureTypes = active ? featureTypes : [];
     });
   }
 
