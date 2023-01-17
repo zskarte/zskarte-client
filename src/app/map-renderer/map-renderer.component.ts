@@ -576,6 +576,7 @@ export class MapRendererComponent implements AfterViewInit {
     }
     const layer = await firstValueFrom(this._state.observeActiveLayer());
     this._state.copySymbol(sign.id, layer?.getId());
+    this._state.resetSelectedFeature();
   }
 
   async toggleEditButtons(show: boolean) {

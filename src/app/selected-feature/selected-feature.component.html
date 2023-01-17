@@ -314,14 +314,28 @@
           </button>-->
         </mat-expansion-panel>
       </div>
-      <button class="primarybutton" mat-raised-button color="warn" (click)="delete(drawElement)" *ngIf="editMode | async">
-        <i class="material-icons">delete</i><span>{{ i18n.get('delete') }}</span>
-      </button>
+      <stack [spacing]="1">
+        <button
+          class="primarybutton"
+          mat-raised-button
+          color="primary"
+          (click)="copy(drawElement)"
+          *ngIf="(editMode | async) && selectedSignature.type === 'Point' && drawElement.symbolId"
+        >
+          <mat-icon>content_copy</mat-icon>
+          {{ i18n.get('copy') }}
+        </button>
+        <button class="primarybutton" mat-raised-button color="warn" (click)="delete(drawElement)" *ngIf="editMode | async">
+          <mat-icon>delete</mat-icon>
+          {{ i18n.get('delete') }}
+        </button>
+      </stack>
     </mat-card-content>
     <mat-card-content *ngIf="(editMode | async) && (mergeMode | async)">
       <div>{{ i18n.get('chooseGroupingArea') }}</div>
       <button mat-raised-button (click)="merge(false)" [disabled]="drawHoleMode" *ngIf="isPolygon()">
-        <i class="material-icons">cancel</i><span> {{ i18n.get('cancelGrouping') }}</span>
+        <mat-icon>cancel</mat-icon>
+        {{ i18n.get('cancelGrouping') }}
       </button>
     </mat-card-content>
   </mat-card>
