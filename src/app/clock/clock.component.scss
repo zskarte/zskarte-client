@@ -4,9 +4,11 @@
 
 .time {
   font-weight: bold;
+  margin: 0;
 }
 .date {
   font-style: italic;
+  margin: 0;
 }
 
 div {
@@ -19,6 +21,7 @@ div {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  font-size: medium;
 }
 
 .timeLeft {
@@ -42,6 +45,6 @@ div {
 .flexColumn {
   display: flex;
   flex-direction: column;
-  size: 12px;
+  justify-content: center;
   align-items: flex-end;
 }
