@@ -159,7 +159,8 @@
             </mat-form-field>
           </mat-expansion-panel>
         </ng-container>
-        <mat-expansion-panel *ngIf="(editMode | async) && selectedSignature.type !== 'Point'">
+
+        <mat-expansion-panel *ngIf="editMode | async">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('line') }}</mat-panel-title>
           </mat-expansion-panel-header>
@@ -206,9 +207,7 @@
           </mat-form-field>
         </mat-expansion-panel>
 
-        <mat-expansion-panel
-          *ngIf="(editMode | async) && (selectedSignature.type === 'Polygon' || selectedSignature.type === 'MultiPolygon')"
-        >
+        <mat-expansion-panel *ngIf="(editMode | async) && drawElement?.type === 'polygon'">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('fillPattern') }}</mat-panel-title>
           </mat-expansion-panel-header>
