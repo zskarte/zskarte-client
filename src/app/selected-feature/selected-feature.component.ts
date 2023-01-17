@@ -310,11 +310,8 @@ export class SelectedFeatureComponent implements OnDestroy {
     return DrawStyle.getImageUrl(file);
   }
 
-  async drawHole() {
-    const isPolygon = await this.isPolygon();
-    if (isPolygon) {
-      //this.sharedState.updateDrawHoleMode(!this.drawHoleMode);
-    }
+  drawHole() {
+    this.zsMapStateService.toggleDrawHoleMode();
   }
 
   async merge(merge: boolean) {
