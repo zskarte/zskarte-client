@@ -8,13 +8,15 @@ interface ImageResponsiveSource {
 export const getResponsiveImageSource = (asset: IZsStrapiAsset) => {
   if (!asset) return undefined;
   const responsiveImageSource: ImageResponsiveSource = { src: asset.url, srcSet: '' };
-  if (!asset.formats) {
-    return responsiveImageSource;
-  }
-  for (const format in asset.formats) {
-    const formatSrc = asset.formats[format].url;
-    if (!formatSrc) continue;
-    responsiveImageSource.srcSet += `, ${formatSrc} ${asset.formats[format].width}w`;
+  if (asset.formats) {
+    responsiveImageSource.srcSet = Object.keys(asset.formats)
+      .map((key) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const format = asset.formats![key];
+        return format.url ? `${format.url} ${format.width}w` : '';
+      })
+      .filter((src) => !!src)
+      .join(', ');
   }
   return responsiveImageSource;
 };
