@@ -663,10 +663,6 @@ export class ZsMapStateService {
     return 'data:text/csv;charset=UTF-8,' + encodeURIComponent(lines.join('\r\n'));
   }
 
-  // public loadSaveFileState(state: IZsMapSaveFileState): void {
-  //   this.reset(state.map, state.display);
-  // }
-
   toggleSidebarContext(context: SidebarContext | null) {
     this.updateDisplayState((draft) => {
       draft.sidebarContext = draft.sidebarContext === context ? null : context;
