@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { mapProtocolEntry, ProtocolEntry } from '../helper/mapProtocolEntry';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
+import { SessionService } from '../session/session.service';
 import { I18NService } from '../state/i18n.service';
 
 @Component({
@@ -11,15 +12,16 @@ import { I18NService } from '../state/i18n.service';
   styleUrls: ['./protocol-table.component.scss'],
 })
 export class ProtocolTableComponent implements OnInit {
-  constructor(public zsMapStateService: ZsMapStateService, public i18n: I18NService, private datePipe: DatePipe) {
-    this.i18n.currentLocale.subscribe((currentLang: string | null) => {
-      if (currentLang !== null) this.currentLang = currentLang;
-    });
-  }
+  constructor(
+    public zsMapStateService: ZsMapStateService,
+    public i18n: I18NService,
+    private datePipe: DatePipe,
+    private session: SessionService,
+  ) {}
 
   ngOnInit(): void {
     this.zsMapStateService.observeDrawElements().subscribe((elements: ZsMapBaseDrawElement[]) => {
-      this.data = mapProtocolEntry(elements, this.datePipe, this.i18n, this.currentLang !== undefined ? this.currentLang : 'de');
+      this.data = mapProtocolEntry(elements, this.datePipe, this.i18n, this.session.getLocale());
     });
   }
 

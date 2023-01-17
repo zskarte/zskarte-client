@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Sign } from '../core/entity/sign';
 import { SessionService } from '../session/session.service';
 
-export const LOCALES: string[] = ['de', 'fr', 'en'];
-export const DEFAULT_LOCALE: string = LOCALES[0];
+export type Locale = 'de' | 'fr' | 'en';
+export const LOCALES: Locale[] = ['de', 'fr', 'en'];
+export const DEFAULT_LOCALE: Locale = LOCALES[0];
 
 @Injectable({
   providedIn: 'root',
@@ -1191,18 +1192,18 @@ export class I18NService {
     },
   };
 
-  public getLabelForSign(sign: Sign) {
+  public getLabelForSign(sign: Sign): string {
     const chosenLang = sign[this._session.getLocale()];
     if (chosenLang) {
       return chosenLang;
     } else {
       for (const locale of LOCALES) {
         if (sign[locale]) {
-          return sign[locale];
+          return sign[locale] ?? '';
         }
       }
     }
-    return null;
+    return '';
   }
 
   public get(key: string): string {

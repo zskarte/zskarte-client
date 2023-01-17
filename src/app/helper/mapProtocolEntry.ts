@@ -17,7 +17,7 @@ export function mapProtocolEntry(
       date: datePipe.transform(element.elementState?.createdAt, 'dd.MM.yyyy HH:mm'),
       group: sk && i18n.has(sk) ? i18n.get(sk) : '',
       sign: currentLocale == 'fr' ? sig.fr : currentLocale == 'en' ? sig.en : sig.de,
-      location: JSON.stringify((element.getOlFeature().getGeometry() as any).getCoordinates()),
+      location: JSON.stringify((element.getOlFeature().getGeometry() as any)?.getCoordinates() ?? []),
       size: sig.size,
       label: element.elementState?.name,
       description: element.elementState?.description,

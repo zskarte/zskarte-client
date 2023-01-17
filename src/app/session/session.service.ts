@@ -10,7 +10,7 @@ import { ZsMapStateService } from '../state/state.service';
 import { GUEST_USER_IDENTIFIER } from './userLogic';
 import { IZsMapOperation } from './operations/operation.interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
-import {DEFAULT_LOCALE} from "../state/i18n.service";
+import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
 
 @Injectable({
   providedIn: 'root',
@@ -97,7 +97,13 @@ export class SessionService {
     });
     if (error || !meResult) return;
 
-    const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined, organizationId: meResult.organization.id, locale: DEFAULT_LOCALE };
+    const session: IZsMapSession = {
+      id: uuidv4(),
+      auth: result,
+      operationId: undefined,
+      organizationId: meResult.organization.id,
+      locale: DEFAULT_LOCALE,
+    };
     if (params.identifier === GUEST_USER_IDENTIFIER) {
       session.guestLoginDateTime = new Date();
     }
@@ -139,7 +145,7 @@ export class SessionService {
     );
   }
 
-  public setLocale(locale: string): void {
+  public setLocale(locale: Locale): void {
     const currentSession = this._session.value;
     if (currentSession) {
       currentSession.locale = locale;
@@ -147,7 +153,7 @@ export class SessionService {
     }
   }
 
-  public getLocale(): string {
+  public getLocale(): Locale {
     return this._session.value?.locale ?? DEFAULT_LOCALE;
   }
 
