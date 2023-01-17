@@ -2,6 +2,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import type { FileFilter } from 'electron';
+import FileSaver from "file-saver";
 
 @Injectable({
   providedIn: 'root',
@@ -23,11 +24,21 @@ export class IpcService {
     });
   }
 
-  public async saveFile(params: { data: string; fileName: string; filters?: FileFilter[] }): Promise<void> {
-    return this._invoke('fs:saveFile', params);
+  public async saveFile(params: { data: string; fileName: string; mimeType: string, filters?: FileFilter[] }): Promise<void> {
+    if (IpcService.isElectron()) {
+      return this._invoke('fs:saveFile', params);
+    }
+
+    const blob = new Blob([params.data], { type: params.mimeType });
+    FileSaver.saveAs(blob, params.fileName);
+    return;
   }
 
   public async openFile(params: { filters: FileFilter[] }): Promise<string> {
     return this._invoke('fs:openFile', params);
+  }
+
+  public static isElectron(): boolean {
+    return !!(typeof window !== 'undefined' && (window as any).zskarte);
   }
 }

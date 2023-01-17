@@ -152,10 +152,10 @@ export class I18NService {
       en: 'Download',
       fr: 'Télécharger',
     },
-    downloadMap: {
-      de: 'Karte herunterladen',
-      en: 'Download map',
-      fr: 'Télécharger carte',
+    exportOperation: {
+      de: 'Operation exportieren',
+      en: 'Export operation',
+      fr: 'Exporter operation',
     },
     downloadMapCSV: {
       de: 'Als CSV exportieren',

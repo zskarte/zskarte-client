@@ -7,10 +7,7 @@ import { ZsMapStateService } from '../state/state.service';
 import { ZsMapDisplayMode } from '../state/interfaces';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { SessionService } from '../session/session.service';
-import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
-import { ExportDialogComponent } from '../export-dialog/export-dialog.component';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DatePipe } from '@angular/common';
@@ -28,11 +25,7 @@ export class ToolbarComponent {
   static ONBOARDING_VERSION = '1.0';
 
   historyMode: Observable<boolean>;
-  exportEnabled = true;
-  downloadData: SafeUrl | null = null;
   locales: Locale[] = LOCALES;
-  downloadTime?: string = undefined;
-  downloadCSVData?: SafeUrl = undefined;
   protocolEntries: ProtocolEntry[] = [];
 
   constructor(
@@ -90,10 +83,6 @@ export class ToolbarComponent {
     }
   }
 
-  exportSession(): void {
-    this.dialog.open(ExportDialogComponent);
-  }
-
   toggleHistory(): void {
     this.zsMapStateService.toggleDisplayMode();
   }
@@ -102,81 +91,8 @@ export class ToolbarComponent {
     this.dialog.open(HelpComponent, { data: false });
   }
 
-  importData(): void {
-    const dialogRef = this.dialog.open(ImportDialogComponent, {
-      maxWidth: '80vw',
-      maxHeight: '80vh',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result && result.value) {
-        this.dialog
-          .open(ConfirmationDialogComponent, {
-            data: result.replace ? this.i18n.get('confirmImportDrawing') : this.i18n.get('confirmImportDrawingNoReplace'),
-          })
-          .afterClosed()
-          .subscribe((confirmed) => {
-            if (confirmed) {
-              this.zsMapStateService.setMapState(JSON.parse(result.value));
-            }
-          });
-      }
-    });
-  }
-
-  getDownloadFileName() {
-    return 'zskarte_' + new Date().toISOString() + '.geojson';
-  }
-
-  download(): void {
-    this.downloadData = this.sanitizer.bypassSecurityTrustUrl(this.zsMapStateService.exportMap());
-  }
-
   protocolTable(): void {
     this.dialog.open(ProtocolTableComponent, { data: false });
-  }
-
-  getDownloadFileNameCSV() {
-    if (this.downloadTime == undefined) {
-      this.downloadTime = new Date().toISOString();
-    }
-    return 'zskarte_' + this.downloadTime + '.csv';
-  }
-
-  downloadCSV(): void {
-    const lines: string[] = new Array<string>();
-
-    // header
-    const row: string[] = new Array<string>();
-    row.push(this.i18n.get('csvID'));
-    row.push(this.i18n.get('csvDate'));
-    row.push(this.i18n.get('csvGroup'));
-    row.push(this.i18n.get('csvSignatur'));
-    row.push(this.i18n.get('csvLocation'));
-    row.push(this.i18n.get('csvSize'));
-    row.push(this.i18n.get('csvLabel'));
-    row.push(this.i18n.get('csvDescription'));
-    lines.push('"' + row.join('";"') + '"');
-
-    // entry
-    this.protocolEntries.forEach((protocolEntry) => {
-      const entryRow = new Array<string>();
-      entryRow.push(protocolEntry.id);
-      entryRow.push(protocolEntry.date === undefined ? '' : protocolEntry.date);
-      entryRow.push(protocolEntry.group);
-      entryRow.push(protocolEntry.sign);
-      entryRow.push(protocolEntry.location);
-      entryRow.push(protocolEntry.size);
-      entryRow.push(protocolEntry.label);
-      entryRow.push(protocolEntry.description);
-      for (let i = 0, l = entryRow.length; i < l; i++) {
-        entryRow[i] = entryRow[i] ? entryRow[i].replace(/"/g, '""') : '';
-      }
-      lines.push('"' + entryRow.join('";"') + '"');
-    });
-
-    this.downloadCSVData = this.sanitizer.bypassSecurityTrustUrl(
-      'data:text/csv;charset=UTF-8,' + encodeURIComponent('\ufeff' + lines.join('\r\n')),
-    );
   }
 
   print(): void {
@@ -184,10 +100,6 @@ export class ToolbarComponent {
     setTimeout(() => {
       window.print();
     }, 0);
-  }
-
-  todo(): void {
-    console.error('todo');
   }
 
   setLocale(locale: Locale) {
