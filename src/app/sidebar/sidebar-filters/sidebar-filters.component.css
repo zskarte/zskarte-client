@@ -23,13 +23,6 @@
   margin-right: -16px;
 }
 
-.category-list-item-button ::ng-deep .mat-button-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
 .icon-wrapper {
   display: flex;
   align-items: center;
@@ -41,4 +34,12 @@
   min-width: 15px;
   max-width: 25px;
   margin: 2px 8px 2px 0px;
+}
+
+.categoryDot {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
 }
