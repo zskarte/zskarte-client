@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, skip } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, interval, map, Observable, of, retry, skip, switchMap, takeUntil } from 'rxjs';
 import { db } from '../db/db';
 import { IAuthResult, IZsMapSession } from './session.interfaces';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,7 +8,6 @@ import { ApiService } from '../api/api.service';
 import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
 import { GUEST_USER_IDENTIFIER } from './userLogic';
-import { IZsMapOperation } from './operations/operation.interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
 
@@ -19,6 +18,8 @@ export class SessionService {
   private _session = new BehaviorSubject<IZsMapSession | undefined>(undefined);
   private _state!: ZsMapStateService;
   private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
+  private _loginParams: { identifier: string; password: string } | undefined;
+  private _isOnline = new BehaviorSubject<boolean>(true);
 
   constructor(private _router: Router, private _api: ApiService) {
     // prevents circular deps between session and api
@@ -28,20 +29,49 @@ export class SessionService {
     this._session.pipe(skip(1)).subscribe(async (session) => {
       if (session) {
         await db.table('session').put(session);
-
-        if (session?.operationId) {
-          const { error, result } = await this._api.get<IZsMapOperation>('/api/operations/' + session.operationId);
-          if (error || !result) return;
-          const mapState = result.mapState;
-          if (mapState) {
-            this._state.reset(mapState);
-          }
-        }
+        await this._state?.refreshMapState();
       } else {
         await db.table('session').clear();
         this._state?.reset();
       }
     });
+
+    // create refresh interval to verify that map state is up to date
+    interval(1000 * 60 * 1).subscribe(async () => {
+      if (this._session.value && this._session.value.operationId && this._isOnline.value) {
+        await this._state.refreshMapState();
+      }
+    });
+
+    // online/offline checks
+    window.addEventListener('online', () => {
+      this._isOnline.next(true);
+    });
+    window.addEventListener('offline', () => {
+      this._isOnline.next(false);
+    });
+    this._isOnline
+      .asObservable()
+      .pipe(skip(1), distinctUntilChanged())
+      .subscribe(async (isOnline) => {
+        if (isOnline) {
+          of([])
+            .pipe(
+              switchMap(async () => {
+                await this.refreshToken();
+              }),
+              retry({ count: 5, delay: 1000 }),
+              takeUntil(this._isOnline.asObservable().pipe(filter((isOnline) => !isOnline))),
+            )
+            .subscribe({
+              complete: () => {
+                // feature: show notification that connection was restored
+              },
+            });
+        } else {
+          // feature: show notification that connection was lost
+        }
+      });
   }
 
   public setStateService(state: ZsMapStateService): void {
@@ -109,12 +139,21 @@ export class SessionService {
     }
 
     this._session.next(session);
+    this._loginParams = params;
     this._router.navigateByUrl('/map');
   }
 
   public async logout(): Promise<void> {
     this._session.next(undefined);
+    this._loginParams = undefined;
     this._router.navigateByUrl('/login');
+  }
+
+  public async refreshToken(): Promise<void> {
+    if (!this._loginParams) {
+      return await this.logout();
+    }
+    return await this.login(this._loginParams);
   }
 
   public getToken(): string | undefined {
@@ -159,5 +198,9 @@ export class SessionService {
 
   public getGuestLoginDateTime() {
     return this._session.value?.guestLoginDateTime;
+  }
+
+  public observeIsOnline(): Observable<boolean> {
+    return this._isOnline.pipe(distinctUntilChanged());
   }
 }

@@ -30,6 +30,8 @@ import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import { ApiService } from '../api/api.service';
+import { IZsMapOperation } from '../session/operations/operation.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -54,7 +56,13 @@ export class ZsMapStateService {
   private _reorderMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
 
-  constructor(private drawDialog: MatDialog, private textDialog: MatDialog, private _sync: SyncService, private _session: SessionService) {
+  constructor(
+    private drawDialog: MatDialog,
+    private textDialog: MatDialog,
+    private _sync: SyncService,
+    private _session: SessionService,
+    private _api: ApiService,
+  ) {
     this._sync.setStateService(this);
     this._session.setStateService(this);
   }
@@ -559,6 +567,14 @@ export class ZsMapStateService {
               }
             }
           }
+
+          // unsubscribe old elements
+          for (const id of Object.keys(this._drawElementCache)) {
+            if (!cache[id]) {
+              this._drawElementCache[id].unsubscribe();
+            }
+          }
+
           this._drawElementCache = cache;
           return elements;
         }
@@ -759,5 +775,25 @@ export class ZsMapStateService {
 
   public setReorderMode(reorderMode: boolean) {
     this._reorderMode.next(reorderMode);
+  }
+
+  public async refreshMapState(): Promise<void> {
+    if (this._session.getOperationId()) {
+      const sha256 = async (str: string): Promise<string> => {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
+      };
+      const { error, result } = await this._api.get<IZsMapOperation>('/api/operations/' + this._session.getOperationId());
+      if (error || !result) return;
+      if (result.mapState) {
+        const [oldDigest, newDigest] = await Promise.all([
+          sha256(JSON.stringify(this._map.value)),
+          sha256(JSON.stringify(result.mapState)),
+        ]);
+        if (oldDigest !== newDigest) {
+          this.reset(result.mapState);
+        }
+      }
+    }
   }
 }
