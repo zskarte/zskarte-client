@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { ApiService } from '../../api/api.service';
 import { SessionService } from '../session.service';
 import { ZsMapStateService } from '../../state/state.service';
 import { IZsMapOperation } from './operation.interfaces';
-import { ZsMapLayerStateType, ZsMapStateSource } from '../../state/interfaces';
+import { ZsMapLayerStateType } from '../../state/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 
 @Component({
@@ -25,19 +25,10 @@ export class OperationsComponent {
   }
 
   private async _reload(): Promise<void> {
-    const result = await this._api.get(
+    const { error, result: operations } = await this._api.get<IZsMapOperation[]>(
       '/api/operations?filters[organization][id][$eq]=' + this._session.getOrganizationId() + '&filters[status][$eq]=active',
     );
-    const operations: IZsMapOperation[] = [];
-    for (const o of result?.data) {
-      operations.push({
-        id: o.id,
-        name: o.attributes.name,
-        description: o.attributes.description,
-        mapState: o.attributes.mapState,
-        status: o.attributes.status,
-      });
-    }
+    if (error || !operations) return;
     this.operations.next(operations);
     this.operationToEdit.next(undefined);
   }
@@ -71,7 +62,6 @@ export class OperationsComponent {
       operation.mapState = {
         version: 1,
         id: uuidv4(),
-        source: ZsMapStateSource.OPEN_STREET_MAP,
         // TODO get map center from organization
         center: [0, 0],
         name: operation.name,

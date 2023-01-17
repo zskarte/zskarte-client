@@ -20,6 +20,9 @@
         <mat-label>Passwort</mat-label>
         <input matInput type="password" placeholder="Passwort eingeben" [(ngModel)]="password" name="password" />
       </mat-form-field>
+      <mat-error *ngIf="session.getAuthError()">{{
+        session.getAuthError()?.error?.error?.message || session.getAuthError()?.statusText || session.getAuthError()?.message
+      }}</mat-error>
     </mat-card-content>
     <mat-card-actions>
       <button class="login-button" mat-raised-button color="primary" (click)="login()">Login</button>

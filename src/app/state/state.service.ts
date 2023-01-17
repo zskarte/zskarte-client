@@ -28,10 +28,8 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
-import Feature from 'ol/Feature';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
-import { SimpleGeometry } from 'ol/geom';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +46,7 @@ export class ZsMapStateService {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
-  private _selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | null>(null);
+  private _selectedFeature = new BehaviorSubject<string | undefined>(undefined);
   private _recentlyUsedElement = new BehaviorSubject<ZsMapDrawElementState[]>([]);
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
@@ -75,6 +73,7 @@ export class ZsMapStateService {
       mapCenter: [0, 0],
       mapZoom: 16,
       activeLayer: undefined,
+      source: ZsMapStateSource.OPEN_STREET_MAP,
       layerOpacity: {},
       layerVisibility: {},
       layerOrder: [],
@@ -151,13 +150,18 @@ export class ZsMapStateService {
   }
 
   public setMapState(newState?: IZsMapState): void {
-    this._layerCache = {};
+    const cached = Object.keys(this._layerCache);
+    for (const c of cached) {
+      if (!newState?.layers?.find((l) => l.id === c)) {
+        this._layerCache[c].unsubscribe();
+        delete this._layerCache[c];
+      }
+    }
     if (this._drawElementCache) {
       for (const key in this._drawElementCache) {
         this._drawElementCache[key].unsubscribe();
       }
     }
-
     this._drawElementCache = {};
     this.updateMapState(() => {
       return newState || this._getDefaultMapState();
@@ -217,12 +221,12 @@ export class ZsMapStateService {
     });
   }
 
-  public setSelectedFeature(feature: Feature<SimpleGeometry>) {
-    this._selectedFeature.next(feature);
+  public setSelectedFeature(featureId: string | undefined) {
+    this._selectedFeature.next(featureId);
   }
 
   public resetSelectedFeature() {
-    this._selectedFeature.next(null);
+    this._selectedFeature.next(undefined);
   }
 
   public setMapZoom(zoom: number) {
@@ -255,7 +259,7 @@ export class ZsMapStateService {
 
   // source
   public observeMapSource(): Observable<ZsMapStateSource> {
-    return this._map.pipe(
+    return this._display.pipe(
       map((o) => {
         return o?.source;
       }),
@@ -264,7 +268,7 @@ export class ZsMapStateService {
   }
 
   public setMapSource(source: ZsMapStateSource) {
-    this.updateMapState((draft) => {
+    this.updateDisplayState((draft) => {
       draft.source = source;
     });
   }
@@ -392,7 +396,7 @@ export class ZsMapStateService {
     );
   }
 
-  public observeSelectedFeature(): Observable<Feature<SimpleGeometry> | null> {
+  public observeSelectedFeature(): Observable<string | undefined> {
     return this._selectedFeature.asObservable();
   }
 
@@ -447,12 +451,12 @@ export class ZsMapStateService {
     return this._map.value.layers?.find((layer) => layer.id === this._display.value.activeLayer);
   }
 
-  public addDrawElement(element: ZsMapDrawElementState): void {
+  public addDrawElement(element: ZsMapDrawElementState): ZsMapDrawElementState | null {
     const activeLayerState = this.getActiveLayerState();
     if (activeLayerState?.type === ZsMapLayerStateType.DRAW) {
       const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
       defineDefaultValuesForSignature(sign);
-      const drawElement = {
+      const drawElement: ZsMapDrawElementState = {
         color: sign.color,
         protected: sign.protected,
         iconSize: sign.iconSize,
@@ -464,23 +468,28 @@ export class ZsMapStateService {
         style: sign.style,
         arrow: sign.arrow,
         strokeWidth: sign.strokeWidth,
-        fillStyle: { ...sign.fillStyle },
+        fillStyle: { ...sign.fillStyle, name: sign.fillStyle?.name ?? '' },
         fillOpacity: sign.fillOpacity,
         fontSize: sign.fontSize,
         id: uuidv4(),
         nameShow: true,
         ...element,
+        createdAt: new Date(),
       };
 
       this.updateMapState((draft) => {
         if (!draft.drawElements) {
           draft.drawElements = [];
         }
-        draft.drawElements.push(drawElement as ZsMapDrawElementState);
+        draft.drawElements.push(drawElement);
       });
 
       this.addRecentlyUsedElement(element);
+
+      return drawElement;
     }
+
+    return null;
   }
 
   private addRecentlyUsedElement(element: ZsMapDrawElementState) {

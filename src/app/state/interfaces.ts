@@ -17,7 +17,6 @@ export interface IZsMapState {
   version: number;
   id: string;
   name?: string;
-  source: ZsMapStateSource;
   layers?: ZsMapLayerState[];
   drawElements?: ZsMapDrawElementState[];
   center: [number, number];
@@ -43,6 +42,7 @@ export interface IZsMapDisplayState {
   layerVisibility: Record<string, boolean>;
   layerOpacity: Record<string, number>;
   layerOrder: string[];
+  source: ZsMapStateSource;
   elementOpacity: Record<string, number>;
   elementVisibility: Record<string, boolean>;
   features: GeoFeature[];
@@ -91,6 +91,7 @@ export interface IZsMapBaseElementState {
   id?: string;
   layer?: string;
   coordinates?: number[] | number[][];
+  createdAt?: Date;
 }
 
 export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {

@@ -59,6 +59,10 @@
             <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('print')">local_printshop</mat-icon>
             {{ i18n.get('print') }}
           </button>
+          <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="protocolOptions">
+            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocol')">list_alt</mat-icon>
+            {{ i18n.get('protocol') }}
+          </button>
           <button mat-menu-item (click)="help()">
             <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('help')">help</mat-icon>
             {{ i18n.get('help') }}
@@ -73,6 +77,22 @@
           <button mat-menu-item *ngFor="let locale of locales" (click)="todo()" [ngClass]="{ active: locale === 'TODO' }">
             {{ i18n.get(locale) }}
           </button>
+        </mat-menu>
+        <mat-menu #protocolOptions="matMenu">
+          <button mat-menu-item class="tools-menu-item" (click)="protocolTable()">
+            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolTable')">table_chart</mat-icon>
+            {{ i18n.get('protocolTable') }}
+          </button>
+          <a
+            mat-menu-item
+            [download]="getDownloadFileNameCSV()"
+            id="exportCSV"
+            class="tools-menu-item"
+            (click)="downloadCSV()"
+            [href]="downloadCSVData"
+            ><mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('downloadMapCSV')">save</mat-icon>
+            {{ i18n.get('downloadMapCSV') }}</a
+          >
         </mat-menu>
       </div>
     </div>
