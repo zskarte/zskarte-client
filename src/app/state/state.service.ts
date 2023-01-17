@@ -82,6 +82,7 @@ export class ZsMapStateService {
       features: [],
       sidebarContext: null,
       hiddenSymbols: [],
+      hiddenFeatureTypes: [],
     };
   }
 
@@ -679,7 +680,6 @@ export class ZsMapStateService {
   public filterCategory(category: string) {
     this.updateDisplayState((draft) => {
       const ids = Signs.SIGNS.filter((s) => s.kat === category).map((symbol) => symbol.id);
-
       ids.forEach((id) => {
         if (!id) return;
         this.toggleInArray(draft.hiddenSymbols, id);
@@ -697,18 +697,26 @@ export class ZsMapStateService {
     if (!symbolId) {
       return;
     }
-
     this.updateDisplayState((draft) => {
-      this.toggleInArray(draft.hiddenSymbols, symbolId);
+      this.toggleInArray<number>(draft.hiddenSymbols, symbolId);
     });
   }
 
-  private toggleInArray(symbols: number[], id: number) {
-    const index = symbols.indexOf(id);
+  public toggleFeatureType(featureType: string) {
+    if (!featureType) {
+      return;
+    }
+    this.updateDisplayState((draft) => {
+      this.toggleInArray<string>(draft.hiddenFeatureTypes, featureType);
+    });
+  }
+
+  private toggleInArray<T>(array: T[], value: T) {
+    const index = array.indexOf(value);
     if (index > -1) {
-      symbols.splice(index, 1);
+      array.splice(index, 1);
     } else {
-      symbols.push(id);
+      array.push(value);
     }
   }
 
@@ -716,6 +724,14 @@ export class ZsMapStateService {
     return this._display.pipe(
       map((o) => {
         return o?.hiddenSymbols;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+  public observeHiddenFeatureTypes() {
+    return this._display.pipe(
+      map((o) => {
+        return o?.hiddenFeatureTypes;
       }),
       distinctUntilChanged((x, y) => x === y),
     );
