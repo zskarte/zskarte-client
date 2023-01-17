@@ -12,6 +12,8 @@ export interface IZsMapSession {
 export interface IZso {
   name: string;
   identifier: string;
+  logoSrc?: string;
+  logoSrcSet?: string;
 }
 
 export interface IAuthResult {

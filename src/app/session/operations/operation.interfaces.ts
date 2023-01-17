@@ -16,6 +16,7 @@ export interface IZsMapOrganization {
   mapZoomLevel: number;
   defaultLocale: string;
   url: string;
+  logo: IZsStrapiAsset;
   logoUrl: string;
   mapXCoord: number;
   mapYCoord: number;
@@ -27,4 +28,39 @@ export interface IZsMapUser {
   id: number;
   username: string;
   email: string;
+}
+
+export interface UZsStrapiAssetFormat {
+  ext: string;
+  url: string;
+  hash: string;
+  mime: string;
+  name: string;
+  size: number;
+  width: number;
+  height: number;
+}
+
+export interface IZsStrapiAsset extends UZsStrapiAssetFormat {
+  id: number;
+  name: string;
+  alternativeText?: string;
+  caption?: string;
+  width: number;
+  formats?: {
+    large?: UZsStrapiAssetFormat;
+    medium?: UZsStrapiAssetFormat;
+    small?: UZsStrapiAssetFormat;
+    thumbnail?: UZsStrapiAssetFormat;
+  };
+  height: number;
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl?: string;
+  provider: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
