@@ -181,13 +181,9 @@ export class ToolbarComponent {
 
   print(): void {
     this.menu.closeMenu();
-
-    // it takes about 250ms to close the menu.
-    // If you succeed in adding a class to the mat-menu
-    // that hides the menu in print mode, this can be removed.
     setTimeout(() => {
       window.print();
-    }, 250);
+    }, 0);
   }
 
   clear(): void {
