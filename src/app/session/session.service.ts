@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
 import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
+import { GUEST_USER_IDENTIFIER } from './userLogic';
 import { IZsMapOperation } from './operations/operation.interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -96,6 +97,10 @@ export class SessionService {
     if (error || !meResult) return;
 
     const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined, organizationId: meResult.organization.id };
+    if (params.identifier === GUEST_USER_IDENTIFIER) {
+      session.guestLoginDateTime = new Date();
+    }
+
     this._session.next(session);
     this._router.navigateByUrl('/map');
   }
@@ -124,16 +129,11 @@ export class SessionService {
     );
   }
 
-  public observeIsGuest(): Observable<boolean> {
-    return this._session.pipe(
-      map((session) => {
-        if (!session?.auth?.user?.username) return false;
-        return session.auth.user.username === 'zso_guest';
-      }),
-    );
-  }
-
   public getLanguage(): string {
     return 'de-CH';
+  }
+
+  public getGuestLoginDateTime() {
+    return this._session.value?.guestLoginDateTime;
   }
 }
