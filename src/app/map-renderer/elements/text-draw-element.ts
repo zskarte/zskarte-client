@@ -28,9 +28,7 @@ export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
       src: null,
     };
     this._olFeature.set('sig', textSign);
-    this._olFeature.on('change', () => {
-      this.setCoordinates(this._olGeometryItem?.getCoordinates() ?? []);
-    });
+    this.setCoordinates(this._olGeometryItem?.getCoordinates() ?? []);
     this._isInitialized = true;
   }
   protected static override _getOlDrawType(): Type {

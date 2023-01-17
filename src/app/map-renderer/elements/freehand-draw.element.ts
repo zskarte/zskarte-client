@@ -34,9 +34,7 @@ export class ZsMapFreehandDrawElement extends ZsMapBaseDrawElement<ZsMapFreehand
       freehand: true,
       filterValue: 'free_hand_element',
     });
-    this._olFeature.on('change', () => {
-      this.setCoordinates(this._olLine.getCoordinates());
-    });
+    this.setCoordinates(this._olLine.getCoordinates());
     this._isInitialized = true;
     return;
   }

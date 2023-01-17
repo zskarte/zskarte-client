@@ -91,6 +91,7 @@ export interface IZsMapBaseElementState {
   id?: string;
   layer?: string;
   coordinates?: number[] | number[][];
+  createdAt?: Date;
 }
 
 export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {

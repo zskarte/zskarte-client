@@ -126,8 +126,11 @@ export class MapRendererComponent implements AfterViewInit {
     // TODO
     const select = new Select({
       hitTolerance: 10,
-      style: (feature, resolution) => {
-        return feature.get('hidden') === true ? null : DrawStyle.styleFunctionSelect(feature, resolution, true);
+      style: (feature: FeatureLike, resolution: number) => {
+        if (feature.get('hidden') === true) {
+          return undefined;
+        }
+        return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
       layers: this._allLayers,
     });
@@ -163,12 +166,18 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._modify.on('modifyend', (e) => {
-      this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+      if (this._modify['vertexFeature_']) {
+        this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+      }
       this.removeButton?.setPosition(e.mapBrowserEvent.coordinate);
       this.copyButton?.setPosition(e.mapBrowserEvent.coordinate);
       this.rotateButton?.setPosition(e.mapBrowserEvent.coordinate);
       this.toggleEditButtons(true);
       this._currentSketch = undefined;
+      e.features.forEach((feature) => {
+        const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+        element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+      });
     });
 
     // select on ol-Map layer
@@ -181,6 +190,13 @@ export class MapRendererComponent implements AfterViewInit {
     // TODO
     const translate = new Translate({
       features: select.getFeatures(),
+    });
+
+    translate.on('translateend', (e) => {
+      e.features.forEach((feature) => {
+        const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+        element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+      });
     });
 
     this._view = new OlView({
@@ -490,7 +506,14 @@ export class MapRendererComponent implements AfterViewInit {
     rotation = rotation > 180 ? rotation - 360 : rotation;
     const id = feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
 
-    this._state.updateDrawElementState(id, 'rotation', rotation);
+    // Update the signature in the UI separately from the state, to provide a smooth rotation
+    feature.get('sig').rotation = rotation;
+    feature.changed();
+
+    // Update the state with the new rotation (debounced)
+    this._drawElementCache[id]?.element.updateElementState((draft) => {
+      draft.rotation = rotation;
+    });
   }
 
   async removeFeature() {
@@ -521,7 +544,7 @@ export class MapRendererComponent implements AfterViewInit {
             }
           }
           const id = coordinationGroup.feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
-          this._state.updateDrawElementState(id, 'coordinates', newCoordinates);
+          this._drawElementCache[id]?.element.setCoordinates(newCoordinates);
         }
       }
     }
@@ -573,6 +596,7 @@ export class MapRendererComponent implements AfterViewInit {
     }
     const layer = await firstValueFrom(this._state.observeActiveLayer());
     this._state.copySymbol(sign.id, layer?.getId());
+    this._state.resetSelectedFeature();
   }
 
   async toggleEditButtons(show: boolean) {
@@ -623,6 +647,12 @@ export class MapRendererComponent implements AfterViewInit {
       // trigger selectedFeature to enable projection rotation while a feature is selected
       this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
     }
+
+    // After rotating the projection,
+    // the coordinates component is not automatically reloaded.
+    // To "force" the component to reload,
+    // we push the current mouse position to the mouse coordinates.
+    this.mouseCoordinates.next(this.mousePosition.value);
   }
 
   getFeatureCoodrinates(feature: Feature | null): number[] {

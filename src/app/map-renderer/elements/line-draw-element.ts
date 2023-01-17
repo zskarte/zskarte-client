@@ -31,9 +31,7 @@ export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
       src: null,
       filterValue: 'not_labeled_line',
     });
-    this._olFeature.on('change', () => {
-      this.setCoordinates(this._olLine.getCoordinates());
-    });
+    this.setCoordinates(this._olLine.getCoordinates());
     this._isInitialized = true;
     return;
   }

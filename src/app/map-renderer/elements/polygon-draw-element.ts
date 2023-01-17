@@ -34,10 +34,7 @@ export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawE
       src: null,
       filterValue: 'not_labeled_polygon',
     });
-    this._olFeature.on('change', () => {
-      // TODO types
-      this.setCoordinates(this._olPolygon.getCoordinates() as any);
-    });
+    this.setCoordinates(this._olPolygon.getCoordinates() as any);
     this._isInitialized = true;
   }
   protected static override _getOlDrawType(): Type {
