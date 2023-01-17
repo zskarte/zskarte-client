@@ -49,7 +49,7 @@ export class SessionService {
 
         this._state
           .observeDisplayState()
-          .pipe(takeUntil(this._clearSession))
+          .pipe(skip(1), takeUntil(this._clearSession))
           .subscribe(async (displayState) => {
             if (this._session.value?.operationId) {
               db.displayStates.put({ ...displayState, id: this._session.value.operationId });
@@ -226,6 +226,6 @@ export class SessionService {
   }
 
   public observeIsOnline(): Observable<boolean> {
-    return this._isOnline.pipe(distinctUntilChanged());
+    return this._isOnline.pipe(skip(1), distinctUntilChanged());
   }
 }

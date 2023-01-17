@@ -21,15 +21,6 @@ export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
   protected _initialize(element: ZsMapTextDrawElementState): void {
     this._olGeometryItem = new LineString(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olGeometryItem);
-    const textSign = {
-      type: 'LineString',
-      text: element.text,
-      filterValue: 'text_element',
-      src: null,
-    };
-    this._olFeature.set('sig', textSign);
-    this.setCoordinates(this._olGeometryItem?.getCoordinates() ?? []);
-    this._isInitialized = true;
   }
   protected static override _getOlDrawType(): Type {
     return 'LineString';
