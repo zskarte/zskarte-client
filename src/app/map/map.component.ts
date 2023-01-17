@@ -69,7 +69,7 @@ export class MapComponent implements OnInit {
     });
     try {
       const data = JSON.parse(jsonString);
-      this.state.loadSaveFileState(data);
+      //this.state.loadSaveFileState(data);
     } catch (e) {
       // TODO error handling
       console.error('TODO error handling', e);

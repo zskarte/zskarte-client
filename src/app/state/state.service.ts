@@ -15,7 +15,7 @@ import {
   ZsMapLayerStateType,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, skip, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
@@ -72,8 +72,8 @@ export class ZsMapStateService {
     return {} as any;
   }
 
-  private _getDefaultDisplayState(): IZsMapDisplayState {
-    return {
+  private _getDefaultDisplayState(mapState?: IZsMapState): IZsMapDisplayState {
+    const state: IZsMapDisplayState = {
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
@@ -92,6 +92,22 @@ export class ZsMapStateService {
       hiddenSymbols: [],
       hiddenFeatureTypes: [],
     };
+    if (!mapState) {
+      mapState = this._map.value;
+    }
+    if (mapState?.layers) {
+      for (const layer of mapState?.layers) {
+        if (layer.id) {
+          if (!state.activeLayer) {
+            state.activeLayer = layer.id;
+          }
+          state.layerOrder.push(layer.id);
+          state.layerVisibility[layer.id] = true;
+          state.layerOpacity[layer.id] = 1;
+        }
+      }
+    }
+    return state;
   }
 
   public copySymbol(symbolId: number, layer?: string) {
@@ -133,31 +149,6 @@ export class ZsMapStateService {
     return this._elementToDraw.asObservable();
   }
 
-  public reset(newMapState?: IZsMapState, newDisplayState?: IZsMapDisplayState): void {
-    this.setMapState(newMapState);
-    if (newDisplayState) {
-      this.setDisplayState(newDisplayState);
-    } else {
-      // generate display style based on map state
-      if (newMapState) {
-        const displayState = this._getDefaultDisplayState();
-        if (newMapState.layers) {
-          for (const layer of newMapState?.layers) {
-            if (layer.id) {
-              if (!displayState.activeLayer) {
-                displayState.activeLayer = layer.id;
-              }
-              displayState.layerOrder.push(layer.id);
-              displayState.layerVisibility[layer.id] = true;
-              displayState.layerOpacity[layer.id] = 1;
-            }
-          }
-        }
-        this.setDisplayState(displayState);
-      }
-    }
-  }
-
   public setMapState(newState?: IZsMapState): void {
     const cached = Object.keys(this._layerCache);
     for (const c of cached) {
@@ -197,12 +188,8 @@ export class ZsMapStateService {
     });
   }
 
-  public saveDisplayState(): void {
-    localStorage.setItem('tempDisplayState', JSON.stringify(this._display.value));
-  }
-
   public observeDisplayState(): Observable<IZsMapDisplayState> {
-    return this._display.asObservable();
+    return this._display.pipe(skip(1));
   }
 
   // zoom
@@ -676,9 +663,9 @@ export class ZsMapStateService {
     return 'data:text/csv;charset=UTF-8,' + encodeURIComponent(lines.join('\r\n'));
   }
 
-  public loadSaveFileState(state: IZsMapSaveFileState): void {
-    this.reset(state.map, state.display);
-  }
+  // public loadSaveFileState(state: IZsMapSaveFileState): void {
+  //   this.reset(state.map, state.display);
+  // }
 
   toggleSidebarContext(context: SidebarContext | null) {
     this.updateDisplayState((draft) => {
@@ -800,7 +787,7 @@ export class ZsMapStateService {
           sha256(JSON.stringify(result.mapState)),
         ]);
         if (oldDigest !== newDigest) {
-          this.reset(result.mapState);
+          this.setMapState(result.mapState);
         }
       }
     }

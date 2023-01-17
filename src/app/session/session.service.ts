@@ -1,5 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged, filter, interval, map, Observable, of, retry, skip, switchMap, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  filter,
+  interval,
+  map,
+  Observable,
+  of,
+  retry,
+  skip,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { db } from '../db/db';
 import { IAuthResult, IZsMapSession } from './session.interfaces';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,6 +29,7 @@ import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
 })
 export class SessionService {
   private _session = new BehaviorSubject<IZsMapSession | undefined>(undefined);
+  private _clearSession = new Subject<void>();
   private _state!: ZsMapStateService;
   private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
   private _loginParams: { identifier: string; password: string } | undefined;
@@ -28,11 +42,22 @@ export class SessionService {
     // save handler
     this._session.pipe(skip(1)).subscribe(async (session) => {
       if (session) {
-        await db.table('session').put(session);
+        await db.sessions.put(session);
         await this._state?.refreshMapState();
+        const displayState = await db.displayStates.get({ id: session.operationId });
+        this._state.setDisplayState(displayState);
+
+        this._state
+          .observeDisplayState()
+          .pipe(takeUntil(this._clearSession))
+          .subscribe(async (displayState) => {
+            if (this._session.value?.operationId) {
+              db.displayStates.put({ ...displayState, id: this._session.value.operationId });
+            }
+          });
       } else {
-        await db.table('session').clear();
-        this._state?.reset();
+        await db.sessions.clear();
+        this._clearSession.next();
       }
     });
 
@@ -106,14 +131,14 @@ export class SessionService {
   }
 
   public async loadSavedSession(): Promise<void> {
-    const sessions = await db.table('session').toArray();
+    const sessions = await db.sessions.toArray();
     if (sessions.length === 1) {
       const session: IZsMapSession = sessions[0];
       this._session.next(session);
       return;
     }
     if (sessions.length > 1) {
-      await db.table('session').clear();
+      await db.sessions.clear();
     }
     this._session.next(undefined);
   }
