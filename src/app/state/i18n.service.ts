@@ -33,7 +33,7 @@ export class I18NService {
       fr: 'Langue',
     },
     symbol: {
-      de: 'Symbol',
+      de: 'Signatur',
       en: 'Symbol',
       fr: 'Symbole',
     },
@@ -528,7 +528,7 @@ export class I18NService {
       fr: 'Fonctions',
     },
     hideSymbol: {
-      de: 'Symbol auf Karte verstecken',
+      de: 'Signatur auf Karte verstecken',
       en: 'Hide symbol on map',
       fr: 'Cacher le symbole sur la carte',
     },
@@ -618,7 +618,7 @@ export class I18NService {
       en: 'English',
     },
     deleteSymbolConfirm: {
-      de: 'Wollen Sie dieses Symbol wirklich löschen?',
+      de: 'Wollen Sie diese Signatur wirklich löschen?',
       fr: 'Voulez-vous vraiment supprimer ce symbole ?',
       en: 'Do you really want to delete this symbol?',
     },
@@ -830,7 +830,7 @@ export class I18NService {
         '<li>pour indiquer cette aide</li>',
     },
     docSearch: {
-      de: 'Die Suche kann dazu verwendet werden, Adressen und andere Orte zu finden und mittels Selektion zum entsprechenden Ort auf der Karte zu navigieren. Die Suche unterstützt ausserdem gezeichnete Symbole inkl. deren Namen',
+      de: 'Die Suche kann dazu verwendet werden, Adressen und andere Orte zu finden und mittels Selektion zum entsprechenden Ort auf der Karte zu navigieren. Die Suche unterstützt ausserdem gezeichnete Signaturen inkl. deren Namen',
       en: 'The search can be used to find addresses and other places and navigate to the corresponding location on the map. The search also supports drawn symbols by including their names',
       fr: "La recherche peut être utilisée pour trouver des adresses et d'autres lieux et naviguer jusqu'à l'endroit correspondant sur la carte. La recherche prend également en compte les symboles dessinés, y compris leurs noms",
     },
@@ -838,8 +838,8 @@ export class I18NService {
       de:
         'Dieses Menü erlaubt es, verschiedene Elemente auf die Karte zu zeichnen:\n' +
         '<li><strong>Text</strong>: Ein Dialog erscheint, welcher es erlaubt einen Text zu definieren. Nach dem Schliessen des Dialoges kann eine Linie auf die Karte gezeichnet werden indem auf die Karte geklickt wird (beenden mit Doppelklick). Anschliessend wird der Text dargestellt und unten links erscheint die <strong>Selektionsansicht</strong>.</li>' +
-        '<li><strong>Symbol</strong>: Es erscheint der <strong>Symbolauswahl</strong> Dialog - nach der entsprechenden Auswahl kann (je nach Symbol) ein Punkt, eine Linie oder eine Fläche (Polygon) gezeichnet werden.</li>' +
-        '<li><strong>Polygon</strong>: Es kann direkt begonnen werden, eine Fläche zu zeichnen (bei Bedarf kann auch später über die <strong>Selektionsansicht</strong> ein Symbol definiert werden).</li>' +
+        '<li><strong>Signatur</strong>: Es erscheint der <strong>Signaturauswahl</strong> Dialog - nach der entsprechenden Auswahl kann (je nach Signatur) ein Punkt, eine Linie oder eine Fläche (Polygon) gezeichnet werden.</li>' +
+        '<li><strong>Polygon</strong>: Es kann direkt begonnen werden, eine Fläche zu zeichnen (bei Bedarf kann auch später über die <strong>Selektionsansicht</strong> eine Signatur definiert werden).</li>' +
         '<li><strong>Linie</strong>: Analog dem Polygon kann direkt begonnen werden, eine Linie zu zeichnen. Eine Linie kann über die <strong>Selektionsansicht</strong> auch in einen Pfeil umgewandelt werden.</li>',
       en:
         'This menu allows you to draw different elements on the map: \n' +
@@ -855,16 +855,16 @@ export class I18NService {
         '<li><strong>Ligne</strong> : Comme pour le polygone, vous pouvez directement commencer à tracer une ligne. Une ligne peut également être convertie en flèche en utilisant la <strong>vue de sélection</strong></li>',
     },
     docSymbolSelectionTitle: {
-      de: 'Symbolauswahl',
+      de: 'Signaturauswahl',
       en: 'Symbol selection',
       fr: 'Séléction de symbole',
     },
     docSymbolSelection: {
       de:
-        'Die Symbolauswahl erlaubt es, aus vordefinierten Symbolen auszuwählen, oder eigene Symbole über den Knopf neben dem Filter zu definieren.\n\n' +
-        'Wurde ein eigenes Symbol hochgeladen, so kann definiert werden, um welche Geometrie es sich handelt (Punkt / Linie / Polygon), es kann eine Benennung in einer oder mehreren der unterstützten Sparchen definiert und eine zugehörige Farbe gewählt werden.\n\n' +
-        'Grundsätzlich werden Bilder, welche als Symbole hinzugefügt werden als Kreis ausgeschnitten. Soll das Bild in seiner Originalform für die spätere Detailansicht erhalten bleiben, so kann dies hier selektiert werden. \n\n' +
-        'Auch kann ein Symbol für die Verwendung durch andere Karten auf diesem Browser freigegeben werden.',
+        'Die Signaturauswahl erlaubt es, aus vordefinierten Signaturen auszuwählen, oder eigene Signaturen über den Knopf neben dem Filter zu definieren.\n\n' +
+        'Wurde eine eigene Signatur hochgeladen, so kann definiert werden, um welche Geometrie es sich handelt (Punkt / Linie / Polygon), es kann eine Benennung in einer oder mehreren der unterstützten Sparchen definiert und eine zugehörige Farbe gewählt werden.\n\n' +
+        'Grundsätzlich werden Bilder, welche als Signaturen hinzugefügt werden als Kreis ausgeschnitten. Soll das Bild in seiner Originalform für die spätere Detailansicht erhalten bleiben, so kann dies hier selektiert werden. \n\n' +
+        'Auch kann eine Signatur für die Verwendung durch andere Karten auf diesem Browser freigegeben werden.',
       en:
         'Symbol selection allows you to choose from predefined symbols, or to define your own symbols using the button next to the filter.\n' +
         'If a custom symbol has been uploaded, you can define the geometry (point / line / polygon), define a name in one or more of the supported languages and choose a color.\n' +
@@ -883,7 +883,7 @@ export class I18NService {
     },
     docSelection: {
       de:
-        'Wird ein Element auf der Karte selektiert (z.B. ein Symbol, eine Linie, eine Fläche, etc.), so erscheint in der unteren linken Ecke des Bildschirms eine Selektionsansicht.\n\n' +
+        'Wird ein Element auf der Karte selektiert (z.B. eine Signatur, eine Linie, eine Fläche, etc.), so erscheint in der unteren linken Ecke des Bildschirms eine Selektionsansicht.\n\n' +
         'Für alle Elemente sind die folgenden Funktionen vorhanden:\n' +
         '<li>Es kann ein Name angegeben werden (u.a. um nach dem gezeichneten Element zu suchen)</li>' +
         '<li>Es kann eine Farbe definiert werden</li>' +
@@ -898,8 +898,8 @@ export class I18NService {
         '   * Es kann ein Loch in ein Polygon gezeichnet werden\n' +
         '   * Polygone können zusammen gruppiert werden (z.B. um unzusammenhängende Bereiche zu vereinen)\n' +
         '<li><strong>Alle ausser Text</strong>: </li>' +
-        '   * Es kann eine Beschreibung definiert werden indem Bilder (existierende oder selbstgewählte Symbole - ein Klick auf das Bild öffnet die Detailansicht) und/oder Text.\n' +
-        '   * Symbole können definiert / ersetzt / ausgeblendet / vergrössert / verkleinert und gedreht werden und es ist möglich, die Darstellung des Symbols zur besseren Sichtbarkeit vom Ankerpunkt aus zu verschieben',
+        '   * Es kann eine Beschreibung definiert werden indem Bilder (existierende oder selbstgewählte Signaturen - ein Klick auf das Bild öffnet die Detailansicht) und/oder Text.\n' +
+        '   * Signaturen können definiert / ersetzt / ausgeblendet / vergrössert / verkleinert und gedreht werden und es ist möglich, die Darstellung der Signatur zur besseren Sichtbarkeit vom Ankerpunkt aus zu verschieben',
       en:
         'If an element on the map is selected (e.g. a symbol, a line, an area, etc.), a selection view appears in the lower left corner of the screen.\n\n' +
         'The following functions are available for all elements:\n' +
@@ -938,7 +938,7 @@ export class I18NService {
         '   * Les symboles peuvent être définis / remplacés / cachés / zoomés / dézoomés et pivotés et il est possible de "déplacer" la représentation du symbole à partir du point d\'ancrage pour une meilleure visibilité',
     },
     docFilter: {
-      de: 'Der Filter erlaubt es, einzelne Symbole oder alle (Symbol: durchgestrichenes Auge) auszublenden, resp. einzublenden (Symbol: Auge)',
+      de: 'Der Filter erlaubt es, einzelne Signaturen oder alle (Symbol: durchgestrichenes Auge) auszublenden, resp. einzublenden (Symbol: Auge)',
       en: 'The filter allows you to hide or show individual or all symbols',
       fr: "Le filtre vous permet de cacher ou d'afficher des symboles individuels ou tous",
     },
@@ -981,7 +981,7 @@ export class I18NService {
     },
     docHistory: {
       de:
-        'Dieser Modus dient dem Lesen / Präsentieren der Karte. Hier werden Symbole gebündelt, sofern die Karte weit ausgezoomt wird. Ausserdem ist es hier möglich, frühere Kartenzustände welche automatisch aufgezeichnet oder explizit durch den Benutzer getagged wurden aufgerufen werden.\n\n' +
+        'Dieser Modus dient dem Lesen / Präsentieren der Karte. Hier werden Signaturen gebündelt, sofern die Karte weit ausgezoomt wird. Ausserdem ist es hier möglich, frühere Kartenzustände welche automatisch aufgezeichnet oder explizit durch den Benutzer getagged wurden aufgerufen werden.\n\n' +
         'Bei der Selektion eines Elementes erscheint in der linken unteren Ecke eine Übersicht über die definierten Informationen wie Name, Beschreibung, Bilder, etc.',
       fr:
         "Ce mode permet de lire / présenter la carte. C'est là que les symboles sont regroupés, à condition que la carte soit largement dézoomée. Il est également possible d'appeler des états de carte précédents qui ont été automatiquement enregistrés ou explicitement marqués par l'utilisateur.\n" +
