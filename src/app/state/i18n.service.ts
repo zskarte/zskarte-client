@@ -1083,7 +1083,7 @@ export class I18NService {
     logout: {
       de: 'Ereignis beenden',
       en: 'End event',
-      fr: 'Fin de l\'événement',
+      fr: "Fin de l'événement",
     },
     expand: {
       de: 'Ansicht wechseln',
