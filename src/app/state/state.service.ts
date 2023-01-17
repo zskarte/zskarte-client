@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
@@ -398,6 +398,12 @@ export class ZsMapStateService {
 
   public observeSelectedFeature(): Observable<string | undefined> {
     return this._selectedFeature.asObservable();
+  }
+
+  public observeSelectedElement(): Observable<ZsMapBaseDrawElement<ZsMapDrawElementState> | undefined> {
+    return combineLatest([this.observeSelectedFeature(), this.observeDrawElements()]).pipe(
+      map(([featureId, elements]) => elements.find((e) => e.getId() === featureId)),
+    );
   }
 
   public addFeature(feature: GeoFeature) {

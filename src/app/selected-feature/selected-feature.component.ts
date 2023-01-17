@@ -14,7 +14,6 @@ import { Feature } from 'ol';
 import { Point, SimpleGeometry } from 'ol/geom';
 import { map, takeUntil } from 'rxjs/operators';
 import { ZsMapDisplayMode, ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
-import { ZsMapOLFeatureProps } from '../map-renderer/elements/base/ol-feature-props';
 import { EditCoordinatesComponent } from '../edit-coordinates/edit-coordinates.component';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
@@ -27,7 +26,7 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 export class SelectedFeatureComponent implements OnDestroy {
   groupedFeatures = null;
   editMode: Observable<boolean>;
-  selectedFeature: Observable<Feature<SimpleGeometry> | null>;
+  selectedFeature: Observable<Feature<SimpleGeometry> | undefined>;
   selectedSignature: Observable<Sign | undefined>;
   selectedDrawElement: Observable<ZsMapDrawElementState | undefined>;
   drawHoleMode: Observable<boolean>;
@@ -56,20 +55,21 @@ export class SelectedFeatureComponent implements OnDestroy {
   ];
 
   constructor(public dialog: MatDialog, public i18n: I18NService, public zsMapStateService: ZsMapStateService) {
-    this.selectedFeature = this.zsMapStateService.observeSelectedFeature().pipe(
-      map((featureId) => this._drawElementCache[featureId ?? '']?.getOlFeature() as Feature<SimpleGeometry>),
+    this.selectedFeature = this.zsMapStateService.observeSelectedElement().pipe(
       takeUntil(this._ngUnsubscribe),
+      map((element) => element?.getOlFeature() as Feature<SimpleGeometry> | undefined),
     );
-    this.selectedDrawElement = this.zsMapStateService
-      .observeSelectedFeature()
-      .pipe(map((featureId) => this._drawElementCache[featureId ?? '']?.elementState));
-    this.selectedSignature = this.selectedFeature.pipe(
-      map((feature) => {
-        const sig = feature?.get('sig');
+    this.selectedDrawElement = this.zsMapStateService.observeSelectedElement().pipe(
+      takeUntil(this._ngUnsubscribe),
+      map((element) => element?.elementState),
+    );
+    this.selectedSignature = this.zsMapStateService.observeSelectedElement().pipe(
+      takeUntil(this._ngUnsubscribe),
+      map((element) => {
+        const sig = element?.getOlFeature()?.get('sig');
         if (sig) {
           return sig.id ? Signs.getSignById(sig.id) : { ...sig };
         }
-        return null;
       }),
     );
 
@@ -222,8 +222,15 @@ export class SelectedFeatureComponent implements OnDestroy {
     field: T | string,
     value: ZsMapDrawElementState[T],
   ) {
-    if (element.id) {
-      this.zsMapStateService.updateDrawElementState(element.id, field as T, value);
+    const el = this._drawElementCache[element?.id ?? ''];
+    if (el) {
+      // Update the signature in the UI separately from the state, to provide a smooth update of all properties
+      el.getOlFeature().get('sig')[field] = value;
+      el.getOlFeature().changed();
+
+      el.updateElementState((draft) => {
+        draft[field as T] = value;
+      });
     }
   }
 
@@ -234,12 +241,13 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
   }
 
-  chooseSymbol(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
+  chooseSymbol(drawElement: ZsMapDrawElementState) {
     const dialogRef = this.dialog.open(DrawingDialogComponent);
     dialogRef.afterClosed().subscribe((result: Sign) => {
       if (result) {
         this.updateProperty(drawElement, 'symbolId', result.id);
-        this.zsMapStateService.setSelectedFeature(selectedFeature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
+
+        this.zsMapStateService.setSelectedFeature(drawElement.id);
       }
     });
   }

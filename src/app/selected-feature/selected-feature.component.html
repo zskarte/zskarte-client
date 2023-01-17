@@ -96,10 +96,10 @@
             <mat-expansion-panel-header>
               <mat-panel-title>{{ i18n.get('symbol') }}</mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-flat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement, selectedFeature)">
+            <button mat-flat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
               <i class="material-icons">stars</i><span>{{ i18n.get('selectSymbol') }}</span>
             </button>
-            <button mat-flat-button *ngIf="drawElement.symbolId" (click)="chooseSymbol(drawElement, selectedFeature)">
+            <button mat-flat-button *ngIf="drawElement.symbolId" (click)="chooseSymbol(drawElement)">
               <i class="material-icons">cached</i><span>{{ i18n.get('replaceSymbol') }}</span>
             </button>
             <div class="filter">
