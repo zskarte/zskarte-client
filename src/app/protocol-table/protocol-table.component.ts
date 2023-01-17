@@ -11,15 +11,20 @@ import { I18NService } from '../state/i18n.service';
   styleUrls: ['./protocol-table.component.scss'],
 })
 export class ProtocolTableComponent implements OnInit {
-  constructor(public zsMapStateService: ZsMapStateService, public i18n: I18NService, private datePipe: DatePipe) {}
+  constructor(public zsMapStateService: ZsMapStateService, public i18n: I18NService, private datePipe: DatePipe) {
+    this.i18n.currentLocale.subscribe((currentLang: string | null) => {
+      if (currentLang !== null) this.currentLang = currentLang;
+    });
+  }
 
   ngOnInit(): void {
     this.zsMapStateService.observeDrawElements().subscribe((elements: ZsMapBaseDrawElement[]) => {
-      this.data = mapProtocolEntry(elements, this.datePipe, this.i18n);
+      this.data = mapProtocolEntry(elements, this.datePipe, this.i18n, this.currentLang !== undefined ? this.currentLang : 'de');
     });
   }
 
   public data: ProtocolEntry[] = [];
+  currentLang?: string;
 
   displayedColumns: string[] = [
     //'protocol-id',
