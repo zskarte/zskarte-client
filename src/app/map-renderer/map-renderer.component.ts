@@ -4,6 +4,7 @@ import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
+import DrawHole from 'ol-ext/interaction/DrawHole';
 import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
@@ -73,6 +74,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _rotating = false;
   private _initialRotation = 0;
   private _lastModificationPointCoordinates: number[] = [];
+  private _drawHole!: DrawHole;
   public currentSketchSize = new BehaviorSubject<string | null>(null);
   public mousePosition = new BehaviorSubject<number[]>([0, 0]);
   public mouseCoordinates = new BehaviorSubject<number[]>([0, 0]);
@@ -428,6 +430,30 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this.initButtons();
+    this.initDrawHole();
+  }
+
+  /**
+   * Initializes the drawHole functionality for Polygons
+   */
+  initDrawHole() {
+    this._drawHole = new DrawHole({
+      layers: this._allLayers,
+      type: 'Polygon',
+    });
+    this._drawHole.setActive(false);
+    this._map.addInteraction(this._drawHole);
+
+    this._drawHole.on('drawend', () => {
+      this._state.setDrawHoleMode(false);
+    });
+
+    this._state
+      .observeDrawHoleMode()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((drawHoleMode) => {
+        this._drawHole.setActive(drawHoleMode);
+      });
   }
 
   initButtons() {

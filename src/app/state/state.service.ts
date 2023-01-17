@@ -766,6 +766,14 @@ export class ZsMapStateService {
     return this._splitMode.asObservable();
   }
 
+  public setDrawHoleMode(drawHoleMode: boolean) {
+    this._drawHoleMode.next(drawHoleMode);
+  }
+
+  public toggleDrawHoleMode() {
+    this.setDrawHoleMode(!this._drawHoleMode.getValue());
+  }
+
   public observeDrawHoleMode(): Observable<boolean> {
     return this._drawHoleMode.asObservable();
   }

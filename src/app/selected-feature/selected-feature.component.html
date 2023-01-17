@@ -299,7 +299,7 @@
         </mat-expansion-panel>
 
         <!-- TODO: implement functions -->
-        <mat-expansion-panel id="functionsPanel" class="noPadding" *ngIf="false">
+        <mat-expansion-panel id="functionsPanel" class="noPadding">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>
           </mat-expansion-panel-header>
@@ -315,7 +315,7 @@
           <button mat-flat-button (click)="merge(true)" *ngIf="isPolygon()">
             <i class="material-icons">call_merge</i><span>{{ i18n.get('group') }}</span>
           </button>
-          <button mat-flat-button (click)="drawHole()" [disabled]="drawHoleMode" *ngIf="isPolygon()">
+          <button mat-flat-button (click)="drawHole()" *ngIf="isPolygon()">
             <i class="material-icons">vignette</i><span>{{ i18n.get('drawHole') }}</span>
           </button>
           <!--
