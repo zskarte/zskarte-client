@@ -7,6 +7,11 @@ import { Patch } from 'immer';
 import { debounce } from '../helper/debounce';
 import { ZsMapStateService } from '../state/state.service';
 
+interface PatchExtended extends Patch {
+  timestamp: Date;
+  identifier: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -66,8 +71,10 @@ export class SyncService {
         console.warn('Disconnected from websocket');
         this._disconnect();
       });
-      this._socket.on('state:patches', (patches) => {
-        this._state.applyMapStatePatches(patches);
+      this._socket.on('state:patches', (patches: PatchExtended[]) => {
+        const otherPatches = patches.filter((p) => p.identifier !== this._connectionId);
+        if (otherPatches.length === 0) return;
+        this._state.applyMapStatePatches(otherPatches);
       });
       this._socket.connect();
     });
@@ -93,7 +100,7 @@ export class SyncService {
 
   private _publishPatches = debounce(async () => {
     if (this._mapStatePatchQueue.length > 0 && this._session.getToken()) {
-      const patches = this._mapStatePatchQueue.map((p) => ({ ...p, timestamp: new Date() }));
+      const patches = this._mapStatePatchQueue.map((p) => ({ ...p, timestamp: new Date(), identifier: this._connectionId }));
       const { error } = await this._api.post('/api/operations/mapstate/patch', patches, {
         headers: {
           operationId: this._session.getOperationId() + '',
