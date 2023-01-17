@@ -25,7 +25,7 @@
   cursor: pointer;
 }
 
-.mat-mdc-table .mat-mdc-row:hover{
+.mat-mdc-table .mat-mdc-row:hover {
   background-color: rgba(0, 0, 0, 0.04);
 }
 

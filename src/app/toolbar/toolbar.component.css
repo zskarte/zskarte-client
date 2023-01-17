@@ -46,8 +46,7 @@ app-geocoder {
 
 @media (max-width: 800px) {
   .clock,
-  mat-card-title
-  {
+  mat-card-title {
     display: none;
   }
   app-geocoder {

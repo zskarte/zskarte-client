@@ -111,7 +111,6 @@ export class ToolbarComponent implements OnDestroy {
     this.zsMapStateService.toggleDisplayMode();
   }
 
-
   help(): void {
     this.dialog.open(HelpComponent, { data: false });
   }

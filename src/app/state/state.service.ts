@@ -187,12 +187,12 @@ export class ZsMapStateService {
     this.updateDisplayState((draft) => {
       if (draft.displayMode == ZsMapDisplayMode.HISTORY) {
         draft.displayMode = ZsMapDisplayMode.DRAW;
-        this._snackBar.open(this.i18n.get("toastDrawing"), 'OK', {
+        this._snackBar.open(this.i18n.get('toastDrawing'), 'OK', {
           duration: 2000,
         });
       } else {
         draft.displayMode = ZsMapDisplayMode.HISTORY;
-        this._snackBar.open(this.i18n.get("toastHistory"), 'OK',{
+        this._snackBar.open(this.i18n.get('toastHistory'), 'OK', {
           duration: 2000,
         });
       }

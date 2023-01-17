@@ -11,8 +11,8 @@
         <mat-select [(value)]="selected" (selectionChange)="updateAvailableSigns()">
           <mat-option>{{ i18n.get('allCategories') }}</mat-option>
           <mat-option *ngFor="let category of signCategories" value="{{ category.name }}">
-                <span class="categoryDot" [ngStyle]="{'background-color': category.color}"></span>
-                {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
+            <span class="categoryDot" [ngStyle]="{ 'background-color': category.color }"></span>
+            {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -40,6 +40,6 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="['symbol', 'name', 'actions']"></tr>
-    <tr mat-row  class="row" *matRowDef="let row; columns: ['symbol', 'name', 'actions']" (click)="select(row)"></tr>
+    <tr mat-row class="row" *matRowDef="let row; columns: ['symbol', 'name', 'actions']" (click)="select(row)"></tr>
   </table>
 </form>
