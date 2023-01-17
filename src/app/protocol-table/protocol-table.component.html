@@ -1,35 +1,50 @@
 <div class="table-container">
-  <table mat-table [dataSource]="data" class="mat-elevation-z8 protocol-table">
+  <div>
+    <mat-form-field>
+      <input
+        matInput
+        name="protocolFilterString"
+        [(ngModel)]="protocolTableDataSource.filter"
+        #protocolFilterString="ngModel"
+        [placeholder]="i18n.get('csvSearchFor')"
+      />
+    </mat-form-field>
+  </div>
+  <table mat-table [dataSource]="protocolTableDataSource" class="mat-elevation-z8 protocol-table" matSort>
     <ng-container matColumnDef="protocol-id">
-      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvID') }}</th>
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by id">{{ i18n.get('csvID') }}</th>
       <td mat-cell *matCellDef="let element">{{ element.id }}</td>
     </ng-container>
     <ng-container matColumnDef="protocol-date">
-      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvDate') }}</th>
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by date">{{ i18n.get('csvDate') }}</th>
       <td mat-cell *matCellDef="let element">{{ element.date }}</td>
     </ng-container>
     <ng-container matColumnDef="protocol-group">
-      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvGroup') }}</th>
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by group">{{ i18n.get('csvGroup') }}</th>
       <td mat-cell *matCellDef="let element">{{ element.group }}</td>
     </ng-container>
     <ng-container matColumnDef="protocol-sign">
-      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvSignatur') }}</th>
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by signature">{{ i18n.get('csvSignatur') }}</th>
       <td mat-cell *matCellDef="let element">{{ element.sign }}</td>
     </ng-container>
+    <ng-container matColumnDef="protocol-centroid">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by centroid">{{ i18n.get('csvCentroid') }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.centroid }}</td>
+    </ng-container>
     <ng-container matColumnDef="protocol-location">
-      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvLocation') }}</th>
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by location">{{ i18n.get('csvLocation') }}</th>
       <td mat-cell *matCellDef="let element">{{ element.location }}</td>
     </ng-container>
     <ng-container matColumnDef="protocol-size">
-      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvSize') }}</th>
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by size">{{ i18n.get('csvSize') }}</th>
       <td mat-cell *matCellDef="let element">{{ element.size }}</td>
     </ng-container>
     <ng-container matColumnDef="protocol-label">
-      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvLabel') }}</th>
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by label">{{ i18n.get('csvLabel') }}</th>
       <td mat-cell *matCellDef="let element">{{ element.label }}</td>
     </ng-container>
     <ng-container matColumnDef="protocol-description">
-      <th mat-header-cell *matHeaderCellDef>
+      <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by description">
         {{ i18n.get('csvDescription') }}
       </th>
       <td mat-cell *matCellDef="let element">{{ element.description }}</td>
