@@ -190,19 +190,6 @@ export class ToolbarComponent {
     }, 250);
   }
 
-  clear(): void {
-    this.dialog
-      .open(ConfirmationDialogComponent, {
-        data: this.i18n.get('confirmClearDrawing'),
-      })
-      .afterClosed()
-      .subscribe((confirmed) => {
-        if (confirmed) {
-          this.zsMapStateService.reset();
-        }
-      });
-  }
-
   todo(): void {
     console.error('todo');
   }
