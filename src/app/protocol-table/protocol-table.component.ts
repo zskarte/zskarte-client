@@ -1,7 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { mapProtocolEntry, ProtocolEntry } from '../helper/mapProtocolEntry';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
@@ -13,7 +14,8 @@ import { I18NService } from '../state/i18n.service';
   templateUrl: './protocol-table.component.html',
   styleUrls: ['./protocol-table.component.scss'],
 })
-export class ProtocolTableComponent implements OnInit, AfterViewInit {
+export class ProtocolTableComponent implements OnInit, OnDestroy, AfterViewInit {
+  private _ngUnsubscribe = new Subject<void>();
   constructor(
     public zsMapStateService: ZsMapStateService,
     public i18n: I18NService,
@@ -24,16 +26,24 @@ export class ProtocolTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort?: MatSort;
 
   ngOnInit(): void {
-    this.zsMapStateService.observeDrawElements().subscribe((elements: ZsMapBaseDrawElement[]) => {
-      this.data = mapProtocolEntry(elements, this.datePipe, this.i18n, this.session.getLocale());
-      this.protocolTableDataSource.data = this.data;
-    });
+    this.zsMapStateService
+      .observeDrawElements()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((elements: ZsMapBaseDrawElement[]) => {
+        this.data = mapProtocolEntry(elements, this.datePipe, this.i18n, this.session.getLocale());
+        this.protocolTableDataSource.data = this.data;
+      });
   }
 
   ngAfterViewInit() {
     if (this.protocolTableDataSource && this.sort) {
       this.protocolTableDataSource.sort = this.sort;
     }
+  }
+
+  ngOnDestroy(): void {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   public data: ProtocolEntry[] = [];
