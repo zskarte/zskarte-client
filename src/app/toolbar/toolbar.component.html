@@ -19,7 +19,7 @@
             <mat-icon aria-hidden="false" class="hamburger">menu</mat-icon>
           </button>
         </div>
-        <mat-menu #mainMenu="matMenu" class="burger-menu">
+        <mat-menu #mainMenu="matMenu" class="noprint">
           <button mat-menu-item id="historyButton" (click)="toggleHistoryIfButton($event)" title="ALT+H">
             <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')">history</mat-icon>
             {{ i18n.get('history') }}
@@ -45,10 +45,6 @@
           <button mat-menu-item class="tools-menu-item" (click)="importData()" *ngIf="!(historyMode | async)">
             <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('importMap')">open_in_browser</mat-icon>
             {{ i18n.get('importMap') }}
-          </button>
-          <button mat-menu-item (click)="clear()" *ngIf="!(historyMode | async)">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('deleteMap')">delete</mat-icon>
-            {{ i18n.get('deleteMap') }}
           </button>
           <mat-divider></mat-divider>
           <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="languages">
