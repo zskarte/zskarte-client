@@ -1125,6 +1125,11 @@ export class I18NService {
       en: 'show/hide',
       fr: 'afficher/cacher',
     },
+    csvSearchFor: {
+      de: 'Suche nach ...',
+      en: 'Search for ...',
+      fr: 'Chercher ...',
+    },
     csvID: {
       de: 'ID',
       en: 'ID',
@@ -1154,6 +1159,11 @@ export class I18NService {
       de: 'Koordinaten',
       en: 'Coordinates',
       fr: 'Coordonnées',
+    },
+    csvCentroid: {
+      de: 'Koordinaten Zentrum',
+      en: 'Centroid',
+      fr: 'Centre coordonnées',
     },
     csvSize: {
       de: 'Grösse',
