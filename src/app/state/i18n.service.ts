@@ -117,16 +117,6 @@ export class I18NService {
       fr: 'La carte à importer existe déjà. Souhaitez-vous le remplacer ? Sinon, une copie est créée.',
       en: 'The map to be imported already exists. Do you want to replace it? If not, a copy will be created.',
     },
-    deleteMap: {
-      de: 'Karte leeren',
-      en: 'Clear map',
-      fr: 'Vide la carte',
-    },
-    confirmDeleteMap: {
-      de: 'Wollen Sie diese Karte wirklich unwiederruflich löschen?',
-      en: 'Do you really want to delete this card irrevocably?',
-      fr: 'Voulez-vous vraiment supprimer cette carte de façon irrévocable ?',
-    },
     editMap: {
       de: 'Sitzung bearbeiten',
       en: 'Edit session',
@@ -411,11 +401,6 @@ export class I18NService {
       de: 'Verwenden Sie eine <strong>.zsjson</strong> Datei um eine vollständige Karte zu importieren.',
       fr: 'Utilisez un fichier <strong>.zsjson</strong> pour importer une carte complète.',
       en: 'Use a <strong>.zsjson</strong> file to import a complete map.',
-    },
-    confirmClearDrawing: {
-      de: 'Wollen Sie wirklich alle Elemente der Zeichnung entfernen? Die History der Karte bleibt dabei bestehen!',
-      en: 'Do you really want to clear all elements of this drawing? The history of the map will remain!',
-      fr: "Voulez-vous vraiment supprimer tous les éléments du dessin ? L'histoire de la carte restera !",
     },
     confirmImportDrawing: {
       de: 'Wollen Sie die entsprechende Zeichnung wirklich importieren? Die aktuelle Zeichnung wird dabei ersetzt, die History bleibt aber bestehen!',
