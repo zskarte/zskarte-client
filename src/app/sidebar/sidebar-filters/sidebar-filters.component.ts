@@ -20,6 +20,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   historyMode$: Observable<boolean>;
   filterKeys: any[] = [];
   hiddenSymbols$: Observable<number[]>;
+  hiddenFeatureTypes$: Observable<string[]>;
   filteredCategories: string[] = [];
 
   filtersOpenState = false;
@@ -34,13 +35,14 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
       map((state) => state.displayMode === ZsMapDisplayMode.HISTORY),
     );
     this.hiddenSymbols$ = this.mapState.observeHiddenSymbols();
+    this.hiddenFeatureTypes$ = this.mapState.observeHiddenFeatureTypes();
   }
 
   ngOnInit(): void {
-    combineLatest([this.mapState.observeDrawElements(), this.mapState.observeHiddenSymbols()])
+    combineLatest([this.mapState.observeDrawElements(), this.mapState.observeHiddenSymbols(), this.mapState.observeHiddenFeatureTypes()])
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(([drawElements, hiddenSymbols]) => {
-        this.updateFilterSymbols(drawElements, hiddenSymbols);
+      .subscribe(([drawElements, hiddenSymbols, hiddenFeatureTypes]) => {
+        this.updateFilterSymbolsAndFeatureTypes(drawElements, hiddenSymbols, hiddenFeatureTypes);
       });
   }
 
@@ -49,7 +51,11 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  updateFilterSymbols(elements: ZsMapBaseDrawElement<ZsMapDrawElementState>[], hiddenSymbols: number[]) {
+  updateFilterSymbolsAndFeatureTypes(
+    elements: ZsMapBaseDrawElement<ZsMapDrawElementState>[],
+    hiddenSymbols: number[],
+    hiddenFeatureTypes: string[],
+  ) {
     const symbols = {};
     if (elements && elements.length > 0) {
       elements.forEach((element) => this.extractSymbol(element.getOlFeature(), symbols));
@@ -57,7 +63,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     this.filterKeys = Object.keys(symbols);
     this.filterSymbols = Object.values(symbols)
       .sort((a: any, b: any) => a.label.localeCompare(b.label))
-      .map((symbol: any) => ({ ...symbol, hidden: hiddenSymbols.includes(symbol.id) }));
+      .map((symbol: any) => ({ ...symbol, hidden: hiddenSymbols.includes(symbol.id) || hiddenFeatureTypes.includes(symbol.filterValue) }));
   }
 
   extractSymbol(f: FeatureLike, symbols: Record<string, any>) {
@@ -121,7 +127,11 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   }
 
   public toggleFilter(symbol: Sign) {
-    this.mapState.toggleSymbol(symbol.id);
+    if (symbol.type === '' || symbol.type === undefined) {
+      this.mapState.toggleSymbol(symbol.id);
+    } else {
+      if (symbol.filterValue !== '' || symbol.filterValue !== undefined) this.mapState.toggleFeatureType(symbol.filterValue as string);
+    }
   }
 
   public isCategoryFiltered(category: string): boolean {

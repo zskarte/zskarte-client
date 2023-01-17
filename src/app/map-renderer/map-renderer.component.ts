@@ -349,6 +349,17 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
+      .observeHiddenFeatureTypes()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((hiddenFeatureTypes) => {
+        for (const key in this._drawElementCache) {
+          const feature = this._drawElementCache[key].element.getOlFeature();
+          const hidden = hiddenFeatureTypes.includes(feature?.get('sig')?.filterValue);
+          feature?.set('hidden', hidden);
+        }
+      });
+
+    this._state
       .observeDrawElements()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((elements) => {
