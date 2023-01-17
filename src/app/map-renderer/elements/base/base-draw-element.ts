@@ -67,7 +67,9 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
   private _doInitialize(element: IZsMapBaseDrawElementState): void {
     if (!this._isInitialized) {
       this._initialize(element);
+      this._setSignatureState(element as T);
     }
+
     this._isInitialized = true;
   }
 
@@ -89,6 +91,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       const element = draft.drawElements?.find((o) => o.id === this._id);
       if (element) {
         updateFn(element);
+        element.modifiedAt = Date.now();
       }
     });
   }, 250);

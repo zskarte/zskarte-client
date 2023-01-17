@@ -165,7 +165,7 @@ export class ZsMapStateService {
     this._drawElementCache = {};
     this.updateMapState(() => {
       return newState || this._getDefaultMapState();
-    });
+    }, true);
   }
 
   public setDisplayState(newState?: IZsMapDisplayState): void {
@@ -189,7 +189,7 @@ export class ZsMapStateService {
   }
 
   public observeDisplayState(): Observable<IZsMapDisplayState> {
-    return this._display.pipe(skip(1));
+    return this._display.asObservable();
   }
 
   // zoom
@@ -476,7 +476,7 @@ export class ZsMapStateService {
         id: uuidv4(),
         nameShow: true,
         ...element,
-        createdAt: new Date(),
+        createdAt: Date.now(),
       };
 
       this.updateMapState((draft) => {
@@ -573,8 +573,11 @@ export class ZsMapStateService {
     );
   }
 
-  public updateMapState(fn: (draft: IZsMapState) => void) {
+  public updateMapState(fn: (draft: IZsMapState) => void, preventPatches = false) {
     const newState = produce<IZsMapState>(this._map.value || {}, fn, (patches, inversePatches) => {
+      if (preventPatches) {
+        return;
+      }
       this._mapPatches.value.push(...patches);
       this._mapPatches.next(this._mapPatches.value);
       this._mapInversePatches.value.push(...inversePatches);
