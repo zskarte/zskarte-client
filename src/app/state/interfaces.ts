@@ -33,6 +33,7 @@ export enum ZsMapDisplayMode {
 }
 
 export interface IZsMapDisplayState {
+  id?: number;
   version: number;
   displayMode: ZsMapDisplayMode;
   mapOpacity: number;
