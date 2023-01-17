@@ -647,6 +647,12 @@ export class MapRendererComponent implements AfterViewInit {
       // trigger selectedFeature to enable projection rotation while a feature is selected
       this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
     }
+
+    // After rotating the projection,
+    // the coordinates component is not automatically reloaded.
+    // To "force" the component to reload,
+    // we push the current mouse position to the mouse coordinates.
+    this.mouseCoordinates.next(this.mousePosition.value);
   }
 
   getFeatureCoodrinates(feature: Feature | null): number[] {
