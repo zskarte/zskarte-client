@@ -702,6 +702,11 @@ export class I18NService {
       en: 'Images',
       fr: 'Images',
     },
+    search: {
+      de: 'Signatur suchen',
+      en: 'Search symbol',
+      fr: 'Rechercher un symbole',
+    },
     unknown: {
       de: 'Unbekannt',
       en: 'Unknown',
