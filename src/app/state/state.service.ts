@@ -566,6 +566,14 @@ export class ZsMapStateService {
               }
             }
           }
+
+          // unsubscribe old elements
+          for (const id of Object.keys(this._drawElementCache)) {
+            if (!cache[id]) {
+              this._drawElementCache[id].unsubscribe();
+            }
+          }
+
           this._drawElementCache = cache;
           return elements;
         }
