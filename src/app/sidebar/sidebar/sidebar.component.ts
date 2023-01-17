@@ -17,7 +17,7 @@ import { I18NService } from '../../state/i18n.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   currentMapOpenState = false;
   selectedLayersOpenState = false;
   favoriteLayersOpenState = false;
@@ -64,12 +64,6 @@ export class SidebarComponent implements OnInit {
     this.favouriteFeatures$ = availableFeatures$.pipe(
       map((features) => features.filter((feature: GeoFeature) => this.favouriteFeaturesList.includes(feature.label.toLowerCase()))),
     );
-  }
-
-  ngOnInit(): void {
-    // this.sharedState.availableFeatures.subscribe((features) => {
-    //   this.updateFilteredFeatures();
-    // });
   }
 
   switchLayer(layer: ZsMapStateSource) {

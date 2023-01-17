@@ -106,7 +106,7 @@ export class MapRendererComponent implements AfterViewInit {
     this.sidebarContext = this._state.observeSidebarContext();
     this.selectedFeatureCoordinates = this.selectedFeature.pipe(
       map((feature) => {
-        const coords = this.getFeatureCoodrinates(feature);
+        const coords = this.getFeatureCoordinates(feature);
         return this.availableProjections[this.selectedProjectionIndex].translate(coords);
       }),
     );
@@ -183,7 +183,7 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     // select on ol-Map layer
-    this.selectedFeature.subscribe((feature) => {
+    this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((feature) => {
       if (feature && !feature.get('sig').protected && !this._modifyCache.getArray().includes(feature)) {
         this._modifyCache.push(feature);
       }
@@ -270,47 +270,56 @@ export class MapRendererComponent implements AfterViewInit {
       debouncedZoomSave();
     });
 
-    this._state.observeMapCenter().subscribe((center) => {
-      if (!areArraysEqual(this._view.getCenter() || [0, 0], center)) {
-        // TODO implement proper fallback center
-        if (!center[0] && !center[1]) {
-          center = [849861.97, 5905812.55];
+    this._state
+      .observeMapCenter()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((center) => {
+        if (!areArraysEqual(this._view.getCenter() || [0, 0], center)) {
+          // TODO implement proper fallback center
+          if (!center[0] && !center[1]) {
+            center = [849861.97, 5905812.55];
+          }
+          this._view.setCenter(center);
         }
-        this._view.setCenter(center);
-      }
-    });
+      });
 
-    this._state.observeMapZoom().subscribe((zoom) => {
-      if (this._view.getZoom() !== zoom) {
-        // TODO implement proper fallback zoom
-        if (!zoom) {
-          zoom = 16;
+    this._state
+      .observeMapZoom()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((zoom) => {
+        if (this._view.getZoom() !== zoom) {
+          // TODO implement proper fallback zoom
+          if (!zoom) {
+            zoom = 16;
+          }
+          this._view.setZoom(zoom);
         }
-        this._view.setZoom(zoom);
-      }
-    });
+      });
 
     this._map.addLayer(this._mapLayer);
 
-    this._state.observeElementToDraw().subscribe((element) => {
-      if (element) {
-        const interaction = DrawElementHelper.createDrawHandlerForType(element, this._state);
-        interaction.on('drawstart', (event) => {
-          this._currentSketch = event.feature;
-        });
-        interaction.on('drawend', () => {
-          this._currentSketch = undefined;
-          this._state.cancelDrawing();
-        });
-        this._currentDrawInteraction = interaction;
-        this._map.addInteraction(this._currentDrawInteraction);
-      } else {
-        if (this._currentDrawInteraction) {
-          this._map.removeInteraction(this._currentDrawInteraction);
+    this._state
+      .observeElementToDraw()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((element) => {
+        if (element) {
+          const interaction = DrawElementHelper.createDrawHandlerForType(element, this._state);
+          interaction.on('drawstart', (event) => {
+            this._currentSketch = event.feature;
+          });
+          interaction.on('drawend', () => {
+            this._currentSketch = undefined;
+            this._state.cancelDrawing();
+          });
+          this._currentDrawInteraction = interaction;
+          this._map.addInteraction(this._currentDrawInteraction);
+        } else {
+          if (this._currentDrawInteraction) {
+            this._map.removeInteraction(this._currentDrawInteraction);
+          }
+          this._currentDrawInteraction = undefined;
         }
-        this._currentDrawInteraction = undefined;
-      }
-    });
+      });
 
     this._state
       .observeMapSource()
@@ -371,20 +380,22 @@ export class MapRendererComponent implements AfterViewInit {
               element,
               layer: undefined,
             };
-            // TODO unsubscribing
-            element.observeLayer().subscribe((layer) => {
-              const cache = this._drawElementCache[element.getId()];
-              const feature = element.getOlFeature();
-              if (cache.layer) {
-                const cachedLayer = this._state.getLayer(cache.layer);
-                if (cachedLayer) {
-                  cachedLayer.removeOlFeature(feature);
+            element
+              .observeLayer()
+              .pipe(takeUntil(element.observeUnsubscribe()))
+              .subscribe((layer) => {
+                const cache = this._drawElementCache[element.getId()];
+                const feature = element.getOlFeature();
+                if (cache.layer) {
+                  const cachedLayer = this._state.getLayer(cache.layer);
+                  if (cachedLayer) {
+                    cachedLayer.removeOlFeature(feature);
+                  }
                 }
-              }
-              cache.layer = layer;
-              const newLayer = this._state.getLayer(layer || '');
-              newLayer?.addOlFeature(feature);
-            });
+                cache.layer = layer;
+                const newLayer = this._state.getLayer(layer || '');
+                newLayer?.addOlFeature(feature);
+              });
           }
         }
       });
@@ -423,11 +434,14 @@ export class MapRendererComponent implements AfterViewInit {
           });
       });
 
-    this._state.observePositionFlag().subscribe((positionFlag) => {
-      this._navigationLayer.setVisible(positionFlag.isVisible);
-      this._positionFlagLocation.setCoordinates(positionFlag.coordinates);
-      this._positionFlag.changed();
-    });
+    this._state
+      .observePositionFlag()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((positionFlag) => {
+        this._navigationLayer.setVisible(positionFlag.isVisible);
+        this._positionFlagLocation.setCoordinates(positionFlag.coordinates);
+        this._positionFlag.changed();
+      });
 
     this.initButtons();
     this.initDrawHole();
@@ -692,7 +706,7 @@ export class MapRendererComponent implements AfterViewInit {
     this.mouseCoordinates.next(this.mousePosition.value);
   }
 
-  getFeatureCoodrinates(feature: Feature | null): number[] {
+  getFeatureCoordinates(feature: Feature | null): number[] {
     const center = getCenter(feature?.getGeometry()?.getExtent() ?? []);
     return this.transformToCurrentProjection(center) ?? [];
   }

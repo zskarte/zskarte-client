@@ -1,12 +1,12 @@
-import { ChangeDetectorRef, Component, HostListener, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { I18NService, Locale, LOCALES } from '../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ZsMapStateService } from '../state/state.service';
 import { ZsMapDisplayMode } from '../state/interfaces';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { SessionService } from '../session/session.service';
 import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
@@ -22,7 +22,7 @@ import { ProtocolTableComponent } from '../protocol-table/protocol-table.compone
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css'],
 })
-export class ToolbarComponent {
+export class ToolbarComponent implements OnDestroy {
   @ViewChild(MatMenuTrigger) menu!: MatMenuTrigger;
 
   static ONBOARDING_VERSION = '1.0';
@@ -34,6 +34,7 @@ export class ToolbarComponent {
   downloadTime?: string = undefined;
   downloadCSVData?: SafeUrl = undefined;
   protocolEntries: ProtocolEntry[] = [];
+  private _ngUnsubscribe = new Subject<void>();
 
   constructor(
     public i18n: I18NService,
@@ -44,13 +45,17 @@ export class ToolbarComponent {
     public session: SessionService,
     private datePipe: DatePipe,
   ) {
-    this.historyMode = this.zsMapStateService
-      .observeDisplayState()
-      .pipe(map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY));
+    this.historyMode = this.zsMapStateService.observeDisplayState().pipe(
+      map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY),
+      takeUntil(this._ngUnsubscribe),
+    );
 
-    this.zsMapStateService.observeDisplayState().subscribe((mode) => {
-      window.history.pushState(null, '', '?mode=' + mode.displayMode);
-    });
+    this.zsMapStateService
+      .observeDisplayState()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((mode) => {
+        window.history.pushState(null, '', '?mode=' + mode.displayMode);
+      });
 
     if (this.isInitialLaunch()) {
       this.dialog.open(HelpComponent, {
@@ -58,14 +63,22 @@ export class ToolbarComponent {
       });
     }
 
-    this.zsMapStateService.observeDrawElements().subscribe((elements: ZsMapBaseDrawElement[]) => {
-      this.protocolEntries = mapProtocolEntry(
-        elements,
-        this.datePipe,
-        this.i18n,
-        this.session.getLocale() === undefined ? 'de' : this.session.getLocale(),
-      );
-    });
+    this.zsMapStateService
+      .observeDrawElements()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((elements: ZsMapBaseDrawElement[]) => {
+        this.protocolEntries = mapProtocolEntry(
+          elements,
+          this.datePipe,
+          this.i18n,
+          this.session.getLocale() === undefined ? 'de' : this.session.getLocale(),
+        );
+      });
+  }
+
+  ngOnDestroy(): void {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   isInitialLaunch(): boolean {

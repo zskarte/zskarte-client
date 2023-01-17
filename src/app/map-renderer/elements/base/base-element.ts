@@ -33,4 +33,8 @@ export abstract class ZsMapBaseElement<T> {
     this._unsubscribe.next();
     this._unsubscribe.complete();
   }
+
+  public observeUnsubscribe(): Observable<void> {
+    return this._unsubscribe.asObservable();
+  }
 }

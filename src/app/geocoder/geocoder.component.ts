@@ -1,9 +1,10 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { I18NService } from '../state/i18n.service';
 import { ZsMapStateService } from '../state/state.service';
 import { transform } from 'ol/proj';
 import { SessionService } from '../session/session.service';
+import { Subject, takeUntil } from 'rxjs';
 
 interface IFoundLocation {
   attrs: IFoundLocationAttrs;
@@ -21,12 +22,13 @@ interface IFoundLocationAttrs {
   templateUrl: './geocoder.component.html',
   styleUrls: ['./geocoder.component.css'],
 })
-export class GeocoderComponent {
+export class GeocoderComponent implements OnDestroy {
   @ViewChild('searchField', { static: false }) el!: ElementRef;
   geocoderUrl = 'https://api3.geo.admin.ch/rest/services/api/SearchServer?type=locations&searchText=';
   foundLocations: IFoundLocation[] = [];
   inputText = '';
   selected: IFoundLocationAttrs | null = null;
+  private _ngUnsubscribe = new Subject<void>();
 
   /*
   @HostListener('window:keydown', ['$event'])
@@ -52,9 +54,17 @@ export class GeocoderComponent {
     public zsMapStateService: ZsMapStateService,
     private _session: SessionService,
   ) {
-    this._session.observeAuthenticated().subscribe(() => {
-      this.selected = null;
-    });
+    this._session
+      .observeAuthenticated()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(() => {
+        this.selected = null;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   private getCoordinate(geometry: any) {
