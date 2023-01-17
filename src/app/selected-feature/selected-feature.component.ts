@@ -56,13 +56,13 @@ export class SelectedFeatureComponent implements OnDestroy {
   ];
 
   constructor(public dialog: MatDialog, public i18n: I18NService, public zsMapStateService: ZsMapStateService) {
-    this.selectedFeature = this.zsMapStateService.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe));
-    this.selectedDrawElement = this.selectedFeature.pipe(
-      map((feature) => {
-        const id = feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
-        return this._drawElementCache[id]?.elementState;
-      }),
+    this.selectedFeature = this.zsMapStateService.observeSelectedFeature().pipe(
+      map((featureId) => this._drawElementCache[featureId ?? '']?.getOlFeature() as Feature<SimpleGeometry>),
+      takeUntil(this._ngUnsubscribe),
     );
+    this.selectedDrawElement = this.zsMapStateService
+      .observeSelectedFeature()
+      .pipe(map((featureId) => this._drawElementCache[featureId ?? '']?.elementState));
     this.selectedSignature = this.selectedFeature.pipe(
       map((feature) => {
         const sig = feature?.get('sig');
@@ -234,32 +234,12 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
   }
 
-  addImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
-    const dialogRef = this.dialog.open(DrawingDialogComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result && result.src) {
-        this.updateProperty(drawElement, 'images', [...(drawElement.images ?? []), result.src]);
-        this.zsMapStateService.setSelectedFeature(selectedFeature);
-      }
-    });
-  }
-
-  removeImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>, src: string) {
-    const images = drawElement.images ?? [];
-    this.updateProperty(
-      drawElement,
-      'images',
-      images.filter((img) => img !== src),
-    );
-    this.zsMapStateService.setSelectedFeature(selectedFeature);
-  }
-
   chooseSymbol(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
     const dialogRef = this.dialog.open(DrawingDialogComponent);
     dialogRef.afterClosed().subscribe((result: Sign) => {
       if (result) {
         this.updateProperty(drawElement, 'symbolId', result.id);
-        this.zsMapStateService.setSelectedFeature(selectedFeature);
+        this.zsMapStateService.setSelectedFeature(selectedFeature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
       }
     });
   }
@@ -279,6 +259,17 @@ export class SelectedFeatureComponent implements OnDestroy {
           //geometry.setCoordinates(result);
         }
       });
+    }
+  }
+
+  copy(drawElement: ZsMapDrawElementState) {
+    if (!drawElement.symbolId) {
+      return;
+    }
+    const layer = this.zsMapStateService.getActiveLayer();
+    if (layer) {
+      this.zsMapStateService.copySymbol(drawElement.symbolId, layer.getId());
+      this.zsMapStateService.resetSelectedFeature();
     }
   }
 

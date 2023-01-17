@@ -8,6 +8,8 @@ import { ApiService } from '../api/api.service';
 import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
 import { GUEST_USER_IDENTIFIER } from './userLogic';
+import { IZsMapOperation } from './operations/operation.interfaces';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +17,7 @@ import { GUEST_USER_IDENTIFIER } from './userLogic';
 export class SessionService {
   private _session = new BehaviorSubject<IZsMapSession | undefined>(undefined);
   private _state!: ZsMapStateService;
+  private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
 
   constructor(private _router: Router, private _api: ApiService) {
     // prevents circular deps between session and api
@@ -26,15 +29,16 @@ export class SessionService {
         await db.table('session').put(session);
 
         if (session?.operationId) {
-          const result = await this._api.get('/api/operations/' + session.operationId);
-          const mapState = result.data?.attributes?.mapState;
+          const { error, result } = await this._api.get<IZsMapOperation>('/api/operations/' + session.operationId);
+          if (error || !result) return;
+          const mapState = result.mapState;
           if (mapState) {
             this._state.reset(mapState);
           }
         }
       } else {
         await db.table('session').clear();
-        this._state.reset();
+        this._state?.reset();
       }
     });
   }
@@ -45,6 +49,10 @@ export class SessionService {
 
   public getOrganizationId(): number | undefined {
     return this._session.value?.organizationId;
+  }
+
+  public getAuthError(): HttpErrorResponse | undefined {
+    return this._authError.value;
   }
 
   public observeOrganizationId(): Observable<number | undefined> {
@@ -80,8 +88,14 @@ export class SessionService {
   }
 
   public async login(params: { identifier: string; password: string }): Promise<void> {
-    const result = await this._api.post<IAuthResult>('/api/auth/local', params);
-    const meResult = await this._api.get<{ organization: { id: number } }>('/api/users/me?populate[0]=organization', { token: result.jwt });
+    const { result, error: authError } = await this._api.post<IAuthResult>('/api/auth/local', params);
+    this._authError.next(authError);
+    if (authError || !result) return;
+    const { error, result: meResult } = await this._api.get<{ organization: { id: number } }>('/api/users/me?populate[0]=organization', {
+      token: result.jwt,
+    });
+    if (error || !meResult) return;
+
     const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined, organizationId: meResult.organization.id };
     if (params.identifier === GUEST_USER_IDENTIFIER) {
       session.guestLoginDateTime = new Date();

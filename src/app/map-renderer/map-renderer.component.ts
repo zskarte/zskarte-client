@@ -4,7 +4,7 @@ import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
-import { BehaviorSubject, firstValueFrom, last, lastValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -17,7 +17,7 @@ import { SidebarContext } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Overlay } from 'ol';
-import { Geometry, LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
+import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { Icon, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
@@ -89,7 +89,18 @@ export class MapRendererComponent implements AfterViewInit {
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
   ) {
-    this.selectedFeature = _state.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe));
+    this.selectedFeature = combineLatest([
+      this._state.observeDrawElements(),
+      _state.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe)),
+    ]).pipe(
+      map(([elements, featureId]) => {
+        if (!featureId) {
+          return null;
+        }
+        const element = elements.find((e) => e.getId() === featureId);
+        return element?.getOlFeature() as Feature<SimpleGeometry>;
+      }),
+    );
     this.sidebarContext = this._state.observeSidebarContext();
     this.selectedFeatureCoordinates = this.selectedFeature.pipe(
       map((feature) => {
@@ -115,8 +126,11 @@ export class MapRendererComponent implements AfterViewInit {
     // TODO
     const select = new Select({
       hitTolerance: 10,
-      style: (feature, resolution) => {
-        return feature.get('hidden') === true ? null : DrawStyle.styleFunctionSelect(feature, resolution, true);
+      style: (feature: FeatureLike, resolution: number) => {
+        if (feature.get('hidden') === true) {
+          return undefined;
+        }
+        return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
       layers: this._allLayers,
     });
@@ -124,10 +138,7 @@ export class MapRendererComponent implements AfterViewInit {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
       for (const feature of event.selected) {
-        if (!feature.get('sig').protected) {
-          this._modifyCache.push(feature);
-        }
-        this._state.setSelectedFeature(feature as Feature<SimpleGeometry>);
+        this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
       }
 
       if (event.selected.length === 0) {
@@ -161,6 +172,13 @@ export class MapRendererComponent implements AfterViewInit {
       this.rotateButton?.setPosition(e.mapBrowserEvent.coordinate);
       this.toggleEditButtons(true);
       this._currentSketch = undefined;
+    });
+
+    // select on ol-Map layer
+    this.selectedFeature.subscribe((feature) => {
+      if (feature && !feature.get('sig').protected && !this._modifyCache.getArray().includes(feature)) {
+        this._modifyCache.push(feature);
+      }
     });
 
     // TODO
@@ -558,18 +576,19 @@ export class MapRendererComponent implements AfterViewInit {
     }
     const layer = await firstValueFrom(this._state.observeActiveLayer());
     this._state.copySymbol(sign.id, layer?.getId());
+    this._state.resetSelectedFeature();
   }
 
   async toggleEditButtons(show: boolean) {
     let allowRotation = false;
     if (show && this._lastModificationPointCoordinates) {
-      const selectedFeature = await firstValueFrom(this.selectedFeature);
+      const feature = await firstValueFrom(this.selectedFeature);
 
       const [pointX, pointY] = this._lastModificationPointCoordinates;
-      const [iconX, iconY] = getFirstCoordinate(selectedFeature);
+      const [iconX, iconY] = getFirstCoordinate(feature);
 
       // only show rotateButton if the feature has an icon and the selected point is where the icon is placed
-      allowRotation = selectedFeature?.get('sig')?.src && pointX === iconX && pointY === iconY;
+      allowRotation = feature?.get('sig')?.src && pointX === iconX && pointY === iconY;
     }
 
     this.toggleButton(show, this.removeButton?.getElement());
@@ -606,7 +625,7 @@ export class MapRendererComponent implements AfterViewInit {
     const feature = await firstValueFrom(this.selectedFeature);
     if (feature) {
       // trigger selectedFeature to enable projection rotation while a feature is selected
-      this._state.setSelectedFeature(feature);
+      this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
     }
   }
 
