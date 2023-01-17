@@ -88,9 +88,9 @@ export class I18NService {
       en: 'Draw',
     },
     createOrLoad: {
-      de: 'Sitzung erstellen / laden',
-      en: 'Create / load session',
-      fr: 'Créer / charger session',
+      de: 'Ereignis erstellen / laden',
+      en: 'Create / load event',
+      fr: 'Créer / charger événement',
     },
     newMap: {
       de: 'Neue Karte erstellen',
@@ -118,9 +118,9 @@ export class I18NService {
       en: 'The map to be imported already exists. Do you want to replace it? If not, a copy will be created.',
     },
     editMap: {
-      de: 'Sitzung bearbeiten',
-      en: 'Edit session',
-      fr: 'Modifier session',
+      de: 'Ereignis bearbeiten',
+      en: 'Edit event',
+      fr: 'Modifier événement',
     },
     downloadCurrentDrawing: {
       de: 'Aktuelle Zeichnung herunterladen',
@@ -128,9 +128,9 @@ export class I18NService {
       en: 'Download the current drawing',
     },
     exportSession: {
-      de: 'Sitzung exportieren',
-      en: 'Export session',
-      fr: 'Exporter la session',
+      de: 'Ereignis exportieren',
+      en: 'Export event',
+      fr: 'Exporter événement',
     },
     withHistory: {
       de: 'Mit History',
@@ -1081,9 +1081,9 @@ export class I18NService {
       fr: 'Catégories',
     },
     logout: {
-      de: 'Sitzung beenden',
-      en: 'End session',
-      fr: 'Fin de session',
+      de: 'Ereignis beenden',
+      en: 'End event',
+      fr: 'Fin de l\'événement',
     },
     expand: {
       de: 'Ansicht wechseln',
