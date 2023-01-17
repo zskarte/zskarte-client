@@ -166,12 +166,18 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._modify.on('modifyend', (e) => {
-      this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+      if (this._modify['vertexFeature_']) {
+        this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+      }
       this.removeButton?.setPosition(e.mapBrowserEvent.coordinate);
       this.copyButton?.setPosition(e.mapBrowserEvent.coordinate);
       this.rotateButton?.setPosition(e.mapBrowserEvent.coordinate);
       this.toggleEditButtons(true);
       this._currentSketch = undefined;
+      e.features.forEach((feature) => {
+        const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+        element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+      });
     });
 
     // select on ol-Map layer
@@ -184,6 +190,13 @@ export class MapRendererComponent implements AfterViewInit {
     // TODO
     const translate = new Translate({
       features: select.getFeatures(),
+    });
+
+    translate.on('translateend', (e) => {
+      e.features.forEach((feature) => {
+        const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+        element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+      });
     });
 
     this._view = new OlView({
@@ -493,7 +506,14 @@ export class MapRendererComponent implements AfterViewInit {
     rotation = rotation > 180 ? rotation - 360 : rotation;
     const id = feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
 
-    this._state.updateDrawElementState(id, 'rotation', rotation);
+    // Update the signature in the UI separately from the state, to provide a smooth rotation
+    feature.get('sig').rotation = rotation;
+    feature.changed();
+
+    // Update the state with the new rotation (debounced)
+    this._drawElementCache[id]?.element.updateElementState((draft) => {
+      draft.rotation = rotation;
+    });
   }
 
   async removeFeature() {
@@ -524,7 +544,7 @@ export class MapRendererComponent implements AfterViewInit {
             }
           }
           const id = coordinationGroup.feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
-          this._state.updateDrawElementState(id, 'coordinates', newCoordinates);
+          this._drawElementCache[id]?.element.setCoordinates(newCoordinates);
         }
       }
     }
