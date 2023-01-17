@@ -82,6 +82,7 @@ export class ToolbarComponent {
     this.zsMapStateService.toggleDisplayMode();
   }
 
+
   help(): void {
     this.dialog.open(HelpComponent, { data: false });
   }
@@ -137,13 +138,5 @@ export class ToolbarComponent {
 
   todo(): void {
     console.error('todo');
-  }
-
-  toggleHistoryIfButton(event: MouseEvent) {
-    const element = event.target as HTMLElement;
-    if (element.id === 'historyButton') {
-      this.toggleHistory();
-    }
-    event.stopPropagation();
   }
 }

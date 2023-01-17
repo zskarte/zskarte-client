@@ -1175,6 +1175,16 @@ export class I18NService {
       en: 'Period of validity of your guest session',
       fr: 'Période de validité de votre session',
     },
+    toastHistory: {
+      de: 'Lesemodus aktiviert',
+      en: 'Reading mode enabled',
+      fr: 'Mode lecture activé',
+    },
+    toastDrawing: {
+      de: 'Zeichnenmodus aktiviert',
+      en: 'Drawing mode enabled',
+      fr: 'Mode dessin activé',
+    },
     recentlyUsedSigns: {
       de: 'Kürzlich verwendete Signaturen',
       en: 'Recently used signatures',

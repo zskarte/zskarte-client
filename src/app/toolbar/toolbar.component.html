@@ -20,10 +20,11 @@
           </button>
         </div>
         <mat-menu #mainMenu="matMenu" class="burger-menu">
-          <button mat-menu-item id="historyButton" (click)="toggleHistoryIfButton($event)" title="ALT+H">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')">history</mat-icon>
-            {{ i18n.get('history') }}
-            <mat-slide-toggle (toggleChange)="toggleHistory()" [checked]="historyMode | async" color="primary"></mat-slide-toggle>
+          <button mat-menu-item (click)="toggleHistory()" title="ALT+H">
+            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(historyMode | async)">history</mat-icon>
+            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="historyMode | async">brush</mat-icon>
+            {{ (historyMode | async) ? i18n.get('drawMode') : i18n.get('history') }}
+            
           </button>
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="todo()" *ngIf="!(historyMode | async)">
