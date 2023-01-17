@@ -228,7 +228,6 @@ export class SelectedFeatureComponent implements OnDestroy {
       // Update the signature in the UI separately from the state, to provide a smooth update of all properties
       el.getOlFeature().get('sig')[field] = value;
       el.getOlFeature().changed();
-
       el.updateElementState((draft) => {
         draft[field as T] = value;
       });
