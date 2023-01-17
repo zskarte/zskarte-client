@@ -18,21 +18,23 @@ export class SessionService {
   constructor(private _router: Router, private _api: ApiService) {
     // prevents circular deps between session and api
     this._api.setSessionService(this);
+  }
 
+  public startDatabaseSync(): void {
     // save handler
-    this._session.pipe(skip(1)).subscribe(async (session) => {
+    this._session.subscribe(async (session) => {
       if (session) {
-        await db.table('session').put(session);
+        await db.sessions.put(session);
 
         if (session?.operationId) {
           const result = await this._api.get('/api/operations/' + session.operationId);
           const mapState = result.data?.attributes?.mapState;
           if (mapState) {
-            this._state.reset(mapState);
+            this._state.loadLayer(mapState.layers);
           }
         }
       } else {
-        await db.table('session').clear();
+        await db.sessions.clear();
         this._state.reset();
       }
     });
@@ -66,14 +68,14 @@ export class SessionService {
   }
 
   public async loadSavedSession(): Promise<void> {
-    const sessions = await db.table('session').toArray();
+    const sessions = await db.sessions.toArray();
     if (sessions.length === 1) {
       const session: IZsMapSession = sessions[0];
       this._session.next(session);
       return;
     }
     if (sessions.length > 1) {
-      await db.table('session').clear();
+      await db.sessions.clear();
     }
     this._session.next(undefined);
   }

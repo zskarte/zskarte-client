@@ -20,7 +20,7 @@ export class FabMenuComponent {
   historyMode$: Observable<boolean>;
 
   constructor(public drawDialog: MatDialog, public textDialog: MatDialog, private mapState: ZsMapStateService, public i18n: I18NService) {
-    this.historyMode$ = this.mapState.observeDisplayState().pipe(map((state) => state.displayMode === ZsMapDisplayMode.HISTORY));
+    this.historyMode$ = this.mapState.observeHistoryMode();
   }
 
   @HostListener('window:keydown', ['$event'])

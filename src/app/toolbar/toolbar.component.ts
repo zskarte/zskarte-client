@@ -38,12 +38,7 @@ export class ToolbarComponent {
     public session: SessionService,
   ) {
     this.historyMode = this.zsMapStateService
-      .observeDisplayState()
-      .pipe(map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY));
-
-    this.zsMapStateService.observeDisplayState().subscribe((mode) => {
-      window.history.pushState(null, '', '?mode=' + mode.displayMode);
-    });
+      .observeHistoryMode();
 
     if (this.isInitialLaunch()) {
       this.dialog.open(HelpComponent, {

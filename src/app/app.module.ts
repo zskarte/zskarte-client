@@ -56,11 +56,16 @@ import { MapComponent } from './map/map.component';
 import { AppRoutingModule } from './app-routing.module';
 import { RecentlyUsedSignsComponent } from './recently-used-signs/recently-used-signs.component';
 import { OperationsComponent } from './session/operations/operations.component';
+import {ZsMapStateService} from "./state/state.service";
 registerLocaleData(localeCH);
 
-export function appFactory(session: SessionService) {
+export function appFactory(session: SessionService, mapState: ZsMapStateService) {
   return async () => {
     await session.loadSavedSession();
+    await mapState.loadSavedDisplayState();
+
+    session.startDatabaseSync();
+    mapState.startDatabaseSync();
   };
 }
 @NgModule({
@@ -127,7 +132,7 @@ export function appFactory(session: SessionService) {
     {
       provide: APP_INITIALIZER,
       useFactory: appFactory,
-      deps: [SessionService],
+      deps: [SessionService, ZsMapStateService],
       multi: true,
     },
   ],

@@ -1,10 +1,19 @@
-import { Dexie } from 'dexie';
+import {Dexie, Table} from 'dexie';
+import {IZsMapSession} from "../session/session.interfaces";
+import {IZsMapDisplayState} from "../state/interfaces";
 
-export const db = new Dexie('ZsKarte');
+export class AppDB extends Dexie {
+  sessions!: Table<IZsMapSession, string>;
+  displayStates!: Table<IZsMapDisplayState, string>;
 
-export const initDb = () => {
-  // Declare tables, IDs and indexes
-  db.version(1).stores({
-    session: 'id, name, token',
-  });
-};
+  constructor(databaseName: string) {
+    super(databaseName);
+
+    this.version(2).stores({
+      sessions: 'id, name, token',
+      displayStates: 'id, displayMode'
+    });
+  }
+}
+
+export const db = new AppDB('ZsKarte');

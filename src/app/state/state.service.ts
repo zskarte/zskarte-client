@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {BehaviorSubject, Observable, skip} from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
@@ -30,6 +30,7 @@ import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import {db} from "../db/db";
 
 @Injectable({
   providedIn: 'root',
@@ -59,6 +60,38 @@ export class ZsMapStateService {
     this._session.setStateService(this);
   }
 
+  public startDatabaseSync(): void {
+    this._display.subscribe(async (displayState) => {
+      await db.displayStates.put(displayState);
+    });
+  }
+
+  public loadLayer(layers: any) {
+    this.updateDisplayState((draft) => {
+      const firstLayer = layers[0];
+      if (firstLayer.id) {
+        draft.activeLayer = firstLayer.id;
+        draft.layerOrder.push(firstLayer.id);
+        draft.layerVisibility[firstLayer.id] = true;
+        draft.layerOpacity[firstLayer.id] = 1;
+      }
+
+      return draft;
+    });
+  }
+
+  public async loadSavedDisplayState(): Promise<void> {
+    const displayStates = await db.displayStates.toArray();
+    if (displayStates.length === 1) {
+      const displayState: IZsMapDisplayState = displayStates[0];
+      this._display.next(displayState);
+      return;
+    }
+    if (displayStates.length > 1) {
+      await db.displayStates.clear();
+    }
+  }
+
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return {} as any;
@@ -66,6 +99,7 @@ export class ZsMapStateService {
 
   private _getDefaultDisplayState(): IZsMapDisplayState {
     return {
+      id: uuidv4(),
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
@@ -128,24 +162,6 @@ export class ZsMapStateService {
     this.setMapState(newMapState);
     if (newDisplayState) {
       this.setDisplayState(newDisplayState);
-    } else {
-      // generate display style based on map state
-      if (newMapState) {
-        const displayState = this._getDefaultDisplayState();
-        if (newMapState.layers) {
-          for (const layer of newMapState?.layers) {
-            if (layer.id) {
-              if (!displayState.activeLayer) {
-                displayState.activeLayer = layer.id;
-              }
-              displayState.layerOrder.push(layer.id);
-              displayState.layerVisibility[layer.id] = true;
-              displayState.layerOpacity[layer.id] = 1;
-            }
-          }
-        }
-        this.setDisplayState(displayState);
-      }
     }
   }
 
@@ -163,9 +179,9 @@ export class ZsMapStateService {
     });
   }
 
-  public setDisplayState(newState?: IZsMapDisplayState): void {
+  public setDisplayState(newState: IZsMapDisplayState): void {
     this.updateDisplayState(() => {
-      return newState || this._getDefaultDisplayState();
+      return newState;
     });
   }
 
@@ -183,6 +199,12 @@ export class ZsMapStateService {
     });
   }
 
+  public setDisplayMode(mode: ZsMapDisplayMode) {
+    this.updateDisplayState((draft) => {
+      draft.displayMode = mode;
+    });
+  }
+
   public observeHistoryMode(): Observable<boolean> {
     return this._display.pipe(
       map((o) => {
@@ -190,10 +212,6 @@ export class ZsMapStateService {
       }),
       distinctUntilChanged((x, y) => x === y),
     );
-  }
-
-  public saveDisplayState(): void {
-    localStorage.setItem('tempDisplayState', JSON.stringify(this._display.value));
   }
 
   public observeDisplayState(): Observable<IZsMapDisplayState> {
