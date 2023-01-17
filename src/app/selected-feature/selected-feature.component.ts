@@ -9,10 +9,10 @@ import { ZsMapStateService } from '../state/state.service';
 import { Signs } from '../map-renderer/signs';
 import { CustomImageStoreService } from '../state/custom-image-store.service';
 import { DrawStyle } from '../map-renderer/draw-style';
-import { firstValueFrom, Observable, Subject } from 'rxjs';
+import { EMPTY, firstValueFrom, Observable, Subject } from 'rxjs';
 import { Feature } from 'ol';
 import { Point, SimpleGeometry } from 'ol/geom';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { ZsMapDisplayMode, ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
 import { EditCoordinatesComponent } from '../edit-coordinates/edit-coordinates.component';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
@@ -32,6 +32,7 @@ export class SelectedFeatureComponent implements OnDestroy {
   drawHoleMode: Observable<boolean>;
   mergeMode: Observable<boolean>;
   featureType?: string;
+  useColorPicker = false;
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _ngUnsubscribe = new Subject<void>();
 
@@ -61,7 +62,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     );
     this.selectedDrawElement = this.zsMapStateService.observeSelectedElement().pipe(
       takeUntil(this._ngUnsubscribe),
-      map((element) => element?.elementState),
+      switchMap((element) => element?.observeElement() ?? EMPTY),
     );
     this.selectedSignature = this.zsMapStateService.observeSelectedElement().pipe(
       takeUntil(this._ngUnsubscribe),
