@@ -37,7 +37,7 @@
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
 
             <ng-container *ngIf="editMode | async">
-              <mat-form-field>
+              <mat-form-field floatLabel="always">
                 <mat-label>{{ i18n.get('color') }}:</mat-label>
                 <input
                   matInput
