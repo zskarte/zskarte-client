@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { ApiService } from '../../api/api.service';
 import { SessionService } from '../session.service';
 import { ZsMapStateService } from '../../state/state.service';
@@ -13,15 +13,24 @@ import { v4 as uuidv4 } from 'uuid';
   templateUrl: './operations.component.html',
   styleUrls: ['./operations.component.scss'],
 })
-export class OperationsComponent {
+export class OperationsComponent implements OnDestroy {
   public operations = new BehaviorSubject<IZsMapOperation[]>([]);
   public operationToEdit = new BehaviorSubject<IZsMapOperation | undefined>(undefined);
+  private _ngUnsubscribe = new Subject<void>();
   constructor(private _api: ApiService, private _state: ZsMapStateService, private _session: SessionService, private _router: Router) {
-    this._session.observeOrganizationId().subscribe(async (organizationId) => {
-      if (organizationId) {
-        this._reload();
-      }
-    });
+    this._session
+      .observeOrganizationId()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(async (organizationId) => {
+        if (organizationId) {
+          this._reload();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   private async _reload(): Promise<void> {
