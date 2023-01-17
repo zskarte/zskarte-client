@@ -51,14 +51,14 @@ export class ProtocolTableComponent implements OnInit, OnDestroy, AfterViewInit 
   public protocolTableDataSource = new MatTableDataSource([] as ProtocolEntry[]);
 
   displayedColumns: string[] = [
-    //'protocol-id',
-    'protocol-date',
-    'protocol-group',
-    'protocol-sign',
-    //'protocol-location',
-    'protocol-centroid',
-    //'protocol-size',
-    'protocol-label',
-    'protocol-description',
+    //'id',
+    'date',
+    'group',
+    'sign',
+    //'location',
+    'centroid',
+    //'size',
+    'label',
+    'description',
   ];
 }
