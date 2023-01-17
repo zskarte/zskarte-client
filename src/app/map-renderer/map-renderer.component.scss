@@ -91,3 +91,13 @@
   z-index: 200000;
   transform: translateX(-50%) translateY(-50%);
 }
+
+@media print {
+  .noprint {
+    display: none !important;
+  }
+
+  .toolbar {
+    display: none !important;
+  }
+}
