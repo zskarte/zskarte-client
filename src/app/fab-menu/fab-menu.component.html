@@ -10,24 +10,23 @@
 <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOpen">
   <ul class="fab-menu-list">
     <li>
-      <button mat-raised-button class="mat-fab" (click)="openTextDialog()" [matTooltip]="i18n.get('text')" matTooltipPosition="left">
+      <button mat-fab (click)="openTextDialog()" [matTooltip]="i18n.get('text')" matTooltipPosition="left">
         <mat-icon>font_download</mat-icon>
       </button>
     </li>
     <li>
-      <button mat-raised-button class="mat-fab" (click)="polygon()" [matTooltip]="i18n.get('polygon')" matTooltipPosition="left">
+      <button mat-fab (click)="polygon()" [matTooltip]="i18n.get('polygon')" matTooltipPosition="left">
         <mat-icon>widgets</mat-icon>
       </button>
     </li>
     <li>
-      <button mat-raised-button class="mat-fab" (click)="line()" [matTooltip]="i18n.get('line')" matTooltipPosition="left">
+      <button mat-fab (click)="line()" [matTooltip]="i18n.get('line')" matTooltipPosition="left">
         <mat-icon>show_chart</mat-icon>
       </button>
     </li>
     <li>
       <button
-        mat-raised-button
-        class="mat-fab"
+        mat-fab
         (click)="toggleFreeHandDraw()"
         [matTooltip]="i18n.get('freehand')"
         matTooltipPosition="left"
@@ -36,7 +35,7 @@
       </button>
     </li>
     <li>
-      <button mat-raised-button class="mat-fab" (click)="openDrawDialog()" [matTooltip]="i18n.get('symbol')" matTooltipPosition="left">
+      <button mat-fab (click)="openDrawDialog()" [matTooltip]="i18n.get('symbol')" matTooltipPosition="left">
         <mat-icon>stars</mat-icon>
       </button>
     </li>
