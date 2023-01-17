@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import { Observable, Subject } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { IZsMapBaseDrawElementState } from 'src/app/state/interfaces';
 import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
@@ -24,6 +24,10 @@ export abstract class ZsMapBaseElement<T> {
   }
 
   protected abstract _initialize(element: IZsMapBaseDrawElementState): void;
+
+  public observeElement(): Observable<T | undefined> {
+    return from(this._element);
+  }
 
   public unsubscribe(): void {
     this._unsubscribe.next();
