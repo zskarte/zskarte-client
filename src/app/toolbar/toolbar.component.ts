@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, HostListener, ViewChild } from '@angular/core';
-import { I18NService, LOCALES } from '../state/i18n.service';
+import { I18NService, Locale, LOCALES } from '../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -30,11 +30,10 @@ export class ToolbarComponent {
   historyMode: Observable<boolean>;
   exportEnabled = true;
   downloadData: SafeUrl | null = null;
-  locales: string[] = LOCALES;
+  locales: Locale[] = LOCALES;
   downloadTime?: string = undefined;
   downloadCSVData?: SafeUrl = undefined;
   protocolEntries: ProtocolEntry[] = [];
-  currentLang?: string;
 
   constructor(
     public i18n: I18NService,
@@ -59,11 +58,13 @@ export class ToolbarComponent {
       });
     }
 
-    this.i18n.currentLocale.subscribe((currentLang: string | null) => {
-      if (currentLang !== null) this.currentLang = currentLang;
-    });
     this.zsMapStateService.observeDrawElements().subscribe((elements: ZsMapBaseDrawElement[]) => {
-      this.protocolEntries = mapProtocolEntry(elements, this.datePipe, this.i18n, this.currentLang === undefined ? 'de' : this.currentLang);
+      this.protocolEntries = mapProtocolEntry(
+        elements,
+        this.datePipe,
+        this.i18n,
+        this.session.getLocale() === undefined ? 'de' : this.session.getLocale(),
+      );
     });
   }
 
@@ -200,6 +201,10 @@ export class ToolbarComponent {
 
   todo(): void {
     console.error('todo');
+  }
+
+  setLocale(locale: Locale) {
+    this.session.setLocale(locale);
   }
 
   toggleHistoryIfButton(event: MouseEvent) {

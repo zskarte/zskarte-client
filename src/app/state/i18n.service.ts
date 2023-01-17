@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { Sign } from '../core/entity/sign';
 import { SessionService } from '../session/session.service';
 
-export const LOCALES: string[] = ['de', 'fr', 'en'];
-export const DEFAULT_LOCALE: string = LOCALES[0];
+export type Locale = 'de' | 'fr' | 'en';
+export const LOCALES: Locale[] = ['de', 'fr', 'en'];
+export const DEFAULT_LOCALE: Locale = LOCALES[0];
 
 @Injectable({
   providedIn: 'root',
@@ -1196,28 +1196,25 @@ export class I18NService {
       fr: 'Signatures récemment utilisées',
     },
   };
-  private _locale: string = DEFAULT_LOCALE;
-  private localeSource = new BehaviorSubject<string | null>(null);
-  public currentLocale = this.localeSource.asObservable();
 
-  public getLabelForSign(sign: Sign) {
-    const chosenLang = sign[this._session.getLanguage()];
+  public getLabelForSign(sign: Sign): string {
+    const chosenLang = sign[this._session.getLocale()];
     if (chosenLang) {
       return chosenLang;
     } else {
       for (const locale of LOCALES) {
         if (sign[locale]) {
-          return sign[locale];
+          return sign[locale] ?? '';
         }
       }
     }
-    return null;
+    return '';
   }
 
   public get(key: string): string {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this._session.getLanguage()];
+      const chosenLang = element[this._session.getLocale()];
       if (chosenLang) {
         return chosenLang;
       } else {
@@ -1233,7 +1230,7 @@ export class I18NService {
   public has(key: string): boolean {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this._session.getLanguage()];
+      const chosenLang = element[this._session.getLocale()];
       if (chosenLang) {
         return true;
       } else {

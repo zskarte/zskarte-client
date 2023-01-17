@@ -10,6 +10,7 @@ import { ZsMapStateService } from '../state/state.service';
 import { GUEST_USER_IDENTIFIER } from './userLogic';
 import { IZsMapOperation } from './operations/operation.interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
 
 @Injectable({
   providedIn: 'root',
@@ -96,7 +97,13 @@ export class SessionService {
     });
     if (error || !meResult) return;
 
-    const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined, organizationId: meResult.organization.id };
+    const session: IZsMapSession = {
+      id: uuidv4(),
+      auth: result,
+      operationId: undefined,
+      organizationId: meResult.organization.id,
+      locale: DEFAULT_LOCALE,
+    };
     if (params.identifier === GUEST_USER_IDENTIFIER) {
       session.guestLoginDateTime = new Date();
     }
@@ -129,8 +136,25 @@ export class SessionService {
     );
   }
 
-  public getLanguage(): string {
-    return 'de-CH';
+  public observeIsGuest(): Observable<boolean> {
+    return this._session.pipe(
+      map((session) => {
+        // TODO handle this once we decided how it should work
+        return true;
+      }),
+    );
+  }
+
+  public setLocale(locale: Locale): void {
+    const currentSession = this._session.value;
+    if (currentSession) {
+      currentSession.locale = locale;
+      this._session.next(currentSession);
+    }
+  }
+
+  public getLocale(): Locale {
+    return this._session.value?.locale ?? DEFAULT_LOCALE;
   }
 
   public getGuestLoginDateTime() {

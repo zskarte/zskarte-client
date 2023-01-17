@@ -24,7 +24,7 @@ export class GeoadminService {
     }
 
     return this.http
-      .get<GeoFeatures>(`https://api3.geo.admin.ch/rest/services/api/MapServer/layersConfig?lang=${this._session.getLanguage()}`)
+      .get<GeoFeatures>(`https://api3.geo.admin.ch/rest/services/api/MapServer/layersConfig?lang=${this._session.getLocale()}`)
       .pipe(tap((data) => (this._featuresCache = data)));
   }
 
@@ -34,7 +34,7 @@ export class GeoadminService {
     }
 
     return this.http
-      .get(`https://api3.geo.admin.ch/rest/services/api/MapServer/${layerId}/legend?lang=` + this._session.getLanguage(), {
+      .get(`https://api3.geo.admin.ch/rest/services/api/MapServer/${layerId}/legend?lang=` + this._session.getLocale(), {
         responseType: 'text',
       })
       .pipe(tap((data) => (this._legendCache = data)));
