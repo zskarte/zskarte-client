@@ -1,0 +1,41 @@
+<div class="table-container">
+  <table mat-table [dataSource]="data" class="mat-elevation-z8 protocol-table">
+    <ng-container matColumnDef="protocol-id">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvID') }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
+    <ng-container matColumnDef="protocol-date">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvDate') }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.date }}</td>
+    </ng-container>
+    <ng-container matColumnDef="protocol-group">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvGroup') }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.group }}</td>
+    </ng-container>
+    <ng-container matColumnDef="protocol-sign">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvSignatur') }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.sign }}</td>
+    </ng-container>
+    <ng-container matColumnDef="protocol-location">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvLocation') }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.location }}</td>
+    </ng-container>
+    <ng-container matColumnDef="protocol-size">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvSize') }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.size }}</td>
+    </ng-container>
+    <ng-container matColumnDef="protocol-label">
+      <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvLabel') }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.label }}</td>
+    </ng-container>
+    <ng-container matColumnDef="protocol-description">
+      <th mat-header-cell *matHeaderCellDef>
+        {{ i18n.get('csvDescription') }}
+      </th>
+      <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

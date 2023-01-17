@@ -10,7 +10,6 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString } from 'ol/geom';
 import { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
-import { areCoordinatesEqual } from '../../helper/coordinates';
 import { takeUntil } from 'rxjs';
 
 export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
@@ -18,7 +17,6 @@ export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.LINE);
-    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates()
       .pipe(takeUntil(this._unsubscribe))
       .subscribe((coordinates) => {
@@ -33,9 +31,7 @@ export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
       src: null,
       filterValue: 'not_labeled_line',
     });
-    this._olFeature.on('change', () => {
-      this.setCoordinates(this._olLine.getCoordinates());
-    });
+    this.setCoordinates(this._olLine.getCoordinates());
     this._isInitialized = true;
     return;
   }
@@ -43,10 +39,11 @@ export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElem
     return 'LineString';
   }
   protected static override _parseFeature(feature: Feature<LineString>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
-    state.addDrawElement({
+    const drawElement = state.addDrawElement({
       type: ZsMapDrawElementStateType.LINE,
       coordinates: feature.getGeometry()?.getCoordinates() || [],
       layer: element.layer,
     });
+    state.setSelectedFeature(drawElement?.id);
   }
 }

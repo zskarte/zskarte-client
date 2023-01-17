@@ -2,55 +2,6 @@
   <mat-card class="selection" *ngIf="selectedSignature | async as selectedSignature">
     <mat-card-content *ngIf="!(mergeMode | async)">
       <div>
-        <!--
-        <mat-card
-          *ngFor="let featureGroup of featureGroups"
-          class="featureGroup titleCard"
-        >
-          <mat-card-content>
-            <div class="imgwrapper" *ngIf="featureGroup.src">
-              <img
-                [src]="getImageUrl(featureGroup.src)"
-                (click)="openImageDetail(findSigBySrc(featureGroup.src))"
-              />
-            </div>
-            <div class="label">{{ featureGroup.label }}</div>
-
-            <mat-expansion-panel
-              *ngFor="let feature of featureGroup.features"
-              (mouseover)="showFeature(feature)"
-              (mouseleave)="hideFeature()"
-            >
-              <mat-expansion-panel-header>
-                <mat-panel-title>{{
-                  feature.get('sig').label
-                    ? feature.get('sig').label
-                    : i18n.get('unknown')
-                }}</mat-panel-title>
-              </mat-expansion-panel-header>
-              <div
-                class="images"
-                *ngIf="
-                  feature.get('sig').images &&
-                  feature.get('sig').images.length > 0
-                "
-              >
-                <div *ngFor="let img of feature.get('sig').images">
-                  <img
-                    [src]="getImageUrl(img)"
-                    (click)="openImageDetail(findSigBySrc(img))"
-                  />
-                </div>
-              </div>
-              <div
-                *ngIf="feature.get('sig').description"
-                class="description"
-                [innerHTML]="feature.get('sig').description"
-              ></div>
-            </mat-expansion-panel>
-          </mat-card-content>
-        </mat-card>-->
-
         <mat-card *ngIf="!featureGroups" class="titleCard">
           <mat-card-content>
             <div class="imgwrapper" *ngIf="selectedSignature.src" (click)="openImageDetail(selectedSignature)">
@@ -84,23 +35,34 @@
               </div>
             </div>
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
-            <div class="images" *ngIf="!editMode && selectedSignature.images && selectedSignature.images.length > 0">
-              <div *ngFor="let img of selectedSignature.images">
-                <img [src]="getImageUrl(img)" (click)="openImageDetail(findSigBySrc(img))" />
-              </div>
-            </div>
 
-            <mat-form-field *ngIf="editMode | async">
-              <mat-label>{{ i18n.get('color') }}:</mat-label>
-              <mat-select [ngModel]="drawElement.color" (ngModelChange)="updateProperty(drawElement, 'color', $event)">
-                <mat-option class="color-option" *ngFor="let color of quickColors" [value]="color.value">
-                  <div class="flex">
-                    <div class="color-display" [style.background-color]="color.value"></div>
-                    <span>{{ i18n.get(color.viewValue) }}</span>
-                  </div>
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <ng-container *ngIf="editMode | async">
+              <mat-form-field floatLabel="always">
+                <mat-label>{{ i18n.get('color') }}:</mat-label>
+                <input
+                  matInput
+                  *ngIf="useColorPicker; else colorDropdown"
+                  type="color"
+                  name="color"
+                  [ngModel]="drawElement.color"
+                  (ngModelChange)="updateProperty(drawElement, 'color', $event)"
+                />
+                <ng-template #colorDropdown>
+                  <mat-select [ngModel]="drawElement.color" (ngModelChange)="updateProperty(drawElement, 'color', $event)">
+                    <mat-option class="color-option" *ngFor="let color of quickColors" [value]="color.value">
+                      <div class="flex">
+                        <div class="color-display" [style.background-color]="color.value"></div>
+                        <span>{{ i18n.get(color.viewValue) }}</span>
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                </ng-template>
+              </mat-form-field>
+              <mat-slide-toggle [(ngModel)]="useColorPicker" class="color-mode-toggle">
+                {{ i18n.get('colorPickerMode') }}
+              </mat-slide-toggle>
+              <mat-divider></mat-divider>
+            </ng-container>
             <mat-checkbox
               [ngModel]="drawElement.protected"
               (ngModelChange)="updateProperty(drawElement, 'protected', $event)"
@@ -131,21 +93,6 @@
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('description') }}</mat-panel-title>
           </mat-expansion-panel-header>
-          <mat-form-field *ngIf="selectedFeature | async as selectedFeature">
-            <mat-label>{{ i18n.get('images') }}</mat-label>
-            <input type="text" matInput hidden value="-" />
-            <div class="images">
-              <div *ngFor="let img of drawElement.images">
-                <img [src]="getImageUrl(img)" (click)="openImageDetail(findSigBySrc(img))" /><i
-                  class="material-icons removeButton"
-                  (click)="removeImage(drawElement, selectedFeature, img)"
-                  >clear</i
-                >
-              </div>
-              <i class="material-icons" (click)="addImage(drawElement, selectedFeature)">add</i>
-            </div>
-          </mat-form-field>
-
           <div class="markdown" *ngIf="editMode | async">
             <div class="markdownEditor">
               <mat-form-field>
@@ -165,10 +112,10 @@
             <mat-expansion-panel-header>
               <mat-panel-title>{{ i18n.get('symbol') }}</mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-flat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement, selectedFeature)">
+            <button mat-flat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
               <i class="material-icons">stars</i><span>{{ i18n.get('selectSymbol') }}</span>
             </button>
-            <button mat-flat-button *ngIf="drawElement.symbolId" (click)="chooseSymbol(drawElement, selectedFeature)">
+            <button mat-flat-button *ngIf="drawElement.symbolId" (click)="chooseSymbol(drawElement)">
               <i class="material-icons">cached</i><span>{{ i18n.get('replaceSymbol') }}</span>
             </button>
             <div class="filter">
@@ -228,7 +175,8 @@
             </mat-form-field>
           </mat-expansion-panel>
         </ng-container>
-        <mat-expansion-panel *ngIf="(editMode | async) && selectedSignature.type !== 'Point'">
+
+        <mat-expansion-panel *ngIf="editMode | async">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('line') }}</mat-panel-title>
           </mat-expansion-panel-header>
@@ -275,9 +223,7 @@
           </mat-form-field>
         </mat-expansion-panel>
 
-        <mat-expansion-panel
-          *ngIf="(editMode | async) && (selectedSignature.type === 'Polygon' || selectedSignature.type === 'MultiPolygon')"
-        >
+        <mat-expansion-panel *ngIf="(editMode | async) && drawElement?.type === 'polygon'">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('fillPattern') }}</mat-panel-title>
           </mat-expansion-panel-header>
@@ -353,7 +299,7 @@
         </mat-expansion-panel>
 
         <!-- TODO: implement functions -->
-        <mat-expansion-panel id="functionsPanel" class="noPadding" *ngIf="false">
+        <mat-expansion-panel id="functionsPanel" class="noPadding">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>
           </mat-expansion-panel-header>
@@ -369,7 +315,7 @@
           <button mat-flat-button (click)="merge(true)" *ngIf="isPolygon()">
             <i class="material-icons">call_merge</i><span>{{ i18n.get('group') }}</span>
           </button>
-          <button mat-flat-button (click)="drawHole()" [disabled]="drawHoleMode" *ngIf="isPolygon()">
+          <button mat-flat-button (click)="drawHole()" *ngIf="isPolygon()">
             <i class="material-icons">vignette</i><span>{{ i18n.get('drawHole') }}</span>
           </button>
           <!--
@@ -383,14 +329,28 @@
           </button>-->
         </mat-expansion-panel>
       </div>
-      <button class="primarybutton" mat-raised-button color="warn" (click)="delete(drawElement)" *ngIf="editMode | async">
-        <i class="material-icons">delete</i><span>{{ i18n.get('delete') }}</span>
-      </button>
+      <stack [spacing]="1">
+        <button
+          class="primarybutton"
+          mat-raised-button
+          color="primary"
+          (click)="copy(drawElement)"
+          *ngIf="(editMode | async) && selectedSignature.type === 'Point' && drawElement.symbolId"
+        >
+          <mat-icon>content_copy</mat-icon>
+          {{ i18n.get('copy') }}
+        </button>
+        <button class="primarybutton" mat-raised-button color="warn" (click)="delete(drawElement)" *ngIf="editMode | async">
+          <mat-icon>delete</mat-icon>
+          {{ i18n.get('delete') }}
+        </button>
+      </stack>
     </mat-card-content>
     <mat-card-content *ngIf="(editMode | async) && (mergeMode | async)">
       <div>{{ i18n.get('chooseGroupingArea') }}</div>
       <button mat-raised-button (click)="merge(false)" [disabled]="drawHoleMode" *ngIf="isPolygon()">
-        <i class="material-icons">cancel</i><span> {{ i18n.get('cancelGrouping') }}</span>
+        <mat-icon>cancel</mat-icon>
+        {{ i18n.get('cancelGrouping') }}
       </button>
     </mat-card-content>
   </mat-card>

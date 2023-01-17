@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
@@ -15,7 +15,7 @@ import {
   ZsMapLayerStateType,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, skip, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
@@ -28,12 +28,13 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
-import Feature from 'ol/Feature';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { SimpleGeometry } from 'ol/geom';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { I18NService } from '../state/i18n.service';
+import { ApiService } from '../api/api.service';
+import { IZsMapOperation } from '../session/operations/operation.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -50,7 +51,7 @@ export class ZsMapStateService {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
-  private _selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | null>(null);
+  private _selectedFeature = new BehaviorSubject<string | undefined>(undefined);
   private _recentlyUsedElement = new BehaviorSubject<ZsMapDrawElementState[]>([]);
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
@@ -65,6 +66,7 @@ export class ZsMapStateService {
     private _sync: SyncService,
     private _session: SessionService,
     private _snackBar: MatSnackBar,
+    private _api: ApiService,
   ) {
     this._sync.setStateService(this);
     this._session.setStateService(this);
@@ -75,8 +77,8 @@ export class ZsMapStateService {
     return {} as any;
   }
 
-  private _getDefaultDisplayState(): IZsMapDisplayState {
-    return {
+  private _getDefaultDisplayState(mapState?: IZsMapState): IZsMapDisplayState {
+    const state: IZsMapDisplayState = {
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
@@ -84,6 +86,7 @@ export class ZsMapStateService {
       mapCenter: [0, 0],
       mapZoom: 16,
       activeLayer: undefined,
+      source: ZsMapStateSource.OPEN_STREET_MAP,
       layerOpacity: {},
       layerVisibility: {},
       layerOrder: [],
@@ -92,7 +95,24 @@ export class ZsMapStateService {
       features: [],
       sidebarContext: null,
       hiddenSymbols: [],
+      hiddenFeatureTypes: [],
     };
+    if (!mapState) {
+      mapState = this._map.value;
+    }
+    if (mapState?.layers) {
+      for (const layer of mapState?.layers) {
+        if (layer.id) {
+          if (!state.activeLayer) {
+            state.activeLayer = layer.id;
+          }
+          state.layerOrder.push(layer.id);
+          state.layerVisibility[layer.id] = true;
+          state.layerOpacity[layer.id] = 1;
+        }
+      }
+    }
+    return state;
   }
 
   public copySymbol(symbolId: number, layer?: string) {
@@ -134,39 +154,19 @@ export class ZsMapStateService {
     return this._elementToDraw.asObservable();
   }
 
-  public reset(newMapState?: IZsMapState, newDisplayState?: IZsMapDisplayState): void {
-    this.setMapState(newMapState);
-    if (newDisplayState) {
-      this.setDisplayState(newDisplayState);
-    } else {
-      // generate display style based on map state
-      if (newMapState) {
-        const displayState = this._getDefaultDisplayState();
-        if (newMapState.layers) {
-          for (const layer of newMapState?.layers) {
-            if (layer.id) {
-              if (!displayState.activeLayer) {
-                displayState.activeLayer = layer.id;
-              }
-              displayState.layerOrder.push(layer.id);
-              displayState.layerVisibility[layer.id] = true;
-              displayState.layerOpacity[layer.id] = 1;
-            }
-          }
-        }
-        this.setDisplayState(displayState);
+  public setMapState(newState?: IZsMapState): void {
+    const cached = Object.keys(this._layerCache);
+    for (const c of cached) {
+      if (!newState?.layers?.find((l) => l.id === c)) {
+        this._layerCache[c].unsubscribe();
+        delete this._layerCache[c];
       }
     }
-  }
-
-  public setMapState(newState?: IZsMapState): void {
-    this._layerCache = {};
     if (this._drawElementCache) {
       for (const key in this._drawElementCache) {
         this._drawElementCache[key].unsubscribe();
       }
     }
-
     this._drawElementCache = {};
     this.updateMapState(() => {
       return newState || this._getDefaultMapState();
@@ -199,12 +199,8 @@ export class ZsMapStateService {
     });
   }
 
-  public saveDisplayState(): void {
-    localStorage.setItem('tempDisplayState', JSON.stringify(this._display.value));
-  }
-
   public observeDisplayState(): Observable<IZsMapDisplayState> {
-    return this._display.asObservable();
+    return this._display.pipe(skip(1));
   }
 
   // zoom
@@ -232,12 +228,12 @@ export class ZsMapStateService {
     });
   }
 
-  public setSelectedFeature(feature: Feature<SimpleGeometry>) {
-    this._selectedFeature.next(feature);
+  public setSelectedFeature(featureId: string | undefined) {
+    this._selectedFeature.next(featureId);
   }
 
   public resetSelectedFeature() {
-    this._selectedFeature.next(null);
+    this._selectedFeature.next(undefined);
   }
 
   public setMapZoom(zoom: number) {
@@ -270,7 +266,7 @@ export class ZsMapStateService {
 
   // source
   public observeMapSource(): Observable<ZsMapStateSource> {
-    return this._map.pipe(
+    return this._display.pipe(
       map((o) => {
         return o?.source;
       }),
@@ -279,7 +275,7 @@ export class ZsMapStateService {
   }
 
   public setMapSource(source: ZsMapStateSource) {
-    this.updateMapState((draft) => {
+    this.updateDisplayState((draft) => {
       draft.source = source;
     });
   }
@@ -407,8 +403,14 @@ export class ZsMapStateService {
     );
   }
 
-  public observeSelectedFeature(): Observable<Feature<SimpleGeometry> | null> {
+  public observeSelectedFeature(): Observable<string | undefined> {
     return this._selectedFeature.asObservable();
+  }
+
+  public observeSelectedElement(): Observable<ZsMapBaseDrawElement<ZsMapDrawElementState> | undefined> {
+    return combineLatest([this.observeSelectedFeature(), this.observeDrawElements()]).pipe(
+      map(([featureId, elements]) => elements.find((e) => e.getId() === featureId)),
+    );
   }
 
   public addFeature(feature: GeoFeature) {
@@ -462,12 +464,12 @@ export class ZsMapStateService {
     return this._map.value.layers?.find((layer) => layer.id === this._display.value.activeLayer);
   }
 
-  public addDrawElement(element: ZsMapDrawElementState): void {
+  public addDrawElement(element: ZsMapDrawElementState): ZsMapDrawElementState | null {
     const activeLayerState = this.getActiveLayerState();
     if (activeLayerState?.type === ZsMapLayerStateType.DRAW) {
       const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
       defineDefaultValuesForSignature(sign);
-      const drawElement = {
+      const drawElement: ZsMapDrawElementState = {
         color: sign.color,
         protected: sign.protected,
         iconSize: sign.iconSize,
@@ -479,23 +481,28 @@ export class ZsMapStateService {
         style: sign.style,
         arrow: sign.arrow,
         strokeWidth: sign.strokeWidth,
-        fillStyle: { ...sign.fillStyle },
+        fillStyle: { ...sign.fillStyle, name: sign.fillStyle?.name ?? '' },
         fillOpacity: sign.fillOpacity,
         fontSize: sign.fontSize,
         id: uuidv4(),
         nameShow: true,
         ...element,
+        createdAt: new Date(),
       };
 
       this.updateMapState((draft) => {
         if (!draft.drawElements) {
           draft.drawElements = [];
         }
-        draft.drawElements.push(drawElement as ZsMapDrawElementState);
+        draft.drawElements.push(drawElement);
       });
 
       this.addRecentlyUsedElement(element);
+
+      return drawElement;
     }
+
+    return null;
   }
 
   private addRecentlyUsedElement(element: ZsMapDrawElementState) {
@@ -558,6 +565,14 @@ export class ZsMapStateService {
               }
             }
           }
+
+          // unsubscribe old elements
+          for (const id of Object.keys(this._drawElementCache)) {
+            if (!cache[id]) {
+              this._drawElementCache[id].unsubscribe();
+            }
+          }
+
           this._drawElementCache = cache;
           return elements;
         }
@@ -659,10 +674,6 @@ export class ZsMapStateService {
     return 'data:text/csv;charset=UTF-8,' + encodeURIComponent(lines.join('\r\n'));
   }
 
-  public loadSaveFileState(state: IZsMapSaveFileState): void {
-    this.reset(state.map, state.display);
-  }
-
   toggleSidebarContext(context: SidebarContext | null) {
     this.updateDisplayState((draft) => {
       draft.sidebarContext = draft.sidebarContext === context ? null : context;
@@ -679,7 +690,6 @@ export class ZsMapStateService {
   public filterCategory(category: string) {
     this.updateDisplayState((draft) => {
       const ids = Signs.SIGNS.filter((s) => s.kat === category).map((symbol) => symbol.id);
-
       ids.forEach((id) => {
         if (!id) return;
         this.toggleInArray(draft.hiddenSymbols, id);
@@ -687,9 +697,10 @@ export class ZsMapStateService {
     });
   }
 
-  public filterAllSymbols(active: boolean) {
+  public filterAll(active: boolean, featureTypes: string[]) {
     this.updateDisplayState((draft) => {
       draft.hiddenSymbols = active ? Signs.SIGNS.map((s) => s.id!) : [];
+      draft.hiddenFeatureTypes = active ? featureTypes : [];
     });
   }
 
@@ -697,18 +708,26 @@ export class ZsMapStateService {
     if (!symbolId) {
       return;
     }
-
     this.updateDisplayState((draft) => {
-      this.toggleInArray(draft.hiddenSymbols, symbolId);
+      this.toggleInArray<number>(draft.hiddenSymbols, symbolId);
     });
   }
 
-  private toggleInArray(symbols: number[], id: number) {
-    const index = symbols.indexOf(id);
+  public toggleFeatureType(featureType: string) {
+    if (!featureType) {
+      return;
+    }
+    this.updateDisplayState((draft) => {
+      this.toggleInArray<string>(draft.hiddenFeatureTypes, featureType);
+    });
+  }
+
+  private toggleInArray<T>(array: T[], value: T) {
+    const index = array.indexOf(value);
     if (index > -1) {
-      symbols.splice(index, 1);
+      array.splice(index, 1);
     } else {
-      symbols.push(id);
+      array.push(value);
     }
   }
 
@@ -716,6 +735,14 @@ export class ZsMapStateService {
     return this._display.pipe(
       map((o) => {
         return o?.hiddenSymbols;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+  public observeHiddenFeatureTypes() {
+    return this._display.pipe(
+      map((o) => {
+        return o?.hiddenFeatureTypes;
       }),
       distinctUntilChanged((x, y) => x === y),
     );
@@ -733,6 +760,14 @@ export class ZsMapStateService {
     return this._splitMode.asObservable();
   }
 
+  public setDrawHoleMode(drawHoleMode: boolean) {
+    this._drawHoleMode.next(drawHoleMode);
+  }
+
+  public toggleDrawHoleMode() {
+    this.setDrawHoleMode(!this._drawHoleMode.getValue());
+  }
+
   public observeDrawHoleMode(): Observable<boolean> {
     return this._drawHoleMode.asObservable();
   }
@@ -743,5 +778,25 @@ export class ZsMapStateService {
 
   public setReorderMode(reorderMode: boolean) {
     this._reorderMode.next(reorderMode);
+  }
+
+  public async refreshMapState(): Promise<void> {
+    if (this._session.getOperationId()) {
+      const sha256 = async (str: string): Promise<string> => {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
+      };
+      const { error, result } = await this._api.get<IZsMapOperation>('/api/operations/' + this._session.getOperationId());
+      if (error || !result) return;
+      if (result.mapState) {
+        const [oldDigest, newDigest] = await Promise.all([
+          sha256(JSON.stringify(this._map.value)),
+          sha256(JSON.stringify(result.mapState)),
+        ]);
+        if (oldDigest !== newDigest) {
+          this.setMapState(result.mapState);
+        }
+      }
+    }
   }
 }

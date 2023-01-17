@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   background: url('/assets/img/login-bg.webp') no-repeat center center fixed;
-  background-position: cover;
+  background-size: cover;
 }
 
 .title {
@@ -28,4 +28,18 @@
   .login-button {
     width: 100%;
   }
+}
+
+.login-logo {
+  height: 2rem;
+  width: 2rem;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+
+.option-wrapper {
+  display: flex;
+  align-items: center;
+  min-height: 2.8rem;
+  gap: 0.5rem;
 }

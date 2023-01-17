@@ -1,5 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, skip } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  filter,
+  interval,
+  map,
+  Observable,
+  of,
+  retry,
+  skip,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { db } from '../db/db';
 import { IAuthResult, IZsMapSession } from './session.interfaces';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,13 +20,20 @@ import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
 import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
+import { GUEST_USER_IDENTIFIER } from './userLogic';
+import { HttpErrorResponse } from '@angular/common/http';
+import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
   private _session = new BehaviorSubject<IZsMapSession | undefined>(undefined);
+  private _clearSession = new Subject<void>();
   private _state!: ZsMapStateService;
+  private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
+  private _loginParams: { identifier: string; password: string } | undefined;
+  private _isOnline = new BehaviorSubject<boolean>(true);
 
   constructor(private _router: Router, private _api: ApiService) {
     // prevents circular deps between session and api
@@ -22,20 +42,61 @@ export class SessionService {
     // save handler
     this._session.pipe(skip(1)).subscribe(async (session) => {
       if (session) {
-        await db.table('session').put(session);
+        await db.sessions.put(session);
+        await this._state?.refreshMapState();
+        const displayState = await db.displayStates.get({ id: session.operationId });
+        this._state.setDisplayState(displayState);
 
-        if (session?.operationId) {
-          const result = await this._api.get('/api/operations/' + session.operationId);
-          const mapState = result.data?.attributes?.mapState;
-          if (mapState) {
-            this._state.reset(mapState);
-          }
-        }
+        this._state
+          .observeDisplayState()
+          .pipe(takeUntil(this._clearSession))
+          .subscribe(async (displayState) => {
+            if (this._session.value?.operationId) {
+              db.displayStates.put({ ...displayState, id: this._session.value.operationId });
+            }
+          });
       } else {
-        await db.table('session').clear();
-        this._state.reset();
+        await db.sessions.clear();
+        this._clearSession.next();
       }
     });
+
+    // create refresh interval to verify that map state is up to date
+    interval(1000 * 60 * 1).subscribe(async () => {
+      if (this._session.value && this._session.value.operationId && this._isOnline.value) {
+        await this._state.refreshMapState();
+      }
+    });
+
+    // online/offline checks
+    window.addEventListener('online', () => {
+      this._isOnline.next(true);
+    });
+    window.addEventListener('offline', () => {
+      this._isOnline.next(false);
+    });
+    this._isOnline
+      .asObservable()
+      .pipe(skip(1), distinctUntilChanged())
+      .subscribe(async (isOnline) => {
+        if (isOnline) {
+          of([])
+            .pipe(
+              switchMap(async () => {
+                await this.refreshToken();
+              }),
+              retry({ count: 5, delay: 1000 }),
+              takeUntil(this._isOnline.asObservable().pipe(filter((isOnline) => !isOnline))),
+            )
+            .subscribe({
+              complete: () => {
+                // feature: show notification that connection was restored
+              },
+            });
+        } else {
+          // feature: show notification that connection was lost
+        }
+      });
   }
 
   public setStateService(state: ZsMapStateService): void {
@@ -44,6 +105,10 @@ export class SessionService {
 
   public getOrganizationId(): number | undefined {
     return this._session.value?.organizationId;
+  }
+
+  public getAuthError(): HttpErrorResponse | undefined {
+    return this._authError.value;
   }
 
   public observeOrganizationId(): Observable<number | undefined> {
@@ -66,29 +131,54 @@ export class SessionService {
   }
 
   public async loadSavedSession(): Promise<void> {
-    const sessions = await db.table('session').toArray();
+    const sessions = await db.sessions.toArray();
     if (sessions.length === 1) {
       const session: IZsMapSession = sessions[0];
       this._session.next(session);
       return;
     }
     if (sessions.length > 1) {
-      await db.table('session').clear();
+      await db.sessions.clear();
     }
     this._session.next(undefined);
   }
 
   public async login(params: { identifier: string; password: string }): Promise<void> {
-    const result = await this._api.post<IAuthResult>('/api/auth/local', params);
-    const meResult = await this._api.get<{ organization: { id: number } }>('/api/users/me?populate[0]=organization', { token: result.jwt });
-    const session: IZsMapSession = { id: uuidv4(), auth: result, operationId: undefined, organizationId: meResult.organization.id };
+    const { result, error: authError } = await this._api.post<IAuthResult>('/api/auth/local', params);
+    this._authError.next(authError);
+    if (authError || !result) return;
+    const { error, result: meResult } = await this._api.get<{ organization: { id: number } }>('/api/users/me?populate[0]=organization', {
+      token: result.jwt,
+    });
+    if (error || !meResult) return;
+
+    const session: IZsMapSession = {
+      id: uuidv4(),
+      auth: result,
+      operationId: undefined,
+      organizationId: meResult.organization.id,
+      locale: DEFAULT_LOCALE,
+    };
+    if (params.identifier === GUEST_USER_IDENTIFIER) {
+      session.guestLoginDateTime = new Date();
+    }
+
     this._session.next(session);
+    this._loginParams = params;
     this._router.navigateByUrl('/map');
   }
 
   public async logout(): Promise<void> {
     this._session.next(undefined);
+    this._loginParams = undefined;
     this._router.navigateByUrl('/login');
+  }
+
+  public async refreshToken(): Promise<void> {
+    if (!this._loginParams) {
+      return await this.logout();
+    }
+    return await this.login(this._loginParams);
   }
 
   public getToken(): string | undefined {
@@ -119,7 +209,23 @@ export class SessionService {
     );
   }
 
-  public getLanguage(): string {
-    return 'de-CH';
+  public setLocale(locale: Locale): void {
+    const currentSession = this._session.value;
+    if (currentSession) {
+      currentSession.locale = locale;
+      this._session.next(currentSession);
+    }
+  }
+
+  public getLocale(): Locale {
+    return this._session.value?.locale ?? DEFAULT_LOCALE;
+  }
+
+  public getGuestLoginDateTime() {
+    return this._session.value?.guestLoginDateTime;
+  }
+
+  public observeIsOnline(): Observable<boolean> {
+    return this._isOnline.pipe(distinctUntilChanged());
   }
 }

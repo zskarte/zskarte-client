@@ -1,20 +1,24 @@
-import { Observable } from 'rxjs';
-import { distinctUntilChanged, map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import Feature from 'ol/Feature';
+import Feature, { FeatureLike } from 'ol/Feature';
 import { DrawStyle } from '../draw-style';
 
 export abstract class ZsMapBaseLayer {
   protected _layer: Observable<ZsMapLayerState | undefined>;
   protected _olSource = new VectorSource();
+  protected _unsubscribe = new Subject<void>();
 
   protected _olLayer: VectorLayer<VectorSource> = new VectorLayer({
     source: this._olSource,
-    style: (feature, resolution) => {
-      return feature.get('hidden') === true ? null : DrawStyle.styleFunction(feature, resolution);
+    style: (feature: FeatureLike, resolution: number) => {
+      if (feature.get('hidden') === true) {
+        return undefined;
+      }
+      return DrawStyle.styleFunction(feature, resolution);
     },
   });
 
@@ -27,19 +31,26 @@ export abstract class ZsMapBaseLayer {
         return undefined;
       }),
       distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
     );
 
-    this.observePosition().subscribe((position) => {
-      this._olLayer.setZIndex(position ? position * 100 : 100);
-    });
+    this.observePosition()
+      .pipe(takeUntil(this._unsubscribe))
+      .subscribe((position) => {
+        this._olLayer.setZIndex(position ? position * 100 : 100);
+      });
 
-    this.observeIsVisible().subscribe((isVisible) => {
-      this._olLayer.setVisible(isVisible);
-    });
+    this.observeIsVisible()
+      .pipe(takeUntil(this._unsubscribe))
+      .subscribe((isVisible) => {
+        this._olLayer.setVisible(isVisible);
+      });
 
-    this.observeOpacity().subscribe((opacity) => {
-      this._olLayer.setOpacity(opacity);
-    });
+    this.observeOpacity()
+      .pipe(takeUntil(this._unsubscribe))
+      .subscribe((opacity) => {
+        this._olLayer.setOpacity(opacity);
+      });
   }
 
   public getId(): string {
@@ -66,6 +77,7 @@ export abstract class ZsMapBaseLayer {
         return o?.type;
       }),
       distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
     );
   }
 
@@ -75,6 +87,7 @@ export abstract class ZsMapBaseLayer {
         return o?.layerOpacity?.[this._id] === undefined ? 1 : o?.layerOpacity?.[this._id];
       }),
       distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
     );
   }
 
@@ -90,6 +103,7 @@ export abstract class ZsMapBaseLayer {
         return o?.name;
       }),
       distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
     );
   }
 
@@ -108,6 +122,7 @@ export abstract class ZsMapBaseLayer {
         return o?.layerVisibility?.[this._id];
       }),
       distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
     );
   }
 
@@ -126,6 +141,7 @@ export abstract class ZsMapBaseLayer {
         return o?.layerOrder.findIndex((o) => o === this._id) + 1;
       }),
       distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
     );
   }
 
@@ -181,4 +197,9 @@ export abstract class ZsMapBaseLayer {
   }
 
   public abstract draw(type: ZsMapDrawElementStateType): void;
+
+  public unsubscribe(): void {
+    this._unsubscribe.next();
+    this._unsubscribe.complete();
+  }
 }

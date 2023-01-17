@@ -218,6 +218,6 @@ div.flex {
   display: flex;
 }
 
-.mat-slide-toggle {
-  padding-bottom: 1.25em;
+.color-mode-toggle {
+  padding-bottom: 1.25rem;
 }

@@ -8,7 +8,7 @@ import {
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString } from 'ol/geom';
-import Geometry, { Type } from 'ol/geom/Geometry';
+import { Type } from 'ol/geom/Geometry';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import VectorSource from 'ol/source/Vector';
 import { Draw } from 'ol/interaction';
@@ -19,7 +19,6 @@ export class ZsMapFreehandDrawElement extends ZsMapBaseDrawElement<ZsMapFreehand
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.LINE);
-    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, this._id);
     this.observeCoordinates()
       .pipe(takeUntil(this._unsubscribe))
       .subscribe((coordinates) => {
@@ -35,9 +34,7 @@ export class ZsMapFreehandDrawElement extends ZsMapBaseDrawElement<ZsMapFreehand
       freehand: true,
       filterValue: 'free_hand_element',
     });
-    this._olFeature.on('change', () => {
-      this.setCoordinates(this._olLine.getCoordinates());
-    });
+    this.setCoordinates(this._olLine.getCoordinates());
     this._isInitialized = true;
     return;
   }
@@ -45,11 +42,12 @@ export class ZsMapFreehandDrawElement extends ZsMapBaseDrawElement<ZsMapFreehand
     return 'LineString';
   }
   protected static override _parseFeature(feature: Feature<LineString>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
-    state.addDrawElement({
+    const drawElement = state.addDrawElement({
       type: ZsMapDrawElementStateType.LINE,
       coordinates: feature.getGeometry()?.getCoordinates() || [],
       layer: element.layer,
     });
+    state.setSelectedFeature(drawElement?.id);
   }
 
   public static override getOlDrawHandler(state: ZsMapStateService, element: ZsMapElementToDraw): Draw {

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { Sign } from '../core/entity/sign';
 import { SessionService } from '../session/session.service';
 
-export const LOCALES: string[] = ['de', 'fr', 'en'];
-export const DEFAULT_LOCALE: string = LOCALES[0];
+export type Locale = 'de' | 'fr' | 'en';
+export const LOCALES: Locale[] = ['de', 'fr', 'en'];
+export const DEFAULT_LOCALE: Locale = LOCALES[0];
 
 @Injectable({
   providedIn: 'root',
@@ -116,16 +116,6 @@ export class I18NService {
       de: 'Die zu importierende Karte existiert bereits. Möchten Sie sie ersetzen? Ansonsten wird eine Kopie angelegt.',
       fr: 'La carte à importer existe déjà. Souhaitez-vous le remplacer ? Sinon, une copie est créée.',
       en: 'The map to be imported already exists. Do you want to replace it? If not, a copy will be created.',
-    },
-    deleteMap: {
-      de: 'Karte leeren',
-      en: 'Clear map',
-      fr: 'Vide la carte',
-    },
-    confirmDeleteMap: {
-      de: 'Wollen Sie diese Karte wirklich unwiederruflich löschen?',
-      en: 'Do you really want to delete this card irrevocably?',
-      fr: 'Voulez-vous vraiment supprimer cette carte de façon irrévocable ?',
     },
     editMap: {
       de: 'Sitzung bearbeiten',
@@ -412,11 +402,6 @@ export class I18NService {
       fr: 'Utilisez un fichier <strong>.zsjson</strong> pour importer une carte complète.',
       en: 'Use a <strong>.zsjson</strong> file to import a complete map.',
     },
-    confirmClearDrawing: {
-      de: 'Wollen Sie wirklich alle Elemente der Zeichnung entfernen? Die History der Karte bleibt dabei bestehen!',
-      en: 'Do you really want to clear all elements of this drawing? The history of the map will remain!',
-      fr: "Voulez-vous vraiment supprimer tous les éléments du dessin ? L'histoire de la carte restera !",
-    },
     confirmImportDrawing: {
       de: 'Wollen Sie die entsprechende Zeichnung wirklich importieren? Die aktuelle Zeichnung wird dabei ersetzt, die History bleibt aber bestehen!',
       en: 'Do you really want to import this drawing? The current drawing will be replaced - the history of the map will remain though!',
@@ -691,6 +676,16 @@ export class I18NService {
       de: 'Drucken',
       en: 'Print',
       fr: 'Imprimer',
+    },
+    protocol: {
+      de: 'Protokoll',
+      en: 'Protocol',
+      fr: 'Protocole',
+    },
+    protocolTable: {
+      de: 'Tabelle anzeigen',
+      en: 'Show Table',
+      fr: 'Afficher Tableau',
     },
     save: {
       de: 'Speichern',
@@ -1031,9 +1026,9 @@ export class I18NService {
       fr: 'TBD',
     },
     signPlace: {
-      de: 'Platz',
-      en: 'Place',
-      fr: 'Place',
+      de: 'Einrichtungen',
+      en: 'Facilities',
+      fr: 'Équipement',
     },
     signFks: {
       de: 'Feuerwehr',
@@ -1059,6 +1054,11 @@ export class I18NService {
       de: 'Formationen',
       en: 'Formations',
       fr: 'Formations',
+    },
+    signVehicles: {
+      de: 'Fahrzeuge',
+      en: 'Vehicles',
+      fr: 'Véhicules',
     },
     signEffect: {
       de: 'Auswirkungen',
@@ -1196,28 +1196,25 @@ export class I18NService {
       fr: 'Signatures récemment utilisées',
     },
   };
-  private _locale: string = DEFAULT_LOCALE;
-  private localeSource = new BehaviorSubject<string | null>(null);
-  public currentLocale = this.localeSource.asObservable();
 
-  public getLabelForSign(sign: Sign) {
-    const chosenLang = sign[this._session.getLanguage()];
+  public getLabelForSign(sign: Sign): string {
+    const chosenLang = sign[this._session.getLocale()];
     if (chosenLang) {
       return chosenLang;
     } else {
       for (const locale of LOCALES) {
         if (sign[locale]) {
-          return sign[locale];
+          return sign[locale] ?? '';
         }
       }
     }
-    return null;
+    return '';
   }
 
   public get(key: string): string {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this._session.getLanguage()];
+      const chosenLang = element[this._session.getLocale()];
       if (chosenLang) {
         return chosenLang;
       } else {
@@ -1233,7 +1230,7 @@ export class I18NService {
   public has(key: string): boolean {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this._session.getLanguage()];
+      const chosenLang = element[this._session.getLocale()];
       if (chosenLang) {
         return true;
       } else {

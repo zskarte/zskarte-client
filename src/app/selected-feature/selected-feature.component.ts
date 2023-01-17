@@ -9,12 +9,11 @@ import { ZsMapStateService } from '../state/state.service';
 import { Signs } from '../map-renderer/signs';
 import { CustomImageStoreService } from '../state/custom-image-store.service';
 import { DrawStyle } from '../map-renderer/draw-style';
-import { firstValueFrom, Observable, Subject } from 'rxjs';
+import { EMPTY, firstValueFrom, Observable, Subject } from 'rxjs';
 import { Feature } from 'ol';
 import { Point, SimpleGeometry } from 'ol/geom';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { ZsMapDisplayMode, ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
-import { ZsMapOLFeatureProps } from '../map-renderer/elements/base/ol-feature-props';
 import { EditCoordinatesComponent } from '../edit-coordinates/edit-coordinates.component';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
@@ -27,12 +26,13 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 export class SelectedFeatureComponent implements OnDestroy {
   groupedFeatures = null;
   editMode: Observable<boolean>;
-  selectedFeature: Observable<Feature<SimpleGeometry> | null>;
+  selectedFeature: Observable<Feature<SimpleGeometry> | undefined>;
   selectedSignature: Observable<Sign | undefined>;
   selectedDrawElement: Observable<ZsMapDrawElementState | undefined>;
   drawHoleMode: Observable<boolean>;
   mergeMode: Observable<boolean>;
   featureType?: string;
+  useColorPicker = false;
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _ngUnsubscribe = new Subject<void>();
 
@@ -56,24 +56,25 @@ export class SelectedFeatureComponent implements OnDestroy {
   ];
 
   constructor(public dialog: MatDialog, public i18n: I18NService, public zsMapStateService: ZsMapStateService) {
-    this.selectedFeature = this.zsMapStateService.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe));
-    this.selectedDrawElement = this.selectedFeature.pipe(
-      map((feature) => {
-        const id = feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
-        return this._drawElementCache[id]?.elementState;
-      }),
+    this.selectedFeature = this.zsMapStateService.observeSelectedElement().pipe(
+      takeUntil(this._ngUnsubscribe),
+      map((element) => element?.getOlFeature() as Feature<SimpleGeometry> | undefined),
     );
-    this.selectedSignature = this.selectedFeature.pipe(
-      map((feature) => {
-        const sig = feature?.get('sig');
+    this.selectedDrawElement = this.zsMapStateService.observeSelectedElement().pipe(
+      takeUntil(this._ngUnsubscribe),
+      switchMap((element) => element?.observeElement() ?? EMPTY),
+    );
+    this.selectedSignature = this.zsMapStateService.observeSelectedElement().pipe(
+      takeUntil(this._ngUnsubscribe),
+      map((element) => {
+        const sig = element?.getOlFeature()?.get('sig');
         if (sig) {
           return sig.id ? Signs.getSignById(sig.id) : { ...sig };
         }
-        return null;
       }),
     );
 
-    this.selectedFeature.subscribe((feature) => {
+    this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((feature) => {
       if (feature && feature.get('features')) {
         if (feature.get('features').length === 1) {
           this.groupedFeatures = null;
@@ -222,8 +223,14 @@ export class SelectedFeatureComponent implements OnDestroy {
     field: T | string,
     value: ZsMapDrawElementState[T],
   ) {
-    if (element.id) {
-      this.zsMapStateService.updateDrawElementState(element.id, field as T, value);
+    const el = this._drawElementCache[element?.id ?? ''];
+    if (el) {
+      // Update the signature in the UI separately from the state, to provide a smooth update of all properties
+      el.getOlFeature().get('sig')[field] = value;
+      el.getOlFeature().changed();
+      el.updateElementState((draft) => {
+        draft[field as T] = value;
+      });
     }
   }
 
@@ -234,32 +241,13 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
   }
 
-  addImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
-    const dialogRef = this.dialog.open(DrawingDialogComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result && result.src) {
-        this.updateProperty(drawElement, 'images', [...(drawElement.images ?? []), result.src]);
-        this.zsMapStateService.setSelectedFeature(selectedFeature);
-      }
-    });
-  }
-
-  removeImage(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>, src: string) {
-    const images = drawElement.images ?? [];
-    this.updateProperty(
-      drawElement,
-      'images',
-      images.filter((img) => img !== src),
-    );
-    this.zsMapStateService.setSelectedFeature(selectedFeature);
-  }
-
-  chooseSymbol(drawElement: ZsMapDrawElementState, selectedFeature: Feature<SimpleGeometry>) {
+  chooseSymbol(drawElement: ZsMapDrawElementState) {
     const dialogRef = this.dialog.open(DrawingDialogComponent);
     dialogRef.afterClosed().subscribe((result: Sign) => {
       if (result) {
         this.updateProperty(drawElement, 'symbolId', result.id);
-        this.zsMapStateService.setSelectedFeature(selectedFeature);
+
+        this.zsMapStateService.setSelectedFeature(drawElement.id);
       }
     });
   }
@@ -279,6 +267,17 @@ export class SelectedFeatureComponent implements OnDestroy {
           //geometry.setCoordinates(result);
         }
       });
+    }
+  }
+
+  copy(drawElement: ZsMapDrawElementState) {
+    if (!drawElement.symbolId) {
+      return;
+    }
+    const layer = this.zsMapStateService.getActiveLayer();
+    if (layer) {
+      this.zsMapStateService.copySymbol(drawElement.symbolId, layer.getId());
+      this.zsMapStateService.resetSelectedFeature();
     }
   }
 
@@ -310,11 +309,8 @@ export class SelectedFeatureComponent implements OnDestroy {
     return DrawStyle.getImageUrl(file);
   }
 
-  async drawHole() {
-    const isPolygon = await this.isPolygon();
-    if (isPolygon) {
-      //this.sharedState.updateDrawHoleMode(!this.drawHoleMode);
-    }
+  drawHole() {
+    this.zsMapStateService.toggleDrawHoleMode();
   }
 
   async merge(merge: boolean) {
