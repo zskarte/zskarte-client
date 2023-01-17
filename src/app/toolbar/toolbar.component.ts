@@ -16,6 +16,7 @@ import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-el
 import { DatePipe } from '@angular/common';
 import { mapProtocolEntry, ProtocolEntry } from '../helper/mapProtocolEntry';
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
+import { Buffer } from 'buffer';
 
 @Component({
   selector: 'app-toolbar',
@@ -169,9 +170,10 @@ export class ToolbarComponent {
       lines.push('"' + entryRow.join('";"') + '"');
     });
 
-    this.downloadCSVData = this.sanitizer.bypassSecurityTrustUrl(
-      'data:text/csv;charset=UTF-8,' + encodeURIComponent('\ufeff' + lines.join('\r\n')),
-    );
+    // ufeff is the BOM for excel to recognize utf8
+    const csvBuffer = Buffer.from('\ufeff' + lines.join('\r\n'), 'utf8');
+    const csvString = csvBuffer.toString();
+    this.downloadCSVData = this.sanitizer.bypassSecurityTrustUrl('data:text/csv;charset=UTF-8,' + encodeURIComponent(csvString));
   }
 
   print(): void {
