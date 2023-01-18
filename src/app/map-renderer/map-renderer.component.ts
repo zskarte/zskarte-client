@@ -740,12 +740,14 @@ export class MapRendererComponent implements AfterViewInit {
     this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
     this._geolocation.setTracking(this.isDevicePositionFlagVisible);
 
-    this._geolocation.on('change:position', () => {
+    this._geolocation.once('change:position', () => {
       const coordinates = this._geolocation.getPosition();
-      if (!coordinates) return;
-      console.log(coordinates);
 
       this._devicePositionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
+      this._map.getView().animate({
+        center: coordinates,
+        zoom: 14,
+      });
       this._devicePositionFlag.setGeometry(this._devicePositionFlagLocation);
       this._devicePositionFlag.changed();
     });
