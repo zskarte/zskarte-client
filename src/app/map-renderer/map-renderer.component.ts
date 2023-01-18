@@ -5,7 +5,7 @@ import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, firstValueFrom, map, Observable, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -14,7 +14,7 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { SidebarContext } from '../state/interfaces';
+import { SidebarContext, ZsMapDrawElementState } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Overlay } from 'ol';
@@ -81,7 +81,7 @@ export class MapRendererComponent implements AfterViewInit {
   public mouseProjection: Observable<string>;
   public availableProjections = availableProjections;
   public selectedProjectionIndex = 0;
-  public selectedFeature: Observable<Feature<SimpleGeometry> | null>;
+  public selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | undefined>(undefined);
   public selectedFeatureCoordinates: Observable<string>;
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
 
@@ -91,18 +91,12 @@ export class MapRendererComponent implements AfterViewInit {
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
   ) {
-    this.selectedFeature = combineLatest([
-      this._state.observeDrawElements(),
-      _state.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe)),
-    ]).pipe(
-      map(([elements, featureId]) => {
-        if (!featureId) {
-          return null;
-        }
-        const element = elements.find((e) => e.getId() === featureId);
-        return element?.getOlFeature() as Feature<SimpleGeometry>;
-      }),
-    );
+    _state
+      .observeSelectedElement()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((element) => {
+        this.selectedFeature.next(element?.getOlFeature() as Feature<SimpleGeometry>);
+      });
     this.sidebarContext = this._state.observeSidebarContext();
     this.selectedFeatureCoordinates = this.selectedFeature.pipe(
       map((feature) => {
@@ -152,9 +146,7 @@ export class MapRendererComponent implements AfterViewInit {
       features: this._modifyCache,
       condition: (event) => {
         if (this._modify['vertexFeature_'] && this._modify['lastPointerEvent_'] && this.areFeaturesModifiable()) {
-          this.removeButton?.setPosition(event.coordinate);
-          this.rotateButton?.setPosition(event.coordinate);
-          this.copyButton?.setPosition(event.coordinate);
+          this.setEditButtonPosition(event.coordinate);
           this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
           this.toggleEditButtons(true);
         }
@@ -171,9 +163,7 @@ export class MapRendererComponent implements AfterViewInit {
       if (this._modify['vertexFeature_']) {
         this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
       }
-      this.removeButton?.setPosition(e.mapBrowserEvent.coordinate);
-      this.copyButton?.setPosition(e.mapBrowserEvent.coordinate);
-      this.rotateButton?.setPosition(e.mapBrowserEvent.coordinate);
+      this.setEditButtonPosition(e.mapBrowserEvent.coordinate);
       this.toggleEditButtons(true);
       this._currentSketch = undefined;
       e.features.forEach((feature) => {
@@ -192,6 +182,10 @@ export class MapRendererComponent implements AfterViewInit {
     // TODO
     const translate = new Translate({
       features: select.getFeatures(),
+    });
+
+    translate.on('translatestart', () => {
+      this.toggleEditButtons(false);
     });
 
     translate.on('translateend', (e) => {
@@ -667,6 +661,17 @@ export class MapRendererComponent implements AfterViewInit {
     this.toggleButton(allowRotation, this.copyButton?.getElement());
   }
 
+  /**
+   * Sets the position of the editButtons around an Symbol
+   * @param coordinates Coordinates of the symbol
+   * @param moveDeleteButton false if it should not move the delete button
+   */
+  setEditButtonPosition(coordinates: number[]) {
+    this.removeButton?.setPosition(coordinates);
+    this.rotateButton?.setPosition(coordinates);
+    this.copyButton?.setPosition(coordinates);
+  }
+
   toggleButton(allow: boolean, el?: HTMLElement) {
     if (el) {
       // TODO: include historyMode
@@ -706,7 +711,7 @@ export class MapRendererComponent implements AfterViewInit {
     this.mouseCoordinates.next(this.mousePosition.value);
   }
 
-  getFeatureCoordinates(feature: Feature | null): number[] {
+  getFeatureCoordinates(feature: Feature | null | undefined): number[] {
     const center = getCenter(feature?.getGeometry()?.getExtent() ?? []);
     return this.transformToCurrentProjection(center) ?? [];
   }

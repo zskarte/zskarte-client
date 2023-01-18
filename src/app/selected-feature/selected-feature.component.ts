@@ -253,18 +253,17 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   async editCoordinates() {
-    const selectedFeature = await firstValueFrom(this.selectedFeature);
-    if (selectedFeature) {
-      const geometry = <Point>selectedFeature.getGeometry();
+    const selectedElement = await firstValueFrom(this.zsMapStateService.observeSelectedElement());
+    if (selectedElement) {
       const editDialog = this.dialog.open(EditCoordinatesComponent, {
         data: {
-          geometry: selectedFeature.getGeometry()?.getType(),
-          coordinates: JSON.stringify(geometry.getCoordinates()),
+          geometry: selectedElement.getOlFeature().getGeometry()?.getType(),
+          coordinates: JSON.stringify(selectedElement.elementState?.coordinates),
         },
       });
       editDialog.afterClosed().subscribe((result) => {
         if (result) {
-          //geometry.setCoordinates(result);
+          selectedElement.setCoordinates(result);
         }
       });
     }
