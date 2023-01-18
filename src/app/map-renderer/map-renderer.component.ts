@@ -411,6 +411,15 @@ export class MapRendererComponent implements AfterViewInit {
               });
           }
         }
+
+        // Removed old elements
+        for (const element of Object.values(this._drawElementCache)) {
+          if (elements.every((e) => e.getId() != element.element.getId())) {
+            // New elements do not contain element from cache
+            this._state.getLayer(element.layer || '').removeOlFeature(element.element.getOlFeature());
+            delete this._drawElementCache[element.element.getId()];
+          }
+        }
       });
 
     this._state

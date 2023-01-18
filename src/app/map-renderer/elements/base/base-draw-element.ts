@@ -61,6 +61,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       fillOpacity: state.fillOpacity,
       fontSize: state.fontSize,
       text: state['text'],
+      zindex: state.zindex,
     });
   }
 
