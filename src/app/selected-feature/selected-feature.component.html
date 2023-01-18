@@ -35,7 +35,9 @@
               </div>
             </div>
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
-
+            <mat-checkbox [(ngModel)]="useColorPicker" class="color-mode-toggle">
+              {{ i18n.get('colorPickerMode') }}
+            </mat-checkbox>
             <ng-container *ngIf="editMode | async">
               <mat-form-field floatLabel="always">
                 <mat-label>{{ i18n.get('color') }}:</mat-label>
@@ -50,18 +52,12 @@
                 <ng-template #colorDropdown>
                   <mat-select [ngModel]="drawElement.color" (ngModelChange)="updateProperty(drawElement, 'color', $event)">
                     <mat-option class="color-option" *ngFor="let color of quickColors" [value]="color.value">
-                      <div class="flex">
-                        <div class="color-display" [style.background-color]="color.value"></div>
-                        <span>{{ i18n.get(color.viewValue) }}</span>
-                      </div>
+                      <div class="categoryDot" [style.background-color]="color.value"></div>
+                      {{ i18n.get(color.viewValue) }}
                     </mat-option>
                   </mat-select>
                 </ng-template>
               </mat-form-field>
-              <mat-slide-toggle [(ngModel)]="useColorPicker" class="color-mode-toggle">
-                {{ i18n.get('colorPickerMode') }}
-              </mat-slide-toggle>
-              <mat-divider></mat-divider>
             </ng-container>
             <mat-checkbox
               [ngModel]="drawElement.protected"
@@ -75,17 +71,15 @@
               *ngIf="editMode && (selectedSignature.type === 'Point' || selectedSignature.src)"
               >{{ i18n.get('labelShow') }}</mat-checkbox
             >
-            <div class="label-light">
-              <div *ngIf="selectedSignature.createdAt" class="label-right">
-                {{ selectedSignature.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
-              </div>
-              <div class="clearfix"></div>
-              <div *ngIf="selectedSignature.size" class="label-right">
-                {{ selectedSignature.type === 'LineString' ? i18n.get('distance') : i18n.get('area') }}:
-                <span [innerHTML]="selectedSignature.size"></span>
-              </div>
-              <div class="clearfix"></div>
+            <div *ngIf="selectedSignature.createdAt" class="label-right">
+              {{ selectedSignature.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
             </div>
+            <div class="clearfix"></div>
+            <div *ngIf="selectedSignature.size" class="label-right">
+              {{ selectedSignature.type === 'LineString' ? i18n.get('distance') : i18n.get('area') }}:
+              <span [innerHTML]="selectedSignature.size"></span>
+            </div>
+            <div class="clearfix"></div>
           </mat-card-content>
         </mat-card>
 
@@ -112,11 +106,13 @@
             <mat-expansion-panel-header>
               <mat-panel-title>{{ i18n.get('symbol') }}</mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-flat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
-              <i class="material-icons">stars</i><span>{{ i18n.get('selectSymbol') }}</span>
+            <button mat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
+              <mat-icon>stars</mat-icon>
+              {{ i18n.get('selectSymbol') }}
             </button>
-            <button mat-flat-button *ngIf="drawElement.symbolId" (click)="chooseSymbol(drawElement)">
-              <i class="material-icons">cached</i><span>{{ i18n.get('replaceSymbol') }}</span>
+            <button mat-button *ngIf="drawElement.symbolId" (click)="chooseSymbol(drawElement)">
+              <mat-icon>cached</mat-icon>
+              {{ i18n.get('replaceSymbol') }}
             </button>
             <div class="filter">
               <mat-checkbox
@@ -127,7 +123,6 @@
                 >{{ i18n.get('hideSymbol') }}</mat-checkbox
               >
             </div>
-            <mat-form-field *ngIf="drawElement.symbolId"><input type="text" matInput hidden value="-" /> </mat-form-field>
             <mat-form-field *ngIf="drawElement.symbolId">
               <mat-label>{{ i18n.get('symbolSize') }}</mat-label>
               <mat-slider [max]="2" [min]="0.5" [step]="0.1">
@@ -154,7 +149,7 @@
               >
             </mat-form-field>
 
-            <mat-form-field *ngIf="drawElement && !drawElement.hideIcon">
+            <mat-form-field *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('rotate') }}</mat-label>
               <mat-slider [max]="180" [min]="-180" [step]="1">
                 <input matSliderThumb [ngModel]="drawElement.rotation" (ngModelChange)="updateProperty(drawElement, 'rotation', $event)" />
@@ -162,7 +157,7 @@
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
 
-            <mat-form-field *ngIf="drawElement && !drawElement.hideIcon">
+            <mat-form-field *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('opacity') }}:</mat-label>
               <mat-slider [max]="1" [min]="0.01" [step]="0.05">
                 <input
@@ -303,20 +298,29 @@
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>
           </mat-expansion-panel-header>
-          <button mat-flat-button (click)="bringToFront()">
-            <i class="material-icons">arrow_upward</i><span>{{ i18n.get('moveToTop') }}</span>
+          <button mat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
+            <mat-icon>stars</mat-icon>
+            {{ i18n.get('selectSymbol') }}
           </button>
-          <button mat-flat-button (click)="sendToBack()">
-            <i class="material-icons">arrow_downward</i><span>{{ i18n.get('moveToBottom') }}</span>
+          <button mat-button (click)="bringToFront()">
+            <mat-icon>arrow_upward</mat-icon>
+            {{ i18n.get('moveToTop') }}
           </button>
-          <button mat-flat-button (click)="split()" *ngIf="canSplit">
-            <i class="material-icons">call_split</i><span>{{ i18n.get('ungroup') }}</span>
+          <button mat-button (click)="sendToBack()">
+            <mat-icon>arrow_downward</mat-icon>
+            {{ i18n.get('moveToBottom') }}
           </button>
-          <button mat-flat-button (click)="merge(true)" *ngIf="isPolygon()">
-            <i class="material-icons">call_merge</i><span>{{ i18n.get('group') }}</span>
+          <button mat-button (click)="split()" *ngIf="canSplit">
+            <mat-icon>call_split</mat-icon>
+            {{ i18n.get('ungroup') }}
           </button>
-          <button mat-flat-button (click)="drawHole()" *ngIf="isPolygon()">
-            <i class="material-icons">vignette</i><span>{{ i18n.get('drawHole') }}</span>
+          <button mat-button (click)="merge(true)" *ngIf="isPolygon()">
+            <mat-icon>call_merge</mat-icon>
+            {{ i18n.get('group') }}
+          </button>
+          <button mat-button (click)="drawHole()" *ngIf="isPolygon()">
+            <mat-icon>vignette</mat-icon>
+            {{ i18n.get('drawHole') }}
           </button>
           <button mat-flat-button (click)="editCoordinates()">
             <i class="material-icons">format_shapes</i><span>{{ i18n.get('defineCoordinates') }}</span>
