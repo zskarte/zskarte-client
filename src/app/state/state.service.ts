@@ -35,7 +35,6 @@ import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -119,6 +118,30 @@ export class ZsMapStateService {
       this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId });
     }
   }
+
+  public drawSignatureAtCoordinate(coordinates: number[]) {
+    const layer = this._display.value.activeLayer;
+    if (layer) {
+
+      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
+      dialogRef.afterClosed().subscribe((result: Sign) => {
+        if (result) {
+          console.log(result)
+          if(result.type === 'Point') {
+            const element: ZsMapDrawElementState = {
+              type: ZsMapDrawElementStateType.SYMBOL,
+              coordinates: coordinates,
+              layer: layer,
+              symbolId: result.id,
+            }
+            this.addDrawElement(element);
+          } else {
+            this._snackBar.open(this.i18n.get('addSignatureManually'), this.i18n.get('ok'), { duration: 5000 });
+            this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId: result.id });
+          }}
+        });
+      }
+    }
 
   // drawing
   public drawElement(type: ZsMapDrawElementStateType, layer: string): void {

@@ -1210,6 +1210,11 @@ export class I18NService {
       en: 'Recently used signatures',
       fr: 'Signatures récemment utilisées',
     },
+    addSignatureManually: {
+      de: 'Bitte fügen Sie die Signatur manuell ein',
+      en: 'Please add the signature manually',
+      fr: 'Veuillez ajouter la signature manuellement',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {
