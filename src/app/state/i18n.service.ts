@@ -1221,7 +1221,7 @@ export class I18NService {
       fr: 'Veuillez ajouter la signature manuellement',
     },
   };
- 
+
   public getLabelForSign(sign: Sign): string {
     const chosenLang = sign[this._session.getLocale()];
     if (chosenLang) {
