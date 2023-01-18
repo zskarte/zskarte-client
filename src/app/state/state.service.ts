@@ -198,6 +198,19 @@ export class ZsMapStateService {
     });
   }
 
+  public observeHistoryMode(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => {
+        return o.displayMode === ZsMapDisplayMode.HISTORY;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public saveDisplayState(): void {
+    localStorage.setItem('tempDisplayState', JSON.stringify(this._display.value));
+  }
+
   public observeDisplayState(): Observable<IZsMapDisplayState> {
     return this._display.asObservable();
   }
