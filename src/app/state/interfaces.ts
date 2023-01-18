@@ -33,6 +33,7 @@ export enum ZsMapDisplayMode {
 }
 
 export interface IZsMapDisplayState {
+  id?: number;
   version: number;
   displayMode: ZsMapDisplayMode;
   mapOpacity: number;
@@ -49,6 +50,7 @@ export interface IZsMapDisplayState {
   sidebarContext: SidebarContext | null;
   positionFlag: IPositionFlag;
   hiddenSymbols: number[];
+  hiddenFeatureTypes: string[];
 }
 
 export type ZsMapLayerState = IZsMapDrawLayerState | IZsMapGeoDataLayerState;
@@ -91,6 +93,8 @@ export interface IZsMapBaseElementState {
   id?: string;
   layer?: string;
   coordinates?: number[] | number[][];
+  createdAt?: number;
+  modifiedAt?: number;
 }
 
 export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
@@ -114,6 +118,7 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   fillOpacity?: number;
   fontSize?: number;
   images?: string[];
+  zindex?: number;
 }
 
 export const drawElementDefaults = {

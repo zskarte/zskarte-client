@@ -12,12 +12,11 @@
 .currentLocation {
   display: flex;
   align-items: center;
-  line-height: 1.5em;
 }
 
 .currentLocation img {
-  height: 1.5em;
-  margin-right: 1em;
+  height: 30px;
+  margin-right: 6px;
 }
 
 .currentLocationLabel {
@@ -32,14 +31,6 @@
 .alignCenter {
   display: flex;
   align-items: center;
-}
-
-.inputField {
-  width: 100%;
-  max-width: 350px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
 }
 
 .mat-mdc-form-field-bottom-align {

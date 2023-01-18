@@ -61,13 +61,16 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       fillOpacity: state.fillOpacity,
       fontSize: state.fontSize,
       text: state['text'],
+      zindex: state.zindex,
     });
   }
 
   private _doInitialize(element: IZsMapBaseDrawElementState): void {
     if (!this._isInitialized) {
       this._initialize(element);
+      this._setSignatureState(element as T);
     }
+
     this._isInitialized = true;
   }
 
@@ -84,17 +87,24 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     );
   }
 
-  private _debouncedSetCoordinates = debounce((coordinates: number[] | number[][] | undefined) => {
+  private _debouncedUpdateElementState = debounce((updateFn: (draft: ZsMapDrawElementState) => void) => {
     this._state.updateMapState((draft) => {
       const element = draft.drawElements?.find((o) => o.id === this._id);
       if (element) {
-        element.coordinates = coordinates;
+        updateFn(element);
+        element.modifiedAt = Date.now();
       }
     });
   }, 250);
 
+  public updateElementState(updateFn: (draft: ZsMapDrawElementState) => void) {
+    this._debouncedUpdateElementState(updateFn);
+  }
+
   public setCoordinates(coordinates: number[] | number[][] | undefined): void {
-    this._debouncedSetCoordinates(coordinates);
+    this._debouncedUpdateElementState((draft: ZsMapDrawElementState) => {
+      draft.coordinates = coordinates;
+    });
   }
 
   public observeLayer(): Observable<string | undefined> {

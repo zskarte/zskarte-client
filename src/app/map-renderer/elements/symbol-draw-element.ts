@@ -38,12 +38,6 @@ export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDraw
     }
 
     this._olFeature.setGeometry(this._olGeometryItem);
-    this._olFeature.set('sig', Signs.getSignById(element.symbolId));
-    // handle changes on the map, eg. translate
-    this._olFeature.on('change', () => {
-      this.setCoordinates(this._olGeometryItem?.getCoordinates() ?? []);
-    });
-    this._isInitialized = true;
     return;
   }
 

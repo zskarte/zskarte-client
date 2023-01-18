@@ -29,16 +29,6 @@ export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawE
   protected _initialize(element: ZsMapSymbolDrawElementState): void {
     this._olPolygon = new Polygon(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olPolygon);
-    this._olFeature.set('sig', {
-      type: 'Polygon',
-      src: null,
-      filterValue: 'not_labeled_polygon',
-    });
-    this._olFeature.on('change', () => {
-      // TODO types
-      this.setCoordinates(this._olPolygon.getCoordinates() as any);
-    });
-    this._isInitialized = true;
   }
   protected static override _getOlDrawType(): Type {
     return 'Polygon';

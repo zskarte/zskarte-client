@@ -1,28 +1,42 @@
 <form class="login-form">
   <mat-card>
-    <div class="title">
-      <mat-card-title-group>
-        <mat-card-title>Login</mat-card-title>
-        <img mat-card-sm-image src="/assets/img/favicon/apple-icon.png" />
-      </mat-card-title-group>
-    </div>
+    <mat-card-header class="title">
+      <mat-card-title>Login</mat-card-title>
+      <img mat-card-sm-image src="/assets/img/favicon/apple-icon.png" />
+    </mat-card-header>
 
     <mat-card-content>
       <mat-form-field class="full-width" appearance="fill">
         <mat-label>ZSO</mat-label>
-        <mat-select [(ngModel)]="identifier" name="identifier">
-          <mat-option *ngFor="let organization of organizations | async" [value]="organization.identifier">{{
-            organization.name
-          }}</mat-option>
+        <mat-select [(ngModel)]="selectedOrganization" name="identifier">
+          <mat-select-trigger>
+            <div class="option-wrapper">
+              <img
+                *ngIf="selectedOrganization?.logoSrc"
+                [src]="selectedOrganization?.logoSrc"
+                [srcset]="selectedOrganization?.logoSrcSet"
+                class="login-logo"
+              />
+              {{ selectedOrganization?.name }}
+            </div>
+          </mat-select-trigger>
+          <mat-option *ngFor="let organization of organizations | async" [value]="organization">
+            <div class="option-wrapper">
+              <img *ngIf="organization.logoSrc" [src]="organization.logoSrc" [srcset]="organization.logoSrcSet" class="login-logo" />
+              {{ organization.name }}
+            </div>
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field class="full-width" appearance="fill">
         <mat-label>Passwort</mat-label>
         <input matInput type="password" placeholder="Passwort eingeben" [(ngModel)]="password" name="password" />
       </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions>
+      <mat-error *ngIf="session.getAuthError()">{{
+        session.getAuthError()?.error?.error?.message || session.getAuthError()?.statusText || session.getAuthError()?.message
+      }}</mat-error>
+
       <button class="login-button" mat-raised-button color="primary" (click)="login()">Login</button>
-    </mat-card-actions>
+    </mat-card-content>
   </mat-card>
 </form>

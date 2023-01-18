@@ -7,6 +7,11 @@ import { Patch } from 'immer';
 import { debounce } from '../helper/debounce';
 import { ZsMapStateService } from '../state/state.service';
 
+interface PatchExtended extends Patch {
+  timestamp: Date;
+  identifier: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -15,12 +20,26 @@ export class SyncService {
   private _socket: Socket | undefined;
   private _mapStatePatchQueue: Patch[] = [];
   private _state!: ZsMapStateService;
+  private _isOnline = true;
+  private _connectingPromise: Promise<void> | undefined;
+
   constructor(private _api: ApiService, private _session: SessionService) {
     this._session.observeOperationId().subscribe((operationId) => {
       if (operationId) {
         this._reconnect();
       } else {
         this._disconnect();
+      }
+    });
+
+    this._session.observeIsOnline().subscribe(async (isOnline) => {
+      this._isOnline = isOnline;
+      if (!isOnline) {
+        this._disconnect();
+      } else {
+        await this._publishPatches();
+        await this._connect();
+        await this._state.refreshMapState();
       }
     });
   }
@@ -39,7 +58,11 @@ export class SyncService {
       return;
     }
 
-    return await new Promise((resolve, reject) => {
+    if (this._connectingPromise) {
+      return await this._connectingPromise;
+    }
+
+    this._connectingPromise = new Promise<void>((resolve, reject) => {
       this._connectionId = uuidv4();
       const token = this._session.getToken();
       const url = this._api.getUrl();
@@ -66,11 +89,17 @@ export class SyncService {
         console.warn('Disconnected from websocket');
         this._disconnect();
       });
-      this._socket.on('state:patches', (patches) => {
-        this._state.applyMapStatePatches(patches);
+      this._socket.on('state:patches', (patches: PatchExtended[]) => {
+        const otherPatches = patches.filter((p) => p.identifier !== this._connectionId);
+        if (otherPatches.length === 0) return;
+        this._state.applyMapStatePatches(otherPatches);
       });
       this._socket.connect();
+    }).finally(() => {
+      this._connectingPromise = undefined;
     });
+
+    return await this._connectingPromise;
   }
 
   private async _disconnect(): Promise<void> {
@@ -88,24 +117,26 @@ export class SyncService {
 
   public publishMapStatePatches(patches: Patch[]): void {
     this._mapStatePatchQueue.push(...patches);
-    this._publishPatches();
+    this._publishPatchesDebounced();
   }
 
-  private _publishPatches = debounce(async () => {
-    if (this._mapStatePatchQueue.length > 0 && this._session.getToken()) {
-      const patches = [...this._mapStatePatchQueue];
-      this._mapStatePatchQueue = [];
-      try {
-        // TODO implement retry logic
-        await this._api.post('/api/operations/mapstate/patch', patches, {
-          headers: {
-            operationId: this._session.getOperationId() + '',
-            identifier: this._connectionId,
-          },
-        });
-      } catch (err) {
-        console.error('Error while publishing patches', err);
+  private async _publishPatches(): Promise<void> {
+    if (this._mapStatePatchQueue.length > 0 && this._session.getToken() && this._isOnline) {
+      const patches = this._mapStatePatchQueue.map((p) => ({ ...p, timestamp: new Date(), identifier: this._connectionId }));
+      const { error } = await this._api.post('/api/operations/mapstate/patch', patches, {
+        headers: {
+          operationId: this._session.getOperationId() + '',
+          identifier: this._connectionId,
+        },
+      });
+      if (error) {
+        return;
       }
+      this._mapStatePatchQueue = [];
     }
-  }, 500);
+  }
+
+  private _publishPatchesDebounced = debounce(async () => {
+    this._publishPatches();
+  }, 250);
 }

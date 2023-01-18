@@ -20,6 +20,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
@@ -40,7 +41,6 @@ import { ClockComponent } from './clock/clock.component';
 import { FabMenuComponent } from './fab-menu/fab-menu.component';
 import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
-import { ExportDialogComponent } from './export-dialog/export-dialog.component';
 import { CreditsComponent } from './credits/credits.component';
 import { SelectedFeatureComponent } from './selected-feature/selected-feature.component';
 import { DetailImageViewComponent } from './detail-image-view/detail-image-view.component';
@@ -50,12 +50,17 @@ import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filte
 import { SessionService } from './session/session.service';
 
 import { registerLocaleData } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
 import { LoginComponent } from './session/login/login.component';
 import { MapComponent } from './map/map.component';
 import { AppRoutingModule } from './app-routing.module';
 import { RecentlyUsedSignsComponent } from './recently-used-signs/recently-used-signs.component';
 import { OperationsComponent } from './session/operations/operations.component';
+import { StackComponent } from './stack/stack.component';
+import { ProtocolTableComponent } from './protocol-table/protocol-table.component';
+import { MatSortModule } from '@angular/material/sort';
+
 registerLocaleData(localeCH);
 
 export function appFactory(session: SessionService) {
@@ -80,7 +85,6 @@ export function appFactory(session: SessionService) {
     FabMenuComponent,
     DrawingDialogComponent,
     TextDialogComponent,
-    ExportDialogComponent,
     CreditsComponent,
     SelectedFeatureComponent,
     DetailImageViewComponent,
@@ -89,6 +93,8 @@ export function appFactory(session: SessionService) {
     MapComponent,
     OperationsComponent,
     RecentlyUsedSignsComponent,
+    StackComponent,
+    ProtocolTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -108,6 +114,7 @@ export function appFactory(session: SessionService) {
     MatSidenavModule,
     MatGridListModule,
     MatSnackBarModule,
+    MatToolbarModule,
     MatTooltipModule,
     MatButtonModule,
     MatSelectModule,
@@ -121,6 +128,7 @@ export function appFactory(session: SessionService) {
     MatRadioModule,
     MatListModule,
     MatFormFieldModule,
+    MatSortModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-CH' },
@@ -130,6 +138,7 @@ export function appFactory(session: SessionService) {
       deps: [SessionService],
       multi: true,
     },
+    DatePipe,
   ],
   bootstrap: [AppComponent],
 })

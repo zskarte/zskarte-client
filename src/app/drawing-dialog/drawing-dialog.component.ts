@@ -44,8 +44,8 @@ export class DrawingDialogComponent implements OnInit {
     // )
 
     this.allSigns = Signs.SIGNS.sort((a, b) => {
-      let aValue = a[this._session.getLanguage()];
-      let bValue = b[this._session.getLanguage()];
+      let aValue = a[this._session.getLocale()];
+      let bValue = b[this._session.getLocale()];
       aValue = aValue ? aValue.toLowerCase() : '';
       bValue = bValue ? bValue.toLowerCase() : '';
       return aValue.localeCompare(bValue);

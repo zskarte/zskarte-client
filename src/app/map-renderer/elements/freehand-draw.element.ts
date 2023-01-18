@@ -28,16 +28,6 @@ export class ZsMapFreehandDrawElement extends ZsMapBaseDrawElement<ZsMapFreehand
   protected _initialize(element: IZsMapBaseDrawElementState): void {
     this._olLine = new LineString(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olLine);
-    this._olFeature.set('sig', {
-      type: 'LineString',
-      src: null,
-      freehand: true,
-      filterValue: 'free_hand_element',
-    });
-    this._olFeature.on('change', () => {
-      this.setCoordinates(this._olLine.getCoordinates());
-    });
-    this._isInitialized = true;
     return;
   }
   protected static override _getOlDrawType(): Type {

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { Sign } from '../core/entity/sign';
 import { SessionService } from '../session/session.service';
 
-export const LOCALES: string[] = ['de', 'fr', 'en'];
-export const DEFAULT_LOCALE: string = LOCALES[0];
+export type Locale = 'de' | 'fr' | 'en';
+export const LOCALES: Locale[] = ['de', 'fr', 'en'];
+export const DEFAULT_LOCALE: Locale = LOCALES[0];
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +33,7 @@ export class I18NService {
       fr: 'Langue',
     },
     symbol: {
-      de: 'Symbol',
+      de: 'Signatur',
       en: 'Symbol',
       fr: 'Symbole',
     },
@@ -88,9 +88,9 @@ export class I18NService {
       en: 'Draw',
     },
     createOrLoad: {
-      de: 'Sitzung erstellen / laden',
-      en: 'Create / load session',
-      fr: 'Créer / charger session',
+      de: 'Ereignis erstellen / laden',
+      en: 'Create / load event',
+      fr: 'Créer / charger événement',
     },
     newMap: {
       de: 'Neue Karte erstellen',
@@ -117,20 +117,10 @@ export class I18NService {
       fr: 'La carte à importer existe déjà. Souhaitez-vous le remplacer ? Sinon, une copie est créée.',
       en: 'The map to be imported already exists. Do you want to replace it? If not, a copy will be created.',
     },
-    deleteMap: {
-      de: 'Karte leeren',
-      en: 'Clear map',
-      fr: 'Vide la carte',
-    },
-    confirmDeleteMap: {
-      de: 'Wollen Sie diese Karte wirklich unwiederruflich löschen?',
-      en: 'Do you really want to delete this card irrevocably?',
-      fr: 'Voulez-vous vraiment supprimer cette carte de façon irrévocable ?',
-    },
     editMap: {
-      de: 'Sitzung bearbeiten',
-      en: 'Edit session',
-      fr: 'Modifier session',
+      de: 'Ereignis bearbeiten',
+      en: 'Edit event',
+      fr: 'Modifier événement',
     },
     downloadCurrentDrawing: {
       de: 'Aktuelle Zeichnung herunterladen',
@@ -138,9 +128,9 @@ export class I18NService {
       en: 'Download the current drawing',
     },
     exportSession: {
-      de: 'Sitzung exportieren',
-      en: 'Export session',
-      fr: 'Exporter la session',
+      de: 'Ereignis exportieren',
+      en: 'Export event',
+      fr: 'Exporter événement',
     },
     withHistory: {
       de: 'Mit History',
@@ -162,10 +152,10 @@ export class I18NService {
       en: 'Download',
       fr: 'Télécharger',
     },
-    downloadMap: {
-      de: 'Karte herunterladen',
-      en: 'Download map',
-      fr: 'Télécharger carte',
+    exportOperation: {
+      de: 'Ereignis exportieren',
+      en: 'Export event',
+      fr: 'Exporter événement',
     },
     downloadMapCSV: {
       de: 'Als CSV exportieren',
@@ -412,11 +402,6 @@ export class I18NService {
       fr: 'Utilisez un fichier <strong>.zsjson</strong> pour importer une carte complète.',
       en: 'Use a <strong>.zsjson</strong> file to import a complete map.',
     },
-    confirmClearDrawing: {
-      de: 'Wollen Sie wirklich alle Elemente der Zeichnung entfernen? Die History der Karte bleibt dabei bestehen!',
-      en: 'Do you really want to clear all elements of this drawing? The history of the map will remain!',
-      fr: "Voulez-vous vraiment supprimer tous les éléments du dessin ? L'histoire de la carte restera !",
-    },
     confirmImportDrawing: {
       de: 'Wollen Sie die entsprechende Zeichnung wirklich importieren? Die aktuelle Zeichnung wird dabei ersetzt, die History bleibt aber bestehen!',
       en: 'Do you really want to import this drawing? The current drawing will be replaced - the history of the map will remain though!',
@@ -528,7 +513,7 @@ export class I18NService {
       fr: 'Fonctions',
     },
     hideSymbol: {
-      de: 'Symbol auf Karte verstecken',
+      de: 'Signatur auf Karte verstecken',
       en: 'Hide symbol on map',
       fr: 'Cacher le symbole sur la carte',
     },
@@ -618,7 +603,7 @@ export class I18NService {
       en: 'English',
     },
     deleteSymbolConfirm: {
-      de: 'Wollen Sie dieses Symbol wirklich löschen?',
+      de: 'Wollen Sie diese Signatur wirklich löschen?',
       fr: 'Voulez-vous vraiment supprimer ce symbole ?',
       en: 'Do you really want to delete this symbol?',
     },
@@ -692,6 +677,16 @@ export class I18NService {
       en: 'Print',
       fr: 'Imprimer',
     },
+    protocol: {
+      de: 'Protokoll',
+      en: 'Protocol',
+      fr: 'Protocole',
+    },
+    protocolTable: {
+      de: 'Tabelle anzeigen',
+      en: 'Show Table',
+      fr: 'Afficher Tableau',
+    },
     save: {
       de: 'Speichern',
       en: 'Save',
@@ -701,6 +696,11 @@ export class I18NService {
       de: 'Bilder',
       en: 'Images',
       fr: 'Images',
+    },
+    search: {
+      de: 'Signatur suchen',
+      en: 'Search symbol',
+      fr: 'Rechercher un symbole',
     },
     unknown: {
       de: 'Unbekannt',
@@ -830,7 +830,7 @@ export class I18NService {
         '<li>pour indiquer cette aide</li>',
     },
     docSearch: {
-      de: 'Die Suche kann dazu verwendet werden, Adressen und andere Orte zu finden und mittels Selektion zum entsprechenden Ort auf der Karte zu navigieren. Die Suche unterstützt ausserdem gezeichnete Symbole inkl. deren Namen',
+      de: 'Die Suche kann dazu verwendet werden, Adressen und andere Orte zu finden und mittels Selektion zum entsprechenden Ort auf der Karte zu navigieren. Die Suche unterstützt ausserdem gezeichnete Signaturen inkl. deren Namen',
       en: 'The search can be used to find addresses and other places and navigate to the corresponding location on the map. The search also supports drawn symbols by including their names',
       fr: "La recherche peut être utilisée pour trouver des adresses et d'autres lieux et naviguer jusqu'à l'endroit correspondant sur la carte. La recherche prend également en compte les symboles dessinés, y compris leurs noms",
     },
@@ -838,8 +838,8 @@ export class I18NService {
       de:
         'Dieses Menü erlaubt es, verschiedene Elemente auf die Karte zu zeichnen:\n' +
         '<li><strong>Text</strong>: Ein Dialog erscheint, welcher es erlaubt einen Text zu definieren. Nach dem Schliessen des Dialoges kann eine Linie auf die Karte gezeichnet werden indem auf die Karte geklickt wird (beenden mit Doppelklick). Anschliessend wird der Text dargestellt und unten links erscheint die <strong>Selektionsansicht</strong>.</li>' +
-        '<li><strong>Symbol</strong>: Es erscheint der <strong>Symbolauswahl</strong> Dialog - nach der entsprechenden Auswahl kann (je nach Symbol) ein Punkt, eine Linie oder eine Fläche (Polygon) gezeichnet werden.</li>' +
-        '<li><strong>Polygon</strong>: Es kann direkt begonnen werden, eine Fläche zu zeichnen (bei Bedarf kann auch später über die <strong>Selektionsansicht</strong> ein Symbol definiert werden).</li>' +
+        '<li><strong>Signatur</strong>: Es erscheint der <strong>Signaturauswahl</strong> Dialog - nach der entsprechenden Auswahl kann (je nach Signatur) ein Punkt, eine Linie oder eine Fläche (Polygon) gezeichnet werden.</li>' +
+        '<li><strong>Polygon</strong>: Es kann direkt begonnen werden, eine Fläche zu zeichnen (bei Bedarf kann auch später über die <strong>Selektionsansicht</strong> eine Signatur definiert werden).</li>' +
         '<li><strong>Linie</strong>: Analog dem Polygon kann direkt begonnen werden, eine Linie zu zeichnen. Eine Linie kann über die <strong>Selektionsansicht</strong> auch in einen Pfeil umgewandelt werden.</li>',
       en:
         'This menu allows you to draw different elements on the map: \n' +
@@ -855,16 +855,16 @@ export class I18NService {
         '<li><strong>Ligne</strong> : Comme pour le polygone, vous pouvez directement commencer à tracer une ligne. Une ligne peut également être convertie en flèche en utilisant la <strong>vue de sélection</strong></li>',
     },
     docSymbolSelectionTitle: {
-      de: 'Symbolauswahl',
+      de: 'Signaturauswahl',
       en: 'Symbol selection',
       fr: 'Séléction de symbole',
     },
     docSymbolSelection: {
       de:
-        'Die Symbolauswahl erlaubt es, aus vordefinierten Symbolen auszuwählen, oder eigene Symbole über den Knopf neben dem Filter zu definieren.\n\n' +
-        'Wurde ein eigenes Symbol hochgeladen, so kann definiert werden, um welche Geometrie es sich handelt (Punkt / Linie / Polygon), es kann eine Benennung in einer oder mehreren der unterstützten Sparchen definiert und eine zugehörige Farbe gewählt werden.\n\n' +
-        'Grundsätzlich werden Bilder, welche als Symbole hinzugefügt werden als Kreis ausgeschnitten. Soll das Bild in seiner Originalform für die spätere Detailansicht erhalten bleiben, so kann dies hier selektiert werden. \n\n' +
-        'Auch kann ein Symbol für die Verwendung durch andere Karten auf diesem Browser freigegeben werden.',
+        'Die Signaturauswahl erlaubt es, aus vordefinierten Signaturen auszuwählen, oder eigene Signaturen über den Knopf neben dem Filter zu definieren.\n\n' +
+        'Wurde eine eigene Signatur hochgeladen, so kann definiert werden, um welche Geometrie es sich handelt (Punkt / Linie / Polygon), es kann eine Benennung in einer oder mehreren der unterstützten Sparchen definiert und eine zugehörige Farbe gewählt werden.\n\n' +
+        'Grundsätzlich werden Bilder, welche als Signaturen hinzugefügt werden als Kreis ausgeschnitten. Soll das Bild in seiner Originalform für die spätere Detailansicht erhalten bleiben, so kann dies hier selektiert werden. \n\n' +
+        'Auch kann eine Signatur für die Verwendung durch andere Karten auf diesem Browser freigegeben werden.',
       en:
         'Symbol selection allows you to choose from predefined symbols, or to define your own symbols using the button next to the filter.\n' +
         'If a custom symbol has been uploaded, you can define the geometry (point / line / polygon), define a name in one or more of the supported languages and choose a color.\n' +
@@ -883,7 +883,7 @@ export class I18NService {
     },
     docSelection: {
       de:
-        'Wird ein Element auf der Karte selektiert (z.B. ein Symbol, eine Linie, eine Fläche, etc.), so erscheint in der unteren linken Ecke des Bildschirms eine Selektionsansicht.\n\n' +
+        'Wird ein Element auf der Karte selektiert (z.B. eine Signatur, eine Linie, eine Fläche, etc.), so erscheint in der unteren linken Ecke des Bildschirms eine Selektionsansicht.\n\n' +
         'Für alle Elemente sind die folgenden Funktionen vorhanden:\n' +
         '<li>Es kann ein Name angegeben werden (u.a. um nach dem gezeichneten Element zu suchen)</li>' +
         '<li>Es kann eine Farbe definiert werden</li>' +
@@ -898,8 +898,8 @@ export class I18NService {
         '   * Es kann ein Loch in ein Polygon gezeichnet werden\n' +
         '   * Polygone können zusammen gruppiert werden (z.B. um unzusammenhängende Bereiche zu vereinen)\n' +
         '<li><strong>Alle ausser Text</strong>: </li>' +
-        '   * Es kann eine Beschreibung definiert werden indem Bilder (existierende oder selbstgewählte Symbole - ein Klick auf das Bild öffnet die Detailansicht) und/oder Text.\n' +
-        '   * Symbole können definiert / ersetzt / ausgeblendet / vergrössert / verkleinert und gedreht werden und es ist möglich, die Darstellung des Symbols zur besseren Sichtbarkeit vom Ankerpunkt aus zu verschieben',
+        '   * Es kann eine Beschreibung definiert werden indem Bilder (existierende oder selbstgewählte Signaturen - ein Klick auf das Bild öffnet die Detailansicht) und/oder Text.\n' +
+        '   * Signaturen können definiert / ersetzt / ausgeblendet / vergrössert / verkleinert und gedreht werden und es ist möglich, die Darstellung der Signatur zur besseren Sichtbarkeit vom Ankerpunkt aus zu verschieben',
       en:
         'If an element on the map is selected (e.g. a symbol, a line, an area, etc.), a selection view appears in the lower left corner of the screen.\n\n' +
         'The following functions are available for all elements:\n' +
@@ -938,7 +938,7 @@ export class I18NService {
         '   * Les symboles peuvent être définis / remplacés / cachés / zoomés / dézoomés et pivotés et il est possible de "déplacer" la représentation du symbole à partir du point d\'ancrage pour une meilleure visibilité',
     },
     docFilter: {
-      de: 'Der Filter erlaubt es, einzelne Symbole oder alle (Symbol: durchgestrichenes Auge) auszublenden, resp. einzublenden (Symbol: Auge)',
+      de: 'Der Filter erlaubt es, einzelne Signaturen oder alle (Symbol: durchgestrichenes Auge) auszublenden, resp. einzublenden (Symbol: Auge)',
       en: 'The filter allows you to hide or show individual or all symbols',
       fr: "Le filtre vous permet de cacher ou d'afficher des symboles individuels ou tous",
     },
@@ -981,7 +981,7 @@ export class I18NService {
     },
     docHistory: {
       de:
-        'Dieser Modus dient dem Lesen / Präsentieren der Karte. Hier werden Symbole gebündelt, sofern die Karte weit ausgezoomt wird. Ausserdem ist es hier möglich, frühere Kartenzustände welche automatisch aufgezeichnet oder explizit durch den Benutzer getagged wurden aufgerufen werden.\n\n' +
+        'Dieser Modus dient dem Lesen / Präsentieren der Karte. Hier werden Signaturen gebündelt, sofern die Karte weit ausgezoomt wird. Ausserdem ist es hier möglich, frühere Kartenzustände welche automatisch aufgezeichnet oder explizit durch den Benutzer getagged wurden aufgerufen werden.\n\n' +
         'Bei der Selektion eines Elementes erscheint in der linken unteren Ecke eine Übersicht über die definierten Informationen wie Name, Beschreibung, Bilder, etc.',
       fr:
         "Ce mode permet de lire / présenter la carte. C'est là que les symboles sont regroupés, à condition que la carte soit largement dézoomée. Il est également possible d'appeler des états de carte précédents qui ont été automatiquement enregistrés ou explicitement marqués par l'utilisateur.\n" +
@@ -1026,9 +1026,9 @@ export class I18NService {
       fr: 'TBD',
     },
     signPlace: {
-      de: 'Platz',
-      en: 'Place',
-      fr: 'Place',
+      de: 'Einrichtungen',
+      en: 'Facilities',
+      fr: 'Équipement',
     },
     signFks: {
       de: 'Feuerwehr',
@@ -1055,6 +1055,11 @@ export class I18NService {
       en: 'Formations',
       fr: 'Formations',
     },
+    signVehicles: {
+      de: 'Fahrzeuge',
+      en: 'Vehicles',
+      fr: 'Véhicules',
+    },
     signEffect: {
       de: 'Auswirkungen',
       en: 'Effects',
@@ -1080,10 +1085,10 @@ export class I18NService {
       en: 'Categories',
       fr: 'Catégories',
     },
-    logout: {
-      de: 'Sitzung beenden',
-      en: 'End session',
-      fr: 'Fin de session',
+    navigateOperations: {
+      de: 'Zurück zu Operationen',
+      en: 'Retour aux opérations',
+      fr: 'Back to Operations',
     },
     expand: {
       de: 'Ansicht wechseln',
@@ -1105,6 +1110,11 @@ export class I18NService {
       en: 'Filters',
       fr: 'Filtre',
     },
+    myLocation: {
+      de: 'Aktuelle position',
+      en: 'Current location',
+      fr: 'Emplacement actuel',
+    },
     generalFilters: {
       de: 'Globale Filter',
       en: 'Global filters',
@@ -1124,6 +1134,11 @@ export class I18NService {
       de: 'anzeigen/verstecken',
       en: 'show/hide',
       fr: 'afficher/cacher',
+    },
+    csvSearchFor: {
+      de: 'Suche nach ...',
+      en: 'Search for ...',
+      fr: 'Chercher ...',
     },
     csvID: {
       de: 'ID',
@@ -1155,6 +1170,11 @@ export class I18NService {
       en: 'Coordinates',
       fr: 'Coordonnées',
     },
+    csvCentroid: {
+      de: 'Koordinaten Zentrum',
+      en: 'Centroid',
+      fr: 'Centre coordonnées',
+    },
     csvSize: {
       de: 'Grösse',
       en: 'Size',
@@ -1175,34 +1195,41 @@ export class I18NService {
       en: 'Period of validity of your guest session',
       fr: 'Période de validité de votre session',
     },
+    toastHistory: {
+      de: 'Lesemodus aktiviert',
+      en: 'Reading mode enabled',
+      fr: 'Mode lecture activé',
+    },
+    toastDrawing: {
+      de: 'Zeichnenmodus aktiviert',
+      en: 'Drawing mode enabled',
+      fr: 'Mode dessin activé',
+    },
     recentlyUsedSigns: {
       de: 'Kürzlich verwendete Signaturen',
       en: 'Recently used signatures',
       fr: 'Signatures récemment utilisées',
     },
   };
-  private _locale: string = DEFAULT_LOCALE;
-  private localeSource = new BehaviorSubject<string | null>(null);
-  public currentLocale = this.localeSource.asObservable();
 
-  public getLabelForSign(sign: Sign) {
-    const chosenLang = sign[this._session.getLanguage()];
+  public getLabelForSign(sign: Sign): string {
+    const chosenLang = sign[this._session.getLocale()];
     if (chosenLang) {
       return chosenLang;
     } else {
       for (const locale of LOCALES) {
         if (sign[locale]) {
-          return sign[locale];
+          return sign[locale] ?? '';
         }
       }
     }
-    return null;
+    return '';
   }
 
   public get(key: string): string {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this._session.getLanguage()];
+      const chosenLang = element[this._session.getLocale()];
       if (chosenLang) {
         return chosenLang;
       } else {
@@ -1218,7 +1245,7 @@ export class I18NService {
   public has(key: string): boolean {
     const element = I18NService.TRANSLATIONS[key];
     if (element) {
-      const chosenLang = element[this._session.getLanguage()];
+      const chosenLang = element[this._session.getLocale()];
       if (chosenLang) {
         return true;
       } else {
