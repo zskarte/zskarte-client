@@ -32,7 +32,8 @@ mat-toolbar {
 }
 
 app-geocoder {
-  max-width: 300px;
+  flex: 1 1 auto;
+  max-width: 380px;
 }
 
 .grouped {

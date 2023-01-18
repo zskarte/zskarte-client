@@ -1,17 +1,17 @@
 <div class="geocoder">
-  <mat-form-field subscriptSizing="dynamic" appearance="outline">
-    <div class="inputField">
-      <input
-        matInput
-        [placeholder]="i18n.get('findPlace')"
-        [matAutocomplete]="auto"
-        [(ngModel)]="inputText"
-        (ngModelChange)="geoCodeLoad()"
-        #searchField
-      />
-      <mat-icon aria-hidden="false" aria-label="Search">search</mat-icon>
-    </div>
-  </mat-form-field>
+  <div class="inputField">
+    <mat-form-field subscriptSizing="dynamic" appearance="outline">
+        <input
+          matInput
+          [placeholder]="i18n.get('findPlace')"
+          [matAutocomplete]="auto"
+          [(ngModel)]="inputText"
+          (ngModelChange)="geoCodeLoad()"
+          #searchField
+        />
+        <mat-icon aria-hidden="false" aria-label="Search" matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
 
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="getLabel" (optionSelected)="geoCodeSelected($event)">
     <mat-option
