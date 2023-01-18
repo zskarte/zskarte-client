@@ -17,7 +17,7 @@ import { I18NService } from '../state/i18n.service';
 import { SidebarContext } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { Collection, Feature, Overlay } from 'ol';
+import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { Icon, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
@@ -57,6 +57,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
   private _view!: OlView;
+  private _geolocation!: OlGeolocation;
   private _modify!: Modify;
   private _mapLayer = new OlTileLayer({
     zIndex: 0,
@@ -217,7 +218,16 @@ export class MapRendererComponent implements AfterViewInit {
       }).extend([select, translate, this._modify]),
     });
 
-    this._positionFlagLocation = new Point([0, 0]);
+    this._geolocation = new OlGeolocation({
+      // enableHighAccuracy must be set to true to have the heading value.
+      trackingOptions: {
+        enableHighAccuracy: true,
+      },
+      projection: this._view.getProjection(),
+    });
+
+    const _coords = this._geolocation.getPosition();
+    this._positionFlagLocation = _coords ? new Point(_coords) : new Point([0, 0]);
     this._positionFlag = new Feature({
       geometry: this._positionFlagLocation,
     });
@@ -688,6 +698,35 @@ export class MapRendererComponent implements AfterViewInit {
 
   setSidebarContext(context: SidebarContext | null) {
     this._state.toggleSidebarContext(context);
+  }
+
+  toggleShowCurrentLocation() {
+    const posFlag = this._state.getCurrentPositionFlag();
+    this._state.updatePositionFlag({
+      ...posFlag,
+      isVisible: !posFlag.isVisible,
+    });
+
+    // only track if the position flag is visible
+    this._geolocation.setTracking(this.isPositionFlagVisible);
+
+    this._geolocation.on('change:position', () => {
+      const coordinates = this._geolocation.getPosition();
+      if (!coordinates) return;
+
+      this._state.updatePositionFlag({
+        isVisible: this.isPositionFlagVisible,
+        coordinates: coordinates,
+      });
+
+      this._positionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
+      this._positionFlag.setGeometry(this._positionFlagLocation);
+      this._positionFlag.changed();
+    });
+  }
+
+  get isPositionFlagVisible(): boolean {
+    return this._state.getCurrentPositionFlag().isVisible;
   }
 
   async rotateProjection() {
