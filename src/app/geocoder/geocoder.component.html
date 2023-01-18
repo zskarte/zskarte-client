@@ -1,15 +1,15 @@
 <div class="geocoder">
   <div class="inputField">
     <mat-form-field subscriptSizing="dynamic" appearance="outline">
-        <input
-          matInput
-          [placeholder]="i18n.get('findPlace')"
-          [matAutocomplete]="auto"
-          [(ngModel)]="inputText"
-          (ngModelChange)="geoCodeLoad()"
-          #searchField
-        />
-        <mat-icon aria-hidden="false" aria-label="Search" matSuffix>search</mat-icon>
+      <input
+        matInput
+        [placeholder]="i18n.get('findPlace')"
+        [matAutocomplete]="auto"
+        [(ngModel)]="inputText"
+        (ngModelChange)="geoCodeLoad()"
+        #searchField
+      />
+      <mat-icon aria-hidden="false" aria-label="Search" matSuffix>search</mat-icon>
     </mat-form-field>
   </div>
 
