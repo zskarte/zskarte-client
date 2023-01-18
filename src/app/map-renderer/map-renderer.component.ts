@@ -27,6 +27,7 @@ import { FeatureLike } from 'ol/Feature';
 import { availableProjections, mercatorProjection } from '../helper/projections';
 import { getCenter } from 'ol/extent';
 import { transform } from 'ol/proj';
+import { ScaleLine } from 'ol/control';
 import { Coordinate } from 'ol/coordinate';
 import { getFirstCoordinate, Sign } from '../core/entity/sign';
 import { MatButton } from '@angular/material/button';
@@ -209,7 +210,15 @@ export class MapRendererComponent implements AfterViewInit {
     this._map = new OlMap({
       target: this.mapElement.nativeElement,
       view: this._view,
-      controls: [],
+      controls: [
+        new ScaleLine({
+          units: 'metric',
+          bar: true,
+          steps: 4,
+          text: true,
+          minWidth: 140,
+        }),
+      ],
       interactions: defaults({
         doubleClickZoom: false,
         pinchRotate: false,
