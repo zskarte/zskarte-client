@@ -19,6 +19,11 @@
   align-items: center;
   margin: 16px;
   gap: 16px;
+  flex-grow: 1;
+}
+
+.flexGrow {
+  flex-grow: 1;
 }
 
 .row {
