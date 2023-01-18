@@ -35,9 +35,6 @@ import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
-
-import { Stroke, Fill, Circle } from 'ol/style';
-
 @Component({
   selector: 'app-map-renderer',
   templateUrl: './map-renderer.component.html',
