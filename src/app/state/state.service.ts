@@ -12,6 +12,7 @@ import {
   ZsMapElementToDraw,
   ZsMapLayerState,
   ZsMapLayerStateType,
+  ZsMapPolygonDrawElementState,
   ZsMapStateSource,
 } from './interfaces';
 import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
@@ -35,6 +36,8 @@ import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
+import { Feature } from 'ol';
+import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
 
 @Injectable({
   providedIn: 'root',
@@ -394,6 +397,58 @@ export class ZsMapStateService {
       draft.activeLayer = layer.id;
       draft.layerOrder.push(layer.id as string);
     });
+  }
+
+  public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+    const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
+    const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
+    if (featureA.getGeometry()?.getType() == 'Polygon' && featureB.getGeometry()?.getType() == 'Polygon') {
+      const newCoordinates: number[][] = [];
+      featureA
+        ?.getGeometry()
+        ?.getCoordinates()
+        ?.forEach((c: number[]) => newCoordinates.push(c));
+      featureB
+        ?.getGeometry()
+        ?.getCoordinates()
+        ?.forEach((c: number[]) => newCoordinates.push(c));
+
+      elementA.updateElementState((draft) => {
+        if (draft.name && elementB.elementState?.name) {
+          draft.name = `${draft.name} | ${elementB.elementState?.name}`;
+        } else if (draft.name || elementB.elementState?.name) {
+          draft.name = draft.name ?? elementB.elementState?.name;
+        }
+        draft.coordinates = newCoordinates;
+      });
+      this.removeDrawElement(elementB.getId());
+      this.setSelectedFeature(elementA.getId());
+      this.setMergeMode(false);
+    }
+  }
+
+  public splitPolygon(element: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+    const feature = element.getOlFeature() as Feature<SimpleGeometry>;
+    if (feature.getGeometry()?.getType() == 'Polygon') {
+      const coords = feature.getGeometry()?.getCoordinates() as number[][];
+      // we only split polygons which have multiple paths
+      if (coords.length <= 1) {
+        return;
+      }
+
+      for (const group of coords) {
+        const state = {
+          ...element.elementState,
+          coordinates: [group],
+        } as ZsMapPolygonDrawElementState;
+        // remove id so it's set in addDrawElement
+        delete state.id;
+        this.addDrawElement(state);
+      }
+
+      // remove old element
+      this.removeDrawElement(element.getId());
+    }
   }
 
   // features
