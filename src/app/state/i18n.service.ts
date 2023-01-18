@@ -1214,7 +1214,7 @@ export class I18NService {
       de: 'Login als Gast',
       en: 'Login as guest',
       fr: 'Connexion en tant que visiteur',
-    }
+    },
   };
 
   public getLabelForSign(sign: Sign): string {
