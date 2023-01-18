@@ -337,7 +337,7 @@
     </mat-card-content>
     <mat-card-content *ngIf="(editMode | async) && (mergeMode | async)">
       <div>{{ i18n.get('chooseGroupingArea') }}</div>
-      <button mat-raised-button (click)="merge(false)" [disabled]="(drawHoleMode | async)" *ngIf="isPolygon()">
+      <button mat-raised-button (click)="merge(false)" [disabled]="drawHoleMode | async" *ngIf="isPolygon()">
         <mat-icon>cancel</mat-icon>
         {{ i18n.get('cancelGrouping') }}
       </button>
