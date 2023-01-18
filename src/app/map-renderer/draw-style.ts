@@ -448,7 +448,7 @@ export class DrawStyle {
     return undefined;
   }
 
-  private static getIconCoordinates(feature: FeatureLike, resolution: number) {
+  public static getIconCoordinates(feature: FeatureLike, resolution: number) {
     feature = DrawStyle.getSubFeature(feature);
     const signature = feature.get('sig');
     const symbolAnchorCoordinate = getFirstCoordinate(feature);
