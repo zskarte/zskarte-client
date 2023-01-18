@@ -1105,6 +1105,11 @@ export class I18NService {
       en: 'Filters',
       fr: 'Filtre',
     },
+    myLocation: {
+      de: 'Aktuelle position',
+      en: 'Current location',
+      fr: 'Emplacement actuel',
+    },
     generalFilters: {
       de: 'Globale Filter',
       en: 'Global filters',

@@ -217,6 +217,10 @@ export class ZsMapStateService {
     });
   }
 
+  public getCurrentPositionFlag(): IPositionFlag {
+    return this._display.value.positionFlag;
+  }
+
   public setSelectedFeature(featureId: string | undefined) {
     this._selectedFeature.next(featureId);
   }
