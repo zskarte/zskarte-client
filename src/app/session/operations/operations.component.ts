@@ -91,14 +91,7 @@ export class OperationsComponent implements OnDestroy {
           name: result.name,
           description: result.description,
           status: 'active',
-          mapState: {
-            version: 1,
-            id: uuidv4(),
-            // TODO get map center from organization
-            center: [0, 0],
-            name: result.name,
-            layers: [{ id: uuidv4(), type: ZsMapLayerStateType.DRAW, name: 'Layer 1' }],
-          },
+          mapState: result.mapState,
         };
         this.saveOperation(operation);
       }
