@@ -27,7 +27,7 @@
       <mat-card-header>
         <mat-card-title>Ereignis auswählen</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
+      <mat-card-content class="card-overflow">
         <mat-list>
           <mat-list-item *ngFor="let o of operations | async">
             <matListItemLine matListItemTitle>{{ o.name }}</matListItemLine>

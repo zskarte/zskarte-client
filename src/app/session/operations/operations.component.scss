@@ -45,3 +45,8 @@
     align-items: center;
   }
 }
+
+.card-overflow {
+  max-height: 250px;
+  overflow: auto;
+}
