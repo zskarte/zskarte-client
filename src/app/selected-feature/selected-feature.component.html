@@ -318,23 +318,13 @@
           <button mat-flat-button (click)="drawHole()" *ngIf="isPolygon()">
             <i class="material-icons">vignette</i><span>{{ i18n.get('drawHole') }}</span>
           </button>
-          <button
-            mat-flat-button
-            (click)="editCoordinates()"
-          >
-            <i class="material-icons">format_shapes</i
-            ><span>{{ i18n.get('defineCoordinates') }}</span>
+          <button mat-flat-button (click)="editCoordinates()">
+            <i class="material-icons">format_shapes</i><span>{{ i18n.get('defineCoordinates') }}</span>
           </button>
         </mat-expansion-panel>
       </div>
       <stack [spacing]="1">
-        <button
-          class="primarybutton"
-          mat-raised-button
-          color="primary"
-          (click)="copy(drawElement)"
-          *ngIf="editMode | async"
-        >
+        <button class="primarybutton" mat-raised-button color="primary" (click)="copy(drawElement)" *ngIf="editMode | async">
           <mat-icon>content_copy</mat-icon>
           {{ i18n.get('copy') }}
         </button>
