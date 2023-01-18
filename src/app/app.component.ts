@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
+import { ShortcutService } from './shortcut/shortcut.service';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,10 @@ import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angul
 export class AppComponent implements OnInit {
   height = window.innerHeight;
   width = window.innerWidth;
+
+  constructor(private _shortcut: ShortcutService) {
+    this._shortcut.initialize();
+  }
 
   ngOnInit(): void {
     this.setSize();

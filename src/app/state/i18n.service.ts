@@ -88,9 +88,9 @@ export class I18NService {
       en: 'Draw',
     },
     createOrLoad: {
-      de: 'Sitzung erstellen / laden',
-      en: 'Create / load session',
-      fr: 'Créer / charger session',
+      de: 'Ereignis erstellen / laden',
+      en: 'Create / load event',
+      fr: 'Créer / charger événement',
     },
     newMap: {
       de: 'Neue Karte erstellen',
@@ -118,9 +118,9 @@ export class I18NService {
       en: 'The map to be imported already exists. Do you want to replace it? If not, a copy will be created.',
     },
     editMap: {
-      de: 'Sitzung bearbeiten',
-      en: 'Edit session',
-      fr: 'Modifier session',
+      de: 'Ereignis bearbeiten',
+      en: 'Edit event',
+      fr: 'Modifier événement',
     },
     downloadCurrentDrawing: {
       de: 'Aktuelle Zeichnung herunterladen',
@@ -128,9 +128,9 @@ export class I18NService {
       en: 'Download the current drawing',
     },
     exportSession: {
-      de: 'Sitzung exportieren',
-      en: 'Export session',
-      fr: 'Exporter la session',
+      de: 'Ereignis exportieren',
+      en: 'Export event',
+      fr: 'Exporter événement',
     },
     withHistory: {
       de: 'Mit History',
@@ -152,10 +152,10 @@ export class I18NService {
       en: 'Download',
       fr: 'Télécharger',
     },
-    downloadMap: {
-      de: 'Karte herunterladen',
-      en: 'Download map',
-      fr: 'Télécharger carte',
+    exportOperation: {
+      de: 'Ereignis exportieren',
+      en: 'Export event',
+      fr: 'Exporter événement',
     },
     downloadMapCSV: {
       de: 'Als CSV exportieren',
@@ -1085,10 +1085,10 @@ export class I18NService {
       en: 'Categories',
       fr: 'Catégories',
     },
-    logout: {
-      de: 'Sitzung beenden',
-      en: 'End session',
-      fr: 'Fin de session',
+    navigateOperations: {
+      de: 'Zurück zu Operationen',
+      en: 'Retour aux opérations',
+      fr: 'Back to Operations',
     },
     expand: {
       de: 'Ansicht wechseln',
@@ -1110,6 +1110,11 @@ export class I18NService {
       en: 'Filters',
       fr: 'Filtre',
     },
+    myLocation: {
+      de: 'Aktuelle position',
+      en: 'Current location',
+      fr: 'Emplacement actuel',
+    },
     generalFilters: {
       de: 'Globale Filter',
       en: 'Global filters',
@@ -1129,6 +1134,11 @@ export class I18NService {
       de: 'anzeigen/verstecken',
       en: 'show/hide',
       fr: 'afficher/cacher',
+    },
+    csvSearchFor: {
+      de: 'Suche nach ...',
+      en: 'Search for ...',
+      fr: 'Chercher ...',
     },
     csvID: {
       de: 'ID',
@@ -1159,6 +1169,11 @@ export class I18NService {
       de: 'Koordinaten',
       en: 'Coordinates',
       fr: 'Coordonnées',
+    },
+    csvCentroid: {
+      de: 'Koordinaten Zentrum',
+      en: 'Centroid',
+      fr: 'Centre coordonnées',
     },
     csvSize: {
       de: 'Grösse',

@@ -1,11 +1,9 @@
 <div class="card">
   <mat-card>
     <ng-container *ngIf="operationToEdit | async as edit; else list">
-      <div class="title">
-        <mat-card-title-group>
-          <mat-card-title>Bearbeiten</mat-card-title>
-        </mat-card-title-group>
-      </div>
+      <mat-card-header>
+        <mat-card-title>Bearbeiten</mat-card-title>
+      </mat-card-header>
       <mat-card-content>
         <form class="edit-form">
           <mat-form-field class="full-width" appearance="fill">
@@ -26,29 +24,41 @@
     </ng-container>
 
     <ng-template #list>
-      <div class="title">
-        <mat-card-title-group>
-          <mat-card-title>Ereignis auswählen</mat-card-title>
-        </mat-card-title-group>
-      </div>
-      <mat-card-content>
-        <mat-selection-list [multiple]="false">
-          <mat-list-option *ngFor="let o of operations | async" [value]="o" (click)="selectOperation(o)">
-            <div class="operation">
-              <div class="infos">
-                <div mat-line>{{ o.name }}</div>
-                <div mat-line *ngIf="o.description">{{ o.description }}</div>
-              </div>
-              <div class="edit">
-                <mat-icon aria-hidden="false" aria-label="Edit" (click)="operationToEdit.next(o)">edit</mat-icon>
-              </div>
+      <mat-card-header>
+        <mat-card-title>Ereignis auswählen</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="card-overflow">
+        <mat-list>
+          <mat-list-item *ngFor="let o of operations | async">
+            <matListItemLine matListItemTitle>{{ o.name }}</matListItemLine>
+            <div matListItemLine>{{ o.description }}</div>
+
+            <div matListItemMeta style="display: flex">
+              <button mat-icon-button color="primary" aria-label="Edit" (click)="selectOperation(o)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="More options">
+                <mat-icon>more_vert</mat-icon>
+              </button>
             </div>
-          </mat-list-option>
-        </mat-selection-list>
+
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="operationToEdit.next(o)">
+                <mat-icon aria-hidden="false">edit_note</mat-icon>
+                Ereignis umbenennen
+              </button>
+              <button mat-menu-item (click)="exportOperation(o.id)">
+                <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportOperation')">save</mat-icon>
+                {{ i18n.get('exportOperation') }}
+              </button>
+            </mat-menu>
+          </mat-list-item>
+        </mat-list>
       </mat-card-content>
-      <mat-card-actions>
-        <button class="button" mat-raised-button color="primary" (click)="newOperation()">Neues Ereignis</button>
-        <button class="button" mat-button (click)="logout()">Logout</button>
+      <mat-card-actions style="display: flex; gap: 4px">
+        <button mat-raised-button color="primary" (click)="createOperation()">Neues Ereignis</button>
+        <button mat-raised-button color="primary" (click)="importOperation()">Ereignis importieren</button>
+        <button mat-raised-button (click)="logout()">Logout</button>
       </mat-card-actions>
     </ng-template>
   </mat-card>

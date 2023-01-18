@@ -1,9 +1,8 @@
 <mat-toolbar>
   <div class="grouped">
-    <app-credits />
-    <h1>TODO Title</h1>
+    <app-credits/>
   </div>
-  <app-geocoder />
+  <app-geocoder/>
   <div class="grouped">
     <app-clock />
     <button mat-icon-button [matMenuTriggerFor]="mainMenu">
@@ -15,27 +14,6 @@
       <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(historyMode | async)">history</mat-icon>
       <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="historyMode | async">brush</mat-icon>
       {{ (historyMode | async) ? i18n.get('drawMode') : i18n.get('history') }}
-    </button>
-    <mat-divider></mat-divider>
-    <button mat-menu-item (click)="todo()" *ngIf="!(historyMode | async)">
-      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('createOrLoad')">swap_calls</mat-icon>
-      {{ i18n.get('createOrLoad') }}
-    </button>
-    <button mat-menu-item (click)="todo()" *ngIf="!(historyMode | async)">
-      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('editMap')">edit</mat-icon>
-      {{ i18n.get('editMap') }}
-    </button>
-    <button mat-menu-item (click)="exportSession()" *ngIf="exportEnabled">
-      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')">save</mat-icon>
-      {{ i18n.get('exportSession') }}
-    </button>
-    <mat-divider></mat-divider>
-    <a mat-menu-item [download]="getDownloadFileName()" id="export" class="tools-menu-item" (click)="download()" [href]="downloadData"
-      ><mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('download')">save</mat-icon> {{ i18n.get('downloadMap') }}</a
-    >
-    <button mat-menu-item class="tools-menu-item" (click)="importData()" *ngIf="!(historyMode | async)">
-      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('importMap')">open_in_browser</mat-icon>
-      {{ i18n.get('importMap') }}
     </button>
     <mat-divider></mat-divider>
     <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="languages">
@@ -55,13 +33,18 @@
       {{ i18n.get('help') }}
     </button>
     <mat-divider></mat-divider>
-    <button mat-menu-item class="tools-menu-item" (click)="session.logout()" *ngIf="!(historyMode | async)">
-      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('logout')">logout</mat-icon>
-      {{ i18n.get('logout') }}
+    <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()" *ngIf="!(historyMode | async)">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('navigateOperations')">logout</mat-icon>
+      {{ i18n.get('navigateOperations') }}
     </button>
   </mat-menu>
   <mat-menu #languages="matMenu">
-    <button mat-menu-item *ngFor="let locale of locales" (click)="setLocale(locale)" [ngClass]="{ active: locale === session.getLocale() }">
+    <button
+      mat-menu-item
+      *ngFor="let locale of locales"
+      (click)="setLocale(locale)"
+      [ngClass]="{ active: locale === session.getLocale() }"
+    >
       {{ i18n.get(locale) }}
     </button>
   </mat-menu>
@@ -70,14 +53,5 @@
       <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolTable')">table_chart</mat-icon>
       {{ i18n.get('protocolTable') }}
     </button>
-    <a
-      mat-menu-item
-      [download]="getDownloadFileNameCSV()"
-      id="exportCSV"
-      class="tools-menu-item"
-      (click)="downloadCSV()"
-      [href]="downloadCSVData"
-      ><mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('downloadMapCSV')">save</mat-icon> {{ i18n.get('downloadMapCSV') }}</a
-    >
   </mat-menu>
 </mat-toolbar>
