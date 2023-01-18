@@ -290,7 +290,7 @@ export class SelectedFeatureComponent implements OnDestroy {
 
   sendToBack(element: ZsMapDrawElementState) {
     const minZIndex = Math.min(...Object.values(this._drawElementCache).map((el) => el.elementState?.zindex ?? 0));
-    this.updateProperty(element, 'zindex', minZIndex + 1);
+    this.updateProperty(element, 'zindex', minZIndex - 1);
   }
 
   findSigBySrc(src: any) {
