@@ -74,7 +74,7 @@ export class SelectedFeatureComponent implements OnDestroy {
       }),
     );
 
-    this.selectedFeature.subscribe((feature) => {
+    this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((feature) => {
       if (feature && feature.get('features')) {
         if (feature.get('features').length === 1) {
           this.groupedFeatures = null;
@@ -228,7 +228,6 @@ export class SelectedFeatureComponent implements OnDestroy {
       // Update the signature in the UI separately from the state, to provide a smooth update of all properties
       el.getOlFeature().get('sig')[field] = value;
       el.getOlFeature().changed();
-
       el.updateElementState((draft) => {
         draft[field as T] = value;
       });
@@ -310,11 +309,8 @@ export class SelectedFeatureComponent implements OnDestroy {
     return DrawStyle.getImageUrl(file);
   }
 
-  async drawHole() {
-    const isPolygon = await this.isPolygon();
-    if (isPolygon) {
-      //this.sharedState.updateDrawHoleMode(!this.drawHoleMode);
-    }
+  drawHole() {
+    this.zsMapStateService.toggleDrawHoleMode();
   }
 
   async merge(merge: boolean) {

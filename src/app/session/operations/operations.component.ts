@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { ApiService } from '../../api/api.service';
 import { SessionService } from '../session.service';
 import { ZsMapStateService } from '../../state/state.service';
@@ -13,16 +13,18 @@ import {DateTime} from "luxon";
 import {IpcService} from "../../ipc/ipc.service";
 import {MatDialog} from "@angular/material/dialog";
 import {ImportDialogComponent} from "../../import-dialog/import-dialog.component";
+import {OperationExportFile, OperationExportFileVersion} from "../../core/entity/operationExportFile";
 
 @Component({
   selector: 'app-operations',
   templateUrl: './operations.component.html',
   styleUrls: ['./operations.component.scss'],
 })
-export class OperationsComponent {
+export class OperationsComponent implements OnDestroy {
   public operations = new BehaviorSubject<IZsMapOperation[]>([]);
   public operationToEdit = new BehaviorSubject<IZsMapOperation | undefined>(undefined);
   public downloadData: SafeUrl | null = null;
+  private _ngUnsubscribe = new Subject<void>();
 
   constructor(private _api: ApiService,
               private _state: ZsMapStateService,
@@ -32,11 +34,19 @@ export class OperationsComponent {
               public ipc: IpcService,
               private _sanitizer: DomSanitizer,
               private _dialog: MatDialog) {
-    this._session.observeOrganizationId().subscribe(async (organizationId) => {
-      if (organizationId) {
-        this._reload();
-      }
-    });
+    this._session
+      .observeOrganizationId()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(async (organizationId) => {
+        if (organizationId) {
+          await this._reload();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   private async _reload(): Promise<void> {
@@ -50,7 +60,7 @@ export class OperationsComponent {
 
   public async selectOperation(operation: IZsMapOperation): Promise<void> {
     if (operation.id) {
-      this._session.setOperationId(operation.id);
+      this._session.setOperation(operation);
       await this._router.navigateByUrl('/map');
     }
   }
@@ -131,9 +141,13 @@ export class OperationsComponent {
     await this._reload();
   }
 
-  public async exportOperation(): Promise<void> {
+  public async exportOperation(operationId: number | undefined): Promise<void> {
+    if (!operationId) {
+      return;
+    }
     const fileName = `Ereignis_${DateTime.now().toFormat('yyyy_LL_dd_hh_mm')}.zsjson`;
-    const saveFile = this._state.exportMap();
+    const {result: operation} = await this._api.get<IZsMapOperation>('/api/operations/' + operationId);
+    const saveFile = { name: operation?.name, description: operation?.description, version: OperationExportFileVersion.V1, map: operation?.mapState };
     await this.ipc.saveFile({
       data: JSON.stringify(saveFile),
       fileName,

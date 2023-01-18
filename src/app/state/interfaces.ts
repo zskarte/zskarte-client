@@ -33,6 +33,7 @@ export enum ZsMapDisplayMode {
 }
 
 export interface IZsMapDisplayState {
+  id?: number;
   version: number;
   displayMode: ZsMapDisplayMode;
   mapOpacity: number;
@@ -92,7 +93,8 @@ export interface IZsMapBaseElementState {
   id?: string;
   layer?: string;
   coordinates?: number[] | number[][];
-  createdAt?: Date;
+  createdAt?: number;
+  modifiedAt?: number;
 }
 
 export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {

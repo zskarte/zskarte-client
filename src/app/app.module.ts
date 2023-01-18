@@ -58,6 +58,7 @@ import { RecentlyUsedSignsComponent } from './recently-used-signs/recently-used-
 import { OperationsComponent } from './session/operations/operations.component';
 import { StackComponent } from './stack/stack.component';
 import { ProtocolTableComponent } from './protocol-table/protocol-table.component';
+import { MatSortModule } from '@angular/material/sort';
 
 registerLocaleData(localeCH);
 
@@ -125,6 +126,7 @@ export function appFactory(session: SessionService) {
     MatRadioModule,
     MatListModule,
     MatFormFieldModule,
+    MatSortModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-CH' },

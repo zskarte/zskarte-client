@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import produce, { applyPatches, Patch } from 'immer';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import produce, {applyPatches, Patch} from 'immer';
 import {
   IPositionFlag,
   IZsMapDisplayState,
-  IZsMapSaveFileState,
   IZsMapState,
   SidebarContext,
   ZsMapDisplayMode,
@@ -15,24 +14,24 @@ import {
   ZsMapLayerStateType,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
-import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
-import { v4 as uuidv4 } from 'uuid';
-import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
-import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
-import { DrawElementHelper } from '../helper/draw-element-helper';
-import { areArraysEqual } from '../helper/array';
-import { GeoFeature } from '../core/entity/geoFeature';
-import { MatDialog } from '@angular/material/dialog';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
-import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
-import { TextDialogComponent } from '../text-dialog/text-dialog.component';
-import { Signs } from '../map-renderer/signs';
-import { SyncService } from '../sync/sync.service';
-import { SessionService } from '../session/session.service';
-import { ApiService } from '../api/api.service';
-import { IZsMapOperation } from '../session/operations/operation.interfaces';
-import {OperationExportFile} from "../core/entity/operationExportFile";
+import {distinctUntilChanged, map, takeWhile} from 'rxjs/operators';
+import {ZsMapBaseLayer} from '../map-renderer/layers/base-layer';
+import {v4 as uuidv4} from 'uuid';
+import {ZsMapDrawLayer} from '../map-renderer/layers/draw-layer';
+import {ZsMapBaseDrawElement} from '../map-renderer/elements/base/base-draw-element';
+import {DrawElementHelper} from '../helper/draw-element-helper';
+import {areArraysEqual} from '../helper/array';
+import {GeoFeature} from '../core/entity/geoFeature';
+import {MatDialog} from '@angular/material/dialog';
+import {DrawingDialogComponent} from '../drawing-dialog/drawing-dialog.component';
+import {defineDefaultValuesForSignature, Sign} from '../core/entity/sign';
+import {TextDialogComponent} from '../text-dialog/text-dialog.component';
+import {Signs} from '../map-renderer/signs';
+import {SyncService} from '../sync/sync.service';
+import {SessionService} from '../session/session.service';
+import {ApiService} from '../api/api.service';
+import {IZsMapOperation} from '../session/operations/operation.interfaces';
+import {OperationExportFile, OperationExportFileVersion} from "../core/entity/operationExportFile";
 
 @Injectable({
   providedIn: 'root',
@@ -73,8 +72,8 @@ export class ZsMapStateService {
     return {} as any;
   }
 
-  private _getDefaultDisplayState(): IZsMapDisplayState {
-    return {
+  private _getDefaultDisplayState(mapState?: IZsMapState): IZsMapDisplayState {
+    const state: IZsMapDisplayState = {
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
@@ -93,6 +92,22 @@ export class ZsMapStateService {
       hiddenSymbols: [],
       hiddenFeatureTypes: [],
     };
+    if (!mapState) {
+      mapState = this._map.value;
+    }
+    if (mapState?.layers) {
+      for (const layer of mapState?.layers) {
+        if (layer.id) {
+          if (!state.activeLayer) {
+            state.activeLayer = layer.id;
+          }
+          state.layerOrder.push(layer.id);
+          state.layerVisibility[layer.id] = true;
+          state.layerOpacity[layer.id] = 1;
+        }
+      }
+    }
+    return state;
   }
 
   public copySymbol(symbolId: number, layer?: string) {
@@ -134,31 +149,6 @@ export class ZsMapStateService {
     return this._elementToDraw.asObservable();
   }
 
-  public reset(newMapState?: IZsMapState, newDisplayState?: IZsMapDisplayState): void {
-    this.setMapState(newMapState);
-    if (newDisplayState) {
-      this.setDisplayState(newDisplayState);
-    } else {
-      // generate display style based on map state
-      if (newMapState) {
-        const displayState = this._getDefaultDisplayState();
-        if (newMapState.layers) {
-          for (const layer of newMapState?.layers) {
-            if (layer.id) {
-              if (!displayState.activeLayer) {
-                displayState.activeLayer = layer.id;
-              }
-              displayState.layerOrder.push(layer.id);
-              displayState.layerVisibility[layer.id] = true;
-              displayState.layerOpacity[layer.id] = 1;
-            }
-          }
-        }
-        this.setDisplayState(displayState);
-      }
-    }
-  }
-
   public setMapState(newState?: IZsMapState): void {
     const cached = Object.keys(this._layerCache);
     for (const c of cached) {
@@ -175,7 +165,7 @@ export class ZsMapStateService {
     this._drawElementCache = {};
     this.updateMapState(() => {
       return newState || this._getDefaultMapState();
-    });
+    }, true);
   }
 
   public setDisplayState(newState?: IZsMapDisplayState): void {
@@ -196,10 +186,6 @@ export class ZsMapStateService {
         draft.displayMode = ZsMapDisplayMode.HISTORY;
       }
     });
-  }
-
-  public saveDisplayState(): void {
-    localStorage.setItem('tempDisplayState', JSON.stringify(this._display.value));
   }
 
   public observeDisplayState(): Observable<IZsMapDisplayState> {
@@ -490,7 +476,7 @@ export class ZsMapStateService {
         id: uuidv4(),
         nameShow: true,
         ...element,
-        createdAt: new Date(),
+        createdAt: Date.now(),
       };
 
       this.updateMapState((draft) => {
@@ -587,8 +573,11 @@ export class ZsMapStateService {
     );
   }
 
-  public updateMapState(fn: (draft: IZsMapState) => void) {
+  public updateMapState(fn: (draft: IZsMapState) => void, preventPatches = false) {
     const newState = produce<IZsMapState>(this._map.value || {}, fn, (patches, inversePatches) => {
+      if (preventPatches) {
+        return;
+      }
       this._mapPatches.value.push(...patches);
       this._mapPatches.next(this._mapPatches.value);
       this._mapInversePatches.value.push(...inversePatches);
@@ -611,15 +600,6 @@ export class ZsMapStateService {
       this._displayInversePatches.next(this._displayInversePatches.value);
     });
     this._display.next(newState);
-  }
-
-
-  public exportMap(): OperationExportFile {
-    return { map: this._map.value };
-  }
-
-  public loadSaveFileState(state: IZsMapSaveFileState): void {
-    this.reset(state.map, state.display);
   }
 
   toggleSidebarContext(context: SidebarContext | null) {
@@ -708,6 +688,14 @@ export class ZsMapStateService {
     return this._splitMode.asObservable();
   }
 
+  public setDrawHoleMode(drawHoleMode: boolean) {
+    this._drawHoleMode.next(drawHoleMode);
+  }
+
+  public toggleDrawHoleMode() {
+    this.setDrawHoleMode(!this._drawHoleMode.getValue());
+  }
+
   public observeDrawHoleMode(): Observable<boolean> {
     return this._drawHoleMode.asObservable();
   }
@@ -734,7 +722,7 @@ export class ZsMapStateService {
           sha256(JSON.stringify(result.mapState)),
         ]);
         if (oldDigest !== newDigest) {
-          this.reset(result.mapState);
+          this.setMapState(result.mapState);
         }
       }
     }

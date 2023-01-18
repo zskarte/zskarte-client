@@ -73,12 +73,8 @@ export class DrawStyle {
     const signature = feature.get('sig');
     if (!signature) {
       return [];
-    } else if (signature.text !== undefined && signature.text !== null) {
-      // It's a text-entry...
-      return DrawStyle.textStyleFunction(feature, resolution, true);
     } else {
-      // It's a symbol-signature.
-      return DrawStyle.imageStyleFunction(feature, resolution, signature, true, editMode);
+      return DrawStyle.featureStyleFunction(feature, resolution, signature, true, editMode);
     }
   }
 
@@ -299,19 +295,74 @@ export class DrawStyle {
       DrawStyle.lastResolution = resolution;
       DrawStyle.clearCaches();
     }
-
     // The feature shall not be displayed or is errorenous. Therefore, we return an empty style.
     const signature = feature.get('sig');
     if (!signature) {
       return [];
-    } else if (signature.text) {
-      // It's a text-entry...
-      return DrawStyle.textStyleFunction(feature, resolution, false);
     } else {
-      // It's a symbol-signature.
-      return DrawStyle.imageStyleFunction(feature, resolution, signature, false, true);
+      return DrawStyle.featureStyleFunction(feature, resolution, signature, false, true);
     }
-    // }
+  }
+
+  private static featureStyleFunction(
+    feature: FeatureLike,
+    resolution: number,
+    signature: Sign,
+    selected: boolean,
+    editMode: boolean,
+  ): Style[] {
+    defineDefaultValuesForSignature(signature);
+    const scale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
+    const vectorStyles = this.getVectorStyles(feature, resolution, signature, selected, scale, editMode);
+    const iconStyles = this.getIconStyle(feature, resolution, signature, selected, scale);
+    const styles: any[] = [];
+
+    if (iconStyles) {
+      iconStyles.forEach((i) => styles.push(i));
+    }
+    if (vectorStyles) {
+      vectorStyles.forEach((v) => styles.push(v));
+    }
+
+    // Additional shizzle (Text and Circle) for text items:
+    if (signature.text) {
+      const zIndex = selected ? Infinity : this.getZIndex(feature);
+      const color = signature.color ?? '';
+      const fontSize = signature.fontSize ?? 1;
+
+      styles.push(
+        new Style({
+          text: new Text({
+            text: signature.text,
+            backgroundFill: this.getColorFill('#FFFFFF'),
+            font: fontSize * 30 + 'px sans-serif',
+            rotation: signature.rotation !== undefined ? (signature.rotation * Math.PI) / 180 : 0,
+            scale: DrawStyle.scale(resolution, DrawStyle.textScaleFactor, 0.4),
+            fill: this.getColorFill(color),
+            backgroundStroke: this.createDefaultStroke(scale, color),
+            padding: [5, 5, 5, 5],
+          }),
+          geometry: function (feature) {
+            return new Point((feature.getGeometry() as any).getCoordinates()[(feature.getGeometry() as any).getCoordinates().length - 1]);
+          },
+          zIndex: zIndex,
+        }),
+      );
+      styles.push(
+        new Style({
+          image: new Circle({
+            radius: scale * 50,
+            fill: this.getColorFill(color),
+          }),
+          geometry: function (feature) {
+            return new Point((feature.getGeometry() as any).getCoordinates()[0]);
+          },
+          zIndex: zIndex,
+        }),
+      );
+    }
+
+    return styles;
   }
 
   public static clearCaches(): void {
@@ -803,76 +854,6 @@ export class DrawStyle {
       }
     }
     return null;
-  }
-
-  private static imageStyleFunction(
-    feature: FeatureLike,
-    resolution: number,
-    signature: Sign,
-    selected: boolean,
-    editMode: boolean,
-  ): Style[] {
-    defineDefaultValuesForSignature(signature);
-    const scale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
-    const vectorStyles = this.getVectorStyles(feature, resolution, signature, selected, scale, editMode);
-    const iconStyles = this.getIconStyle(feature, resolution, signature, selected, scale);
-    const styles: any[] = [];
-    if (iconStyles) {
-      iconStyles.forEach((i) => styles.push(i));
-    }
-    if (vectorStyles) {
-      vectorStyles.forEach((v) => styles.push(v));
-    }
-    return styles;
-  }
-
-  private static textStyleFunction(feature: FeatureLike, resolution: number, selected: boolean): Style[] {
-    const defaultScale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
-    const signature = feature.get('sig');
-    defineDefaultValuesForSignature(signature);
-    const zIndex = selected ? Infinity : this.getZIndex(feature);
-    const textStyles = [
-      new Style({
-        stroke: this.createDefaultStroke(defaultScale, signature.color, true),
-        zIndex: zIndex,
-      }),
-      new Style({
-        text: new Text({
-          text: signature.text,
-          backgroundFill: this.getColorFill('#FFFFFF'),
-          font: signature.fontSize * 30 + 'px sans-serif',
-          rotation: signature.rotation !== undefined ? (signature.rotation * Math.PI) / 180 : 0,
-          scale: DrawStyle.scale(resolution, DrawStyle.textScaleFactor, 0.4),
-          fill: this.getColorFill(signature.color),
-          backgroundStroke: this.createDefaultStroke(defaultScale, signature.color),
-          padding: [5, 5, 5, 5],
-        }),
-        geometry: function (feature) {
-          return new Point((feature.getGeometry() as any).getCoordinates()[(feature.getGeometry() as any).getCoordinates().length - 1]);
-        },
-        zIndex: zIndex,
-      }),
-      new Style({
-        image: new Circle({
-          radius: defaultScale * 50,
-          fill: this.getColorFill(signature.color),
-        }),
-        geometry: function (feature) {
-          return new Point((feature.getGeometry() as any).getCoordinates()[0]);
-        },
-        zIndex: zIndex,
-      }),
-    ];
-
-    const highlightLine = this.getHighlightLineWhenSelectedStyle(feature, defaultScale, selected);
-    if (highlightLine) {
-      textStyles.push(highlightLine);
-    }
-    const highlightPoints = this.getHighlightPointsWhenSelectedStyle(feature, defaultScale, selected);
-    if (highlightPoints) {
-      textStyles.push(highlightPoints);
-    }
-    return textStyles;
   }
 
   private static colorFunction = function (signatureColor: string | undefined, alpha = 1) {

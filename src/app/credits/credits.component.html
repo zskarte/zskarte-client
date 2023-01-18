@@ -1,6 +1,4 @@
-<!-- <span class="credits" *ngIf="zso">
-  <a [href]="zso.url" target="_blank">
-    <img [src]="'assets/img/zso/' + zso.id + '.png'" />
-  </a>
-</span> -->
-<h1>TODO session</h1>
+<div class="credits">
+  <img [src]=logo *ngIf="logo"/>
+  <h1>{{ operationName }}</h1>
+</div>

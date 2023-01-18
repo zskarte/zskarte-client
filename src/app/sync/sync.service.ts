@@ -20,7 +20,7 @@ export class SyncService {
   private _socket: Socket | undefined;
   private _mapStatePatchQueue: Patch[] = [];
   private _state!: ZsMapStateService;
-  private _isOnline = false;
+  private _isOnline = true;
   private _connectingPromise: Promise<void> | undefined;
 
   constructor(private _api: ApiService, private _session: SessionService) {

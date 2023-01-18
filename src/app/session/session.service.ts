@@ -1,5 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged, filter, interval, map, Observable, of, retry, skip, switchMap, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  filter,
+  interval,
+  map,
+  Observable,
+  of,
+  retry,
+  skip,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { db } from '../db/db';
 import { IAuthResult, IZsMapSession } from './session.interfaces';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,12 +23,14 @@ import { ZsMapStateService } from '../state/state.service';
 import { GUEST_USER_IDENTIFIER } from './userLogic';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
+import {IZsMapOperation} from "./operations/operation.interfaces";
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
   private _session = new BehaviorSubject<IZsMapSession | undefined>(undefined);
+  private _clearSession = new Subject<void>();
   private _state!: ZsMapStateService;
   private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
   private _loginParams: { identifier: string; password: string } | undefined;
@@ -28,11 +43,22 @@ export class SessionService {
     // save handler
     this._session.pipe(skip(1)).subscribe(async (session) => {
       if (session) {
-        await db.table('session').put(session);
+        await db.sessions.put(session);
         await this._state?.refreshMapState();
+        const displayState = await db.displayStates.get({ id: session.operationId });
+        this._state.setDisplayState(displayState);
+
+        this._state
+          .observeDisplayState()
+          .pipe(skip(1), takeUntil(this._clearSession))
+          .subscribe(async (displayState) => {
+            if (this._session.value?.operationId) {
+              db.displayStates.put({ ...displayState, id: this._session.value.operationId });
+            }
+          });
       } else {
-        await db.table('session').clear();
-        this._state?.reset();
+        await db.sessions.clear();
+        this._clearSession.next();
       }
     });
 
@@ -90,9 +116,11 @@ export class SessionService {
     return this._session.pipe(map((session) => session?.organizationId));
   }
 
-  public setOperationId(id: number): void {
+  public setOperation(operation: IZsMapOperation): void {
     if (this._session?.value) {
-      this._session.value.operationId = id;
+      this._session.value.operationId = operation.id;
+      this._session.value.operationName = operation.name;
+      this._session.value.operationDescription = operation.description;
     }
     this._session.next(this._session.value);
   }
@@ -105,15 +133,27 @@ export class SessionService {
     return this._session?.value?.operationId;
   }
 
+  public getOperationName(): string | undefined {
+    return this._session?.value?.operationName;
+  }
+
+  public getOperationDescription(): string | undefined {
+    return this._session?.value?.operationDescription;
+  }
+
+  public getLogo(): string | undefined {
+    return this._session?.value?.organizationLogo;
+  }
+
   public async loadSavedSession(): Promise<void> {
-    const sessions = await db.table('session').toArray();
+    const sessions = await db.sessions.toArray();
     if (sessions.length === 1) {
       const session: IZsMapSession = sessions[0];
       this._session.next(session);
       return;
     }
     if (sessions.length > 1) {
-      await db.table('session').clear();
+      await db.sessions.clear();
     }
     this._session.next(undefined);
   }
@@ -122,7 +162,7 @@ export class SessionService {
     const { result, error: authError } = await this._api.post<IAuthResult>('/api/auth/local', params);
     this._authError.next(authError);
     if (authError || !result) return;
-    const { error, result: meResult } = await this._api.get<{ organization: { id: number } }>('/api/users/me?populate[0]=organization', {
+    const { error, result: meResult } = await this._api.get<{ organization: { id: number, logo: { url:string } } }>('/api/users/me?populate[0]=organization.logo', {
       token: result.jwt,
     });
     if (error || !meResult) return;
@@ -131,6 +171,9 @@ export class SessionService {
       id: uuidv4(),
       auth: result,
       operationId: undefined,
+      operationName: undefined,
+      operationDescription: undefined,
+      organizationLogo: meResult.organization.logo.url,
       organizationId: meResult.organization.id,
       locale: DEFAULT_LOCALE,
     };
@@ -201,6 +244,6 @@ export class SessionService {
   }
 
   public observeIsOnline(): Observable<boolean> {
-    return this._isOnline.pipe(distinctUntilChanged());
+    return this._isOnline.pipe(skip(1), distinctUntilChanged());
   }
 }
