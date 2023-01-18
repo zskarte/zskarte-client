@@ -1,8 +1,8 @@
 <mat-toolbar>
   <div class="grouped">
-    <app-credits/>
+    <app-credits />
   </div>
-  <app-geocoder/>
+  <app-geocoder />
   <div class="grouped">
     <app-clock />
     <button mat-icon-button [matMenuTriggerFor]="mainMenu">
@@ -39,12 +39,7 @@
     </button>
   </mat-menu>
   <mat-menu #languages="matMenu">
-    <button
-      mat-menu-item
-      *ngFor="let locale of locales"
-      (click)="setLocale(locale)"
-      [ngClass]="{ active: locale === session.getLocale() }"
-    >
+    <button mat-menu-item *ngFor="let locale of locales" (click)="setLocale(locale)" [ngClass]="{ active: locale === session.getLocale() }">
       {{ i18n.get(locale) }}
     </button>
   </mat-menu>
