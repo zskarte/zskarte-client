@@ -1,6 +1,4 @@
-import { Component, HostListener, Input } from '@angular/core';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
-import { TextDialogComponent } from '../text-dialog/text-dialog.component';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ZsMapStateService } from '../state/state.service';
 import { map, Observable } from 'rxjs';
@@ -21,28 +19,6 @@ export class FabMenuComponent {
 
   constructor(public drawDialog: MatDialog, public textDialog: MatDialog, private mapState: ZsMapStateService, public i18n: I18NService) {
     this.historyMode$ = this.mapState.observeDisplayState().pipe(map((state) => state.displayMode === ZsMapDisplayMode.HISTORY));
-  }
-
-  @HostListener('window:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent) {
-    // Only handle global events (to prevent input elements to be considered)
-    const globalEvent = event.target instanceof HTMLBodyElement;
-    if (globalEvent && event.altKey) {
-      switch (event.code) {
-        case 'KeyX':
-          this.openTextDialog();
-          break;
-        case 'KeyS':
-          this.openDrawDialog();
-          break;
-        case 'KeyP':
-          this.polygon();
-          break;
-        case 'KeyL':
-          this.line();
-          break;
-      }
-    }
   }
 
   openDrawDialog(): void {

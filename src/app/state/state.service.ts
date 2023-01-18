@@ -530,6 +530,9 @@ export class ZsMapStateService {
         draft.drawElements.splice(index, 1);
       }
     });
+    if (this._selectedFeature.value === id) {
+      this.setSelectedFeature(undefined);
+    }
   }
 
   public getDrawElementState(id: string): ZsMapDrawElementState | undefined {
