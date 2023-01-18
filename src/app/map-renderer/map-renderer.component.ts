@@ -19,7 +19,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
-import { Icon, Style } from 'ol/style';
+import { Fill, Icon, Stroke, Style, Circle } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
@@ -64,6 +64,10 @@ export class MapRendererComponent implements AfterViewInit {
     zIndex: 0,
   });
   private _navigationLayer!: VectorLayer<VectorSource>;
+  private _deviceTrackingLayer!: VectorLayer<VectorSource>;
+  private _devicePositionFlag!: Feature;
+  private _devicePositionFlagLocation!: Point;
+  public isDevicePositionFlagVisible = false;
   private _positionFlag!: Feature;
   private _positionFlagLocation!: Point;
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
@@ -270,6 +274,35 @@ export class MapRendererComponent implements AfterViewInit {
     });
     this._navigationLayer.setZIndex(99999999999);
     this._map.addLayer(this._navigationLayer);
+
+    this._devicePositionFlagLocation = _coords ? new Point(_coords) : new Point([0, 0]);
+    this._devicePositionFlag = new Feature({
+      geometry: this._devicePositionFlagLocation,
+    });
+    this._devicePositionFlag.setStyle(
+      new Style({
+        image: new Circle({
+          radius: 6,
+          fill: new Fill({
+            color: '#3399CC',
+          }),
+          stroke: new Stroke({
+            color: '#fff',
+            width: 2,
+          }),
+        }),
+      }),
+    );
+
+    const deviceTrackingSource = new VectorSource({
+      features: [this._devicePositionFlag],
+    });
+    this._deviceTrackingLayer = new VectorLayer({
+      source: deviceTrackingSource,
+      visible: false,
+    });
+    this._deviceTrackingLayer.setZIndex(999999999999);
+    this._map.addLayer(this._deviceTrackingLayer);
 
     this._map.on('moveend', () => {
       this._state.setMapCenter(this._view.getCenter() || [0, 0]);
@@ -739,32 +772,23 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   toggleShowCurrentLocation() {
-    const posFlag = this._state.getCurrentPositionFlag();
-    this._state.updatePositionFlag({
-      ...posFlag,
-      isVisible: !posFlag.isVisible,
-    });
+    this.isDevicePositionFlagVisible = !this.isDevicePositionFlagVisible;
 
     // only track if the position flag is visible
-    this._geolocation.setTracking(this.isPositionFlagVisible);
+    this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
+    this._geolocation.setTracking(this.isDevicePositionFlagVisible);
 
-    this._geolocation.on('change:position', () => {
+    this._geolocation.once('change:position', () => {
       const coordinates = this._geolocation.getPosition();
-      if (!coordinates) return;
 
-      this._state.updatePositionFlag({
-        isVisible: this.isPositionFlagVisible,
-        coordinates: coordinates,
+      this._devicePositionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
+      this._map.getView().animate({
+        center: coordinates,
+        zoom: 14,
       });
-
-      this._positionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
-      this._positionFlag.setGeometry(this._positionFlagLocation);
-      this._positionFlag.changed();
+      this._devicePositionFlag.setGeometry(this._devicePositionFlagLocation);
+      this._devicePositionFlag.changed();
     });
-  }
-
-  get isPositionFlagVisible(): boolean {
-    return this._state.getCurrentPositionFlag().isVisible;
   }
 
   async rotateProjection() {
