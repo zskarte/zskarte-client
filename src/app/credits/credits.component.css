@@ -1,17 +1,15 @@
 .credits {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 100%;
-  display: inline-block;
-}
-
-.credits a {
-  color: white;
 }
 
 .credits img {
   height: 100%;
+  width: auto;
 }
 
-.credits span {
-  margin: 0.5em;
-  display: inline-block;
+.credits h1 {
+  margin-bottom: 0;
 }

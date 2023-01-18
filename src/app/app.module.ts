@@ -40,7 +40,6 @@ import { ClockComponent } from './clock/clock.component';
 import { FabMenuComponent } from './fab-menu/fab-menu.component';
 import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
-import { ExportDialogComponent } from './export-dialog/export-dialog.component';
 import { CreditsComponent } from './credits/credits.component';
 import { SelectedFeatureComponent } from './selected-feature/selected-feature.component';
 import { DetailImageViewComponent } from './detail-image-view/detail-image-view.component';
@@ -85,7 +84,6 @@ export function appFactory(session: SessionService) {
     FabMenuComponent,
     DrawingDialogComponent,
     TextDialogComponent,
-    ExportDialogComponent,
     CreditsComponent,
     SelectedFeatureComponent,
     DetailImageViewComponent,

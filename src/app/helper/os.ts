@@ -1,3 +1,7 @@
+export function isElectron(): boolean {
+  return !!(typeof window !== 'undefined' && (window as any).zskarte);
+}
+
 export enum OS {
   MACOS = 'macOS',
   IOS = 'iOS',

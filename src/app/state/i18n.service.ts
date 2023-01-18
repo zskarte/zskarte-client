@@ -152,10 +152,10 @@ export class I18NService {
       en: 'Download',
       fr: 'Télécharger',
     },
-    downloadMap: {
-      de: 'Karte herunterladen',
-      en: 'Download map',
-      fr: 'Télécharger carte',
+    exportOperation: {
+      de: 'Ereignis exportieren',
+      en: 'Export event',
+      fr: 'Exporter événement',
     },
     downloadMapCSV: {
       de: 'Als CSV exportieren',
@@ -1080,10 +1080,10 @@ export class I18NService {
       en: 'Categories',
       fr: 'Catégories',
     },
-    logout: {
-      de: 'Ereignis beenden',
-      en: 'End event',
-      fr: "Fin de l'événement",
+    navigateOperations: {
+      de: 'Zurück zu Operationen',
+      en: 'Retour aux opérations',
+      fr: 'Back to Operations',
     },
     expand: {
       de: 'Ansicht wechseln',
