@@ -1,17 +1,15 @@
 <div class="geocoder">
-  <div class="inputField">
-    <mat-form-field subscriptSizing="dynamic" appearance="outline">
-        <input
-          matInput
-          [placeholder]="i18n.get('findPlace')"
-          [matAutocomplete]="auto"
-          [(ngModel)]="inputText"
-          (ngModelChange)="geoCodeLoad()"
-          #searchField
-        />
-        <mat-icon aria-hidden="false" aria-label="Search" matSuffix>search</mat-icon>
-    </mat-form-field>
-  </div>
+  <mat-form-field subscriptSizing="dynamic" appearance="outline">
+    <input
+      matInput
+      [placeholder]="i18n.get('findPlace')"
+      [matAutocomplete]="auto"
+      [(ngModel)]="inputText"
+      (ngModelChange)="geoCodeLoad()"
+      #searchField
+    />
+    <mat-icon aria-hidden="false" aria-label="Search" matSuffix>search</mat-icon>
+  </mat-form-field>
 
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="getLabel" (optionSelected)="geoCodeSelected($event)">
     <mat-option
@@ -23,16 +21,4 @@
       <span [innerHTML]="location.attrs.label" [title]="getLabel(location.attrs)"></span>
     </mat-option>
   </mat-autocomplete>
-
-  <div *ngIf="selected" class="currentLocation">
-    <img src="assets/img/place.png" />
-    <div class="alignCenter">
-      <span class="currentLocationLabel">{{ getLabel(selected) }}</span>
-    </div>
-    <button mat-icon-button (click)="removeSelectedLocation()">
-      <i class="material-icons" [title]="i18n.get('removeSymbol')">close</i>
-    </button>
-  </div>
-
-  <!-- <input #geocode type="text"  placeholder="">-->
 </div>
