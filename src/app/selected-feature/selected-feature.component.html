@@ -35,7 +35,7 @@
               </div>
             </div>
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
-            <mat-checkbox *ngIf="(editMode | async)" [(ngModel)]="useColorPicker" class="color-mode-toggle">
+            <mat-checkbox *ngIf="editMode | async" [(ngModel)]="useColorPicker" class="color-mode-toggle">
               {{ i18n.get('colorPickerMode') }}
             </mat-checkbox>
             <ng-container *ngIf="editMode | async">
@@ -294,7 +294,7 @@
         </mat-expansion-panel>
 
         <!-- TODO: implement functions -->
-        <mat-expansion-panel id="functionsPanel" class="noPadding" *ngIf="(editMode | async)">
+        <mat-expansion-panel id="functionsPanel" class="noPadding" *ngIf="editMode | async">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>
           </mat-expansion-panel-header>
