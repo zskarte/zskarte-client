@@ -11,7 +11,7 @@ import { SessionService } from '../session/session.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DatePipe } from '@angular/common';
-import { mapProtocolEntry, ProtocolEntry } from '../helper/mapProtocolEntry';
+import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../helper/protocolEntry';
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
 import { Router } from '@angular/router';
 
@@ -95,6 +95,10 @@ export class ToolbarComponent implements OnDestroy {
 
   protocolTable(): void {
     this.dialog.open(ProtocolTableComponent, { data: false });
+  }
+
+  protocolExcelExport(): void {
+    exportProtocolExcel(this.protocolEntries);
   }
 
   print(): void {

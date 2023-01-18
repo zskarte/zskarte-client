@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { ZsMapStateService } from 'src/app/state/state.service';
-import { mapProtocolEntry, ProtocolEntry } from '../helper/mapProtocolEntry';
+import { mapProtocolEntry, ProtocolEntry } from '../helper/protocolEntry';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { SessionService } from '../session/session.service';
 import { I18NService } from '../state/i18n.service';

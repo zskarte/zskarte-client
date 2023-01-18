@@ -4,6 +4,8 @@ import { I18NService } from '../state/i18n.service';
 import capitalizeFirstLetter from './capitalizeFirstLetter';
 import { getCenter } from 'ol/extent';
 import { availableProjections } from './projections';
+import saveAs from 'file-saver';
+import { Workbook } from 'exceljs';
 
 export function mapProtocolEntry(
   elements: ZsMapBaseDrawElement[],
@@ -46,4 +48,21 @@ export interface ProtocolEntry {
   size: string;
   label: string;
   description: string;
+}
+
+export function exportProtocolExcel(protocolEntries: ProtocolEntry[]) {
+  const workbook = new Workbook();
+  const sheet = workbook.addWorksheet('Protocol Entries');
+  sheet.columns = [
+    { header: 'Datum', key: 'date', width: 15 },
+    { header: 'Gruppe', key: 'group', width: 15 },
+    { header: 'Signatur', key: 'sign', width: 15 },
+    { header: 'Koordinaten', key: 'location', width: 30 },
+    { header: 'Bezeichnung', key: 'label', width: 15 },
+    { header: 'Beschreibung', key: 'description', width: 30 },
+  ];
+  sheet.addRows(protocolEntries);
+  return workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
+    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `Protokollexport_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  });
 }

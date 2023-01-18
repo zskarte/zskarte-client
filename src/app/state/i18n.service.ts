@@ -687,6 +687,11 @@ export class I18NService {
       en: 'Show Table',
       fr: 'Afficher Tableau',
     },
+    protocolSaveAsExcel: {
+      de: 'Als Excel exportieren',
+      en: 'Export as Excel',
+      fr: 'Exporter en Excel',
+    },
     save: {
       de: 'Speichern',
       en: 'Save',
