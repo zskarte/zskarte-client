@@ -30,24 +30,6 @@ export class GeocoderComponent implements OnDestroy {
   selected: IFoundLocationAttrs | null = null;
   private _ngUnsubscribe = new Subject<void>();
 
-  /*
-  @HostListener('window:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent) {
-    // Only handle global events (to prevent input elements to be considered)
-    const globalEvent = event.target instanceof HTMLBodyElement;
-    if (
-      globalEvent &&
-      !this.sharedState.featureSource.getValue() &&
-      !event.altKey &&
-      event.code != 'Escape'
-    ) {
-      this.el.nativeElement.focus();
-      this.el.nativeElement.dispatchEvent(
-        new KeyboardEvent('keydown', { key: event.key })
-      );
-    }
-  }*/
-
   constructor(
     private http: HttpClient,
     public i18n: I18NService,

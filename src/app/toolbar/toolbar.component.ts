@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
 import { I18NService, Locale, LOCALES } from '../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
@@ -83,19 +83,6 @@ export class ToolbarComponent implements OnDestroy {
       return true;
     }
     return false;
-  }
-
-  @HostListener('window:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent) {
-    // Only handle global events (to prevent input elements to be considered)
-    const globalEvent = event.target instanceof HTMLBodyElement;
-    if (globalEvent && event.altKey) {
-      switch (event.code) {
-        case 'KeyH':
-          this.toggleHistory();
-          break;
-      }
-    }
   }
 
   toggleHistory(): void {

@@ -24,6 +24,14 @@
   </button>
   <button
     mat-icon-button
+    [color]="isPositionFlagVisible ? 'primary' : 'basic'"
+    (click)="toggleShowCurrentLocation()"
+    [attr.aria-label]="i18n.get('myLocation')"
+  >
+    <mat-icon>my_location</mat-icon>
+  </button>
+  <button
+    mat-icon-button
     *ngIf="(sidebarContext | async) !== null"
     (click)="setSidebarContext(null)"
     color="accent"

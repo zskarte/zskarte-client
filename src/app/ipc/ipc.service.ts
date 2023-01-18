@@ -3,7 +3,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import type { FileFilter } from 'electron';
 import FileSaver from 'file-saver';
-import isElectron from "../helper/os";
+import {isElectron} from "../helper/os";
 
 @Injectable({
   providedIn: 'root',

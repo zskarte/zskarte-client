@@ -217,6 +217,10 @@ export class ZsMapStateService {
     });
   }
 
+  public getCurrentPositionFlag(): IPositionFlag {
+    return this._display.value.positionFlag;
+  }
+
   public setSelectedFeature(featureId: string | undefined) {
     this._selectedFeature.next(featureId);
   }
@@ -530,6 +534,9 @@ export class ZsMapStateService {
         draft.drawElements.splice(index, 1);
       }
     });
+    if (this._selectedFeature.value === id) {
+      this.setSelectedFeature(undefined);
+    }
   }
 
   public getDrawElementState(id: string): ZsMapDrawElementState | undefined {

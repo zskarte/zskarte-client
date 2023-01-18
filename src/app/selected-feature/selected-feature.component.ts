@@ -135,51 +135,6 @@ export class SelectedFeatureComponent implements OnDestroy {
     return this.isPolygon() && this.selectedFeature != null && point?.getCoordinates().length > 1;
   }
 
-  /*
-  @HostListener('window:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent) {
-    // Only handle global events (to prevent input elements to be considered)
-    const globalEvent = event.target instanceof HTMLBodyElement;
-    if (globalEvent && this.selectedFeature && this.selectedSignature) {
-      switch (event.key) {
-        case 'Delete':
-        case 'Backspace':
-          this.delete();
-          break;
-        case '+':
-          this.selectedSignature.strokeWidth += 0.1;
-          this.redraw();
-          break;
-        case '-':
-          this.selectedSignature.strokeWidth -= 0.1;
-          this.redraw();
-          break;
-        case 'g':
-          this.merge(true);
-          break;
-        case 'Escape':
-          if (this.mergeMode) {
-            this.merge(false);
-          } else {
-            this.sharedState.selectFeature(null);
-          }
-          break;
-        case 'PageUp':
-          this.bringToFront();
-          break;
-        case 'PageDown':
-          this.sendToBack();
-          break;
-        case 'h':
-          this.drawHole();
-          break;
-        case 'c':
-          this.editCoordinates();
-          break;
-      }
-    }
-  }*/
-
   private extractFeatureGroups(allFeatures: any[]): any {
     const result = {};
     allFeatures.forEach((f) => {
@@ -253,18 +208,17 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   async editCoordinates() {
-    const selectedFeature = await firstValueFrom(this.selectedFeature);
-    if (selectedFeature) {
-      const geometry = <Point>selectedFeature.getGeometry();
+    const selectedElement = await firstValueFrom(this.zsMapStateService.observeSelectedElement());
+    if (selectedElement) {
       const editDialog = this.dialog.open(EditCoordinatesComponent, {
         data: {
-          geometry: selectedFeature.getGeometry()?.getType(),
-          coordinates: JSON.stringify(geometry.getCoordinates()),
+          geometry: selectedElement.getOlFeature().getGeometry()?.getType(),
+          coordinates: JSON.stringify(selectedElement.elementState?.coordinates),
         },
       });
       editDialog.afterClosed().subscribe((result) => {
         if (result) {
-          //geometry.setCoordinates(result);
+          selectedElement.setCoordinates(result);
         }
       });
     }
