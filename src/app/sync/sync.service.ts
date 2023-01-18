@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Patch } from 'immer';
 import { debounce } from '../helper/debounce';
 import { ZsMapStateService } from '../state/state.service';
+import { debounceTime, merge } from 'rxjs';
 
 interface PatchExtended extends Patch {
   timestamp: Date;
@@ -20,28 +21,28 @@ export class SyncService {
   private _socket: Socket | undefined;
   private _mapStatePatchQueue: Patch[] = [];
   private _state!: ZsMapStateService;
-  private _isOnline = true;
+  private _isOnlineCache = true;
   private _connectingPromise: Promise<void> | undefined;
 
   constructor(private _api: ApiService, private _session: SessionService) {
-    this._session.observeOperationId().subscribe((operationId) => {
-      if (operationId) {
-        this._reconnect();
-      } else {
-        this._disconnect();
-      }
-    });
+    merge(this._session.observeOperationId(), this._session.observeIsOnline())
+      .pipe(debounceTime(250))
+      .subscribe(async () => {
+        const operationId = this._session.getOperationId();
+        const isOnline = this._session.isOnline();
 
-    this._session.observeIsOnline().subscribe(async (isOnline) => {
-      this._isOnline = isOnline;
-      if (!isOnline) {
-        this._disconnect();
-      } else {
-        await this._publishPatches();
-        await this._connect();
-        await this._state.refreshMapState();
-      }
-    });
+        this._isOnlineCache = isOnline;
+        if (isOnline) {
+          if (operationId) {
+            await this._publishPatches();
+            await this._reconnect();
+          } else {
+            await this._disconnect();
+          }
+        } else {
+          await this._disconnect();
+        }
+      });
   }
 
   public setStateService(state: ZsMapStateService): void {
@@ -82,7 +83,6 @@ export class SyncService {
         reject(err);
       });
       this._socket.on('connect', () => {
-        console.log('Successfully created websocket connection');
         resolve();
       });
       this._socket.on('disconnect', () => {
@@ -103,14 +103,14 @@ export class SyncService {
   }
 
   private async _disconnect(): Promise<void> {
-    if (!this._socket?.connected) {
+    if (!this._socket) {
       return;
     }
-    if (this._socket) {
-      this._socket.removeAllListeners();
-      if (this._socket.connected) {
-        this._socket.disconnect();
-      }
+    this._socket.removeAllListeners();
+    try {
+      this._socket.disconnect();
+    } catch {
+      // do nothing here
     }
     this._socket = undefined;
   }
@@ -121,7 +121,7 @@ export class SyncService {
   }
 
   private async _publishPatches(): Promise<void> {
-    if (this._mapStatePatchQueue.length > 0 && this._session.getToken() && this._isOnline) {
+    if (this._mapStatePatchQueue.length > 0 && this._session.getToken() && this._isOnlineCache) {
       const patches = this._mapStatePatchQueue.map((p) => ({ ...p, timestamp: new Date(), identifier: this._connectionId }));
       const { error } = await this._api.post('/api/operations/mapstate/patch', patches, {
         headers: {

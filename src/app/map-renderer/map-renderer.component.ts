@@ -5,7 +5,7 @@ import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, EMPTY, firstValueFrom, map, Observable, skip, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -14,12 +14,12 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { SidebarContext, ZsMapDrawElementState } from '../state/interfaces';
+import { SidebarContext } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
-import { Icon, Style } from 'ol/style';
+import { Fill, Icon, Stroke, Style, Circle } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
@@ -71,6 +71,10 @@ export class MapRendererComponent implements AfterViewInit {
     zIndex: 0,
   });
   private _navigationLayer!: VectorLayer<VectorSource>;
+  private _deviceTrackingLayer!: VectorLayer<VectorSource>;
+  private _devicePositionFlag!: Feature;
+  private _devicePositionFlagLocation!: Point;
+  public isDevicePositionFlagVisible = false;
   private _positionFlag!: Feature;
   private _positionFlagLocation!: Point;
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
@@ -93,6 +97,7 @@ export class MapRendererComponent implements AfterViewInit {
   public selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | undefined>(undefined);
   public selectedFeatureCoordinates: Observable<string>;
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
+  public historyMode = new BehaviorSubject<boolean>(false);
 
   constructor(
     private _state: ZsMapStateService,
@@ -125,6 +130,14 @@ export class MapRendererComponent implements AfterViewInit {
         return this.availableProjections[this.selectedProjectionIndex].translate(transform);
       }),
     );
+
+    this._state.observeHistoryMode().subscribe((historyMode) => {
+      if (historyMode) {
+        this.toggleEditButtons(false);
+      }
+    });
+
+    this._state.observeHistoryMode().subscribe(this.historyMode);
   }
 
   public ngOnDestroy(): void {
@@ -159,7 +172,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._modify = new Modify({
       features: this._modifyCache,
       condition: (event) => {
-        if (!this.areFeaturesModifiable()) {
+        if (!this.areFeaturesModifiable() || this.historyMode.getValue()) {
           this.toggleEditButtons(false);
           return false;
         }
@@ -198,14 +211,13 @@ export class MapRendererComponent implements AfterViewInit {
       }
     });
 
-    // TODO
     const translate = new Translate({
       features: select.getFeatures(),
       condition: () =>
         select
           .getFeatures()
           .getArray()
-          .every((feature) => !feature?.get('sig').protected),
+          .every((feature) => !feature?.get('sig').protected) && !this.historyMode.value,
     });
 
     translate.on('translatestart', () => {
@@ -279,6 +291,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._map.addLayer(this._navigationLayer);
 
+
     this._map.on('singleclick', (event) => {
       if (this._map.hasFeatureAtPixel(event.pixel)) {
         const feature = this._map.forEachFeatureAtPixel(event.pixel, (feature) => feature, {hitTolerance: 10});
@@ -292,6 +305,36 @@ export class MapRendererComponent implements AfterViewInit {
         this.toggleFlagButtons(false);
       }
     });
+
+    this._devicePositionFlagLocation = _coords ? new Point(_coords) : new Point([0, 0]);
+    this._devicePositionFlag = new Feature({
+      geometry: this._devicePositionFlagLocation,
+    });
+    this._devicePositionFlag.setStyle(
+      new Style({
+        image: new Circle({
+          radius: 6,
+          fill: new Fill({
+            color: '#3399CC',
+          }),
+          stroke: new Stroke({
+            color: '#fff',
+            width: 2,
+          }),
+        }),
+      }),
+    );
+
+    const deviceTrackingSource = new VectorSource({
+      features: [this._devicePositionFlag],
+    });
+    this._deviceTrackingLayer = new VectorLayer({
+      source: deviceTrackingSource,
+      visible: false,
+    });
+    this._deviceTrackingLayer.setZIndex(999999999999);
+    this._map.addLayer(this._deviceTrackingLayer);
+
 
     this._map.on('moveend', () => {
       this._state.setMapCenter(this._view.getCenter() || [0, 0]);
@@ -767,8 +810,7 @@ export class MapRendererComponent implements AfterViewInit {
 
   toggleButton(allow: boolean, el?: HTMLElement) {
     if (el) {
-      // TODO: include historyMode
-      el.style.display = allow ? 'block' : 'none';
+      el.style.display = allow && !this.historyMode.value ? 'block' : 'none';
     }
   }
 
@@ -789,32 +831,23 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   toggleShowCurrentLocation() {
-    const posFlag = this._state.getCurrentPositionFlag();
-    this._state.updatePositionFlag({
-      ...posFlag,
-      isVisible: !posFlag.isVisible,
-    });
+    this.isDevicePositionFlagVisible = !this.isDevicePositionFlagVisible;
 
     // only track if the position flag is visible
-    this._geolocation.setTracking(this.isPositionFlagVisible);
+    this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
+    this._geolocation.setTracking(this.isDevicePositionFlagVisible);
 
-    this._geolocation.on('change:position', () => {
+    this._geolocation.once('change:position', () => {
       const coordinates = this._geolocation.getPosition();
-      if (!coordinates) return;
 
-      this._state.updatePositionFlag({
-        isVisible: this.isPositionFlagVisible,
-        coordinates: coordinates,
+      this._devicePositionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
+      this._map.getView().animate({
+        center: coordinates,
+        zoom: 14,
       });
-
-      this._positionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
-      this._positionFlag.setGeometry(this._positionFlagLocation);
-      this._positionFlag.changed();
+      this._devicePositionFlag.setGeometry(this._devicePositionFlagLocation);
+      this._devicePositionFlag.changed();
     });
-  }
-
-  get isPositionFlagVisible(): boolean {
-    return this._state.getCurrentPositionFlag().isVisible;
   }
 
   async rotateProjection() {

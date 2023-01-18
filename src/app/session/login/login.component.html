@@ -39,4 +39,8 @@
       <button class="login-button" mat-raised-button color="primary" (click)="login()">Login</button>
     </mat-card-content>
   </mat-card>
+
+  <div class="guest-login">
+    <button class="guest-login-button" mat-button (click)="guestLogin()">{{ i18n.get('guestLogin') }}</button>
+  </div>
 </form>

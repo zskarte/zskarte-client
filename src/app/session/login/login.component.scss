@@ -32,6 +32,14 @@
   }
 }
 
+.guest-login {
+  margin-top: 8px;
+}
+
+.guest-login-button:not(:disabled) {
+  color: white;
+}
+
 .login-logo {
   height: 2rem;
   width: 2rem;

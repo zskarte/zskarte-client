@@ -60,11 +60,19 @@ import { OperationsComponent } from './session/operations/operations.component';
 import { StackComponent } from './stack/stack.component';
 import { ProtocolTableComponent } from './protocol-table/protocol-table.component';
 import { MatSortModule } from '@angular/material/sort';
+import { SyncService } from './sync/sync.service';
+import { ZsMapStateService } from './state/state.service';
+import { ApiService } from './api/api.service';
 
 registerLocaleData(localeCH);
 
-export function appFactory(session: SessionService) {
+export function appFactory(session: SessionService, sync: SyncService, state: ZsMapStateService, api: ApiService) {
   return async () => {
+    // "inject" services to prevent circular dependencies
+    session.setStateService(state);
+    sync.setStateService(state);
+    api.setSessionService(session);
+
     await session.loadSavedSession();
   };
 }
@@ -135,7 +143,7 @@ export function appFactory(session: SessionService) {
     {
       provide: APP_INITIALIZER,
       useFactory: appFactory,
-      deps: [SessionService],
+      deps: [SessionService, SyncService, ZsMapStateService, ApiService],
       multi: true,
     },
     DatePipe,

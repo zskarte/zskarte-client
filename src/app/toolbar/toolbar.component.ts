@@ -116,7 +116,7 @@ export class ToolbarComponent implements OnDestroy {
     event.stopPropagation();
   }
 
-  async navigateEvents() {
-    await this._router.navigateByUrl('/operations');
+  navigateEvents() {
+    this.session.setOperation(undefined);
   }
 }

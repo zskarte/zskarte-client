@@ -65,10 +65,7 @@ export class ZsMapStateService {
     private _session: SessionService,
     private _snackBar: MatSnackBar,
     private _api: ApiService,
-  ) {
-    this._sync.setStateService(this);
-    this._session.setStateService(this);
-  }
+  ) {}
 
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -219,6 +216,19 @@ export class ZsMapStateService {
         });
       }
     });
+  }
+
+  public observeHistoryMode(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => {
+        return o.displayMode === ZsMapDisplayMode.HISTORY;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public saveDisplayState(): void {
+    localStorage.setItem('tempDisplayState', JSON.stringify(this._display.value));
   }
 
   public observeDisplayState(): Observable<IZsMapDisplayState> {
