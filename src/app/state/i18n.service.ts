@@ -1185,6 +1185,11 @@ export class I18NService {
       en: 'Recently used signatures',
       fr: 'Signatures récemment utilisées',
     },
+    geoLocationErrorMsg: {
+      de: 'Bitte aktiviere die GPS Ortung um dieses Feature zu verwenden.',
+      en: 'Please allow GPS tracking to use this feature.',
+      fr: 'Veuillez autoriser le suivi GPS pour utiliser cette fonction.',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

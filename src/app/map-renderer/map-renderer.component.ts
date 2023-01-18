@@ -738,7 +738,8 @@ export class MapRendererComponent implements AfterViewInit {
 
     // only track if the position flag is visible
     this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
-    this._geolocation.setTracking(this.isDevicePositionFlagVisible);
+
+    if (!this._geolocation.getTracking()) this._geolocation.setTracking(true);
 
     this._geolocation.once('change:position', () => {
       const coordinates = this._geolocation.getPosition();
@@ -750,6 +751,13 @@ export class MapRendererComponent implements AfterViewInit {
       });
       this._devicePositionFlag.setGeometry(this._devicePositionFlagLocation);
       this._devicePositionFlag.changed();
+    });
+
+    this._geolocation.once('error', () => {
+      this.isDevicePositionFlagVisible = false;
+      this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
+      this._geolocation.setTracking(this.isDevicePositionFlagVisible);
+      alert(this.i18n.get('geoLocationErrorMsg'));
     });
   }
 
