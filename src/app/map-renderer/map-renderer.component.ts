@@ -288,10 +288,9 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._map.addLayer(this._navigationLayer);
 
-
     this._map.on('singleclick', (event) => {
       if (this._map.hasFeatureAtPixel(event.pixel)) {
-        const feature = this._map.forEachFeatureAtPixel(event.pixel, (feature) => feature, {hitTolerance: 10});
+        const feature = this._map.forEachFeatureAtPixel(event.pixel, (feature) => feature, { hitTolerance: 10 });
         if (feature === this._positionFlag) {
           this.setFlagButtonPosition(this._positionFlagLocation.getCoordinates());
           this.toggleFlagButtons(true);
@@ -331,7 +330,6 @@ export class MapRendererComponent implements AfterViewInit {
     });
     this._deviceTrackingLayer.setZIndex(999999999999);
     this._map.addLayer(this._deviceTrackingLayer);
-
 
     this._map.on('moveend', () => {
       this._state.setMapCenter(this._view.getCenter() || [0, 0]);
@@ -597,7 +595,6 @@ export class MapRendererComponent implements AfterViewInit {
       positioning: 'center-center',
       offset: [30, -45],
     });
-
 
     this.rotateButton.getElement()?.addEventListener('mousedown', () => this.startRotating());
     this.rotateButton.getElement()?.addEventListener('touchstart', () => this.startRotating());
@@ -886,7 +883,7 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   hidePositionFlag() {
-    this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] })
+    this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
     this.toggleFlagButtons(false);
   }
 }
