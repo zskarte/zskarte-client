@@ -35,6 +35,9 @@ import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
+
+import { Stroke, Fill, Circle } from 'ol/style';
+
 @Component({
   selector: 'app-map-renderer',
   templateUrl: './map-renderer.component.html',
@@ -482,6 +485,28 @@ export class MapRendererComponent implements AfterViewInit {
 
     this.initButtons();
     this.initDrawHole();
+
+    const selectLocationMarker = new Select({
+      hitTolerance: 10,
+      style: new Style({
+        image: new Circle({
+          radius: 10,
+          fill: new Fill({
+            color: 'rgba(255, 255, 255, 0.5)',
+          }),
+          stroke: new Stroke({
+            color: 'rgba(0, 0, 0, 0.5)',
+          }),
+        }),
+      }),
+
+          
+      layers: [this._navigationLayer],
+    });
+
+    selectLocationMarker.on('select', (event) => {
+      console.log('select', event);
+    });
   }
 
   /**
