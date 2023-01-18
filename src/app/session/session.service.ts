@@ -23,7 +23,7 @@ import { ZsMapStateService } from '../state/state.service';
 import { GUEST_USER_IDENTIFIER } from './userLogic';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
-import {IZsMapOperation} from "./operations/operation.interfaces";
+import { IZsMapOperation } from './operations/operation.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -162,9 +162,12 @@ export class SessionService {
     const { result, error: authError } = await this._api.post<IAuthResult>('/api/auth/local', params);
     this._authError.next(authError);
     if (authError || !result) return;
-    const { error, result: meResult } = await this._api.get<{ organization: { id: number, logo: { url:string } } }>('/api/users/me?populate[0]=organization.logo', {
-      token: result.jwt,
-    });
+    const { error, result: meResult } = await this._api.get<{ organization: { id: number; logo: { url: string } } }>(
+      '/api/users/me?populate[0]=organization.logo',
+      {
+        token: result.jwt,
+      },
+    );
     if (error || !meResult) return;
 
     const session: IZsMapSession = {

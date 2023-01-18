@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import produce, {applyPatches, Patch} from 'immer';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
   IZsMapDisplayState,
@@ -14,24 +14,24 @@ import {
   ZsMapLayerStateType,
   ZsMapStateSource,
 } from './interfaces';
-import {distinctUntilChanged, map, takeWhile} from 'rxjs/operators';
-import {ZsMapBaseLayer} from '../map-renderer/layers/base-layer';
-import {v4 as uuidv4} from 'uuid';
-import {ZsMapDrawLayer} from '../map-renderer/layers/draw-layer';
-import {ZsMapBaseDrawElement} from '../map-renderer/elements/base/base-draw-element';
-import {DrawElementHelper} from '../helper/draw-element-helper';
-import {areArraysEqual} from '../helper/array';
-import {GeoFeature} from '../core/entity/geoFeature';
-import {MatDialog} from '@angular/material/dialog';
-import {DrawingDialogComponent} from '../drawing-dialog/drawing-dialog.component';
-import {defineDefaultValuesForSignature, Sign} from '../core/entity/sign';
-import {TextDialogComponent} from '../text-dialog/text-dialog.component';
-import {Signs} from '../map-renderer/signs';
-import {SyncService} from '../sync/sync.service';
-import {SessionService} from '../session/session.service';
-import {ApiService} from '../api/api.service';
-import {IZsMapOperation} from '../session/operations/operation.interfaces';
-import {OperationExportFile, OperationExportFileVersion} from "../core/entity/operationExportFile";
+import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
+import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
+import { v4 as uuidv4 } from 'uuid';
+import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
+import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
+import { DrawElementHelper } from '../helper/draw-element-helper';
+import { areArraysEqual } from '../helper/array';
+import { GeoFeature } from '../core/entity/geoFeature';
+import { MatDialog } from '@angular/material/dialog';
+import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
+import { TextDialogComponent } from '../text-dialog/text-dialog.component';
+import { Signs } from '../map-renderer/signs';
+import { SyncService } from '../sync/sync.service';
+import { SessionService } from '../session/session.service';
+import { ApiService } from '../api/api.service';
+import { IZsMapOperation } from '../session/operations/operation.interfaces';
+import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
 
 @Injectable({
   providedIn: 'root',

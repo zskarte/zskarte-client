@@ -2,7 +2,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import type { FileFilter } from 'electron';
-import FileSaver from "file-saver";
+import FileSaver from 'file-saver';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +24,7 @@ export class IpcService {
     });
   }
 
-  public async saveFile(params: { data: string; fileName: string; mimeType: string, filters?: FileFilter[] }): Promise<void> {
+  public async saveFile(params: { data: string; fileName: string; mimeType: string; filters?: FileFilter[] }): Promise<void> {
     if (IpcService.isElectron()) {
       return this._invoke('fs:saveFile', params);
     }

@@ -4,16 +4,16 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { ApiService } from '../../api/api.service';
 import { SessionService } from '../session.service';
 import { ZsMapStateService } from '../../state/state.service';
-import {IZsMapOperation} from './operation.interfaces';
-import {IZsMapState, ZsMapLayerStateType} from '../../state/interfaces';
+import { IZsMapOperation } from './operation.interfaces';
+import { IZsMapState, ZsMapLayerStateType } from '../../state/interfaces';
 import { v4 as uuidv4 } from 'uuid';
-import {I18NService} from "../../state/i18n.service";
-import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
-import {DateTime} from "luxon";
-import {IpcService} from "../../ipc/ipc.service";
-import {MatDialog} from "@angular/material/dialog";
-import {ImportDialogComponent} from "../../import-dialog/import-dialog.component";
-import {OperationExportFile, OperationExportFileVersion} from "../../core/entity/operationExportFile";
+import { I18NService } from '../../state/i18n.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DateTime } from 'luxon';
+import { IpcService } from '../../ipc/ipc.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ImportDialogComponent } from '../../import-dialog/import-dialog.component';
+import { OperationExportFile, OperationExportFileVersion } from '../../core/entity/operationExportFile';
 
 @Component({
   selector: 'app-operations',
@@ -26,14 +26,16 @@ export class OperationsComponent implements OnDestroy {
   public downloadData: SafeUrl | null = null;
   private _ngUnsubscribe = new Subject<void>();
 
-  constructor(private _api: ApiService,
-              private _state: ZsMapStateService,
-              private _session: SessionService,
-              public i18n: I18NService,
-              private _router: Router,
-              public ipc: IpcService,
-              private _sanitizer: DomSanitizer,
-              private _dialog: MatDialog) {
+  constructor(
+    private _api: ApiService,
+    private _state: ZsMapStateService,
+    private _session: SessionService,
+    public i18n: I18NService,
+    private _router: Router,
+    public ipc: IpcService,
+    private _sanitizer: DomSanitizer,
+    private _dialog: MatDialog,
+  ) {
     this._session
       .observeOrganizationId()
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -77,13 +79,13 @@ export class OperationsComponent implements OnDestroy {
         center: [0, 0],
         name: '',
         layers: [{ id: uuidv4(), type: ZsMapLayerStateType.DRAW, name: 'Layer 1' }],
-      }
+      },
     });
   }
 
   public async importOperation(): Promise<void> {
     const importDialog = this._dialog.open(ImportDialogComponent);
-    importDialog.afterClosed().subscribe(result => {
+    importDialog.afterClosed().subscribe((result) => {
       if (result) {
         const operation: IZsMapOperation = {
           name: result.name,
@@ -96,11 +98,11 @@ export class OperationsComponent implements OnDestroy {
             center: [0, 0],
             name: result.name,
             layers: [{ id: uuidv4(), type: ZsMapLayerStateType.DRAW, name: 'Layer 1' }],
-          }
-        }
+          },
+        };
         this.saveOperation(operation);
       }
-    })
+    });
   }
 
   public async deleteOperation(): Promise<void> {
@@ -146,12 +148,17 @@ export class OperationsComponent implements OnDestroy {
       return;
     }
     const fileName = `Ereignis_${DateTime.now().toFormat('yyyy_LL_dd_hh_mm')}.zsjson`;
-    const {result: operation} = await this._api.get<IZsMapOperation>('/api/operations/' + operationId);
-    const saveFile = { name: operation?.name, description: operation?.description, version: OperationExportFileVersion.V1, map: operation?.mapState };
+    const { result: operation } = await this._api.get<IZsMapOperation>('/api/operations/' + operationId);
+    const saveFile = {
+      name: operation?.name,
+      description: operation?.description,
+      version: OperationExportFileVersion.V1,
+      map: operation?.mapState,
+    };
     await this.ipc.saveFile({
       data: JSON.stringify(saveFile),
       fileName,
-      mimeType: "application/json",
+      mimeType: 'application/json',
       filters: [
         {
           name: 'ZS-Karte',

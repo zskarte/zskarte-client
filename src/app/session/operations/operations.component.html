@@ -33,7 +33,7 @@
             <matListItemLine matListItemTitle>{{ o.name }}</matListItemLine>
             <div matListItemLine>{{ o.description }}</div>
 
-            <div matListItemMeta style="display: flex;">
+            <div matListItemMeta style="display: flex">
               <button mat-icon-button color="primary" aria-label="Edit" (click)="selectOperation(o)">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -47,10 +47,7 @@
                 <mat-icon aria-hidden="false">edit_note</mat-icon>
                 Ereignis umbenennen
               </button>
-              <button
-                mat-menu-item
-                (click)="exportOperation(o.id)"
-              >
+              <button mat-menu-item (click)="exportOperation(o.id)">
                 <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportOperation')">save</mat-icon>
                 {{ i18n.get('exportOperation') }}
               </button>
