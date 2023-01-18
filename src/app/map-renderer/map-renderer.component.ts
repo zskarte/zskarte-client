@@ -97,7 +97,12 @@ export class MapRendererComponent implements AfterViewInit {
       .observeSelectedElement()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((element) => {
-        this.selectedFeature.next(element?.getOlFeature() as Feature<SimpleGeometry>);
+        if (element) {
+          this.selectedFeature.next(element.getOlFeature() as Feature<SimpleGeometry>);
+        } else {
+          this.selectedFeature.next(undefined);
+          this.toggleEditButtons(false);
+        }
       });
     this.sidebarContext = this._state.observeSidebarContext();
     this.selectedFeatureCoordinates = this.selectedFeature.pipe(
