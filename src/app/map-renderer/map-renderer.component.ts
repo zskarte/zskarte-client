@@ -161,7 +161,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._modify = new Modify({
       features: this._modifyCache,
       condition: (event) => {
-        if (!this.areFeaturesModifiable()) {
+        if (!this.areFeaturesModifiable() || this.historyMode.getValue()) {
           this.toggleEditButtons(false);
           return false;
         }
