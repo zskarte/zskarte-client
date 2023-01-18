@@ -221,7 +221,7 @@ export class MapRendererComponent implements AfterViewInit {
       ],
       interactions: defaults({
         doubleClickZoom: false,
-        pinchRotate: false,
+        pinchRotate: true,
         shiftDragZoom: false,
       }).extend([select, translate, this._modify]),
     });
