@@ -283,12 +283,14 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
   }
 
-  bringToFront() {
-    this.zsMapStateService.setReorderMode(true);
+  bringToFront(element: ZsMapDrawElementState) {
+    const maxZIndex = Math.max(...Object.values(this._drawElementCache).map((el) => el.elementState?.zindex ?? 0));
+    this.updateProperty(element, 'zindex', maxZIndex + 1);
   }
 
-  sendToBack() {
-    this.zsMapStateService.setReorderMode(false);
+  sendToBack(element: ZsMapDrawElementState) {
+    const minZIndex = Math.min(...Object.values(this._drawElementCache).map((el) => el.elementState?.zindex ?? 0));
+    this.updateProperty(element, 'zindex', minZIndex + 1);
   }
 
   findSigBySrc(src: any) {

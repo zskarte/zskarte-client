@@ -700,7 +700,7 @@ export class DrawStyle {
 
   private static getZIndex(feature: FeatureLike): number {
     feature = DrawStyle.getSubFeature(feature);
-    return feature.get('zindex') ? feature.get('zindex') : 0;
+    return feature.get('sig')?.zindex ? feature.get('sig')?.zindex : 0;
   }
 
   private static getAreaFill(color: string, scale: number, fillStyle: FillStyle | undefined) {

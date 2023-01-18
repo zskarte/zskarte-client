@@ -303,10 +303,10 @@
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>
           </mat-expansion-panel-header>
-          <button mat-flat-button (click)="bringToFront()">
+          <button mat-flat-button (click)="bringToFront(drawElement)">
             <i class="material-icons">arrow_upward</i><span>{{ i18n.get('moveToTop') }}</span>
           </button>
-          <button mat-flat-button (click)="sendToBack()">
+          <button mat-flat-button (click)="sendToBack(drawElement)">
             <i class="material-icons">arrow_downward</i><span>{{ i18n.get('moveToBottom') }}</span>
           </button>
           <button mat-flat-button (click)="split()" *ngIf="canSplit">
