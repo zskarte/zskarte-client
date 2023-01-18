@@ -1205,25 +1205,23 @@ export class I18NService {
       en: 'Recently used signatures',
       fr: 'Signatures récemment utilisées',
     },
-
+    deletionNotification: {
+      de: 'Die erfassten Daten werden jeden Abend um 00:00 Uhr gelöscht. Die Daten sind nach diesem Vorgang nicht mehr vorhanden.',
+      en: 'The recorded data is deleted every evening at 00:00. The data is no longer available after this process.',
+      fr: 'Les données saisies sont effacées chaque soir à 00:00. Les données ne sont plus disponibles après ce processus.',
+    },
+    guestLogin: {
+      de: 'Login als Gast',
+      en: 'Login as guest',
+      fr: 'Connexion en tant que visiteur',
+    },
     addSignatureManually: {
       de: 'Bitte fügen Sie die Signatur manuell ein',
       en: 'Please add the signature manually',
       fr: 'Veuillez ajouter la signature manuellement',
-
-      deletionNotification: {
-        de: 'Die erfassten Daten werden jeden Abend um 00:00 Uhr gelöscht. Die Daten sind nach diesem Vorgang nicht mehr vorhanden.',
-        en: 'The recorded data is deleted every evening at 00:00. The data is no longer available after this process.',
-        fr: 'Les données saisies sont effacées chaque soir à 00:00. Les données ne sont plus disponibles après ce processus.',
-      },
-      guestLogin: {
-        de: 'Login als Gast',
-        en: 'Login as guest',
-        fr: 'Connexion en tant que visiteur',
-      },
     },
   };
-
+ 
   public getLabelForSign(sign: Sign): string {
     const chosenLang = sign[this._session.getLocale()];
     if (chosenLang) {
