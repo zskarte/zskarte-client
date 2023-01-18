@@ -66,10 +66,7 @@ export class ZsMapStateService {
     private _session: SessionService,
     private _snackBar: MatSnackBar,
     private _api: ApiService,
-  ) {
-    this._sync.setStateService(this);
-    this._session.setStateService(this);
-  }
+  ) {}
 
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
