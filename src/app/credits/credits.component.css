@@ -6,10 +6,14 @@
 }
 
 .credits img {
-  height: 100%;
+  height: 46px;
   width: auto;
 }
 
 .credits h1 {
   margin-bottom: 0;
+}
+
+h1 {
+  margin: 0;
 }

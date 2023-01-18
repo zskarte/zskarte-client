@@ -1,11 +1,9 @@
 <form class="login-form">
   <mat-card>
-    <div class="title">
-      <mat-card-title-group>
-        <mat-card-title>Login</mat-card-title>
-        <img mat-card-sm-image src="/assets/img/favicon/apple-icon.png" />
-      </mat-card-title-group>
-    </div>
+    <mat-card-header class="title">
+      <mat-card-title>Login</mat-card-title>
+      <img mat-card-sm-image src="/assets/img/favicon/apple-icon.png" />
+    </mat-card-header>
 
     <mat-card-content>
       <mat-form-field class="full-width" appearance="fill">
@@ -37,9 +35,8 @@
       <mat-error *ngIf="session.getAuthError()">{{
         session.getAuthError()?.error?.error?.message || session.getAuthError()?.statusText || session.getAuthError()?.message
       }}</mat-error>
-    </mat-card-content>
-    <mat-card-actions>
+
       <button class="login-button" mat-raised-button color="primary" (click)="login()">Login</button>
-    </mat-card-actions>
+    </mat-card-content>
   </mat-card>
 </form>

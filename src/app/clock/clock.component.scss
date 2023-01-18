@@ -1,17 +1,12 @@
-.clock {
-  display: inline-block;
-}
-
 .time {
   font-weight: bold;
+  margin: 0;
+  line-height: 20px;
 }
 .date {
   font-style: italic;
-}
-
-div {
-  display: inline-block;
-  text-align: center;
+  margin: 0;
+  line-height: 20px;
 }
 
 .flexContainer {
@@ -19,29 +14,12 @@ div {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-}
-
-.timeLeft {
-  color: #3f51b5;
-  position: relative;
-
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    font-size: 10px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
+  font-size: 14px;
 }
 
 .flexColumn {
   display: flex;
   flex-direction: column;
-  size: 12px;
+  justify-content: center;
   align-items: flex-end;
 }

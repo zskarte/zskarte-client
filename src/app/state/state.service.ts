@@ -29,6 +29,9 @@ import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import { SimpleGeometry } from 'ol/geom';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
@@ -56,10 +59,12 @@ export class ZsMapStateService {
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
 
   constructor(
+    public i18n: I18NService,
     private drawDialog: MatDialog,
     private textDialog: MatDialog,
     private _sync: SyncService,
     private _session: SessionService,
+    private _snackBar: MatSnackBar,
     private _api: ApiService,
   ) {
     this._sync.setStateService(this);
@@ -181,8 +186,14 @@ export class ZsMapStateService {
     this.updateDisplayState((draft) => {
       if (draft.displayMode == ZsMapDisplayMode.HISTORY) {
         draft.displayMode = ZsMapDisplayMode.DRAW;
+        this._snackBar.open(this.i18n.get('toastDrawing'), 'OK', {
+          duration: 2000,
+        });
       } else {
         draft.displayMode = ZsMapDisplayMode.HISTORY;
+        this._snackBar.open(this.i18n.get('toastHistory'), 'OK', {
+          duration: 2000,
+        });
       }
     });
   }

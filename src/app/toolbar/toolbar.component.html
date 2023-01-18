@@ -1,69 +1,52 @@
-<mat-card class="toolbar">
-  <div class="flexContainer alignCenter">
-    <div class="credits">
-      <div class="flexContainer">
-        <app-credits></app-credits>
-      </div>
-    </div>
-    <div class="tools">
-      <div class="flexContainer alignCenter justifySpace flex-gap">
-        <div class="grow">
-          <app-geocoder style="flex: 1; margin-top: -0.08em"></app-geocoder>
-        </div>
-        <div class="right-header">
-          <div class="clock">
-            <app-clock></app-clock>
-          </div>
-          <button mat-stroked-button size="small" color="primary" class="noprint hideWhenCollapsed edit" [matMenuTriggerFor]="mainMenu">
-            <mat-icon aria-hidden="false" class="hamburger">menu</mat-icon>
-          </button>
-        </div>
-        <mat-menu #mainMenu="matMenu" class="noprint">
-          <button mat-menu-item id="historyButton" (click)="toggleHistoryIfButton($event)" title="ALT+H">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')">history</mat-icon>
-            {{ i18n.get('history') }}
-            <mat-slide-toggle (toggleChange)="toggleHistory()" [checked]="historyMode | async" color="primary"></mat-slide-toggle>
-          </button>
-          <mat-divider></mat-divider>
-          <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="languages">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('language')">language</mat-icon>
-            {{ i18n.get('language') }}
-          </button>
-          <button mat-menu-item class="tools-menu-item" (click)="print()" *ngIf="!(historyMode | async)">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('print')">local_printshop</mat-icon>
-            {{ i18n.get('print') }}
-          </button>
-          <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="protocolOptions">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocol')">list_alt</mat-icon>
-            {{ i18n.get('protocol') }}
-          </button>
-          <button mat-menu-item (click)="help()">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('help')">help</mat-icon>
-            {{ i18n.get('help') }}
-          </button>
-          <mat-divider></mat-divider>
-          <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()" *ngIf="!(historyMode | async)">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('navigateOperations')">logout</mat-icon>
-            {{ i18n.get('navigateOperations') }}
-          </button>
-        </mat-menu>
-        <mat-menu #languages="matMenu">
-          <button
-            mat-menu-item
-            *ngFor="let locale of locales"
-            (click)="setLocale(locale)"
-            [ngClass]="{ active: locale === session.getLocale() }"
-          >
-            {{ i18n.get(locale) }}
-          </button>
-        </mat-menu>
-        <mat-menu #protocolOptions="matMenu">
-          <button mat-menu-item class="tools-menu-item" (click)="protocolTable()">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolTable')">table_chart</mat-icon>
-            {{ i18n.get('protocolTable') }}
-          </button>
-        </mat-menu>
-      </div>
-    </div>
+<mat-toolbar>
+  <div class="grouped">
+    <app-credits />
   </div>
-</mat-card>
+  <app-geocoder />
+  <div class="grouped">
+    <app-clock />
+    <button mat-icon-button [matMenuTriggerFor]="mainMenu">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+  <mat-menu #mainMenu="matMenu" class="noprint">
+    <button mat-menu-item (click)="toggleHistory()" title="ALT+H">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(historyMode | async)">history</mat-icon>
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="historyMode | async">brush</mat-icon>
+      {{ (historyMode | async) ? i18n.get('drawMode') : i18n.get('history') }}
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="languages">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('language')">language</mat-icon>
+      {{ i18n.get('language') }}
+    </button>
+    <button mat-menu-item class="tools-menu-item" (click)="print()" *ngIf="!(historyMode | async)">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('print')">local_printshop</mat-icon>
+      {{ i18n.get('print') }}
+    </button>
+    <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="protocolOptions">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocol')">list_alt</mat-icon>
+      {{ i18n.get('protocol') }}
+    </button>
+    <button mat-menu-item (click)="help()">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('help')">help</mat-icon>
+      {{ i18n.get('help') }}
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()" *ngIf="!(historyMode | async)">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('navigateOperations')">logout</mat-icon>
+      {{ i18n.get('navigateOperations') }}
+    </button>
+  </mat-menu>
+  <mat-menu #languages="matMenu">
+    <button mat-menu-item *ngFor="let locale of locales" (click)="setLocale(locale)" [ngClass]="{ active: locale === session.getLocale() }">
+      {{ i18n.get(locale) }}
+    </button>
+  </mat-menu>
+  <mat-menu #protocolOptions="matMenu">
+    <button mat-menu-item class="tools-menu-item" (click)="protocolTable()">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolTable')">table_chart</mat-icon>
+      {{ i18n.get('protocolTable') }}
+    </button>
+  </mat-menu>
+</mat-toolbar>
