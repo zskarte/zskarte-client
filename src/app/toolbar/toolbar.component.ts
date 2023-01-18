@@ -13,7 +13,7 @@ import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-el
 import { DatePipe } from '@angular/common';
 import { mapProtocolEntry, ProtocolEntry } from '../helper/mapProtocolEntry';
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
-import {Router} from "@angular/router";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-toolbar',

@@ -1083,7 +1083,7 @@ export class I18NService {
     navigateOperations: {
       de: 'Zurück zu Operationen',
       en: 'Retour aux opérations',
-      fr: "Back to Operations",
+      fr: 'Back to Operations',
     },
     expand: {
       de: 'Ansicht wechseln',
