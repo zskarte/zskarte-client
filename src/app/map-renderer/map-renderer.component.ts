@@ -147,7 +147,12 @@ export class MapRendererComponent implements AfterViewInit {
     this._modify = new Modify({
       features: this._modifyCache,
       condition: (event) => {
-        if (this._modify['vertexFeature_'] && this._modify['lastPointerEvent_'] && this.areFeaturesModifiable()) {
+        if (!this.areFeaturesModifiable()) {
+          this.toggleEditButtons(false);
+          return false;
+        }
+
+        if (this._modify['vertexFeature_'] && this._modify['lastPointerEvent_']) {
           this.setEditButtonPosition(event.coordinate);
           this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
           this.toggleEditButtons(true);
@@ -184,6 +189,11 @@ export class MapRendererComponent implements AfterViewInit {
     // TODO
     const translate = new Translate({
       features: select.getFeatures(),
+      condition: () =>
+        select
+          .getFeatures()
+          .getArray()
+          .every((feature) => !feature?.get('sig').protected),
     });
 
     translate.on('translatestart', () => {
