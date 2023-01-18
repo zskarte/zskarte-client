@@ -56,7 +56,6 @@ export class ZsMapStateService {
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
-  private _reorderMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -720,10 +719,6 @@ export class ZsMapStateService {
 
   public setSplitMode(splitMode: boolean) {
     this._splitMode.next(splitMode);
-  }
-
-  public setReorderMode(reorderMode: boolean) {
-    this._reorderMode.next(reorderMode);
   }
 
   public async refreshMapState(): Promise<void> {
