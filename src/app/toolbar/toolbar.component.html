@@ -42,9 +42,9 @@
             {{ i18n.get('help') }}
           </button>
           <mat-divider></mat-divider>
-          <button mat-menu-item class="tools-menu-item" (click)="session.logout()" *ngIf="!(historyMode | async)">
-            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('logout')">logout</mat-icon>
-            {{ i18n.get('logout') }}
+          <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()" *ngIf="!(historyMode | async)">
+            <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('navigateOperations')">logout</mat-icon>
+            {{ i18n.get('navigateOperations') }}
           </button>
         </mat-menu>
         <mat-menu #languages="matMenu">

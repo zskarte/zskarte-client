@@ -13,6 +13,7 @@ import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-el
 import { DatePipe } from '@angular/common';
 import { mapProtocolEntry, ProtocolEntry } from '../helper/mapProtocolEntry';
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-toolbar',
@@ -37,6 +38,7 @@ export class ToolbarComponent implements OnDestroy {
     public zsMapStateService: ZsMapStateService,
     public session: SessionService,
     private datePipe: DatePipe,
+    private _router: Router,
   ) {
     this.historyMode = this.zsMapStateService.observeDisplayState().pipe(
       map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY),
@@ -125,5 +127,9 @@ export class ToolbarComponent implements OnDestroy {
       this.toggleHistory();
     }
     event.stopPropagation();
+  }
+
+  async navigateEvents() {
+    await this._router.navigateByUrl('/operations');
   }
 }

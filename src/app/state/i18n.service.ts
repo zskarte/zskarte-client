@@ -1080,10 +1080,10 @@ export class I18NService {
       en: 'Categories',
       fr: 'Catégories',
     },
-    logout: {
-      de: 'Ereignis beenden',
-      en: 'End event',
-      fr: "Fin de l'événement",
+    navigateOperations: {
+      de: 'Zurück zu Operationen',
+      en: 'Retour aux opérations',
+      fr: "Back to Operations",
     },
     expand: {
       de: 'Ansicht wechseln',
