@@ -34,6 +34,7 @@ import { MatButton } from '@angular/material/button';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { Signs } from './signs';
 
 @Component({
   selector: 'app-map-renderer',
@@ -361,24 +362,16 @@ export class MapRendererComponent implements AfterViewInit {
         }
       });
 
-    this._state
-      .observeHiddenSymbols()
+    combineLatest([this._state.observeHiddenSymbols(), this._state.observeHiddenFeatureTypes(), this._state.observeHiddenCategories()])
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((hiddenSymbols) => {
+      .subscribe(([hiddenSymbols, hiddenFeatureTypes, hiddenCategories]) => {
+        const hiddenSignIds = Signs.SIGNS.filter((sign) => sign.kat && hiddenCategories.includes(sign.kat)).map((sig) => sig.id);
         for (const key in this._drawElementCache) {
           const feature = this._drawElementCache[key].element.getOlFeature();
-          const hidden = hiddenSymbols.includes(feature?.get('sig')?.id);
-          feature?.set('hidden', hidden);
-        }
-      });
-
-    this._state
-      .observeHiddenFeatureTypes()
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((hiddenFeatureTypes) => {
-        for (const key in this._drawElementCache) {
-          const feature = this._drawElementCache[key].element.getOlFeature();
-          const hidden = hiddenFeatureTypes.includes(feature?.get('sig')?.filterValue);
+          const hidden =
+            hiddenSymbols.includes(feature?.get('sig')?.id) ||
+            hiddenFeatureTypes.includes(feature?.get('sig')?.filterValue) ||
+            hiddenSignIds.includes(feature?.get('sig')?.id);
           feature?.set('hidden', hidden);
         }
       });

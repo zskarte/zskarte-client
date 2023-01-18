@@ -5,7 +5,7 @@ import { ZsMapDisplayMode, ZsMapDrawElementState } from 'src/app/state/interface
 import { combineLatest, Subject } from 'rxjs';
 import { I18NService } from 'src/app/state/i18n.service';
 import capitalizeFirstLetter from 'src/app/helper/capitalizeFirstLetter';
-import { Sign, signCategories } from 'src/app/core/entity/sign';
+import { Sign, signCategories, SignCategory } from 'src/app/core/entity/sign';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { ZsMapBaseDrawElement } from 'src/app/map-renderer/elements/base/base-draw-element';
 import { FeatureLike } from 'ol/Feature';
@@ -21,11 +21,11 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   filterKeys: any[] = [];
   hiddenSymbols$: Observable<number[]>;
   hiddenFeatureTypes$: Observable<string[]>;
-  filteredCategories: string[] = [];
+  hiddenCategories$: Observable<string[]>;
 
   filtersOpenState = false;
   filtersGeneralOpenState = false;
-  signCategories = [...signCategories.values()];
+  signCategories: SignCategory[] = [...signCategories.values()];
   capitalizeFirstLetter = capitalizeFirstLetter;
   private _ngUnsubscribe = new Subject<void>();
 
@@ -36,13 +36,19 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     );
     this.hiddenSymbols$ = this.mapState.observeHiddenSymbols();
     this.hiddenFeatureTypes$ = this.mapState.observeHiddenFeatureTypes();
+    this.hiddenCategories$ = this.mapState.observeHiddenCategories();
   }
 
   ngOnInit(): void {
-    combineLatest([this.mapState.observeDrawElements(), this.mapState.observeHiddenSymbols(), this.mapState.observeHiddenFeatureTypes()])
+    combineLatest([
+      this.mapState.observeDrawElements(),
+      this.mapState.observeHiddenSymbols(),
+      this.mapState.observeHiddenFeatureTypes(),
+      this.mapState.observeHiddenCategories(),
+    ])
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(([drawElements, hiddenSymbols, hiddenFeatureTypes]) => {
-        this.updateFilterSymbolsAndFeatureTypes(drawElements, hiddenSymbols, hiddenFeatureTypes);
+      .subscribe(([drawElements, hiddenSymbols, hiddenFeatureTypes, hiddenCategories]) => {
+        this.updateFilterSymbolsAndFeatureTypes(drawElements, hiddenSymbols, hiddenFeatureTypes, hiddenCategories);
       });
   }
 
@@ -55,6 +61,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     elements: ZsMapBaseDrawElement<ZsMapDrawElementState>[],
     hiddenSymbols: number[],
     hiddenFeatureTypes: string[],
+    hiddenCategories: string[],
   ) {
     const symbols = {};
     if (elements && elements.length > 0) {
@@ -64,6 +71,9 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     this.filterSymbols = Object.values(symbols)
       .sort((a: any, b: any) => a.label.localeCompare(b.label))
       .map((symbol: any) => ({ ...symbol, hidden: hiddenSymbols.includes(symbol.id) || hiddenFeatureTypes.includes(symbol.filterValue) }));
+    this.signCategories.forEach((category) => {
+      category.isHidden = hiddenCategories?.includes(category.name);
+    });
   }
 
   extractSymbol(f: FeatureLike, symbols: Record<string, any>) {
@@ -116,20 +126,11 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     this.mapState.filterAll(
       active,
       this.filterSymbols.map((symbol) => symbol.filterValue),
+      signCategories.map((category) => category.name),
     );
   }
 
-  public filterCategory(category: string) {
-    this.mapState.filterCategory(category);
-    const index = this.filteredCategories.findIndex((c) => c === category);
-    if (index !== -1) {
-      this.filteredCategories.splice(index, 1);
-    } else {
-      this.filteredCategories.push(category);
-    }
-  }
-
-  public toggleFilter(symbol: Sign) {
+  public toggleSymbolOrFeatureFilter(symbol: Sign) {
     if (symbol.type === '' || symbol.type === undefined) {
       this.mapState.toggleSymbol(symbol.id);
     } else {
@@ -137,7 +138,9 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     }
   }
 
-  public isCategoryFiltered(category: string): boolean {
-    return this.filteredCategories.findIndex((c) => c === category) !== -1;
+  public toggleCategoryFilter(category: SignCategory) {
+    if (category.name !== '' && category.name !== undefined) {
+      this.mapState.toggleCategory(category.name);
+    }
   }
 }

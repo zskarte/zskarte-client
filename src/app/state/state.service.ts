@@ -96,6 +96,7 @@ export class ZsMapStateService {
       sidebarContext: null,
       hiddenSymbols: [],
       hiddenFeatureTypes: [],
+      hiddenCategories: [],
     };
     if (!mapState) {
       mapState = this._map.value;
@@ -633,20 +634,11 @@ export class ZsMapStateService {
     );
   }
 
-  public filterCategory(category: string) {
+  public filterAll(active: boolean, featureTypes: string[], categoryNames: string[]) {
     this.updateDisplayState((draft) => {
-      const ids = Signs.SIGNS.filter((s) => s.kat === category).map((symbol) => symbol.id);
-      ids.forEach((id) => {
-        if (!id) return;
-        this.toggleInArray(draft.hiddenSymbols, id);
-      });
-    });
-  }
-
-  public filterAll(active: boolean, featureTypes: string[]) {
-    this.updateDisplayState((draft) => {
-      draft.hiddenSymbols = active ? Signs.SIGNS.map((s) => s.id!) : [];
+      draft.hiddenSymbols = active ? [...Signs.SIGNS.map((s) => s.id!)] : [];
       draft.hiddenFeatureTypes = active ? featureTypes : [];
+      draft.hiddenCategories = active ? categoryNames : [];
     });
   }
 
@@ -665,6 +657,15 @@ export class ZsMapStateService {
     }
     this.updateDisplayState((draft) => {
       this.toggleInArray<string>(draft.hiddenFeatureTypes, featureType);
+    });
+  }
+
+  public toggleCategory(category: string) {
+    if (!category) {
+      return;
+    }
+    this.updateDisplayState((draft) => {
+      this.toggleInArray<string>(draft.hiddenCategories, category);
     });
   }
 
@@ -688,7 +689,16 @@ export class ZsMapStateService {
   public observeHiddenFeatureTypes() {
     return this._display.pipe(
       map((o) => {
-        return o?.hiddenFeatureTypes;
+        return o?.hiddenFeatureTypes.filter((f) => f !== undefined);
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public observeHiddenCategories() {
+    return this._display.pipe(
+      map((o) => {
+        return o?.hiddenCategories;
       }),
       distinctUntilChanged((x, y) => x === y),
     );
