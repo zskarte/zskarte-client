@@ -20,5 +20,5 @@ export class ClockComponent {
       .subscribe(() => {
         this.now.next(new Date());
       });
-    }
   }
+}

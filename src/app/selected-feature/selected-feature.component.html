@@ -71,15 +71,15 @@
               *ngIf="editMode && (selectedSignature.type === 'Point' || selectedSignature.src)"
               >{{ i18n.get('labelShow') }}</mat-checkbox
             >
-              <div *ngIf="selectedSignature.createdAt" class="label-right">
-                {{ selectedSignature.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
-              </div>
-              <div class="clearfix"></div>
-              <div *ngIf="selectedSignature.size" class="label-right">
-                {{ selectedSignature.type === 'LineString' ? i18n.get('distance') : i18n.get('area') }}:
-                <span [innerHTML]="selectedSignature.size"></span>
-              </div>
-              <div class="clearfix"></div>
+            <div *ngIf="selectedSignature.createdAt" class="label-right">
+              {{ selectedSignature.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
+            </div>
+            <div class="clearfix"></div>
+            <div *ngIf="selectedSignature.size" class="label-right">
+              {{ selectedSignature.type === 'LineString' ? i18n.get('distance') : i18n.get('area') }}:
+              <span [innerHTML]="selectedSignature.size"></span>
+            </div>
+            <div class="clearfix"></div>
           </mat-card-content>
         </mat-card>
 
@@ -106,7 +106,7 @@
             <mat-expansion-panel-header>
               <mat-panel-title>{{ i18n.get('symbol') }}</mat-panel-title>
             </mat-expansion-panel-header>
-            <button mat-button  *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
+            <button mat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
               <mat-icon>stars</mat-icon>
               {{ i18n.get('selectSymbol') }}
             </button>
@@ -298,13 +298,13 @@
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>
           </mat-expansion-panel-header>
-          <button mat-button  *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
+          <button mat-button *ngIf="!drawElement.symbolId" (click)="chooseSymbol(drawElement)">
             <mat-icon>stars</mat-icon>
             {{ i18n.get('selectSymbol') }}
           </button>
           <button mat-button (click)="bringToFront()">
             <mat-icon>arrow_upward</mat-icon>
-              {{ i18n.get('moveToTop') }}
+            {{ i18n.get('moveToTop') }}
           </button>
           <button mat-button (click)="sendToBack()">
             <mat-icon>arrow_downward</mat-icon>
