@@ -17,11 +17,10 @@ interface PatchExtended extends Patch {
   providedIn: 'root',
 })
 export class SyncService {
-  private _connectionId = '';
+  private _connectionId = uuidv4();
   private _socket: Socket | undefined;
   private _mapStatePatchQueue: Patch[] = [];
   private _state!: ZsMapStateService;
-  private _isOnlineCache = true;
   private _connectingPromise: Promise<void> | undefined;
 
   constructor(private _api: ApiService, private _session: SessionService) {
@@ -30,11 +29,8 @@ export class SyncService {
       .subscribe(async () => {
         const operationId = this._session.getOperationId();
         const isOnline = this._session.isOnline();
-
-        this._isOnlineCache = isOnline;
         if (isOnline) {
           if (operationId) {
-            await this._publishPatches();
             await this._reconnect();
           } else {
             await this._disconnect();
@@ -64,7 +60,6 @@ export class SyncService {
     }
 
     this._connectingPromise = new Promise<void>((resolve, reject) => {
-      this._connectionId = uuidv4();
       const token = this._session.getToken();
       const url = this._api.getUrl();
 
@@ -117,11 +112,15 @@ export class SyncService {
 
   public publishMapStatePatches(patches: Patch[]): void {
     this._mapStatePatchQueue.push(...patches);
-    this._publishPatchesDebounced();
+    this._publishMapStatePatchesDebounced();
   }
 
-  private async _publishPatches(): Promise<void> {
-    if (this._mapStatePatchQueue.length > 0 && this._session.getToken() && this._isOnlineCache) {
+  public async sendCachedMapStatePatches(): Promise<void> {
+    return await this._publishMapStatePatches();
+  }
+
+  private async _publishMapStatePatches(): Promise<void> {
+    if (this._mapStatePatchQueue.length > 0 && this._session.getToken() && this._session.isOnline()) {
       const patches = this._mapStatePatchQueue.map((p) => ({ ...p, timestamp: new Date(), identifier: this._connectionId }));
       const { error } = await this._api.post('/api/operations/mapstate/patch', patches, {
         headers: {
@@ -136,7 +135,7 @@ export class SyncService {
     }
   }
 
-  private _publishPatchesDebounced = debounce(async () => {
-    this._publishPatches();
+  private _publishMapStatePatchesDebounced = debounce(async () => {
+    this._publishMapStatePatches();
   }, 250);
 }
