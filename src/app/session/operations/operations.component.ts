@@ -63,7 +63,6 @@ export class OperationsComponent implements OnDestroy {
   public async selectOperation(operation: IZsMapOperation): Promise<void> {
     if (operation.id) {
       this._session.setOperation(operation);
-      await this._router.navigateByUrl('/map');
     }
   }
 
