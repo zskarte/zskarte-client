@@ -1215,6 +1215,11 @@ export class I18NService {
       en: 'Login as guest',
       fr: 'Connexion en tant que visiteur',
     },
+    addSignatureManually: {
+      de: 'Bitte fügen Sie die Signatur manuell ein',
+      en: 'Please add the signature manually',
+      fr: 'Veuillez ajouter la signature manuellement',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

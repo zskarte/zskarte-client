@@ -46,9 +46,13 @@ export class MapRendererComponent implements AfterViewInit {
   @ViewChild('delete') deleteElement!: MatButton;
   @ViewChild('rotate') rotateElement!: MatButton;
   @ViewChild('copy') copyElement!: MatButton;
+  @ViewChild('draw') drawElement!: MatButton;
+  @ViewChild('close') closeElement!: MatButton;
   removeButton?: Overlay;
   rotateButton?: Overlay;
   copyButton?: Overlay;
+  drawButton?: Overlay;
+  closeButton?: Overlay;
   ROTATE_OFFSET_X = 30;
   ROTATE_OFFSET_Y = -30;
 
@@ -295,7 +299,22 @@ export class MapRendererComponent implements AfterViewInit {
       source: navigationSource,
     });
     this._navigationLayer.setZIndex(99999999999);
+
     this._map.addLayer(this._navigationLayer);
+
+    this._map.on('singleclick', (event) => {
+      if (this._map.hasFeatureAtPixel(event.pixel)) {
+        const feature = this._map.forEachFeatureAtPixel(event.pixel, (feature) => feature, { hitTolerance: 10 });
+        if (feature === this._positionFlag && !this.historyMode.getValue()) {
+          this.setFlagButtonPosition(this._positionFlagLocation.getCoordinates());
+          this.toggleFlagButtons(true);
+        } else {
+          this.toggleFlagButtons(false);
+        }
+      } else {
+        this.toggleFlagButtons(false);
+      }
+    });
 
     this._devicePositionFlagLocation = _coords ? new Point(_coords) : new Point([0, 0]);
     this._devicePositionFlag = new Feature({
@@ -579,6 +598,18 @@ export class MapRendererComponent implements AfterViewInit {
       offset: [this.ROTATE_OFFSET_X, this.ROTATE_OFFSET_Y],
     });
 
+    this.drawButton = new Overlay({
+      element: this.drawElement._elementRef.nativeElement,
+      positioning: 'center-center',
+      offset: [30, 15],
+    });
+
+    this.closeButton = new Overlay({
+      element: this.closeElement._elementRef.nativeElement,
+      positioning: 'center-center',
+      offset: [30, -45],
+    });
+
     this.rotateButton.getElement()?.addEventListener('mousedown', () => this.startRotating());
     this.rotateButton.getElement()?.addEventListener('touchstart', () => this.startRotating());
     this.removeButton.getElement()?.addEventListener('click', () => this.removeFeature());
@@ -589,10 +620,15 @@ export class MapRendererComponent implements AfterViewInit {
         this.doCopySign(coordinationGroup?.feature);
       }
     });
+    this.drawButton.getElement()?.addEventListener('click', () => this.toggleDrawingDialog());
+    // hide position flag this.zsMapStateService.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
+    this.closeButton.getElement()?.addEventListener('click', () => this.hidePositionFlag());
 
     this._map.addOverlay(this.removeButton);
     this._map.addOverlay(this.rotateButton);
     this._map.addOverlay(this.copyButton);
+    this._map.addOverlay(this.drawButton);
+    this._map.addOverlay(this.closeButton);
   }
 
   async startRotating() {
@@ -759,6 +795,11 @@ export class MapRendererComponent implements AfterViewInit {
     this.toggleButton(allowRotation, this.copyButton?.getElement());
   }
 
+  async toggleFlagButtons(show: boolean) {
+    this.toggleButton(show, this.drawButton?.getElement());
+    this.toggleButton(show, this.closeButton?.getElement());
+  }
+
   /**
    * Sets the position of the editButtons around an Symbol
    * @param coordinates Coordinates of the symbol
@@ -768,6 +809,11 @@ export class MapRendererComponent implements AfterViewInit {
     this.removeButton?.setPosition(coordinates);
     this.rotateButton?.setPosition(coordinates);
     this.copyButton?.setPosition(coordinates);
+  }
+
+  setFlagButtonPosition(coordinates: number[]) {
+    this.drawButton?.setPosition(coordinates);
+    this.closeButton?.setPosition(coordinates);
   }
 
   toggleButton(allow: boolean, el?: HTMLElement) {
@@ -839,5 +885,19 @@ export class MapRendererComponent implements AfterViewInit {
       return transform(coordinates, mercatorProjection, projection);
     }
     return undefined;
+  }
+
+  toggleDrawingDialog() {
+    const posFlag = this._state.getCurrentPositionFlag();
+    const coordinates = posFlag.coordinates;
+    if (coordinates) {
+      this._state.drawSignatureAtCoordinate(coordinates);
+      this.toggleFlagButtons(false);
+    }
+  }
+
+  hidePositionFlag() {
+    this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
+    this.toggleFlagButtons(false);
   }
 }

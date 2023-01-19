@@ -120,6 +120,31 @@ export class ZsMapStateService {
     }
   }
 
+  public drawSignatureAtCoordinate(coordinates: number[]) {
+    const layer = this._display.value.activeLayer;
+    if (layer) {
+      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
+      dialogRef.afterClosed().subscribe((result: Sign) => {
+        if (result) {
+          console.log(result);
+          if (result.type === 'Point') {
+            const element: ZsMapDrawElementState = {
+              type: ZsMapDrawElementStateType.SYMBOL,
+              coordinates: coordinates,
+              layer: layer,
+              symbolId: result.id,
+            };
+            this.addDrawElement(element);
+            this.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
+          } else {
+            this._snackBar.open(this.i18n.get('addSignatureManually'), this.i18n.get('ok'), { duration: 5000 });
+            this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId: result.id });
+          }
+        }
+      });
+    }
+  }
+
   // drawing
   public drawElement(type: ZsMapDrawElementStateType, layer: string): void {
     if (type === ZsMapDrawElementStateType.SYMBOL) {
