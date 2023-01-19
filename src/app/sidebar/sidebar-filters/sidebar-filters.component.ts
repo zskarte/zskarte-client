@@ -17,15 +17,15 @@ import { FeatureLike } from 'ol/Feature';
 })
 export class SidebarFiltersComponent implements OnInit, OnDestroy {
   filterSymbols: any[] = [];
-  historyMode$: Observable<boolean>;
   filterKeys: any[] = [];
+  signCategories: any[] = [...signCategories.values()];
+  historyMode$: Observable<boolean>;
   hiddenSymbols$: Observable<number[]>;
   hiddenFeatureTypes$: Observable<string[]>;
   hiddenCategories$: Observable<string[]>;
 
   filtersOpenState = false;
   filtersGeneralOpenState = false;
-  signCategories: SignCategory[] = [...signCategories.values()];
   capitalizeFirstLetter = capitalizeFirstLetter;
   private _ngUnsubscribe = new Subject<void>();
 

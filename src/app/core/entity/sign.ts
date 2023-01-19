@@ -106,21 +106,20 @@ export function getMostTopCoordinate(feature: any) {
 }
 
 export const signCategories: SignCategory[] = [
-  { name: 'place', color: '#0000FF', isHidden: false },
-  { name: 'formation', color: '#0000FF', isHidden: false },
-  { name: 'vehicles', color: '#0000FF', isHidden: false },
-  { name: 'action', color: '#0000FF', isHidden: false },
-  { name: 'damage', color: '#FF0000', isHidden: false },
-  { name: 'incident', color: '#FF0000', isHidden: false },
-  { name: 'danger', color: '#FF9100', isHidden: false },
-  { name: 'fks', color: '#948B68', isHidden: false },
-  { name: 'effect', color: '#FFF333', isHidden: false },
+  { name: 'place', color: '#0000FF' },
+  { name: 'formation', color: '#0000FF' },
+  { name: 'vehicles', color: '#0000FF' },
+  { name: 'action', color: '#0000FF' },
+  { name: 'damage', color: '#FF0000' },
+  { name: 'incident', color: '#FF0000' },
+  { name: 'danger', color: '#FF9100' },
+  { name: 'fks', color: '#948B68' },
+  { name: 'effect', color: '#FFF333' },
 ];
 
 export interface SignCategory {
   name: string;
   color: string;
-  isHidden: boolean;
 }
 
 export function getColorForCategory(category: string): string {
