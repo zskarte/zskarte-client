@@ -127,7 +127,6 @@ export class ZsMapStateService {
       const dialogRef = this.drawDialog.open(DrawingDialogComponent);
       dialogRef.afterClosed().subscribe((result: Sign) => {
         if (result) {
-          console.log(result);
           if (result.type === 'Point') {
             const element: ZsMapDrawElementState = {
               type: ZsMapDrawElementStateType.SYMBOL,
@@ -838,7 +837,6 @@ export class ZsMapStateService {
           sha256(JSON.stringify(result.mapState)),
         ]);
         if (oldDigest !== newDigest) {
-          console.log('update map state', result);
           this.setMapState(result.mapState);
         }
       }
