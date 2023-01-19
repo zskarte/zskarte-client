@@ -12,6 +12,7 @@ import {
   ZsMapElementToDraw,
   ZsMapLayerState,
   ZsMapLayerStateType,
+  ZsMapPolygonDrawElementState,
   ZsMapStateSource,
 } from './interfaces';
 import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
@@ -35,6 +36,8 @@ import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
+import { Feature } from 'ol';
+import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +59,6 @@ export class ZsMapStateService {
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
-  private _reorderMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -67,10 +69,7 @@ export class ZsMapStateService {
     private _session: SessionService,
     private _snackBar: MatSnackBar,
     private _api: ApiService,
-  ) {
-    this._sync.setStateService(this);
-    this._session.setStateService(this);
-  }
+  ) {}
 
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -119,6 +118,31 @@ export class ZsMapStateService {
   public copySymbol(symbolId: number, layer?: string) {
     if (layer) {
       this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId });
+    }
+  }
+
+  public drawSignatureAtCoordinate(coordinates: number[]) {
+    const layer = this._display.value.activeLayer;
+    if (layer) {
+      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
+      dialogRef.afterClosed().subscribe((result: Sign) => {
+        if (result) {
+          console.log(result);
+          if (result.type === 'Point') {
+            const element: ZsMapDrawElementState = {
+              type: ZsMapDrawElementStateType.SYMBOL,
+              coordinates: coordinates,
+              layer: layer,
+              symbolId: result.id,
+            };
+            this.addDrawElement(element);
+            this.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
+          } else {
+            this._snackBar.open(this.i18n.get('addSignatureManually'), this.i18n.get('ok'), { duration: 5000 });
+            this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId: result.id });
+          }
+        }
+      });
     }
   }
 
@@ -198,6 +222,19 @@ export class ZsMapStateService {
         });
       }
     });
+  }
+
+  public observeHistoryMode(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => {
+        return o.displayMode === ZsMapDisplayMode.HISTORY;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public saveDisplayState(): void {
+    localStorage.setItem('tempDisplayState', JSON.stringify(this._display.value));
   }
 
   public observeDisplayState(): Observable<IZsMapDisplayState> {
@@ -386,6 +423,58 @@ export class ZsMapStateService {
       draft.activeLayer = layer.id;
       draft.layerOrder.push(layer.id as string);
     });
+  }
+
+  public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+    const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
+    const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
+    if (featureA.getGeometry()?.getType() == 'Polygon' && featureB.getGeometry()?.getType() == 'Polygon') {
+      const newCoordinates: number[][] = [];
+      featureA
+        ?.getGeometry()
+        ?.getCoordinates()
+        ?.forEach((c: number[]) => newCoordinates.push(c));
+      featureB
+        ?.getGeometry()
+        ?.getCoordinates()
+        ?.forEach((c: number[]) => newCoordinates.push(c));
+
+      elementA.updateElementState((draft) => {
+        if (draft.name && elementB.elementState?.name) {
+          draft.name = `${draft.name} | ${elementB.elementState?.name}`;
+        } else if (draft.name || elementB.elementState?.name) {
+          draft.name = draft.name ?? elementB.elementState?.name;
+        }
+        draft.coordinates = newCoordinates;
+      });
+      this.removeDrawElement(elementB.getId());
+      this.setSelectedFeature(elementA.getId());
+      this.setMergeMode(false);
+    }
+  }
+
+  public splitPolygon(element: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+    const feature = element.getOlFeature() as Feature<SimpleGeometry>;
+    if (feature.getGeometry()?.getType() == 'Polygon') {
+      const coords = feature.getGeometry()?.getCoordinates() as number[][];
+      // we only split polygons which have multiple paths
+      if (coords.length <= 1) {
+        return;
+      }
+
+      for (const group of coords) {
+        const state = {
+          ...element.elementState,
+          coordinates: [group],
+        } as ZsMapPolygonDrawElementState;
+        // remove id so it's set in addDrawElement
+        delete state.id;
+        this.addDrawElement(state);
+      }
+
+      // remove old element
+      this.removeDrawElement(element.getId());
+    }
   }
 
   // features
@@ -730,10 +819,6 @@ export class ZsMapStateService {
 
   public setSplitMode(splitMode: boolean) {
     this._splitMode.next(splitMode);
-  }
-
-  public setReorderMode(reorderMode: boolean) {
-    this._reorderMode.next(reorderMode);
   }
 
   public async refreshMapState(): Promise<void> {

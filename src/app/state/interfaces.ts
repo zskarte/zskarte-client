@@ -95,7 +95,6 @@ export interface IZsMapBaseElementState {
   layer?: string;
   coordinates?: number[] | number[][];
   createdAt?: number;
-  modifiedAt?: number;
 }
 
 export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
@@ -119,6 +118,7 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   fillOpacity?: number;
   fontSize?: number;
   images?: string[];
+  zindex?: number;
 }
 
 export const drawElementDefaults = {

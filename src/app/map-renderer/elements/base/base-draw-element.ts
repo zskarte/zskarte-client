@@ -61,6 +61,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       fillOpacity: state.fillOpacity,
       fontSize: state.fontSize,
       text: state['text'],
+      zindex: state.zindex,
     });
   }
 
@@ -91,7 +92,6 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       const element = draft.drawElements?.find((o) => o.id === this._id);
       if (element) {
         updateFn(element);
-        element.modifiedAt = Date.now();
       }
     });
   }, 250);

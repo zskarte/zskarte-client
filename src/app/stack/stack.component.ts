@@ -6,9 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./stack.component.css'],
 })
 export class StackComponent implements OnInit {
-  @Input() spacing: number = 1;
-
-  constructor() {}
+  @Input() spacing = 1;
 
   ngOnInit(): void {
     this.spacing = this.spacing * 4;

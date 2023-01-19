@@ -129,10 +129,13 @@ export class SelectedFeatureComponent implements OnDestroy {
     return element.type === ZsMapDrawElementStateType.TEXT;
   }
 
-  async canSplit() {
-    const feature = await firstValueFrom(this.selectedFeature);
-    const point = <Point>feature?.getGeometry();
-    return this.isPolygon() && this.selectedFeature != null && point?.getCoordinates().length > 1;
+  canSplit(element: ZsMapDrawElementState) {
+    if (!element?.id) {
+      return false;
+    }
+
+    const point = this._drawElementCache[element.id].getOlFeature()?.getGeometry() as SimpleGeometry;
+    return this.isPolygon() && this.selectedFeature != null && (point?.getCoordinates()?.length ?? 0) > 1;
   }
 
   private extractFeatureGroups(allFeatures: any[]): any {
@@ -267,28 +270,26 @@ export class SelectedFeatureComponent implements OnDestroy {
     this.zsMapStateService.toggleDrawHoleMode();
   }
 
-  async merge(merge: boolean) {
-    const isPolygon = await this.isPolygon();
-    if (merge && this.selectedFeature && isPolygon) {
+  merge(merge: boolean) {
+    if (merge && this.isPolygon()) {
       this.zsMapStateService.setMergeMode(true);
     } else {
       this.zsMapStateService.setMergeMode(false);
     }
   }
 
-  async split() {
-    const canSplit = await this.canSplit();
-    if (canSplit) {
-      this.zsMapStateService.setSplitMode(true);
-    }
+  split(element: ZsMapDrawElementState) {
+    this.zsMapStateService.splitPolygon(this._drawElementCache[element.id ?? '']);
   }
 
-  bringToFront() {
-    this.zsMapStateService.setReorderMode(true);
+  bringToFront(element: ZsMapDrawElementState) {
+    const maxZIndex = Math.max(...Object.values(this._drawElementCache).map((el) => el.elementState?.zindex ?? 0));
+    this.updateProperty(element, 'zindex', maxZIndex + 1);
   }
 
-  sendToBack() {
-    this.zsMapStateService.setReorderMode(false);
+  sendToBack(element: ZsMapDrawElementState) {
+    const minZIndex = Math.min(...Object.values(this._drawElementCache).map((el) => el.elementState?.zindex ?? 0));
+    this.updateProperty(element, 'zindex', minZIndex - 1);
   }
 
   findSigBySrc(src: any) {

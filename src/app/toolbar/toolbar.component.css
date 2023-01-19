@@ -31,10 +31,6 @@ mat-toolbar {
   }
 }
 
-app-geocoder {
-  max-width: 300px;
-}
-
 .grouped {
   display: flex;
   flex-direction: row;
