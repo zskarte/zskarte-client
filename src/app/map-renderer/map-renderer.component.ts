@@ -5,7 +5,7 @@ import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -454,14 +454,14 @@ export class MapRendererComponent implements AfterViewInit {
     combineLatest([this._state.observeHiddenSymbols(), this._state.observeHiddenFeatureTypes(), this._state.observeHiddenCategories()])
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(([hiddenSymbols, hiddenFeatureTypes, hiddenCategories]) => {
-        const hiddenSignIds = Signs.SIGNS.filter((sign) => sign.kat && hiddenCategories.includes(sign.kat)).map((sig) => sig.id);
+        const hiddenSignIds = Signs.SIGNS.filter((sign) => sign.kat && hiddenCategories?.includes(sign.kat)).map((sig) => sig.id);
         for (const key in this._drawElementCache) {
           const feature = this._drawElementCache[key].element.getOlFeature();
           const filterType = this._drawElementCache[key].element.elementState?.type as string;
           const hidden =
             hiddenSymbols.includes(feature?.get('sig')?.id) ||
             hiddenFeatureTypes.includes(filterType) ||
-            hiddenSignIds.includes(feature?.get('sig')?.id);
+            hiddenSignIds?.includes(feature?.get('sig')?.id);
           feature?.set('hidden', hidden);
         }
       });
