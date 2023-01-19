@@ -4,10 +4,11 @@
   "main": "dist/electron/index.js",
   "scripts": {
     "ng:serve": "ng serve --port 4300",
-    "ng:build": "ng build --configuration production",
+    "ng:build:prod": "ng build --configuration production",
+    "ng:build:dev": "ng build --configuration development",
     "electron:serve": "yarn electron:build && wait-on http-get://localhost:4300/ && electron ./ --serve",
     "electron:build": "tsc -p tsconfig.electron.json && electron-builder install-app-deps",
-    "build": "run-p ng:build electron:build",
+    "build": "run-p ng:build:prod electron:build",
     "start": "run-p ng:serve electron:serve",
     "lint": "eslint \"src/**/*.ts\""
   },
