@@ -24,6 +24,14 @@
   </button>
   <button
     mat-icon-button
+    [color]="isDevicePositionFlagVisible ? 'primary' : 'basic'"
+    (click)="toggleShowCurrentLocation()"
+    [attr.aria-label]="i18n.get('myLocation')"
+  >
+    <mat-icon>my_location</mat-icon>
+  </button>
+  <button
+    mat-icon-button
     *ngIf="(sidebarContext | async) !== null"
     (click)="setSidebarContext(null)"
     color="accent"
@@ -42,18 +50,25 @@
   ></div>
 </ng-container>
 
-<button mat-button mat-mini-fab class="edit-button" color="warn" #delete>
+<button mat-mini-fab class="edit-button" color="warn" #delete>
   <i class="material-icons">delete_forever</i>
 </button>
-<button mat-button mat-mini-fab class="edit-button" color="primary" #rotate>
+<button mat-mini-fab class="edit-button" color="primary" #rotate>
   <i class="material-icons">rotate_left</i>
 </button>
-<button mat-button mat-mini-fab class="edit-button" color="primary" #copy>
+<button mat-mini-fab class="edit-button" color="primary" #copy>
   <i class="material-icons">content_copy</i>
 </button>
 
-<div class="mat-button coordinates">
-  <div class="mat-button-wrapper" *ngIf="{ feature: selectedFeature | async } as context">
+<button mat-mini-fab class="edit-button" color="primary" #draw>
+  <mat-icon>stars</mat-icon>
+</button>
+<button mat-mini-fab class="edit-button" #close>
+  <mat-icon>close</mat-icon>
+</button>
+
+<div class="coordinates">
+  <ng-container *ngIf="{ feature: selectedFeature | async } as context">
     <span *ngIf="!context.feature">
       <ng-container *ngIf="mouseProjection | async as mouseProjection">{{ mouseProjection }}</ng-container>
     </span>
@@ -63,5 +78,5 @@
       </ng-container>
     </span>
     <i class="material-icons" (click)="rotateProjection()">change_circle</i>
-  </div>
+  </ng-container>
 </div>

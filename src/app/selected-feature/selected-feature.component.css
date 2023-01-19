@@ -178,6 +178,7 @@ mat-expansion-panel button i {
   overflow-x: auto;
   padding: 0.5em;
 }
+
 .images > div {
   display: inline-block;
   margin-right: 2em;
@@ -205,19 +206,22 @@ mat-expansion-panel button i {
   font-size: 1.2em;
 }
 
-.color-display {
-  min-width: 1em;
-  margin-right: 0.7em;
-}
-
-.color-option {
-  padding-left: 0;
-}
-
 div.flex {
   display: flex;
 }
 
-.mat-slide-toggle {
-  padding-bottom: 1.25em;
+.color-mode-toggle {
+  padding-bottom: 1.25rem;
+}
+
+.categoryDot {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.hidden {
+  display: none;
 }

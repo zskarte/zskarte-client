@@ -17,7 +17,7 @@ import { I18NService } from '../../state/i18n.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   currentMapOpenState = false;
   selectedLayersOpenState = false;
   favoriteLayersOpenState = false;
@@ -66,31 +66,8 @@ export class SidebarComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-    // this.sharedState.availableFeatures.subscribe((features) => {
-    //   this.updateFilteredFeatures();
-    // });
-  }
-
   switchLayer(layer: ZsMapStateSource) {
-    if (layer === ZsMapStateSource.OFFLINE) {
-      const offlineHost = findOfflineHost();
-      this.http.get(offlineHost).subscribe(
-        () => this.mapState.setMapSource(layer),
-        (error) => {
-          if (error.status === 200) {
-            this.mapState.setMapSource(layer);
-          } else {
-            console.log(error);
-            this.snackBar.open(this.i18n.get('docOfflineMap').replace('${offlineHost}', offlineHost), this.i18n.get('close'), {
-              duration: 6000,
-            });
-          }
-        },
-      );
-    } else {
-      this.mapState.setMapSource(layer);
-    }
+    this.mapState.setMapSource(layer);
   }
 
   showLegend(item: GeoFeature) {

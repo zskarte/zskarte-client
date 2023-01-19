@@ -15,14 +15,8 @@
         <div class="title">{{ layer.observeName() | async }}</div>
       </div>
       <div>
-        <mat-slider
-          [max]="1"
-          [min]="0"
-          [step]="0.1"
-          [ngModel]="mapState.observeMapOpacity() | async"
-          (input)="mapState.setMapOpacity($event.value ?? 0)"
-          style="width: 100%"
-        >
+        <mat-slider [max]="1" [min]="0" [step]="0.1" style="width: 100%">
+          <input matSliderThumb [ngModel]="mapState.observeMapOpacity() | async" (ngModelChange)="mapState.setMapOpacity($event)" />
         </mat-slider>
       </div>
       <mat-action-list *ngFor="let layer of mapSources">
@@ -55,7 +49,8 @@
             <i (click)="mapState.sortFeatureDown(index)" *ngIf="!last" class="material-icons">arrow_downward</i>
           </div>
           <div>
-            <mat-slider [max]="1" [min]="0" [step]="0.1" [value]="item.opacity" (valueChange)="mapState.setFeatureOpacity(index, $event)">
+            <mat-slider [max]="1" [min]="0" [step]="0.1">
+              <input matSliderThumb [ngModel]="item.opacity" (ngModelChange)="mapState.setFeatureOpacity(index, $event)" />
             </mat-slider>
           </div>
           <mat-divider *ngIf="!last"></mat-divider>

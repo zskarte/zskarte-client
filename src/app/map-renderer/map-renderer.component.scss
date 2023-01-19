@@ -11,24 +11,24 @@
   position: absolute;
   top: 30px;
   right: 30px;
-}
 
-.zoom button {
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5em;
-}
+  button {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5em;
 
-.zoom .mat-icon-button {
-  line-height: 1;
-}
+    &.mat-icon-button {
+      line-height: 1;
 
-.zoom .mat-icon {
-  font-size: 2em;
-  height: auto;
-  width: auto;
+      .mat-icon {
+        font-size: 2em;
+        height: auto;
+        width: auto;
+      }
+    }
+  }
 }
 
 .tooltip {
@@ -56,6 +56,12 @@
   color: white;
   user-select: text;
   cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  box-sizing: border-box;
+  padding: 6px 12px;
 }
 
 .coordinates span {

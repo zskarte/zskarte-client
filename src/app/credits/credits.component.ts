@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { I18NService } from '../state/i18n.service';
-import { ZsMapStateService } from '../state/state.service';
+import { SessionService } from '../session/session.service';
 
 @Component({
   selector: 'app-credits',
@@ -8,5 +8,11 @@ import { ZsMapStateService } from '../state/state.service';
   styleUrls: ['./credits.component.css'],
 })
 export class CreditsComponent {
-  constructor(public i18n: I18NService, public zsMapStateService: ZsMapStateService) {}
+  public operationName = '';
+  public logo = '';
+
+  constructor(public i18n: I18NService, public session: SessionService) {
+    this.operationName = session.getOperationName() ?? '';
+    this.logo = session.getLogo() ?? '';
+  }
 }

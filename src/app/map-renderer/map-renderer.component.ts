@@ -4,7 +4,8 @@ import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
-import { BehaviorSubject, firstValueFrom, last, lastValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
+import DrawHole from 'ol-ext/interaction/DrawHole';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -16,9 +17,9 @@ import { I18NService } from '../state/i18n.service';
 import { SidebarContext } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { Collection, Feature, Overlay } from 'ol';
-import { Geometry, LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
-import { Icon, Style } from 'ol/style';
+import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
+import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
+import { Fill, Icon, Stroke, Style, Circle } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
@@ -26,12 +27,14 @@ import { FeatureLike } from 'ol/Feature';
 import { availableProjections, mercatorProjection } from '../helper/projections';
 import { getCenter } from 'ol/extent';
 import { transform } from 'ol/proj';
+import { ScaleLine } from 'ol/control';
 import { Coordinate } from 'ol/coordinate';
 import { getFirstCoordinate, Sign } from '../core/entity/sign';
 import { MatButton } from '@angular/material/button';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { Signs } from './signs';
 
 @Component({
   selector: 'app-map-renderer',
@@ -44,9 +47,13 @@ export class MapRendererComponent implements AfterViewInit {
   @ViewChild('delete') deleteElement!: MatButton;
   @ViewChild('rotate') rotateElement!: MatButton;
   @ViewChild('copy') copyElement!: MatButton;
+  @ViewChild('draw') drawElement!: MatButton;
+  @ViewChild('close') closeElement!: MatButton;
   removeButton?: Overlay;
   rotateButton?: Overlay;
   copyButton?: Overlay;
+  drawButton?: Overlay;
+  closeButton?: Overlay;
   ROTATE_OFFSET_X = 30;
   ROTATE_OFFSET_Y = -30;
 
@@ -56,11 +63,16 @@ export class MapRendererComponent implements AfterViewInit {
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
   private _view!: OlView;
+  private _geolocation!: OlGeolocation;
   private _modify!: Modify;
   private _mapLayer = new OlTileLayer({
     zIndex: 0,
   });
   private _navigationLayer!: VectorLayer<VectorSource>;
+  private _deviceTrackingLayer!: VectorLayer<VectorSource>;
+  private _devicePositionFlag!: Feature;
+  private _devicePositionFlagLocation!: Point;
+  public isDevicePositionFlagVisible = false;
   private _positionFlag!: Feature;
   private _positionFlagLocation!: Point;
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
@@ -73,15 +85,18 @@ export class MapRendererComponent implements AfterViewInit {
   private _rotating = false;
   private _initialRotation = 0;
   private _lastModificationPointCoordinates: number[] = [];
+  private _drawHole!: DrawHole;
+  private _mergeMode = false;
   public currentSketchSize = new BehaviorSubject<string | null>(null);
   public mousePosition = new BehaviorSubject<number[]>([0, 0]);
   public mouseCoordinates = new BehaviorSubject<number[]>([0, 0]);
   public mouseProjection: Observable<string>;
   public availableProjections = availableProjections;
   public selectedProjectionIndex = 0;
-  public selectedFeature: Observable<Feature<SimpleGeometry> | null>;
+  public selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | undefined>(undefined);
   public selectedFeatureCoordinates: Observable<string>;
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
+  public historyMode = new BehaviorSubject<boolean>(false);
 
   constructor(
     private _state: ZsMapStateService,
@@ -89,11 +104,21 @@ export class MapRendererComponent implements AfterViewInit {
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
   ) {
-    this.selectedFeature = _state.observeSelectedFeature().pipe(takeUntil(this._ngUnsubscribe));
+    _state
+      .observeSelectedElement()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((element) => {
+        if (element) {
+          this.selectedFeature.next(element.getOlFeature() as Feature<SimpleGeometry>);
+        } else {
+          this.selectedFeature.next(undefined);
+          this.toggleEditButtons(false);
+        }
+      });
     this.sidebarContext = this._state.observeSidebarContext();
     this.selectedFeatureCoordinates = this.selectedFeature.pipe(
       map((feature) => {
-        const coords = this.getFeatureCoodrinates(feature);
+        const coords = this.getFeatureCoordinates(feature);
         return this.availableProjections[this.selectedProjectionIndex].translate(coords);
       }),
     );
@@ -104,6 +129,21 @@ export class MapRendererComponent implements AfterViewInit {
         return this.availableProjections[this.selectedProjectionIndex].translate(transform);
       }),
     );
+
+    this._state.observeHistoryMode().subscribe((historyMode) => {
+      if (historyMode) {
+        this.toggleEditButtons(false);
+      }
+    });
+
+    this._state.observeHistoryMode().subscribe(this.historyMode);
+
+    this._state
+      .observeMergeMode()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((mode) => {
+        this._mergeMode = mode;
+      });
   }
 
   public ngOnDestroy(): void {
@@ -115,8 +155,11 @@ export class MapRendererComponent implements AfterViewInit {
     // TODO
     const select = new Select({
       hitTolerance: 10,
-      style: (feature, resolution) => {
-        return feature.get('hidden') === true ? null : DrawStyle.styleFunctionSelect(feature, resolution, true);
+      style: (feature: FeatureLike, resolution: number) => {
+        if (feature.get('hidden') === true) {
+          return undefined;
+        }
+        return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
       layers: this._allLayers,
     });
@@ -124,10 +167,13 @@ export class MapRendererComponent implements AfterViewInit {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
       for (const feature of event.selected) {
-        if (!feature.get('sig').protected) {
-          this._modifyCache.push(feature);
+        if (this._mergeMode) {
+          const selectedElement = this._drawElementCache[this.selectedFeature.getValue()?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+          const elementToMerge = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+          this._state.mergePolygons(selectedElement.element, elementToMerge.element);
+        } else {
+          this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
         }
-        this._state.setSelectedFeature(feature as Feature<SimpleGeometry>);
       }
 
       if (event.selected.length === 0) {
@@ -138,10 +184,13 @@ export class MapRendererComponent implements AfterViewInit {
     this._modify = new Modify({
       features: this._modifyCache,
       condition: (event) => {
-        if (this._modify['vertexFeature_'] && this._modify['lastPointerEvent_'] && this.areFeaturesModifiable()) {
-          this.removeButton?.setPosition(event.coordinate);
-          this.rotateButton?.setPosition(event.coordinate);
-          this.copyButton?.setPosition(event.coordinate);
+        if (!this.areFeaturesModifiable() || this.historyMode.getValue()) {
+          this.toggleEditButtons(false);
+          return false;
+        }
+
+        if (this._modify['vertexFeature_'] && this._modify['lastPointerEvent_']) {
+          this.setEditButtonPosition(event.coordinate);
           this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
           this.toggleEditButtons(true);
         }
@@ -155,17 +204,43 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._modify.on('modifyend', (e) => {
-      this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
-      this.removeButton?.setPosition(e.mapBrowserEvent.coordinate);
-      this.copyButton?.setPosition(e.mapBrowserEvent.coordinate);
-      this.rotateButton?.setPosition(e.mapBrowserEvent.coordinate);
+      if (this._modify['vertexFeature_']) {
+        this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+      }
+      this.setEditButtonPosition(e.mapBrowserEvent.coordinate);
       this.toggleEditButtons(true);
       this._currentSketch = undefined;
+      e.features.forEach((feature) => {
+        const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+        element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+      });
     });
 
-    // TODO
+    // select on ol-Map layer
+    this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((feature) => {
+      if (feature && !feature.get('sig').protected && !this._modifyCache.getArray().includes(feature)) {
+        this._modifyCache.push(feature);
+      }
+    });
+
     const translate = new Translate({
       features: select.getFeatures(),
+      condition: () =>
+        select
+          .getFeatures()
+          .getArray()
+          .every((feature) => !feature?.get('sig').protected) && !this.historyMode.value,
+    });
+
+    translate.on('translatestart', () => {
+      this.toggleEditButtons(false);
+    });
+
+    translate.on('translateend', (e) => {
+      e.features.forEach((feature) => {
+        const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+        element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+      });
     });
 
     this._view = new OlView({
@@ -176,15 +251,32 @@ export class MapRendererComponent implements AfterViewInit {
     this._map = new OlMap({
       target: this.mapElement.nativeElement,
       view: this._view,
-      controls: [],
+      controls: [
+        new ScaleLine({
+          units: 'metric',
+          bar: true,
+          steps: 4,
+          text: true,
+          minWidth: 140,
+        }),
+      ],
       interactions: defaults({
         doubleClickZoom: false,
-        pinchRotate: false,
+        pinchRotate: true,
         shiftDragZoom: false,
       }).extend([select, translate, this._modify]),
     });
 
-    this._positionFlagLocation = new Point([0, 0]);
+    this._geolocation = new OlGeolocation({
+      // enableHighAccuracy must be set to true to have the heading value.
+      trackingOptions: {
+        enableHighAccuracy: true,
+      },
+      projection: this._view.getProjection(),
+    });
+
+    const _coords = this._geolocation.getPosition();
+    this._positionFlagLocation = _coords ? new Point(_coords) : new Point([0, 0]);
     this._positionFlag = new Feature({
       geometry: this._positionFlagLocation,
     });
@@ -208,7 +300,51 @@ export class MapRendererComponent implements AfterViewInit {
       source: navigationSource,
     });
     this._navigationLayer.setZIndex(99999999999);
+
     this._map.addLayer(this._navigationLayer);
+
+    this._map.on('singleclick', (event) => {
+      if (this._map.hasFeatureAtPixel(event.pixel)) {
+        const feature = this._map.forEachFeatureAtPixel(event.pixel, (feature) => feature, { hitTolerance: 10 });
+        if (feature === this._positionFlag && !this.historyMode.getValue()) {
+          this.setFlagButtonPosition(this._positionFlagLocation.getCoordinates());
+          this.toggleFlagButtons(true);
+        } else {
+          this.toggleFlagButtons(false);
+        }
+      } else {
+        this.toggleFlagButtons(false);
+      }
+    });
+
+    this._devicePositionFlagLocation = _coords ? new Point(_coords) : new Point([0, 0]);
+    this._devicePositionFlag = new Feature({
+      geometry: this._devicePositionFlagLocation,
+    });
+    this._devicePositionFlag.setStyle(
+      new Style({
+        image: new Circle({
+          radius: 6,
+          fill: new Fill({
+            color: '#3399CC',
+          }),
+          stroke: new Stroke({
+            color: '#fff',
+            width: 2,
+          }),
+        }),
+      }),
+    );
+
+    const deviceTrackingSource = new VectorSource({
+      features: [this._devicePositionFlag],
+    });
+    this._deviceTrackingLayer = new VectorLayer({
+      source: deviceTrackingSource,
+      visible: false,
+    });
+    this._deviceTrackingLayer.setZIndex(999999999999);
+    this._map.addLayer(this._deviceTrackingLayer);
 
     this._map.on('moveend', () => {
       this._state.setMapCenter(this._view.getCenter() || [0, 0]);
@@ -237,47 +373,56 @@ export class MapRendererComponent implements AfterViewInit {
       debouncedZoomSave();
     });
 
-    this._state.observeMapCenter().subscribe((center) => {
-      if (!areArraysEqual(this._view.getCenter() || [0, 0], center)) {
-        // TODO implement proper fallback center
-        if (!center[0] && !center[1]) {
-          center = [849861.97, 5905812.55];
+    this._state
+      .observeMapCenter()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((center) => {
+        if (!areArraysEqual(this._view.getCenter() || [0, 0], center)) {
+          // TODO implement proper fallback center
+          if (!center[0] && !center[1]) {
+            center = [849861.97, 5905812.55];
+          }
+          this._view.setCenter(center);
         }
-        this._view.setCenter(center);
-      }
-    });
+      });
 
-    this._state.observeMapZoom().subscribe((zoom) => {
-      if (this._view.getZoom() !== zoom) {
-        // TODO implement proper fallback zoom
-        if (!zoom) {
-          zoom = 16;
+    this._state
+      .observeMapZoom()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((zoom) => {
+        if (this._view.getZoom() !== zoom) {
+          // TODO implement proper fallback zoom
+          if (!zoom) {
+            zoom = 16;
+          }
+          this._view.setZoom(zoom);
         }
-        this._view.setZoom(zoom);
-      }
-    });
+      });
 
     this._map.addLayer(this._mapLayer);
 
-    this._state.observeElementToDraw().subscribe((element) => {
-      if (element) {
-        const interaction = DrawElementHelper.createDrawHandlerForType(element, this._state);
-        interaction.on('drawstart', (event) => {
-          this._currentSketch = event.feature;
-        });
-        interaction.on('drawend', () => {
-          this._currentSketch = undefined;
-          this._state.cancelDrawing();
-        });
-        this._currentDrawInteraction = interaction;
-        this._map.addInteraction(this._currentDrawInteraction);
-      } else {
-        if (this._currentDrawInteraction) {
-          this._map.removeInteraction(this._currentDrawInteraction);
+    this._state
+      .observeElementToDraw()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((element) => {
+        if (element) {
+          const interaction = DrawElementHelper.createDrawHandlerForType(element, this._state);
+          interaction.on('drawstart', (event) => {
+            this._currentSketch = event.feature;
+          });
+          interaction.on('drawend', () => {
+            this._currentSketch = undefined;
+            this._state.cancelDrawing();
+          });
+          this._currentDrawInteraction = interaction;
+          this._map.addInteraction(this._currentDrawInteraction);
+        } else {
+          if (this._currentDrawInteraction) {
+            this._map.removeInteraction(this._currentDrawInteraction);
+          }
+          this._currentDrawInteraction = undefined;
         }
-        this._currentDrawInteraction = undefined;
-      }
-    });
+      });
 
     this._state
       .observeMapSource()
@@ -306,13 +451,17 @@ export class MapRendererComponent implements AfterViewInit {
         }
       });
 
-    this._state
-      .observeHiddenSymbols()
+    combineLatest([this._state.observeHiddenSymbols(), this._state.observeHiddenFeatureTypes(), this._state.observeHiddenCategories()])
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((hiddenSymbols) => {
+      .subscribe(([hiddenSymbols, hiddenFeatureTypes, hiddenCategories]) => {
+        const hiddenSignIds = Signs.SIGNS.filter((sign) => sign.kat && hiddenCategories?.includes(sign.kat)).map((sig) => sig.id);
         for (const key in this._drawElementCache) {
           const feature = this._drawElementCache[key].element.getOlFeature();
-          const hidden = hiddenSymbols.includes(feature?.get('sig')?.id);
+          const filterType = this._drawElementCache[key].element.elementState?.type as string;
+          const hidden =
+            hiddenSymbols.includes(feature?.get('sig')?.id) ||
+            hiddenFeatureTypes.includes(filterType) ||
+            hiddenSignIds?.includes(feature?.get('sig')?.id);
           feature?.set('hidden', hidden);
         }
       });
@@ -327,20 +476,31 @@ export class MapRendererComponent implements AfterViewInit {
               element,
               layer: undefined,
             };
-            // TODO unsubscribing
-            element.observeLayer().subscribe((layer) => {
-              const cache = this._drawElementCache[element.getId()];
-              const feature = element.getOlFeature();
-              if (cache.layer) {
-                const cachedLayer = this._state.getLayer(cache.layer);
-                if (cachedLayer) {
-                  cachedLayer.removeOlFeature(feature);
+            element
+              .observeLayer()
+              .pipe(takeUntil(element.observeUnsubscribe()))
+              .subscribe((layer) => {
+                const cache = this._drawElementCache[element.getId()];
+                const feature = element.getOlFeature();
+                if (cache.layer) {
+                  const cachedLayer = this._state.getLayer(cache.layer);
+                  if (cachedLayer) {
+                    cachedLayer.removeOlFeature(feature);
+                  }
                 }
-              }
-              cache.layer = layer;
-              const newLayer = this._state.getLayer(layer || '');
-              newLayer?.addOlFeature(feature);
-            });
+                cache.layer = layer;
+                const newLayer = this._state.getLayer(layer || '');
+                newLayer?.addOlFeature(feature);
+              });
+          }
+        }
+
+        // Removed old elements
+        for (const element of Object.values(this._drawElementCache)) {
+          if (elements.every((e) => e.getId() != element.element.getId())) {
+            // New elements do not contain element from cache
+            this._state.getLayer(element.layer || '').removeOlFeature(element.element.getOlFeature());
+            delete this._drawElementCache[element.element.getId()];
           }
         }
       });
@@ -379,13 +539,40 @@ export class MapRendererComponent implements AfterViewInit {
           });
       });
 
-    this._state.observePositionFlag().subscribe((positionFlag) => {
-      this._navigationLayer.setVisible(positionFlag.isVisible);
-      this._positionFlagLocation.setCoordinates(positionFlag.coordinates);
-      this._positionFlag.changed();
-    });
+    this._state
+      .observePositionFlag()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((positionFlag) => {
+        this._navigationLayer.setVisible(positionFlag.isVisible);
+        this._positionFlagLocation.setCoordinates(positionFlag.coordinates);
+        this._positionFlag.changed();
+      });
 
     this.initButtons();
+    this.initDrawHole();
+  }
+
+  /**
+   * Initializes the drawHole functionality for Polygons
+   */
+  initDrawHole() {
+    this._drawHole = new DrawHole({
+      layers: this._allLayers,
+      type: 'Polygon',
+    });
+    this._drawHole.setActive(false);
+    this._map.addInteraction(this._drawHole);
+
+    this._drawHole.on('drawend', () => {
+      this._state.setDrawHoleMode(false);
+    });
+
+    this._state
+      .observeDrawHoleMode()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((drawHoleMode) => {
+        this._drawHole.setActive(drawHoleMode);
+      });
   }
 
   initButtons() {
@@ -405,6 +592,18 @@ export class MapRendererComponent implements AfterViewInit {
       offset: [this.ROTATE_OFFSET_X, this.ROTATE_OFFSET_Y],
     });
 
+    this.drawButton = new Overlay({
+      element: this.drawElement._elementRef.nativeElement,
+      positioning: 'center-center',
+      offset: [30, 15],
+    });
+
+    this.closeButton = new Overlay({
+      element: this.closeElement._elementRef.nativeElement,
+      positioning: 'center-center',
+      offset: [30, -45],
+    });
+
     this.rotateButton.getElement()?.addEventListener('mousedown', () => this.startRotating());
     this.rotateButton.getElement()?.addEventListener('touchstart', () => this.startRotating());
     this.removeButton.getElement()?.addEventListener('click', () => this.removeFeature());
@@ -415,10 +614,15 @@ export class MapRendererComponent implements AfterViewInit {
         this.doCopySign(coordinationGroup?.feature);
       }
     });
+    this.drawButton.getElement()?.addEventListener('click', () => this.toggleDrawingDialog());
+    // hide position flag this.zsMapStateService.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
+    this.closeButton.getElement()?.addEventListener('click', () => this.hidePositionFlag());
 
     this._map.addOverlay(this.removeButton);
     this._map.addOverlay(this.rotateButton);
     this._map.addOverlay(this.copyButton);
+    this._map.addOverlay(this.drawButton);
+    this._map.addOverlay(this.closeButton);
   }
 
   async startRotating() {
@@ -475,7 +679,14 @@ export class MapRendererComponent implements AfterViewInit {
     rotation = rotation > 180 ? rotation - 360 : rotation;
     const id = feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
 
-    this._state.updateDrawElementState(id, 'rotation', rotation);
+    // Update the signature in the UI separately from the state, to provide a smooth rotation
+    feature.get('sig').rotation = rotation;
+    feature.changed();
+
+    // Update the state with the new rotation (debounced)
+    this._drawElementCache[id]?.element.updateElementState((draft) => {
+      draft.rotation = rotation;
+    });
   }
 
   async removeFeature() {
@@ -506,7 +717,7 @@ export class MapRendererComponent implements AfterViewInit {
             }
           }
           const id = coordinationGroup.feature?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID);
-          this._state.updateDrawElementState(id, 'coordinates', newCoordinates);
+          this._drawElementCache[id]?.element.setCoordinates(newCoordinates);
         }
       }
     }
@@ -558,18 +769,19 @@ export class MapRendererComponent implements AfterViewInit {
     }
     const layer = await firstValueFrom(this._state.observeActiveLayer());
     this._state.copySymbol(sign.id, layer?.getId());
+    this._state.resetSelectedFeature();
   }
 
   async toggleEditButtons(show: boolean) {
     let allowRotation = false;
     if (show && this._lastModificationPointCoordinates) {
-      const selectedFeature = await firstValueFrom(this.selectedFeature);
+      const feature = await firstValueFrom(this.selectedFeature);
 
       const [pointX, pointY] = this._lastModificationPointCoordinates;
-      const [iconX, iconY] = getFirstCoordinate(selectedFeature);
+      const [iconX, iconY] = getFirstCoordinate(feature);
 
       // only show rotateButton if the feature has an icon and the selected point is where the icon is placed
-      allowRotation = selectedFeature?.get('sig')?.src && pointX === iconX && pointY === iconY;
+      allowRotation = feature?.get('sig')?.src && pointX === iconX && pointY === iconY;
     }
 
     this.toggleButton(show, this.removeButton?.getElement());
@@ -577,10 +789,30 @@ export class MapRendererComponent implements AfterViewInit {
     this.toggleButton(allowRotation, this.copyButton?.getElement());
   }
 
+  async toggleFlagButtons(show: boolean) {
+    this.toggleButton(show, this.drawButton?.getElement());
+    this.toggleButton(show, this.closeButton?.getElement());
+  }
+
+  /**
+   * Sets the position of the editButtons around an Symbol
+   * @param coordinates Coordinates of the symbol
+   * @param moveDeleteButton false if it should not move the delete button
+   */
+  setEditButtonPosition(coordinates: number[]) {
+    this.removeButton?.setPosition(coordinates);
+    this.rotateButton?.setPosition(coordinates);
+    this.copyButton?.setPosition(coordinates);
+  }
+
+  setFlagButtonPosition(coordinates: number[]) {
+    this.drawButton?.setPosition(coordinates);
+    this.closeButton?.setPosition(coordinates);
+  }
+
   toggleButton(allow: boolean, el?: HTMLElement) {
     if (el) {
-      // TODO: include historyMode
-      el.style.display = allow ? 'block' : 'none';
+      el.style.display = allow && !this.historyMode.value ? 'block' : 'none';
     }
   }
 
@@ -600,17 +832,43 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.toggleSidebarContext(context);
   }
 
+  toggleShowCurrentLocation() {
+    this.isDevicePositionFlagVisible = !this.isDevicePositionFlagVisible;
+
+    // only track if the position flag is visible
+    this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
+    this._geolocation.setTracking(this.isDevicePositionFlagVisible);
+
+    this._geolocation.once('change:position', () => {
+      const coordinates = this._geolocation.getPosition();
+
+      this._devicePositionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
+      this._map.getView().animate({
+        center: coordinates,
+        zoom: 14,
+      });
+      this._devicePositionFlag.setGeometry(this._devicePositionFlagLocation);
+      this._devicePositionFlag.changed();
+    });
+  }
+
   async rotateProjection() {
     const nextIndex = this.selectedProjectionIndex + 1;
     this.selectedProjectionIndex = nextIndex >= availableProjections.length ? 0 : nextIndex;
     const feature = await firstValueFrom(this.selectedFeature);
     if (feature) {
       // trigger selectedFeature to enable projection rotation while a feature is selected
-      this._state.setSelectedFeature(feature);
+      this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
     }
+
+    // After rotating the projection,
+    // the coordinates component is not automatically reloaded.
+    // To "force" the component to reload,
+    // we push the current mouse position to the mouse coordinates.
+    this.mouseCoordinates.next(this.mousePosition.value);
   }
 
-  getFeatureCoodrinates(feature: Feature | null): number[] {
+  getFeatureCoordinates(feature: Feature | null | undefined): number[] {
     const center = getCenter(feature?.getGeometry()?.getExtent() ?? []);
     return this.transformToCurrentProjection(center) ?? [];
   }
@@ -621,5 +879,19 @@ export class MapRendererComponent implements AfterViewInit {
       return transform(coordinates, mercatorProjection, projection);
     }
     return undefined;
+  }
+
+  toggleDrawingDialog() {
+    const posFlag = this._state.getCurrentPositionFlag();
+    const coordinates = posFlag.coordinates;
+    if (coordinates) {
+      this._state.drawSignatureAtCoordinate(coordinates);
+      this.toggleFlagButtons(false);
+    }
+  }
+
+  hidePositionFlag() {
+    this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
+    this.toggleFlagButtons(false);
   }
 }

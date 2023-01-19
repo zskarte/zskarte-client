@@ -105,20 +105,26 @@ export function getMostTopCoordinate(feature: any) {
   return symbolAnchorCoordinate;
 }
 
-export const signCategories: Map<string, { name: string; color: string }> = new Map([
-  ['place', { name: 'place', color: '#0000FF' }],
-  ['formation', { name: 'formation', color: '#0000FF' }],
-  ['action', { name: 'action', color: '#0000FF' }],
-  ['damage', { name: 'damage', color: '#FF0000' }],
-  ['incident', { name: 'incident', color: '#FF0000' }],
-  ['danger', { name: 'danger', color: '#FF9100' }],
-  ['fks', { name: 'fks', color: '#948B68' }], // purple: B22CC6
-  ['effect', { name: 'effect', color: '#FFF333' }],
-  //['label',      {name:'label',      color:'#555555'}]
-]);
+export const signCategories: SignCategory[] = [
+  { name: 'place', color: '#0000FF' },
+  { name: 'formation', color: '#0000FF' },
+  { name: 'vehicles', color: '#0000FF' },
+  { name: 'action', color: '#0000FF' },
+  { name: 'damage', color: '#FF0000' },
+  { name: 'incident', color: '#FF0000' },
+  { name: 'danger', color: '#FF9100' },
+  { name: 'fks', color: '#948B68' },
+  { name: 'effect', color: '#FFF333' },
+];
 
-export function getColorForCategory(kat: string): string {
-  return signCategories.has(kat) ? signCategories.get(kat)!.color : '#535353';
+export interface SignCategory {
+  name: string;
+  color: string;
+}
+
+export function getColorForCategory(category: string): string {
+  const foundCategory = signCategories.find((c) => c.name === category);
+  return foundCategory ? foundCategory.color : '#535353';
 }
 
 export function defineDefaultValuesForSignature(signature: Sign) {

@@ -6,23 +6,39 @@ import { v4 as uuidv4 } from 'uuid';
 import { Patch } from 'immer';
 import { debounce } from '../helper/debounce';
 import { ZsMapStateService } from '../state/state.service';
+import { debounceTime, merge } from 'rxjs';
+
+interface PatchExtended extends Patch {
+  timestamp: Date;
+  identifier: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class SyncService {
-  private _connectionId = '';
+  private _connectionId = uuidv4();
   private _socket: Socket | undefined;
   private _mapStatePatchQueue: Patch[] = [];
   private _state!: ZsMapStateService;
+  private _connectingPromise: Promise<void> | undefined;
+
   constructor(private _api: ApiService, private _session: SessionService) {
-    this._session.observeOperationId().subscribe((operationId) => {
-      if (operationId) {
-        this._reconnect();
-      } else {
-        this._disconnect();
-      }
-    });
+    merge(this._session.observeOperationId(), this._session.observeIsOnline())
+      .pipe(debounceTime(250))
+      .subscribe(async () => {
+        const operationId = this._session.getOperationId();
+        const isOnline = this._session.isOnline();
+        if (isOnline) {
+          if (operationId) {
+            await this._reconnect();
+          } else {
+            await this._disconnect();
+          }
+        } else {
+          await this._disconnect();
+        }
+      });
   }
 
   public setStateService(state: ZsMapStateService): void {
@@ -39,8 +55,11 @@ export class SyncService {
       return;
     }
 
-    return await new Promise((resolve, reject) => {
-      this._connectionId = uuidv4();
+    if (this._connectingPromise) {
+      return await this._connectingPromise;
+    }
+
+    this._connectingPromise = new Promise<void>((resolve, reject) => {
       const token = this._session.getToken();
       const url = this._api.getUrl();
 
@@ -59,53 +78,64 @@ export class SyncService {
         reject(err);
       });
       this._socket.on('connect', () => {
-        console.log('Successfully created websocket connection');
         resolve();
       });
       this._socket.on('disconnect', () => {
         console.warn('Disconnected from websocket');
         this._disconnect();
       });
-      this._socket.on('state:patches', (patches) => {
-        this._state.applyMapStatePatches(patches);
+      this._socket.on('state:patches', (patches: PatchExtended[]) => {
+        const otherPatches = patches.filter((p) => p.identifier !== this._connectionId);
+        if (otherPatches.length === 0) return;
+        this._state.applyMapStatePatches(otherPatches);
       });
       this._socket.connect();
+    }).finally(() => {
+      this._connectingPromise = undefined;
     });
+
+    return await this._connectingPromise;
   }
 
   private async _disconnect(): Promise<void> {
-    if (!this._socket?.connected) {
+    if (!this._socket) {
       return;
     }
-    if (this._socket) {
-      this._socket.removeAllListeners();
-      if (this._socket.connected) {
-        this._socket.disconnect();
-      }
+    this._socket.removeAllListeners();
+    try {
+      this._socket.disconnect();
+    } catch {
+      // do nothing here
     }
     this._socket = undefined;
   }
 
   public publishMapStatePatches(patches: Patch[]): void {
     this._mapStatePatchQueue.push(...patches);
-    this._publishPatches();
+    this._publishMapStatePatchesDebounced();
   }
 
-  private _publishPatches = debounce(async () => {
-    if (this._mapStatePatchQueue.length > 0 && this._session.getToken()) {
-      const patches = [...this._mapStatePatchQueue];
-      this._mapStatePatchQueue = [];
-      try {
-        // TODO implement retry logic
-        await this._api.post('/api/operations/mapstate/patch', patches, {
-          headers: {
-            operationId: this._session.getOperationId() + '',
-            identifier: this._connectionId,
-          },
-        });
-      } catch (err) {
-        console.error('Error while publishing patches', err);
+  public async sendCachedMapStatePatches(): Promise<void> {
+    return await this._publishMapStatePatches();
+  }
+
+  private async _publishMapStatePatches(): Promise<void> {
+    if (this._mapStatePatchQueue.length > 0 && this._session.getToken() && this._session.isOnline()) {
+      const patches = this._mapStatePatchQueue.map((p) => ({ ...p, timestamp: new Date(), identifier: this._connectionId }));
+      const { error } = await this._api.post('/api/operations/mapstate/patch', patches, {
+        headers: {
+          operationId: this._session.getOperationId() + '',
+          identifier: this._connectionId,
+        },
+      });
+      if (error) {
+        return;
       }
+      this._mapStatePatchQueue = [];
     }
-  }, 500);
+  }
+
+  private _publishMapStatePatchesDebounced = debounce(async () => {
+    this._publishMapStatePatches();
+  }, 250);
 }

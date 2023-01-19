@@ -25,7 +25,7 @@
     <div class="filterButtons" *ngIf="filterSymbols && filterSymbols.length > 0">
       <mat-grid-list cols="5" gutterSize="4">
         <mat-grid-tile *ngFor="let symbol of filterSymbols">
-          <button mat-button class="filterItem" (click)="toggleFilter(symbol)">
+          <button mat-button class="filterItem" (click)="toggleSymbolOrFeatureFilter(symbol)">
             <div style="position: relative; height: 100%; display: flex; justify-content: center; align-items: center">
               <img
                 [class.opaque]="symbol.hidden"
@@ -49,17 +49,12 @@
         {{ i18n.get('categories') }}
       </mat-panel-title>
     </mat-expansion-panel-header>
+
     <mat-selection-list>
-      <mat-list-item *ngFor="let category of signCategories" class="category-list-item">
-        <button mat-button class="category-list-item-button" style="width: 100%; text-align: left" (click)="filterCategory(category.name)">
-          <div [ngStyle]="{ 'background-color': category.color }" class="category-color"></div>
-          {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
-          <div class="icon-wrapper">
-            <mat-icon *ngIf="isCategoryFiltered(category.name)">visibility_off</mat-icon>
-            <mat-icon *ngIf="!isCategoryFiltered(category.name)">visibility_on</mat-icon>
-          </div>
-        </button>
-      </mat-list-item>
+      <mat-list-option *ngFor="let category of signCategories" (click)="toggleCategoryFilter(category)" [selected]="!category.isHidden">
+        <div class="categoryDot" [style.background-color]="category.color"></div>
+        {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
+      </mat-list-option>
     </mat-selection-list>
   </mat-expansion-panel>
 </mat-accordion>

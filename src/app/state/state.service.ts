@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
   IZsMapDisplayState,
-  IZsMapSaveFileState,
   IZsMapState,
   SidebarContext,
   ZsMapDisplayMode,
@@ -13,6 +12,7 @@ import {
   ZsMapElementToDraw,
   ZsMapLayerState,
   ZsMapLayerStateType,
+  ZsMapPolygonDrawElementState,
   ZsMapStateSource,
 } from './interfaces';
 import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
@@ -28,10 +28,16 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
-import Feature from 'ol/Feature';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { SimpleGeometry } from 'ol/geom';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { I18NService } from '../state/i18n.service';
+import { ApiService } from '../api/api.service';
+import { IZsMapOperation } from '../session/operations/operation.interfaces';
+import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
+import { Feature } from 'ol';
+import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
 
 @Injectable({
   providedIn: 'root',
@@ -48,26 +54,30 @@ export class ZsMapStateService {
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
-  private _selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | null>(null);
+  private _selectedFeature = new BehaviorSubject<string | undefined>(undefined);
   private _recentlyUsedElement = new BehaviorSubject<ZsMapDrawElementState[]>([]);
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
-  private _reorderMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
 
-  constructor(private drawDialog: MatDialog, private textDialog: MatDialog, private _sync: SyncService, private _session: SessionService) {
-    this._sync.setStateService(this);
-    this._session.setStateService(this);
-  }
+  constructor(
+    public i18n: I18NService,
+    private drawDialog: MatDialog,
+    private textDialog: MatDialog,
+    private _sync: SyncService,
+    private _session: SessionService,
+    private _snackBar: MatSnackBar,
+    private _api: ApiService,
+  ) {}
 
   private _getDefaultMapState(): IZsMapState {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return {} as any;
   }
 
-  private _getDefaultDisplayState(): IZsMapDisplayState {
-    return {
+  private _getDefaultDisplayState(mapState?: IZsMapState): IZsMapDisplayState {
+    const state: IZsMapDisplayState = {
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
@@ -75,6 +85,7 @@ export class ZsMapStateService {
       mapCenter: [0, 0],
       mapZoom: 16,
       activeLayer: undefined,
+      source: ZsMapStateSource.OPEN_STREET_MAP,
       layerOpacity: {},
       layerVisibility: {},
       layerOrder: [],
@@ -83,12 +94,54 @@ export class ZsMapStateService {
       features: [],
       sidebarContext: null,
       hiddenSymbols: [],
+      hiddenFeatureTypes: [],
+      hiddenCategories: [],
     };
+    if (!mapState) {
+      mapState = this._map.value;
+    }
+    if (mapState?.layers) {
+      for (const layer of mapState?.layers) {
+        if (layer.id) {
+          if (!state.activeLayer) {
+            state.activeLayer = layer.id;
+          }
+          state.layerOrder.push(layer.id);
+          state.layerVisibility[layer.id] = true;
+          state.layerOpacity[layer.id] = 1;
+        }
+      }
+    }
+    return state;
   }
 
   public copySymbol(symbolId: number, layer?: string) {
     if (layer) {
       this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId });
+    }
+  }
+
+  public drawSignatureAtCoordinate(coordinates: number[]) {
+    const layer = this._display.value.activeLayer;
+    if (layer) {
+      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
+      dialogRef.afterClosed().subscribe((result: Sign) => {
+        if (result) {
+          if (result.type === 'Point') {
+            const element: ZsMapDrawElementState = {
+              type: ZsMapDrawElementStateType.SYMBOL,
+              coordinates: coordinates,
+              layer: layer,
+              symbolId: result.id,
+            };
+            this.addDrawElement(element);
+            this.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
+          } else {
+            this._snackBar.open(this.i18n.get('addSignatureManually'), this.i18n.get('ok'), { duration: 5000 });
+            this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId: result.id });
+          }
+        }
+      });
     }
   }
 
@@ -125,43 +178,25 @@ export class ZsMapStateService {
     return this._elementToDraw.asObservable();
   }
 
-  public reset(newMapState?: IZsMapState, newDisplayState?: IZsMapDisplayState): void {
-    this.setMapState(newMapState);
-    if (newDisplayState) {
-      this.setDisplayState(newDisplayState);
-    } else {
-      // generate display style based on map state
-      if (newMapState) {
-        const displayState = this._getDefaultDisplayState();
-        if (newMapState.layers) {
-          for (const layer of newMapState?.layers) {
-            if (layer.id) {
-              if (!displayState.activeLayer) {
-                displayState.activeLayer = layer.id;
-              }
-              displayState.layerOrder.push(layer.id);
-              displayState.layerVisibility[layer.id] = true;
-              displayState.layerOpacity[layer.id] = 1;
-            }
-          }
-        }
-        this.setDisplayState(displayState);
+  public setMapState(newState?: IZsMapState): void {
+    const cached = Object.keys(this._layerCache);
+    for (const c of cached) {
+      if (!newState?.layers?.find((l) => l.id === c)) {
+        this._layerCache[c].unsubscribe();
+        delete this._layerCache[c];
       }
     }
-  }
-
-  public setMapState(newState?: IZsMapState): void {
-    this._layerCache = {};
     if (this._drawElementCache) {
       for (const key in this._drawElementCache) {
-        this._drawElementCache[key].unsubscribe();
+        if (!newState?.drawElements?.find((e) => e.id === key)) {
+          this._drawElementCache[key].unsubscribe();
+        }
       }
     }
-
     this._drawElementCache = {};
     this.updateMapState(() => {
       return newState || this._getDefaultMapState();
-    });
+    }, true);
   }
 
   public setDisplayState(newState?: IZsMapDisplayState): void {
@@ -178,10 +213,25 @@ export class ZsMapStateService {
     this.updateDisplayState((draft) => {
       if (draft.displayMode == ZsMapDisplayMode.HISTORY) {
         draft.displayMode = ZsMapDisplayMode.DRAW;
+        this._snackBar.open(this.i18n.get('toastDrawing'), 'OK', {
+          duration: 2000,
+        });
       } else {
         draft.displayMode = ZsMapDisplayMode.HISTORY;
+        this._snackBar.open(this.i18n.get('toastHistory'), 'OK', {
+          duration: 2000,
+        });
       }
     });
+  }
+
+  public observeHistoryMode(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => {
+        return o.displayMode === ZsMapDisplayMode.HISTORY;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
   }
 
   public saveDisplayState(): void {
@@ -217,12 +267,16 @@ export class ZsMapStateService {
     });
   }
 
-  public setSelectedFeature(feature: Feature<SimpleGeometry>) {
-    this._selectedFeature.next(feature);
+  public getCurrentPositionFlag(): IPositionFlag {
+    return this._display.value.positionFlag;
+  }
+
+  public setSelectedFeature(featureId: string | undefined) {
+    this._selectedFeature.next(featureId);
   }
 
   public resetSelectedFeature() {
-    this._selectedFeature.next(null);
+    this._selectedFeature.next(undefined);
   }
 
   public setMapZoom(zoom: number) {
@@ -255,7 +309,7 @@ export class ZsMapStateService {
 
   // source
   public observeMapSource(): Observable<ZsMapStateSource> {
-    return this._map.pipe(
+    return this._display.pipe(
       map((o) => {
         return o?.source;
       }),
@@ -264,7 +318,7 @@ export class ZsMapStateService {
   }
 
   public setMapSource(source: ZsMapStateSource) {
-    this.updateMapState((draft) => {
+    this.updateDisplayState((draft) => {
       draft.source = source;
     });
   }
@@ -372,6 +426,58 @@ export class ZsMapStateService {
     });
   }
 
+  public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+    const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
+    const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
+    if (featureA.getGeometry()?.getType() == 'Polygon' && featureB.getGeometry()?.getType() == 'Polygon') {
+      const newCoordinates: number[][] = [];
+      featureA
+        ?.getGeometry()
+        ?.getCoordinates()
+        ?.forEach((c: number[]) => newCoordinates.push(c));
+      featureB
+        ?.getGeometry()
+        ?.getCoordinates()
+        ?.forEach((c: number[]) => newCoordinates.push(c));
+
+      elementA.updateElementState((draft) => {
+        if (draft.name && elementB.elementState?.name) {
+          draft.name = `${draft.name} | ${elementB.elementState?.name}`;
+        } else if (draft.name || elementB.elementState?.name) {
+          draft.name = draft.name ?? elementB.elementState?.name;
+        }
+        draft.coordinates = newCoordinates;
+      });
+      this.removeDrawElement(elementB.getId());
+      this.setSelectedFeature(elementA.getId());
+      this.setMergeMode(false);
+    }
+  }
+
+  public splitPolygon(element: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+    const feature = element.getOlFeature() as Feature<SimpleGeometry>;
+    if (feature.getGeometry()?.getType() == 'Polygon') {
+      const coords = feature.getGeometry()?.getCoordinates() as number[][];
+      // we only split polygons which have multiple paths
+      if (coords.length <= 1) {
+        return;
+      }
+
+      for (const group of coords) {
+        const state = {
+          ...element.elementState,
+          coordinates: [group],
+        } as ZsMapPolygonDrawElementState;
+        // remove id so it's set in addDrawElement
+        delete state.id;
+        this.addDrawElement(state);
+      }
+
+      // remove old element
+      this.removeDrawElement(element.getId());
+    }
+  }
+
   // features
   public observeSelectedFeatures(): Observable<GeoFeature[]> {
     return this._display.pipe(
@@ -392,8 +498,14 @@ export class ZsMapStateService {
     );
   }
 
-  public observeSelectedFeature(): Observable<Feature<SimpleGeometry> | null> {
+  public observeSelectedFeature(): Observable<string | undefined> {
     return this._selectedFeature.asObservable();
+  }
+
+  public observeSelectedElement(): Observable<ZsMapBaseDrawElement<ZsMapDrawElementState> | undefined> {
+    return combineLatest([this.observeSelectedFeature(), this.observeDrawElements()]).pipe(
+      map(([featureId, elements]) => elements.find((e) => e.getId() === featureId)),
+    );
   }
 
   public addFeature(feature: GeoFeature) {
@@ -447,12 +559,12 @@ export class ZsMapStateService {
     return this._map.value.layers?.find((layer) => layer.id === this._display.value.activeLayer);
   }
 
-  public addDrawElement(element: ZsMapDrawElementState): void {
+  public addDrawElement(element: ZsMapDrawElementState): ZsMapDrawElementState | null {
     const activeLayerState = this.getActiveLayerState();
     if (activeLayerState?.type === ZsMapLayerStateType.DRAW) {
       const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
       defineDefaultValuesForSignature(sign);
-      const drawElement = {
+      const drawElement: ZsMapDrawElementState = {
         color: sign.color,
         protected: sign.protected,
         iconSize: sign.iconSize,
@@ -464,23 +576,28 @@ export class ZsMapStateService {
         style: sign.style,
         arrow: sign.arrow,
         strokeWidth: sign.strokeWidth,
-        fillStyle: { ...sign.fillStyle },
+        fillStyle: { ...sign.fillStyle, name: sign.fillStyle?.name ?? '' },
         fillOpacity: sign.fillOpacity,
         fontSize: sign.fontSize,
         id: uuidv4(),
         nameShow: true,
         ...element,
+        createdAt: Date.now(),
       };
 
       this.updateMapState((draft) => {
         if (!draft.drawElements) {
           draft.drawElements = [];
         }
-        draft.drawElements.push(drawElement as ZsMapDrawElementState);
+        draft.drawElements.push(drawElement);
       });
 
       this.addRecentlyUsedElement(element);
+
+      return drawElement;
     }
+
+    return null;
   }
 
   private addRecentlyUsedElement(element: ZsMapDrawElementState) {
@@ -519,6 +636,9 @@ export class ZsMapStateService {
         draft.drawElements.splice(index, 1);
       }
     });
+    if (this._selectedFeature.value === id) {
+      this.setSelectedFeature(undefined);
+    }
   }
 
   public getDrawElementState(id: string): ZsMapDrawElementState | undefined {
@@ -543,6 +663,14 @@ export class ZsMapStateService {
               }
             }
           }
+
+          // unsubscribe old elements
+          for (const id of Object.keys(this._drawElementCache)) {
+            if (!cache[id]) {
+              this._drawElementCache[id].unsubscribe();
+            }
+          }
+
           this._drawElementCache = cache;
           return elements;
         }
@@ -554,8 +682,11 @@ export class ZsMapStateService {
     );
   }
 
-  public updateMapState(fn: (draft: IZsMapState) => void) {
+  public updateMapState(fn: (draft: IZsMapState) => void, preventPatches = false) {
     const newState = produce<IZsMapState>(this._map.value || {}, fn, (patches, inversePatches) => {
+      if (preventPatches) {
+        return;
+      }
       this._mapPatches.value.push(...patches);
       this._mapPatches.next(this._mapPatches.value);
       this._mapInversePatches.value.push(...inversePatches);
@@ -580,74 +711,6 @@ export class ZsMapStateService {
     this._display.next(newState);
   }
 
-  public getSaveFileState(): IZsMapSaveFileState {
-    return {
-      map: this._map.value,
-      display: this._display.value,
-    };
-  }
-
-  public exportMap(): string {
-    return 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify(this._map.value));
-  }
-
-  public exportMapWithSession(): string {
-    return 'data:text/json;charset=UTF-8,' + encodeURIComponent(JSON.stringify({ map: this._map.value, display: this._display.value }));
-  }
-
-  public exportMapCsv(): string {
-    const lines: string[] = new Array<string>();
-    /*
-    const result: { features: Feature } = this.writeFeatures();
-    const features: Feature[] = result.features;
-
-    // header
-    let row: string[] = new Array<string>();
-    row.push(this.i18n.get('csvID'));
-    row.push(this.i18n.get('csvDate'));
-    row.push(this.i18n.get('csvGroup'));
-    row.push(this.i18n.get('csvSignatur'));
-    row.push(this.i18n.get('csvLocation'));
-    row.push(this.i18n.get('csvSize'));
-    row.push(this.i18n.get('csvLabel'));
-    row.push(this.i18n.get('csvDescription'));
-    lines.push('"' + row.join('";"') + '"');
-
-    // entry
-    for (let i = 0, l = features.length; i < l; i++) {
-      let f: Feature = features[i];
-      if (!f.properties || !f.properties.sig) continue;
-      let s: Sign = f.properties.sig;
-      let sk: string = s.kat
-        ? 'sign' + this.capitalizeFirstLetter(s.kat)
-        : 'csvGroupArea';
-      //console.log('row', f);
-
-      row = new Array<string>();
-      row.push(f.id);
-      row.push(s.createdAt.toString());
-      row.push(sk && this.i18n.has(sk) ? this.i18n.get(sk) : '');
-      row.push(
-        this.i18n.locale == 'fr' ? s.fr : this.i18n.locale == 'en' ? s.en : s.de
-      );
-      row.push(JSON.stringify(f.geometry));
-      row.push(s.size ? s.size.replace('<sup>2</sup>', '2') : '');
-      row.push(s.label);
-      row.push(s.description);
-
-      for (let ii = 0, ll = row.length; ii < ll; ii++) {
-        row[ii] = row[ii] ? row[ii].replace(/"/g, '""') : '';
-      }
-      lines.push('"' + row.join('";"') + '"');
-    }*/
-
-    return 'data:text/csv;charset=UTF-8,' + encodeURIComponent(lines.join('\r\n'));
-  }
-
-  public loadSaveFileState(state: IZsMapSaveFileState): void {
-    this.reset(state.map, state.display);
-  }
-
   toggleSidebarContext(context: SidebarContext | null) {
     this.updateDisplayState((draft) => {
       draft.sidebarContext = draft.sidebarContext === context ? null : context;
@@ -661,20 +724,11 @@ export class ZsMapStateService {
     );
   }
 
-  public filterCategory(category: string) {
+  public filterAll(active: boolean, featureTypes: string[], categoryNames: string[]) {
     this.updateDisplayState((draft) => {
-      const ids = Signs.SIGNS.filter((s) => s.kat === category).map((symbol) => symbol.id);
-
-      ids.forEach((id) => {
-        if (!id) return;
-        this.toggleInArray(draft.hiddenSymbols, id);
-      });
-    });
-  }
-
-  public filterAllSymbols(active: boolean) {
-    this.updateDisplayState((draft) => {
-      draft.hiddenSymbols = active ? Signs.SIGNS.map((s) => s.id!) : [];
+      draft.hiddenSymbols = active ? [...Signs.SIGNS.map((s) => s.id!)] : [];
+      draft.hiddenFeatureTypes = active ? featureTypes : [];
+      draft.hiddenCategories = active ? categoryNames : [];
     });
   }
 
@@ -682,18 +736,35 @@ export class ZsMapStateService {
     if (!symbolId) {
       return;
     }
-
     this.updateDisplayState((draft) => {
-      this.toggleInArray(draft.hiddenSymbols, symbolId);
+      this.toggleInArray<number>(draft.hiddenSymbols, symbolId);
     });
   }
 
-  private toggleInArray(symbols: number[], id: number) {
-    const index = symbols.indexOf(id);
+  public toggleFeatureType(featureType: string) {
+    if (!featureType) {
+      return;
+    }
+    this.updateDisplayState((draft) => {
+      this.toggleInArray<string>(draft.hiddenFeatureTypes, featureType);
+    });
+  }
+
+  public toggleCategory(category: string) {
+    if (!category) {
+      return;
+    }
+    this.updateDisplayState((draft) => {
+      this.toggleInArray<string>(draft.hiddenCategories, category);
+    });
+  }
+
+  private toggleInArray<T>(array: T[], value: T) {
+    const index = array.indexOf(value);
     if (index > -1) {
-      symbols.splice(index, 1);
+      array.splice(index, 1);
     } else {
-      symbols.push(id);
+      array.push(value);
     }
   }
 
@@ -701,6 +772,23 @@ export class ZsMapStateService {
     return this._display.pipe(
       map((o) => {
         return o?.hiddenSymbols;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+  public observeHiddenFeatureTypes() {
+    return this._display.pipe(
+      map((o) => {
+        return o?.hiddenFeatureTypes.filter((f) => f !== undefined);
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public observeHiddenCategories() {
+    return this._display.pipe(
+      map((o) => {
+        return o?.hiddenCategories;
       }),
       distinctUntilChanged((x, y) => x === y),
     );
@@ -718,6 +806,14 @@ export class ZsMapStateService {
     return this._splitMode.asObservable();
   }
 
+  public setDrawHoleMode(drawHoleMode: boolean) {
+    this._drawHoleMode.next(drawHoleMode);
+  }
+
+  public toggleDrawHoleMode() {
+    this.setDrawHoleMode(!this._drawHoleMode.getValue());
+  }
+
   public observeDrawHoleMode(): Observable<boolean> {
     return this._drawHoleMode.asObservable();
   }
@@ -726,7 +822,24 @@ export class ZsMapStateService {
     this._splitMode.next(splitMode);
   }
 
-  public setReorderMode(reorderMode: boolean) {
-    this._reorderMode.next(reorderMode);
+  public async refreshMapState(): Promise<void> {
+    if (this._session.getOperationId()) {
+      await this._sync.sendCachedMapStatePatches();
+      const sha256 = async (str: string): Promise<string> => {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
+      };
+      const { error, result } = await this._api.get<IZsMapOperation>('/api/operations/' + this._session.getOperationId());
+      if (error || !result) return;
+      if (result.mapState) {
+        const [oldDigest, newDigest] = await Promise.all([
+          sha256(JSON.stringify(this._map.value)),
+          sha256(JSON.stringify(result.mapState)),
+        ]);
+        if (oldDigest !== newDigest) {
+          this.setMapState(result.mapState);
+        }
+      }
+    }
   }
 }

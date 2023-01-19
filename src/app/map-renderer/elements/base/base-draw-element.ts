@@ -1,5 +1,5 @@
 import { Feature } from 'ol';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IZsMapBaseDrawElementState, ZsMapDrawElementState, ZsMapElementToDraw } from '../../../state/interfaces';
 import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapBaseElement } from './base-element';
@@ -21,6 +21,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
   constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.IS_DRAW_ELEMENT, true);
+    this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, _id);
     this._element = this._state.observeMapState().pipe(
       map((o) => {
         // TODO typings
@@ -60,13 +61,16 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       fillOpacity: state.fillOpacity,
       fontSize: state.fontSize,
       text: state['text'],
+      zindex: state.zindex,
     });
   }
 
   private _doInitialize(element: IZsMapBaseDrawElementState): void {
     if (!this._isInitialized) {
       this._initialize(element);
+      this._setSignatureState(element as T);
     }
+
     this._isInitialized = true;
   }
 
@@ -83,17 +87,23 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     );
   }
 
-  private _debouncedSetCoordinates = debounce((coordinates: number[] | number[][] | undefined) => {
+  private _debouncedUpdateElementState = debounce((updateFn: (draft: ZsMapDrawElementState) => void) => {
     this._state.updateMapState((draft) => {
       const element = draft.drawElements?.find((o) => o.id === this._id);
       if (element) {
-        element.coordinates = coordinates;
+        updateFn(element);
       }
     });
   }, 250);
 
+  public updateElementState(updateFn: (draft: ZsMapDrawElementState) => void) {
+    this._debouncedUpdateElementState(updateFn);
+  }
+
   public setCoordinates(coordinates: number[] | number[][] | undefined): void {
-    this._debouncedSetCoordinates(coordinates);
+    this._debouncedUpdateElementState((draft: ZsMapDrawElementState) => {
+      draft.coordinates = coordinates;
+    });
   }
 
   public observeLayer(): Observable<string | undefined> {

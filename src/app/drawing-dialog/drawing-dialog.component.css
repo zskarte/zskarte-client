@@ -1,108 +1,41 @@
-.selectionTable img {
-  max-height: 1.8em;
-  max-width: 1.8em;
-}
-
-.imgwrapper {
-  display: inline-block;
-  width: 2em;
-  height: 3em;
-  text-align: center;
-}
-
-.signSelect {
+.container {
   min-width: 70vw;
   min-height: 70vh;
   max-width: 100%;
   max-height: 60vh;
 }
-.name {
-  width: 100%;
-}
 
-.selectionTable {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.selectionTable th {
-  text-align: left;
-  font-size: 0.8em;
-  color: #787878;
-}
-.selectionTable td {
-  vertical-align: middle;
-  line-height: 3em;
-}
-
-.symbolCol {
-  width: 7em;
-}
-
-.selectRow {
-  cursor: pointer;
-}
-
-.selectRow:hover {
-  background-color: lightgray;
-}
-
-.row-image {
-  vertical-align: middle;
-}
-
-.row-action {
-  vertical-align: middle;
-}
-
-.imgdrop {
-  height: 10em;
-  border: 1px dashed black;
-  text-align: center;
-}
-.addButton {
-  margin-right: 1em;
-}
-
-.buttonCell {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: 3em;
-}
-
-.buttonCell button {
-  margin-left: 0.5em;
-  margin-right: 0.5em;
+.categoryDot {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
 }
 
 .filter {
   display: flex;
-  gap: 10px;
+  flex-direction: row;
   align-items: center;
+  margin: 16px;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+.flexGrow {
+  flex-grow: 1;
+}
+
+.row {
+  cursor: pointer;
+}
+
+.mat-mdc-table .mat-mdc-row:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 @media screen and (max-width: 700px) {
   .filter {
     flex-direction: column;
   }
-}
-
-.mat-column-symbol {
-  padding-left: 0 !important;
-}
-
-.categoryDot {
-  display: block;
-  min-width: 1em;
-  margin-right: 0.7em;
-}
-
-.categoryElement {
-  display: flex;
-}
-
-.noPadding {
-  padding: 0;
 }

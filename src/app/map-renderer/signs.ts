@@ -522,16 +522,6 @@ export class Signs {
       example: 'Explosionsherd - Beispiel.svg',
     },
     {
-      id: 51,
-      kat: 'formation',
-      type: 'Point',
-      color: '#0000FF',
-      src: 'BABS/Fahrzeugplatz.svg',
-      de: 'Fahrzeugplatz',
-      en: 'Fahrzeugplatz',
-      fr: 'Place pour véhicules',
-    },
-    {
       id: 52,
       kat: 'incident',
       type: 'Point',
@@ -962,18 +952,8 @@ export class Signs {
       fr: 'Poste médical avancé',
     },
     {
-      id: 95,
-      kat: 'place',
-      type: 'Point',
-      color: '#0000FF',
-      src: 'BABS/Sanitaetsumladestelle.svg',
-      de: 'Sanitätsumladestelle',
-      en: 'Sanitätsumladestelle',
-      fr: 'Poste sanitaire de transfert',
-    },
-    {
       id: 96,
-      kat: 'fks',
+      kat: 'place',
       type: 'LineString',
       color: '#0000FF',
       src: 'BABS/Sperre.svg',
@@ -1054,7 +1034,7 @@ export class Signs {
     },
     {
       id: 104,
-      kat: 'fks',
+      kat: 'place',
       type: 'Point',
       color: '#0000FF',
       src: 'BABS/Stuetzpunkt.svg',
@@ -1598,6 +1578,16 @@ export class Signs {
       de: 'Ziviles Führungsorgan',
       en: 'Ziviles Führungsorgan',
       fr: 'Organe exécutif civil',
+    },
+    {
+      id: 158,
+      kat: 'place',
+      type: 'Point',
+      color: '#0000FF',
+      src: 'NTP/NTP.svg',
+      de: 'Notfalltreffpunkt',
+      en: 'Emergency meeting point',
+      fr: 'Point de rencontre d’urgence',
     },
   ];
 
