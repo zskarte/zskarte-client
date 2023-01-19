@@ -65,13 +65,6 @@ export class SessionService {
       return;
     });
 
-    // create refresh interval to verify that map state is up to date
-    interval(1000 * 60 * 1).subscribe(async () => {
-      if (this._session.value && this._session.value.operationId && this._isOnline.value) {
-        await this._state.refreshMapState();
-      }
-    });
-
     // online/offline checks
     window.addEventListener('online', () => {
       this._isOnline.next(true);
