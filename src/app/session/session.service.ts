@@ -192,7 +192,7 @@ export class SessionService {
       };
     }
 
-    newSession.permission = decoded.permission;
+    newSession.permission = decoded.permission || PermissionType.ALL;
 
     // update organization values
     newSession.jwt = jwt;
@@ -298,5 +298,17 @@ export class SessionService {
     }
     const url = `${window.location.origin}/share/${response.result.accessToken}`;
     return url;
+  }
+
+  public observeHasWritePermission(): Observable<boolean> {
+    return this._session.pipe(
+      map((session) => {
+        return !(session?.permission === PermissionType.READ);
+      }),
+    );
+  }
+
+  public hasWritePermission(): boolean {
+    return !(this._session.value?.permission === PermissionType.READ);
   }
 }

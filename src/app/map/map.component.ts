@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
+import { SessionService } from '../session/session.service';
 import { ZsMapStateSource, ZsMapDrawElementStateType, SidebarContext } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 
@@ -17,7 +18,7 @@ export class MapComponent implements OnInit {
   activeLayer$: Observable<ZsMapBaseLayer | undefined>;
   width = window.innerWidth;
 
-  constructor(public state: ZsMapStateService) {
+  constructor(public state: ZsMapStateService, public session: SessionService) {
     this.sidebarContext$ = state.observeSidebarContext();
     this.activeLayer$ = state.observeActiveLayer();
   }

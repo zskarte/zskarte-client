@@ -1260,6 +1260,11 @@ export class I18NService {
       en: 'Please add the signature manually',
       fr: 'Veuillez ajouter la signature manuellement',
     },
+    copyShareLink: {
+      de: 'Freigabe-Link kopieren',
+      en: 'Copy share link',
+      fr: 'Copier le lien de partage',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

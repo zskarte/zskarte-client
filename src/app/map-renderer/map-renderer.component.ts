@@ -29,12 +29,13 @@ import { getCenter } from 'ol/extent';
 import { transform } from 'ol/proj';
 import { ScaleLine } from 'ol/control';
 import { Coordinate } from 'ol/coordinate';
-import { getFirstCoordinate, Sign } from '../core/entity/sign';
+import { Sign } from '../core/entity/sign';
 import { MatButton } from '@angular/material/button';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Signs } from './signs';
+import { SessionService } from '../session/session.service';
 
 @Component({
   selector: 'app-map-renderer',
@@ -100,6 +101,7 @@ export class MapRendererComponent implements AfterViewInit {
 
   constructor(
     private _state: ZsMapStateService,
+    private _session: SessionService,
     public i18n: I18NService,
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
@@ -182,6 +184,12 @@ export class MapRendererComponent implements AfterViewInit {
         return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
       layers: this._allLayers,
+      condition: () => {
+        if (!this._session.hasWritePermission()) {
+          return false;
+        }
+        return true;
+      },
     });
     select.on('select', (event) => {
       this._modifyCache.clear();
@@ -212,6 +220,10 @@ export class MapRendererComponent implements AfterViewInit {
     this._modify = new Modify({
       features: this._modifyCache,
       condition: (event) => {
+        if (!this._session.hasWritePermission()) {
+          return false;
+        }
+
         if (!this.areFeaturesModifiable() || this.historyMode.getValue()) {
           this.toggleEditButtons(false);
           return false;
@@ -255,11 +267,17 @@ export class MapRendererComponent implements AfterViewInit {
 
     const translate = new Translate({
       features: select.getFeatures(),
-      condition: () =>
-        select
-          .getFeatures()
-          .getArray()
-          .every((feature) => !feature?.get('sig').protected) && !this.historyMode.value,
+      condition: () => {
+        if (!this._session.hasWritePermission()) {
+          return false;
+        }
+        return (
+          select
+            .getFeatures()
+            .getArray()
+            .every((feature) => !feature?.get('sig').protected) && !this.historyMode.value
+        );
+      },
     });
 
     translate.on('translatestart', () => {
