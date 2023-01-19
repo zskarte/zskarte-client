@@ -1215,6 +1215,36 @@ export class I18NService {
       en: 'Recently used signatures',
       fr: 'Signatures récemment utilisées',
     },
+    date: {
+      de: 'Datum',
+      en: 'Date',
+      fr: 'Date',
+    },
+    groupLabel: {
+      de: 'Gruppe',
+      en: 'Group',
+      fr: 'Groupe',
+    },
+    sign: {
+      de: 'Zeichen',
+      en: 'Sign',
+      fr: 'Signe',
+    },
+    location: {
+      de: 'Ort',
+      en: 'Location',
+      fr: 'Emplacement',
+    },
+    label: {
+      de: 'Beschriftung',
+      en: 'Label',
+      fr: 'Etiquette',
+    },
+    protocolExport: {
+      de: 'ProtokollExport',
+      en: 'ProtocolExport',
+      fr: 'ExportationProtocole',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

@@ -98,7 +98,7 @@ export class ToolbarComponent implements OnDestroy {
   }
 
   protocolExcelExport(): void {
-    exportProtocolExcel(this.protocolEntries);
+    exportProtocolExcel(this.protocolEntries, this.i18n);
   }
 
   print(): void {

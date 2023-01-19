@@ -50,19 +50,22 @@ export interface ProtocolEntry {
   description: string;
 }
 
-export function exportProtocolExcel(protocolEntries: ProtocolEntry[]) {
+export function exportProtocolExcel(protocolEntries: ProtocolEntry[], i18n: I18NService) {
   const workbook = new Workbook();
   const sheet = workbook.addWorksheet('Protocol Entries');
   sheet.columns = [
-    { header: 'Datum', key: 'date', width: 15 },
-    { header: 'Gruppe', key: 'group', width: 15 },
-    { header: 'Signatur', key: 'sign', width: 15 },
-    { header: 'Koordinaten', key: 'location', width: 30 },
-    { header: 'Bezeichnung', key: 'label', width: 15 },
-    { header: 'Beschreibung', key: 'description', width: 30 },
+    { header: i18n.get('date'), key: 'date', width: 15 },
+    { header: i18n.get('groupLabel'), key: 'group', width: 15 },
+    { header: i18n.get('sign'), key: 'sign', width: 15 },
+    { header: i18n.get('location'), key: 'location', width: 30 },
+    { header: i18n.get('label'), key: 'label', width: 15 },
+    { header: i18n.get('description'), key: 'description', width: 30 },
   ];
   sheet.addRows(protocolEntries);
   return workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
-    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `Protokollexport_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    saveAs(
+      new Blob([buffer], { type: 'application/octet-stream' }),
+      `${i18n.get('protocolExport')}_${new Date().toISOString().slice(0, 10)}.xlsx`,
+    );
   });
 }
