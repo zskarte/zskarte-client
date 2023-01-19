@@ -94,28 +94,28 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
         symbols['not_labeled_polygon'] = {
           type: 'Polygon',
           label: this.i18n.get('polygon'),
-          filterValue: 'not_labeled_polygon',
+          filterValue: 'polygon',
           icon: 'widgets',
         };
       } else if (sig.type === undefined && f?.getGeometry()?.getType() === 'LineString' && sig.text) {
         symbols['text_element'] = {
           type: 'LineString',
           label: this.i18n.get('text'),
-          filterValue: 'text_element',
+          filterValue: 'text',
           icon: 'font_download',
         };
       } else if (sig.type === undefined && f?.getGeometry()?.getType() === 'LineString' && sig.freehand) {
         symbols['free_hand_element'] = {
           type: 'LineString',
           label: this.i18n.get('freeHand'),
-          filterValue: 'free_hand_element',
+          filterValue: 'line',
           icon: 'gesture',
         };
       } else if (sig.type === undefined && f?.getGeometry()?.getType() === 'LineString' && !sig.src) {
         symbols['not_labeled_line'] = {
           type: 'LineString',
           label: this.i18n.get('line'),
-          filterValue: 'not_labeled_line',
+          filterValue: 'line',
           icon: 'show_chart',
         };
       }

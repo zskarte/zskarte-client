@@ -368,9 +368,10 @@ export class MapRendererComponent implements AfterViewInit {
         const hiddenSignIds = Signs.SIGNS.filter((sign) => sign.kat && hiddenCategories.includes(sign.kat)).map((sig) => sig.id);
         for (const key in this._drawElementCache) {
           const feature = this._drawElementCache[key].element.getOlFeature();
+          const filterType = this._drawElementCache[key].element.elementState?.type as string;
           const hidden =
             hiddenSymbols.includes(feature?.get('sig')?.id) ||
-            hiddenFeatureTypes.includes(feature?.get('sig')?.filterValue) ||
+            hiddenFeatureTypes.includes(filterType) ||
             hiddenSignIds.includes(feature?.get('sig')?.id);
           feature?.set('hidden', hidden);
         }
