@@ -291,7 +291,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._map.on('singleclick', (event) => {
       if (this._map.hasFeatureAtPixel(event.pixel)) {
         const feature = this._map.forEachFeatureAtPixel(event.pixel, (feature) => feature, { hitTolerance: 10 });
-        if (feature === this._positionFlag) {
+        if (feature === this._positionFlag && !this.historyMode.getValue()) {
           this.setFlagButtonPosition(this._positionFlagLocation.getCoordinates());
           this.toggleFlagButtons(true);
         } else {
