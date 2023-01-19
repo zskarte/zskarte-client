@@ -4,7 +4,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
 import { MatSliderChange } from '@angular/material/slider';
 import { I18NService } from '../state/i18n.service';
-import { FillStyle, getColorForCategory, Sign } from '../core/entity/sign';
+import { defineDefaultValuesForSignature, FillStyle, getColorForCategory, Sign, signatureDefaultValues } from '../core/entity/sign';
 import { ZsMapStateService } from '../state/state.service';
 import { Signs } from '../map-renderer/signs';
 import { CustomImageStoreService } from '../state/custom-image-store.service';
@@ -318,5 +318,14 @@ export class SelectedFeatureComponent implements OnDestroy {
     };
     updateProp(this.selectedSignature, field.split('.'), event.value);
     //this.redraw();
+  }
+
+  resetSignature(element: ZsMapDrawElementState) {
+    if (!element.id) return;
+    this.zsMapStateService.updateDrawElementState(element.id, 'iconSize', signatureDefaultValues.iconSize);
+    this.zsMapStateService.updateDrawElementState(element.id, 'iconOffset', signatureDefaultValues.iconOffset);
+    this.zsMapStateService.updateDrawElementState(element.id, 'rotation', signatureDefaultValues.rotation);
+    this.zsMapStateService.updateDrawElementState(element.id, 'flipIcon', signatureDefaultValues.flipIcon);
+    this.zsMapStateService.updateDrawElementState(element.id, 'iconOpacity', signatureDefaultValues.iconOpacity);
   }
 }

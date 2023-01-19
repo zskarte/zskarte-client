@@ -168,6 +168,9 @@
               </mat-slider>
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
+            <button *ngIf="drawElement.symbolId"
+                    mat-flat-button color="primary"
+                    (click)="resetSignature(drawElement)">{{ i18n.get('defaultValues') }}</button>
           </mat-expansion-panel>
         </ng-container>
 
