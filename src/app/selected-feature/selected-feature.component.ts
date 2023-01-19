@@ -342,9 +342,5 @@ export class SelectedFeatureComponent implements OnDestroy {
   resetPolygon(element: ZsMapDrawElementState) {
     if (!element.id) return;
     this.updateFillStyle(element, 'name', signatureDefaultValues.fillStyle.name);
-    this.updateFillStyle(element, 'angle', signatureDefaultValues.fillStyleAngle);
-    this.updateFillStyle(element, 'size', signatureDefaultValues.fillStyleSize);
-    this.updateFillStyle(element, 'spacing', signatureDefaultValues.fillStyleSpacing);
-    this.zsMapStateService.updateDrawElementState(element.id, 'fillOpacity', signatureDefaultValues.fillOpacity);
   }
 }

@@ -166,7 +166,7 @@ export const signatureDefaultValues: SignatureDefaultValues = {
     name: 'filled',
   },
   fillStyleAngle: 45,
-  fillStyleSize: 4,
+  fillStyleSize: 5,
   fillStyleSpacing: 10,
   iconOffset: 0.1,
   protected: false,

@@ -257,7 +257,7 @@
           <mat-form-field *ngIf="drawElement.fillStyle?.name && drawElement.fillStyle?.name !== 'filled'">
             <mat-label>{{ i18n.get('width') }}</mat-label>
             <mat-slider [max]="10" [min]="1" [step]="0.1">
-              <input matSliderThumb [ngModel]="drawElement.fillStyle?.size" (ngModelChange)="updateProperty(drawElement, 'size', $event)" />
+              <input matSliderThumb [ngModel]="drawElement.fillStyle?.size" (ngModelChange)="updateFillStyle(drawElement, 'size', $event)" />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
@@ -268,7 +268,7 @@
               <input
                 matSliderThumb
                 [ngModel]="drawElement.fillStyle?.spacing"
-                (ngModelChange)="updateProperty(drawElement, 'spacing', $event)"
+                (ngModelChange)="updateFillStyle(drawElement, 'spacing', $event)"
               />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
@@ -280,7 +280,7 @@
               <input
                 matSliderThumb
                 [ngModel]="drawElement.fillStyle?.angle"
-                (ngModelChange)="updateProperty(drawElement, 'angle', $event)"
+                (ngModelChange)="updateFillStyle(drawElement, 'angle', $event)"
               />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
