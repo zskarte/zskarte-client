@@ -4,16 +4,16 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
 import { MatSliderChange } from '@angular/material/slider';
 import { I18NService } from '../state/i18n.service';
-import { defineDefaultValuesForSignature, FillStyle, getColorForCategory, Sign, signatureDefaultValues } from '../core/entity/sign';
+import { FillStyle, getColorForCategory, Sign, signatureDefaultValues } from '../core/entity/sign';
 import { ZsMapStateService } from '../state/state.service';
 import { Signs } from '../map-renderer/signs';
 import { CustomImageStoreService } from '../state/custom-image-store.service';
 import { DrawStyle } from '../map-renderer/draw-style';
-import { EMPTY, firstValueFrom, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, EMPTY, firstValueFrom, Observable, Subject } from 'rxjs';
 import { Feature } from 'ol';
-import { Point, SimpleGeometry } from 'ol/geom';
+import { SimpleGeometry } from 'ol/geom';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { ZsMapDisplayMode, ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
+import { ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
 import { EditCoordinatesComponent } from '../edit-coordinates/edit-coordinates.component';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
@@ -25,7 +25,7 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 })
 export class SelectedFeatureComponent implements OnDestroy {
   groupedFeatures = null;
-  editMode: Observable<boolean>;
+  editMode = new BehaviorSubject(true);
   selectedFeature: Observable<Feature<SimpleGeometry> | undefined>;
   selectedSignature: Observable<Sign | undefined>;
   selectedDrawElement: Observable<ZsMapDrawElementState | undefined>;
@@ -88,10 +88,12 @@ export class SelectedFeatureComponent implements OnDestroy {
       }
     });
 
-    this.editMode = this.zsMapStateService.observeDisplayState().pipe(
-      takeUntil(this._ngUnsubscribe),
-      map((displayState) => displayState.displayMode === ZsMapDisplayMode.DRAW),
-    );
+    this.zsMapStateService
+      .observeIsReadOnly()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((isReadOnly) => {
+        this.editMode.next(!isReadOnly);
+      });
 
     this.zsMapStateService
       .observeDrawElements()

@@ -5,7 +5,7 @@ import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -36,7 +36,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Signs } from './signs';
 import { SessionService } from '../session/session.service';
-import { merge } from 'lodash';
 
 @Component({
   selector: 'app-map-renderer',
@@ -133,19 +132,6 @@ export class MapRendererComponent implements AfterViewInit {
       }),
     );
 
-    merge(this._state.observeIsHistoryMode(), this._session.observeHasWritePermission())
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(async () => {
-        const isHistoryMode = this._state.isHistoryMode();
-        const hasWritePermission = this._session.hasWritePermission();
-
-        if (!hasWritePermission || isHistoryMode) {
-          this.isReadOnly.next(true);
-        } else {
-          this.isReadOnly.next(false);
-        }
-      });
-
     combineLatest([
       this.selectedVertexPoint.asObservable(),
       this._state.observeSelectedElement().pipe(
@@ -172,6 +158,8 @@ export class MapRendererComponent implements AfterViewInit {
       .subscribe((mode) => {
         this._mergeMode = mode;
       });
+
+    // this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
   }
 
   public ngOnDestroy(): void {

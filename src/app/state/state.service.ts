@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
@@ -15,7 +15,7 @@ import {
   ZsMapPolygonDrawElementState,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, mergeMap, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
@@ -848,5 +848,15 @@ export class ZsMapStateService {
         }
       }
     }
+  }
+
+  observeIsReadOnly(): Observable<boolean> {
+    return merge(this.observeIsHistoryMode(), this._session.observeHasWritePermission()).pipe(
+      map(() => {
+        const isHistoryMode = this.isHistoryMode();
+        const hasWritePermission = this._session.hasWritePermission();
+        return !hasWritePermission || isHistoryMode;
+      }),
+    );
   }
 }

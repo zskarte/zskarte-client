@@ -4,9 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ZsMapStateService } from '../state/state.service';
-import { ZsMapDisplayMode } from '../state/interfaces';
-import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SessionService } from '../session/session.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
@@ -25,7 +24,6 @@ export class ToolbarComponent implements OnDestroy {
 
   static ONBOARDING_VERSION = '1.0';
 
-  historyMode: Observable<boolean>;
   locales: Locale[] = LOCALES;
   protocolEntries: ProtocolEntry[] = [];
   private _ngUnsubscribe = new Subject<void>();
@@ -40,11 +38,6 @@ export class ToolbarComponent implements OnDestroy {
     private datePipe: DatePipe,
     private _router: Router,
   ) {
-    this.historyMode = this.zsMapStateService.observeDisplayState().pipe(
-      map((displayState) => displayState.displayMode === ZsMapDisplayMode.HISTORY),
-      takeUntil(this._ngUnsubscribe),
-    );
-
     if (this.isInitialLaunch()) {
       this.dialog.open(HelpComponent, {
         data: true,

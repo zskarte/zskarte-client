@@ -12,7 +12,7 @@
         <app-map-renderer></app-map-renderer>
       </div>
       <app-selected-feature></app-selected-feature>
-      <app-fab-menu *ngIf="session.observeHasWritePermission() | async" [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
+      <app-fab-menu *ngIf="state.observeIsReadOnly() | async" [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

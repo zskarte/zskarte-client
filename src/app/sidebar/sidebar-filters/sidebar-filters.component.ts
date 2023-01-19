@@ -1,7 +1,7 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { map, takeUntil } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs/internal/Observable';
-import { ZsMapDisplayMode, ZsMapDrawElementState } from 'src/app/state/interfaces';
+import { ZsMapDrawElementState } from 'src/app/state/interfaces';
 import { combineLatest, Subject } from 'rxjs';
 import { I18NService } from 'src/app/state/i18n.service';
 import capitalizeFirstLetter from 'src/app/helper/capitalizeFirstLetter';
@@ -19,24 +19,18 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   filterSymbols: any[] = [];
   filterKeys: any[] = [];
   signCategories: any[] = [...signCategories.values()];
-  historyMode$: Observable<boolean>;
   hiddenSymbols$: Observable<number[]>;
   hiddenFeatureTypes$: Observable<string[]>;
   hiddenCategories$: Observable<string[]>;
-
   filtersOpenState = false;
   filtersGeneralOpenState = false;
   capitalizeFirstLetter = capitalizeFirstLetter;
   private _ngUnsubscribe = new Subject<void>();
 
   constructor(public i18n: I18NService, private mapState: ZsMapStateService) {
-    this.historyMode$ = this.mapState.observeDisplayState().pipe(
-      takeUntil(this._ngUnsubscribe),
-      map((state) => state.displayMode === ZsMapDisplayMode.HISTORY),
-    );
-    this.hiddenSymbols$ = this.mapState.observeHiddenSymbols();
-    this.hiddenFeatureTypes$ = this.mapState.observeHiddenFeatureTypes();
-    this.hiddenCategories$ = this.mapState.observeHiddenCategories();
+    this.hiddenSymbols$ = this.mapState.observeHiddenSymbols().pipe(takeUntil(this._ngUnsubscribe));
+    this.hiddenFeatureTypes$ = this.mapState.observeHiddenFeatureTypes().pipe(takeUntil(this._ngUnsubscribe));
+    this.hiddenCategories$ = this.mapState.observeHiddenCategories().pipe(takeUntil(this._ngUnsubscribe));
   }
 
   ngOnInit(): void {

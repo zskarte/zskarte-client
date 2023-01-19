@@ -1270,6 +1270,11 @@ export class I18NService {
       en: 'Logout',
       fr: 'Logout',
     },
+    copiedToClipboard: {
+      de: 'In Zwischenablage kopiert',
+      en: 'Copied to clipboard',
+      fr: 'Copié dans le presse-papiers',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {
