@@ -97,15 +97,14 @@ export class OperationsComponent implements OnDestroy {
     });
   }
 
-  public async deleteOperation(): Promise<void> {
-    if (!this.operationToEdit.value) {
+  public async deleteOperation(operation: IZsMapOperation): Promise<void> {
+    if (!operation) {
       return;
     }
-    if (this.operationToEdit.value) {
-      this.operationToEdit.value.status = 'archived';
-    }
-    await this._api.put('/api/operations/' + this.operationToEdit.value.id, {
-      data: { ...this.operationToEdit.value, organization: this._session.getOrganizationId() },
+
+    operation.status = 'archived';
+    await this._api.put('/api/operations/' + operation.id, {
+      data: { ...operation, organization: this._session.getOrganizationId() },
     });
     await this._reload();
   }
