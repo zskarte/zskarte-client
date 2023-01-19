@@ -1239,6 +1239,7 @@ export class I18NService {
       de: 'ProtokollExport',
       en: 'ProtocolExport',
       fr: 'ExportationProtocole',
+    },
     deletionNotification: {
       de: 'Die erfassten Daten werden jeden Abend um 00:00 Uhr gelöscht. Die Daten sind nach diesem Vorgang nicht mehr vorhanden.',
       en: 'The recorded data is deleted every evening at 00:00. The data is no longer available after this process.',
