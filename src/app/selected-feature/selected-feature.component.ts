@@ -194,9 +194,12 @@ export class SelectedFeatureComponent implements OnDestroy {
 
   updateFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]) {
     if (element.id) {
-      const fillStyle = { ...element.fillStyle, [field]: value } as FillStyle;
-      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', fillStyle);
+      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', this.getUpdatedFillStyle(element, field, value));
     }
+  }
+
+  getUpdatedFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]): FillStyle {
+    return { ...element.fillStyle, [field]: value } as FillStyle;
   }
 
   chooseSymbol(drawElement: ZsMapDrawElementState) {
@@ -334,5 +337,14 @@ export class SelectedFeatureComponent implements OnDestroy {
     this.zsMapStateService.updateDrawElementState(element.id, 'style', signatureDefaultValues.style);
     this.zsMapStateService.updateDrawElementState(element.id, 'strokeWidth', signatureDefaultValues.strokeWidth);
     this.zsMapStateService.updateDrawElementState(element.id, 'arrow', signatureDefaultValues.arrow);
+  }
+
+  resetPolygon(element: ZsMapDrawElementState) {
+    if (!element.id) return;
+    this.updateFillStyle(element, 'name', signatureDefaultValues.fillStyle.name);
+    this.updateFillStyle(element, 'angle', signatureDefaultValues.fillStyleAngle);
+    this.updateFillStyle(element, 'size', signatureDefaultValues.fillStyleSize);
+    this.updateFillStyle(element, 'spacing', signatureDefaultValues.fillStyleSpacing);
+    this.zsMapStateService.updateDrawElementState(element.id, 'fillOpacity', signatureDefaultValues.fillOpacity);
   }
 }

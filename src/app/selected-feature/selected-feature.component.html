@@ -285,6 +285,9 @@
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
+          <button
+          mat-flat-button color="primary"
+          (click)="resetPolygon(drawElement)">{{ i18n.get('defaultValues') }}</button>
         </mat-expansion-panel>
 
         <mat-expansion-panel *ngIf="(editMode | async) && isText(drawElement)">
