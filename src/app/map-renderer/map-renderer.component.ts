@@ -159,7 +159,7 @@ export class MapRendererComponent implements AfterViewInit {
         this._mergeMode = mode;
       });
 
-    // this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
+    this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
   }
 
   public ngOnDestroy(): void {
