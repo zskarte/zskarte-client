@@ -1,87 +1,68 @@
 <div mat-dialog-content>
   <mat-vertical-stepper>
-    <mat-step [label]="i18n.get('docWelcomeTitle')" completed="false">
-      <div class="description" [innerHTML]="i18n.get('docWelcome')"></div>
-    </mat-step>
-    <mat-step [label]="i18n.get('createOrLoad')" completed="false">
+    <mat-step [label]="i18n.get('docLoginTitle')" completed="false">
       <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docNewMap')"></div>
-        <div class="screenshot"><img src="assets/doc/create_map.png" /></div>
+        <div class="description" [innerHTML]="i18n.get('docLogin')"></div>
+        <div class="screenshot"><img src="assets/doc/login.png" /></div>
       </div>
     </mat-step>
-    <mat-step [label]="i18n.get('docInitialViewTitle')" completed="false">
+    <mat-step [label]="i18n.get('docCreateOrLoadTitle')" completed="false">
       <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docInitialView')"></div>
-        <div class="screenshot"><img src="assets/doc/initial_view.jpg" /></div>
+        <div class="description" [innerHTML]="i18n.get('docCreateOrLoad')"></div>
+        <div class="screenshot"><img src="assets/doc/load.png" /></div>
       </div>
     </mat-step>
-    <mat-step [label]="i18n.get('docMainMenuTitle')" completed="false">
+    <mat-step [label]="i18n.get('docMainViewTitle')" completed="false">
       <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docMainMenu')"></div>
-        <div class="screenshot"><img src="assets/doc/main_menu.jpg" /></div>
+        <div class="description" [innerHTML]="i18n.get('docMainView')"></div>
+        <div class="screenshot"><img src="assets/doc/map.png" /></div>
+      </div>
+    </mat-step>
+    <mat-step [label]="i18n.get('docMapMenuTitle')" completed="false">
+      <div class="section">
+        <div class="description" [innerHTML]="i18n.get('docMapMenu')"></div>
+        <div class="screenshot"><img src="assets/doc/map-menu.png" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('findPlace')" completed="false">
       <div class="section">
         <div class="description" [innerHTML]="i18n.get('docSearch')"></div>
-        <div class="screenshot"><img src="assets/doc/search.jpg" /></div>
+        <div class="screenshot"><img src="assets/doc/search.png" /></div>
+        <div class="screenshot"><img src="assets/doc/flag.png" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('draw')" completed="false">
       <div class="section">
         <div class="description" [innerHTML]="i18n.get('docDraw')"></div>
-        <div class="screenshot"><img src="assets/doc/draw.jpg" /></div>
+        <div class="screenshot"><img src="assets/doc/draw.png" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docSymbolSelectionTitle')" completed="false">
       <div class="section">
         <div class="description" [innerHTML]="i18n.get('docSymbolSelection')"></div>
-        <div class="screenshot"><img src="assets/doc/symbolselection.jpg" /><img src="assets/doc/custom_image.jpg" /></div>
+        <div class="screenshot"><img src="assets/doc/signature.png" /></div>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docSelectionTitle')" completed="false">
       <div class="section">
         <div class="description" [innerHTML]="i18n.get('docSelection')"></div>
         <div class="screenshot">
-          <img src="assets/doc/selectiontext.jpg" />
-          <img src="assets/doc/selectiondescription.jpg" />
-          <img src="assets/doc/selectionsymbol.jpg" />
-          <img src="assets/doc/selectionline.jpg" />
-          <img src="assets/doc/selectionpattern.jpg" />
+          <img src="assets/doc/select.png" />
         </div>
       </div>
     </mat-step>
-    <mat-step [label]="i18n.get('filter')" completed="false">
+    <mat-step [label]="i18n.get('docMapFunctionsTitle')" completed="false">
       <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docFilter')"></div>
-        <div class="screenshot"><img src="assets/doc/filter.jpg" /></div>
+        <div class="description" [innerHTML]="i18n.get('docMapFunctions')"></div>
+        <div class="screenshot"><img src="assets/doc/map-functions.png" /></div>
       </div>
     </mat-step>
-    <mat-step [label]="i18n.get('currentDrawing')" completed="false">
+    <mat-step [label]="i18n.get('docQuickFunctionsTitle')" completed="false">
       <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docCurrentDrawing')"></div>
-        <div class="screenshot">
-          <img src="assets/doc/currentdrawing.jpg" />
-        </div>
+        <div class="description" [innerHTML]="i18n.get('docQuickFunctions')"></div>
+        <div class="screenshot"><img src="assets/doc/quick-functions.png" /></div>
       </div>
     </mat-step>
-    <mat-step [label]="i18n.get('layers')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docLayers')"></div>
-        <div class="screenshot"><img src="assets/doc/layers.jpg" /></div>
-      </div>
-    </mat-step>
-    <mat-step [label]="i18n.get('history')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docHistory')"></div>
-        <div class="screenshot"><img src="assets/doc/historymode.jpg" /></div>
-      </div>
-    </mat-step>
-    <!--<mat-step [label]="i18n.get('keyboardShortcutsTitle')" completed="false">
-            <div class="section">
-                <div class="description" [innerHTML]="i18n.get('keyboardShortcuts')"></div>
-            </div>
-        </mat-step>-->
   </mat-vertical-stepper>
 </div>
 <div mat-dialog-actions align="end">
