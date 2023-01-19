@@ -5,7 +5,7 @@ import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -14,7 +14,7 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { SidebarContext } from '../state/interfaces';
+import { SidebarContext, ZsMapDrawElementStateType } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
@@ -84,7 +84,6 @@ export class MapRendererComponent implements AfterViewInit {
   private _currentSketch: FeatureLike | undefined;
   private _rotating = false;
   private _initialRotation = 0;
-  private _lastModificationPointCoordinates: number[] = [];
   private _drawHole!: DrawHole;
   private _mergeMode = false;
   public currentSketchSize = new BehaviorSubject<string | null>(null);
@@ -97,6 +96,7 @@ export class MapRendererComponent implements AfterViewInit {
   public selectedFeatureCoordinates: Observable<string>;
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
   public historyMode = new BehaviorSubject<boolean>(false);
+  public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
 
   constructor(
     private _state: ZsMapStateService,
@@ -138,6 +138,26 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._state.observeHistoryMode().subscribe(this.historyMode);
 
+    combineLatest([
+      this.selectedVertexPoint.asObservable(),
+      this._state.observeSelectedElement().pipe(
+        filter(Boolean),
+        // get feature each time the coordinates change
+        switchMap((element) => element.observeCoordinates().pipe(map(() => element.getOlFeature()))),
+        map((feature) => DrawStyle.getIconCoordinates(feature, this._view.getResolution() ?? 1)[1]),
+      ),
+    ])
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(([vertexPoint, featurePoint]) => {
+        // prioritize vertexPoint
+        const coordinates = vertexPoint ?? featurePoint;
+        if (Array.isArray(coordinates)) {
+          this.removeButton?.setPosition(coordinates);
+          this.rotateButton?.setPosition(coordinates);
+          this.copyButton?.setPosition(coordinates);
+        }
+      });
+
     this._state
       .observeMergeMode()
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -167,12 +187,20 @@ export class MapRendererComponent implements AfterViewInit {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
       for (const feature of event.selected) {
+        const nextElement = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+
         if (this._mergeMode) {
           const selectedElement = this._drawElementCache[this.selectedFeature.getValue()?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
-          const elementToMerge = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
-          this._state.mergePolygons(selectedElement.element, elementToMerge.element);
+          this._state.mergePolygons(selectedElement.element, nextElement.element);
         } else {
           this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
+          // reset selectedVertexPoint, since we selected a whole feature.
+          this.selectedVertexPoint.next(null);
+
+          // only show buttons on select for Symbols
+          if (!this.historyMode.getValue() && nextElement?.element?.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
+            this.toggleEditButtons(true, true);
+          }
         }
       }
 
@@ -190,8 +218,7 @@ export class MapRendererComponent implements AfterViewInit {
         }
 
         if (this._modify['vertexFeature_'] && this._modify['lastPointerEvent_']) {
-          this.setEditButtonPosition(event.coordinate);
-          this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+          this.selectedVertexPoint.next(this._modify['vertexFeature_'].getGeometry().getCoordinates());
           this.toggleEditButtons(true);
         }
         return true;
@@ -204,16 +231,19 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._modify.on('modifyend', (e) => {
-      if (this._modify['vertexFeature_']) {
-        this._lastModificationPointCoordinates = this._modify['vertexFeature_'].getGeometry().getCoordinates();
+      if (e.features.getLength() <= 0) {
+        return;
       }
-      this.setEditButtonPosition(e.mapBrowserEvent.coordinate);
-      this.toggleEditButtons(true);
+
       this._currentSketch = undefined;
-      e.features.forEach((feature) => {
-        const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
-        element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
-      });
+      // only first feature is relevant
+      const feature = e.features.getArray()[0] as Feature<SimpleGeometry>;
+      const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+      element.element.setCoordinates(feature.getGeometry()?.getCoordinates() ?? []);
+      if (this._modify['vertexFeature_']) {
+        this.selectedVertexPoint.next(this._modify['vertexFeature_'].getGeometry().getCoordinates());
+        this.toggleEditButtons(true);
+      }
     });
 
     // select on ol-Map layer
@@ -237,10 +267,22 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     translate.on('translateend', (e) => {
-      e.features.forEach((feature) => {
-        const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
-        element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
-      });
+      if (e.features.getLength() <= 0) {
+        return;
+      }
+      // only the first feature is relevant
+      const feature = e.features.getArray()[0];
+      const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+      element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+
+      if (element.element.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
+        // Hack to ensure, the buttons show up at the correct location immediately
+        this.selectedVertexPoint.next(DrawStyle.getIconCoordinates(feature, this._view.getResolution() ?? 1)[1]);
+        // Always allow rotation for symbols on translate end
+        this.toggleEditButtons(true, true);
+      } else {
+        this.toggleEditButtons(true);
+      }
     });
 
     this._view = new OlView({
@@ -733,7 +775,7 @@ export class MapRendererComponent implements AfterViewInit {
         case 'Polygon':
           for (let i = 0; i < coordinates.length; i++) {
             const coordinateGroup = coordinates[i];
-            if (indexOfPointInCoordinateGroup(coordinateGroup, this._lastModificationPointCoordinates) != -1) {
+            if (indexOfPointInCoordinateGroup(coordinateGroup, this.selectedVertexPoint.getValue() ?? []) != -1) {
               return {
                 feature: feature,
                 coordinateGroupIndex: i,
@@ -772,18 +814,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.resetSelectedFeature();
   }
 
-  async toggleEditButtons(show: boolean) {
-    let allowRotation = false;
-    if (show && this._lastModificationPointCoordinates) {
-      const feature = await firstValueFrom(this.selectedFeature);
-
-      const [pointX, pointY] = this._lastModificationPointCoordinates;
-      const [iconX, iconY] = getFirstCoordinate(feature);
-
-      // only show rotateButton if the feature has an icon and the selected point is where the icon is placed
-      allowRotation = feature?.get('sig')?.src && pointX === iconX && pointY === iconY;
-    }
-
+  async toggleEditButtons(show: boolean, allowRotation = false) {
     this.toggleButton(show, this.removeButton?.getElement());
     this.toggleButton(allowRotation, this.rotateButton?.getElement());
     this.toggleButton(allowRotation, this.copyButton?.getElement());
@@ -792,17 +823,6 @@ export class MapRendererComponent implements AfterViewInit {
   async toggleFlagButtons(show: boolean) {
     this.toggleButton(show, this.drawButton?.getElement());
     this.toggleButton(show, this.closeButton?.getElement());
-  }
-
-  /**
-   * Sets the position of the editButtons around an Symbol
-   * @param coordinates Coordinates of the symbol
-   * @param moveDeleteButton false if it should not move the delete button
-   */
-  setEditButtonPosition(coordinates: number[]) {
-    this.removeButton?.setPosition(coordinates);
-    this.rotateButton?.setPosition(coordinates);
-    this.copyButton?.setPosition(coordinates);
   }
 
   setFlagButtonPosition(coordinates: number[]) {
