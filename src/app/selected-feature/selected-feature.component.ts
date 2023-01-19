@@ -125,7 +125,8 @@ export class SelectedFeatureComponent implements OnDestroy {
     return this.featureType === 'LineString';
   }
 
-  isText(element: ZsMapDrawElementState) {
+  isText(element?: ZsMapDrawElementState) {
+    if (!element) return false;
     return element.type === ZsMapDrawElementStateType.TEXT;
   }
 
@@ -194,9 +195,12 @@ export class SelectedFeatureComponent implements OnDestroy {
 
   updateFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]) {
     if (element.id) {
-      const fillStyle = { ...element.fillStyle, [field]: value } as FillStyle;
-      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', fillStyle);
+      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', this.getUpdatedFillStyle(element, field, value));
     }
+  }
+
+  getUpdatedFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]): FillStyle {
+    return { ...element.fillStyle, [field]: value } as FillStyle;
   }
 
   chooseSymbol(drawElement: ZsMapDrawElementState) {
@@ -327,5 +331,18 @@ export class SelectedFeatureComponent implements OnDestroy {
     this.zsMapStateService.updateDrawElementState(element.id, 'rotation', signatureDefaultValues.rotation);
     this.zsMapStateService.updateDrawElementState(element.id, 'flipIcon', signatureDefaultValues.flipIcon);
     this.zsMapStateService.updateDrawElementState(element.id, 'iconOpacity', signatureDefaultValues.iconOpacity);
+    this.zsMapStateService.updateDrawElementState(element.id, 'hideIcon', signatureDefaultValues.hideIcon);
+  }
+
+  resetLine(element: ZsMapDrawElementState) {
+    if (!element.id) return;
+    this.zsMapStateService.updateDrawElementState(element.id, 'style', signatureDefaultValues.style);
+    this.zsMapStateService.updateDrawElementState(element.id, 'strokeWidth', signatureDefaultValues.strokeWidth);
+    this.zsMapStateService.updateDrawElementState(element.id, 'arrow', signatureDefaultValues.arrow);
+  }
+
+  resetPolygon(element: ZsMapDrawElementState) {
+    if (!element.id) return;
+    this.updateFillStyle(element, 'name', signatureDefaultValues.fillStyle.name);
   }
 }

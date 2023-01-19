@@ -121,13 +121,6 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   zindex?: number;
 }
 
-export const drawElementDefaults = {
-  nameShow: true,
-  size: 1,
-  opacity: 0.5,
-  rotation: 1,
-};
-
 export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.TEXT;
   text?: string;
