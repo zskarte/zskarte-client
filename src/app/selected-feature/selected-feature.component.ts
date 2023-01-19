@@ -331,6 +331,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     this.zsMapStateService.updateDrawElementState(element.id, 'rotation', signatureDefaultValues.rotation);
     this.zsMapStateService.updateDrawElementState(element.id, 'flipIcon', signatureDefaultValues.flipIcon);
     this.zsMapStateService.updateDrawElementState(element.id, 'iconOpacity', signatureDefaultValues.iconOpacity);
+    this.zsMapStateService.updateDrawElementState(element.id, 'hideIcon', signatureDefaultValues.hideIcon);
   }
 
   resetLine(element: ZsMapDrawElementState) {

@@ -123,7 +123,7 @@
                 >{{ i18n.get('hideSymbol') }}</mat-checkbox
               >
             </div>
-            <mat-form-field *ngIf="drawElement.symbolId">
+            <mat-form-field *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('symbolSize') }}</mat-label>
               <mat-slider [max]="2" [min]="0.5" [step]="0.1">
                 <input matSliderThumb [ngModel]="drawElement.iconSize" (ngModelChange)="updateProperty(drawElement, 'iconSize', $event)" />
@@ -131,7 +131,7 @@
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
 
-            <mat-form-field *ngIf="drawElement.symbolId">
+            <mat-form-field *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('symbolOffset') }}</mat-label>
               <mat-slider [max]="5000" [min]="0.1" [step]="100">
                 <input

@@ -177,6 +177,7 @@ export const signatureDefaultValues: SignatureDefaultValues = {
   rotation: 1,
   images: [],
   flipIcon: false,
+  hideIcon: false,
 };
 
 export interface SignatureDefaultValues {
@@ -199,4 +200,5 @@ export interface SignatureDefaultValues {
   rotation: number;
   images: any[];
   flipIcon: boolean;
+  hideIcon: boolean;
 }
