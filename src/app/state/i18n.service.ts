@@ -268,9 +268,9 @@ export class I18NService {
       en: 'Opacity',
     },
     defaultValues: {
-      de: 'Standardwerte',
+      de: 'Standardwerte zurücksetzen',
       fr: 'Valeurs par défaut',
-      en: 'Default Values',
+      en: 'Reset Default Values',
     },
     solidLine: {
       de: 'Durchgezogen',
