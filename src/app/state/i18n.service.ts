@@ -162,6 +162,11 @@ export class I18NService {
       en: 'Export event',
       fr: 'Exporter événement',
     },
+    deleteOperation: {
+      de: 'Ereignis löschen',
+      en: 'Delete event',
+      fr: 'Effacer événement',
+    },
     downloadMapCSV: {
       de: 'Als CSV exportieren',
       en: 'Export as CSV',
