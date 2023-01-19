@@ -683,6 +683,9 @@ export class ZsMapStateService {
   }
 
   public updateMapState(fn: (draft: IZsMapState) => void, preventPatches = false) {
+    if (!preventPatches && !this._session.hasWritePermission()) {
+      return;
+    }
     const newState = produce<IZsMapState>(this._map.value || {}, fn, (patches, inversePatches) => {
       if (preventPatches) {
         return;
