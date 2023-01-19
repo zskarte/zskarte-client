@@ -331,6 +331,8 @@ export class SelectedFeatureComponent implements OnDestroy {
 
   resetLine(element: ZsMapDrawElementState) {
     if (!element.id) return;
-    debugger
+    this.zsMapStateService.updateDrawElementState(element.id, 'style', signatureDefaultValues.style);
+    this.zsMapStateService.updateDrawElementState(element.id, 'strokeWidth', signatureDefaultValues.strokeWidth);
+    this.zsMapStateService.updateDrawElementState(element.id, 'arrow', signatureDefaultValues.arrow);
   }
 }
