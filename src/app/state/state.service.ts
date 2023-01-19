@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
@@ -15,7 +15,7 @@ import {
   ZsMapPolygonDrawElementState,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, mergeMap, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
@@ -225,13 +225,17 @@ export class ZsMapStateService {
     });
   }
 
-  public observeHistoryMode(): Observable<boolean> {
+  public observeIsHistoryMode(): Observable<boolean> {
     return this._display.pipe(
       map((o) => {
         return o.displayMode === ZsMapDisplayMode.HISTORY;
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public isHistoryMode(): boolean {
+    return this._display.value?.displayMode === ZsMapDisplayMode.HISTORY;
   }
 
   public saveDisplayState(): void {
@@ -844,5 +848,15 @@ export class ZsMapStateService {
         }
       }
     }
+  }
+
+  observeIsReadOnly(): Observable<boolean> {
+    return merge(this.observeIsHistoryMode(), this._session.observeHasWritePermission()).pipe(
+      map(() => {
+        const isHistoryMode = this.isHistoryMode();
+        const hasWritePermission = this._session.hasWritePermission();
+        return !hasWritePermission || isHistoryMode;
+      }),
+    );
   }
 }

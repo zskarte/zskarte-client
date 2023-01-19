@@ -5,7 +5,7 @@ import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -96,7 +96,7 @@ export class MapRendererComponent implements AfterViewInit {
   public selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | undefined>(undefined);
   public selectedFeatureCoordinates: Observable<string>;
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
-  public historyMode = new BehaviorSubject<boolean>(false);
+  public isReadOnly = new BehaviorSubject<boolean>(false);
   public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
 
   constructor(
@@ -132,14 +132,6 @@ export class MapRendererComponent implements AfterViewInit {
       }),
     );
 
-    this._state.observeHistoryMode().subscribe((historyMode) => {
-      if (historyMode) {
-        this.toggleEditButtons(false);
-      }
-    });
-
-    this._state.observeHistoryMode().subscribe(this.historyMode);
-
     combineLatest([
       this.selectedVertexPoint.asObservable(),
       this._state.observeSelectedElement().pipe(
@@ -166,6 +158,8 @@ export class MapRendererComponent implements AfterViewInit {
       .subscribe((mode) => {
         this._mergeMode = mode;
       });
+
+    // this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
   }
 
   public ngOnDestroy(): void {
@@ -184,12 +178,6 @@ export class MapRendererComponent implements AfterViewInit {
         return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
       layers: this._allLayers,
-      condition: () => {
-        if (!this._session.hasWritePermission()) {
-          return false;
-        }
-        return true;
-      },
     });
     select.on('select', (event) => {
       this._modifyCache.clear();
@@ -206,7 +194,7 @@ export class MapRendererComponent implements AfterViewInit {
           this.selectedVertexPoint.next(null);
 
           // only show buttons on select for Symbols
-          if (!this.historyMode.getValue() && nextElement?.element?.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
+          if (!this.isReadOnly.getValue() && nextElement?.element?.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
             this.toggleEditButtons(true, true);
           }
         }
@@ -220,11 +208,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._modify = new Modify({
       features: this._modifyCache,
       condition: (event) => {
-        if (!this._session.hasWritePermission()) {
-          return false;
-        }
-
-        if (!this.areFeaturesModifiable() || this.historyMode.getValue()) {
+        if (!this.areFeaturesModifiable() || this.isReadOnly.getValue()) {
           this.toggleEditButtons(false);
           return false;
         }
@@ -268,14 +252,11 @@ export class MapRendererComponent implements AfterViewInit {
     const translate = new Translate({
       features: select.getFeatures(),
       condition: () => {
-        if (!this._session.hasWritePermission()) {
-          return false;
-        }
         return (
           select
             .getFeatures()
             .getArray()
-            .every((feature) => !feature?.get('sig').protected) && !this.historyMode.value
+            .every((feature) => !feature?.get('sig').protected) && !this.isReadOnly.value
         );
       },
     });
@@ -366,7 +347,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._map.on('singleclick', (event) => {
       if (this._map.hasFeatureAtPixel(event.pixel)) {
         const feature = this._map.forEachFeatureAtPixel(event.pixel, (feature) => feature, { hitTolerance: 10 });
-        if (feature === this._positionFlag && !this.historyMode.getValue()) {
+        if (feature === this._positionFlag && !this.isReadOnly.getValue()) {
           this.setFlagButtonPosition(this._positionFlagLocation.getCoordinates());
           this.toggleFlagButtons(true);
         } else {
@@ -850,7 +831,7 @@ export class MapRendererComponent implements AfterViewInit {
 
   toggleButton(allow: boolean, el?: HTMLElement) {
     if (el) {
-      el.style.display = allow && !this.historyMode.value ? 'block' : 'none';
+      el.style.display = allow && !this.isReadOnly.value ? 'block' : 'none';
     }
   }
 
