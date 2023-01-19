@@ -267,6 +267,11 @@ export class I18NService {
       fr: 'Opacité',
       en: 'Opacity',
     },
+    defaultValues: {
+      de: 'Standardwerte',
+      fr: 'Valeurs par défaut',
+      en: 'Default Values',
+    },
     solidLine: {
       de: 'Durchgezogen',
       fr: 'Continue',
