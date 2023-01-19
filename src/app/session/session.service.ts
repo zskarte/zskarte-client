@@ -28,7 +28,7 @@ import { IZsMapOperation } from './operations/operation.interfaces';
 })
 export class SessionService {
   private _session = new BehaviorSubject<IZsMapSession | undefined>(undefined);
-  private _clearSession = new Subject<void>();
+  private _clearOperation = new Subject<void>();
   private _state!: ZsMapStateService;
   private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
   private _isOnline = new BehaviorSubject<boolean>(true);
@@ -44,7 +44,7 @@ export class SessionService {
 
           this._state
             .observeDisplayState()
-            .pipe(skip(1), takeUntil(this._clearSession))
+            .pipe(skip(1), takeUntil(this._clearOperation))
             .subscribe(async (displayState) => {
               if (this._session.value?.operationId) {
                 db.displayStates.put({ ...displayState, id: this._session.value.operationId });
@@ -52,14 +52,16 @@ export class SessionService {
             });
         } else {
           await this._router.navigateByUrl('/operations');
+          this._clearOperation.next();
           this._state.setMapState(undefined);
           this._state.setDisplayState(undefined);
         }
         return;
       }
 
+      await db.displayStates.clear();
       await db.sessions.clear();
-      this._clearSession.next();
+      this._clearOperation.next();
       return;
     });
 
