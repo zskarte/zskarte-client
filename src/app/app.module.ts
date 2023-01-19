@@ -63,6 +63,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { SyncService } from './sync/sync.service';
 import { ZsMapStateService } from './state/state.service';
 import { ApiService } from './api/api.service';
+import { ShareComponent } from './session/share/share.component';
 
 registerLocaleData(localeCH);
 
@@ -73,7 +74,9 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     sync.setStateService(state);
     api.setSessionService(session);
 
-    await session.loadSavedSession();
+    if (!window.location.pathname.startsWith('/share/')) {
+      await session.loadSavedSession();
+    }
   };
 }
 @NgModule({
@@ -103,6 +106,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     RecentlyUsedSignsComponent,
     StackComponent,
     ProtocolTableComponent,
+    ShareComponent,
   ],
   imports: [
     BrowserModule,
