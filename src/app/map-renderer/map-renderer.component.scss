@@ -91,3 +91,7 @@
   z-index: 200000;
   transform: translateX(-50%) translateY(-50%);
 }
+
+.rotate-button {
+  cursor: nwse-resize !important;
+}

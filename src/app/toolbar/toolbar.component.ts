@@ -45,13 +45,6 @@ export class ToolbarComponent implements OnDestroy {
       takeUntil(this._ngUnsubscribe),
     );
 
-    this.zsMapStateService
-      .observeDisplayState()
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((mode) => {
-        window.history.pushState(null, '', '?mode=' + mode.displayMode);
-      });
-
     if (this.isInitialLaunch()) {
       this.dialog.open(HelpComponent, {
         data: true,
