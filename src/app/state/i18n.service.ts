@@ -147,6 +147,11 @@ export class I18NService {
       en: 'Cancel',
       fr: 'Annuler',
     },
+    confirm: {
+      de: 'Bestätigen',
+      en: 'Confirm',
+      fr: 'Confirmer',
+    },
     download: {
       de: 'Herunterladen',
       en: 'Download',
@@ -296,16 +301,6 @@ export class I18NService {
       de: 'OK',
       en: 'OK',
       fr: 'OK',
-    },
-    yes: {
-      de: 'Ja',
-      en: 'Yes',
-      fr: 'Oui',
-    },
-    no: {
-      de: 'Nein',
-      en: 'No',
-      fr: 'Non',
     },
     yourText: {
       de: 'Ihr Text',
@@ -1244,6 +1239,20 @@ export class I18NService {
       de: 'ProtokollExport',
       en: 'ProtocolExport',
       fr: 'ExportationProtocole',
+    deletionNotification: {
+      de: 'Die erfassten Daten werden jeden Abend um 00:00 Uhr gelöscht. Die Daten sind nach diesem Vorgang nicht mehr vorhanden.',
+      en: 'The recorded data is deleted every evening at 00:00. The data is no longer available after this process.',
+      fr: 'Les données saisies sont effacées chaque soir à 00:00. Les données ne sont plus disponibles après ce processus.',
+    },
+    guestLogin: {
+      de: 'Login als Gast',
+      en: 'Login as guest',
+      fr: 'Connexion en tant que visiteur',
+    },
+    addSignatureManually: {
+      de: 'Bitte fügen Sie die Signatur manuell ein',
+      en: 'Please add the signature manually',
+      fr: 'Veuillez ajouter la signature manuellement',
     },
   };
 

@@ -2,13 +2,12 @@ import { Locale } from '../state/i18n.service';
 
 export interface IZsMapSession {
   id: string;
-  operationId: number | undefined;
-  operationName: string | undefined;
-  operationDescription: string | undefined;
-  organizationLogo: string | undefined;
-  organizationId: number | undefined;
-  auth: IAuthResult;
-  guestLoginDateTime?: Date | undefined;
+  operationId?: number;
+  operationName?: string;
+  operationDescription?: string;
+  organizationLogo?: string;
+  organizationId?: number;
+  jwt?: string;
   locale: Locale;
 }
 

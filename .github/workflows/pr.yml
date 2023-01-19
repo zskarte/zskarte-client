@@ -1,0 +1,35 @@
+name: PR
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+env:
+  NODE_VERSION: 16.x
+
+jobs:
+  testAndBuild:
+    name: Test and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Lint
+        run: yarn lint
+
+      # - name: Test
+      #   run: yarn test
+      #   env:
+      #     CI: 'true'
+
+      - name: Build
+        run: yarn build

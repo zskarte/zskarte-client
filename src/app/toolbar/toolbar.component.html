@@ -33,7 +33,7 @@
       {{ i18n.get('help') }}
     </button>
     <mat-divider></mat-divider>
-    <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()" *ngIf="!(historyMode | async)">
+    <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()">
       <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('navigateOperations')">logout</mat-icon>
       {{ i18n.get('navigateOperations') }}
     </button>
