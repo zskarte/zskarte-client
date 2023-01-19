@@ -146,7 +146,7 @@ export function defineDefaultValuesForSignature(signature: Sign) {
   signature.iconOpacity = signature.iconOpacity || signatureDefaultValues.iconOpacity;
   signature.rotation = signature.rotation || signatureDefaultValues.rotation;
   signature.images = signature.images || signatureDefaultValues.images;
-  signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon
+  signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
 }
 
 export const signatureDefaultValues: SignatureDefaultValues = {
