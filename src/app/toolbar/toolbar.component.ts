@@ -116,4 +116,9 @@ export class ToolbarComponent implements OnDestroy {
   navigateEvents() {
     this.session.setOperation(undefined);
   }
+
+  async copyShareLink(): Promise<void> {
+    const url = await this.session.generateShareUrl();
+    await navigator.clipboard.writeText(url);
+  }
 }
