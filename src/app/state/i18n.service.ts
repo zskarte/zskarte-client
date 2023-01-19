@@ -682,6 +682,11 @@ export class I18NService {
       en: 'Show Table',
       fr: 'Afficher Tableau',
     },
+    protocolSaveAsExcel: {
+      de: 'Als Excel exportieren',
+      en: 'Export as Excel',
+      fr: 'Exporter en Excel',
+    },
     save: {
       de: 'Speichern',
       en: 'Save',
@@ -1204,6 +1209,36 @@ export class I18NService {
       de: 'Kürzlich verwendete Signaturen',
       en: 'Recently used signatures',
       fr: 'Signatures récemment utilisées',
+    },
+    date: {
+      de: 'Datum',
+      en: 'Date',
+      fr: 'Date',
+    },
+    groupLabel: {
+      de: 'Gruppe',
+      en: 'Group',
+      fr: 'Groupe',
+    },
+    sign: {
+      de: 'Zeichen',
+      en: 'Sign',
+      fr: 'Signe',
+    },
+    location: {
+      de: 'Ort',
+      en: 'Location',
+      fr: 'Emplacement',
+    },
+    label: {
+      de: 'Beschriftung',
+      en: 'Label',
+      fr: 'Etiquette',
+    },
+    protocolExport: {
+      de: 'ProtokollExport',
+      en: 'ProtocolExport',
+      fr: 'ExportationProtocole',
     },
     deletionNotification: {
       de: 'Die erfassten Daten werden jeden Abend um 00:00 Uhr gelöscht. Die Daten sind nach diesem Vorgang nicht mehr vorhanden.',

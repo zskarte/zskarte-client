@@ -48,5 +48,9 @@
       <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolTable')">table_chart</mat-icon>
       {{ i18n.get('protocolTable') }}
     </button>
+    <button mat-menu-item class="tools-menu-item" (click)="protocolExcelExport()">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolSaveAsExcel')">save</mat-icon>
+      {{ i18n.get('protocolSaveAsExcel') }}
+    </button>
   </mat-menu>
 </mat-toolbar>
