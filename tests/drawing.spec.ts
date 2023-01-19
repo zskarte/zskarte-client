@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('add symbol', async ({ page }) => {
-  await page.locator('mat-list-item', { hasText: 'e2e test' }).getByRole('button', { name: 'Edit' }).click();
+  await page.locator('mat-list-item', { hasText: 'e2e test' }).first().click();
   await page.getByRole('button', { name: 'OK' }).click();
   await page.getByRole('button', { name: 'Add' }).click();
   await page.getByRole('button').filter({ hasText: 'stars' }).click();

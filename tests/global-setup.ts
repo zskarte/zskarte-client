@@ -27,9 +27,7 @@ async function globalSetup(config: FullConfig) {
     await login(page);
     await page.getByText('Ereignis auswählen').waitFor();
     await page.locator('mat-list-item', { hasText: 'e2e test' }).getByRole('button', { name: 'More options' }).click();
-    await page.getByRole('menuitem', { name: 'Ereignis umbenennen' }).click();
-    await page.getByText('Bearbeiten').waitFor();
-    await page.getByRole('button', { name: 'Löschen' }).click();
+    await page.getByRole('menuitem', { name: 'Ereignis löschen' }).click();
   };
 }
 
