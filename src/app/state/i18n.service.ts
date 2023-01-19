@@ -1265,6 +1265,11 @@ export class I18NService {
       en: 'Copy share link',
       fr: 'Copier le lien de partage',
     },
+    logout: {
+      de: 'Logout',
+      en: 'Logout',
+      fr: 'Logout',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

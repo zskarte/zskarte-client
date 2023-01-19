@@ -225,13 +225,17 @@ export class ZsMapStateService {
     });
   }
 
-  public observeHistoryMode(): Observable<boolean> {
+  public observeIsHistoryMode(): Observable<boolean> {
     return this._display.pipe(
       map((o) => {
         return o.displayMode === ZsMapDisplayMode.HISTORY;
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public isHistoryMode(): boolean {
+    return this._display.value?.displayMode === ZsMapDisplayMode.HISTORY;
   }
 
   public saveDisplayState(): void {

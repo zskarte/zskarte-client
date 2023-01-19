@@ -10,12 +10,14 @@
     </button>
   </div>
   <mat-menu #mainMenu="matMenu" class="noprint">
-    <button mat-menu-item (click)="toggleHistory()" title="ALT+H">
-      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(historyMode | async)">history</mat-icon>
-      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="historyMode | async">brush</mat-icon>
-      {{ (historyMode | async) ? i18n.get('drawMode') : i18n.get('history') }}
-    </button>
-    <mat-divider></mat-divider>
+    <ng-container *ngIf="session.observeHasWritePermission() | async">
+      <button mat-menu-item (click)="toggleHistory()" title="ALT+H">
+        <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(historyMode | async)">history</mat-icon>
+        <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="historyMode | async">brush</mat-icon>
+        {{ (historyMode | async) ? i18n.get('drawMode') : i18n.get('history') }}
+      </button>
+      <mat-divider></mat-divider>
+    </ng-container>
     <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="languages">
       <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('language')">language</mat-icon>
       {{ i18n.get('language') }}
@@ -39,12 +41,17 @@
         {{ i18n.get('copyShareLink') }}
       </button>
       <mat-divider></mat-divider>
+      <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()">
+        <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('navigateOperations')">logout</mat-icon>
+        {{ i18n.get('navigateOperations') }}
+      </button>
     </ng-container>
-
-    <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()">
-      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('navigateOperations')">logout</mat-icon>
-      {{ i18n.get('navigateOperations') }}
-    </button>
+    <ng-container *ngIf="!(session.observeHasWritePermission() | async)">
+      <button mat-menu-item class="tools-menu-item" (click)="session.logout()">
+        <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('logout')">logout</mat-icon>
+        {{ i18n.get('logout') }}
+      </button>
+    </ng-container>
   </mat-menu>
   <mat-menu #languages="matMenu">
     <button mat-menu-item *ngFor="let locale of locales" (click)="setLocale(locale)" [ngClass]="{ active: locale === session.getLocale() }">

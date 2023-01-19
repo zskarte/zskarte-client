@@ -36,6 +36,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Signs } from './signs';
 import { SessionService } from '../session/session.service';
+import { merge } from 'lodash';
 
 @Component({
   selector: 'app-map-renderer',
@@ -96,7 +97,7 @@ export class MapRendererComponent implements AfterViewInit {
   public selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | undefined>(undefined);
   public selectedFeatureCoordinates: Observable<string>;
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
-  public historyMode = new BehaviorSubject<boolean>(false);
+  public isReadOnly = new BehaviorSubject<boolean>(false);
   public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
 
   constructor(
@@ -132,13 +133,18 @@ export class MapRendererComponent implements AfterViewInit {
       }),
     );
 
-    this._state.observeHistoryMode().subscribe((historyMode) => {
-      if (historyMode) {
-        this.toggleEditButtons(false);
-      }
-    });
+    merge(this._state.observeIsHistoryMode(), this._session.observeHasWritePermission())
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(async () => {
+        const isHistoryMode = this._state.isHistoryMode();
+        const hasWritePermission = this._session.hasWritePermission();
 
-    this._state.observeHistoryMode().subscribe(this.historyMode);
+        if (!hasWritePermission || isHistoryMode) {
+          this.isReadOnly.next(true);
+        } else {
+          this.isReadOnly.next(false);
+        }
+      });
 
     combineLatest([
       this.selectedVertexPoint.asObservable(),
@@ -184,12 +190,6 @@ export class MapRendererComponent implements AfterViewInit {
         return DrawStyle.styleFunctionSelect(feature, resolution, true);
       },
       layers: this._allLayers,
-      condition: () => {
-        if (!this._session.hasWritePermission()) {
-          return false;
-        }
-        return true;
-      },
     });
     select.on('select', (event) => {
       this._modifyCache.clear();
@@ -206,7 +206,7 @@ export class MapRendererComponent implements AfterViewInit {
           this.selectedVertexPoint.next(null);
 
           // only show buttons on select for Symbols
-          if (!this.historyMode.getValue() && nextElement?.element?.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
+          if (!this.isReadOnly.getValue() && nextElement?.element?.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
             this.toggleEditButtons(true, true);
           }
         }
@@ -220,11 +220,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._modify = new Modify({
       features: this._modifyCache,
       condition: (event) => {
-        if (!this._session.hasWritePermission()) {
-          return false;
-        }
-
-        if (!this.areFeaturesModifiable() || this.historyMode.getValue()) {
+        if (!this.areFeaturesModifiable() || this.isReadOnly.getValue()) {
           this.toggleEditButtons(false);
           return false;
         }
@@ -268,14 +264,11 @@ export class MapRendererComponent implements AfterViewInit {
     const translate = new Translate({
       features: select.getFeatures(),
       condition: () => {
-        if (!this._session.hasWritePermission()) {
-          return false;
-        }
         return (
           select
             .getFeatures()
             .getArray()
-            .every((feature) => !feature?.get('sig').protected) && !this.historyMode.value
+            .every((feature) => !feature?.get('sig').protected) && !this.isReadOnly.value
         );
       },
     });
@@ -366,7 +359,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._map.on('singleclick', (event) => {
       if (this._map.hasFeatureAtPixel(event.pixel)) {
         const feature = this._map.forEachFeatureAtPixel(event.pixel, (feature) => feature, { hitTolerance: 10 });
-        if (feature === this._positionFlag && !this.historyMode.getValue()) {
+        if (feature === this._positionFlag && !this.isReadOnly.getValue()) {
           this.setFlagButtonPosition(this._positionFlagLocation.getCoordinates());
           this.toggleFlagButtons(true);
         } else {
@@ -850,7 +843,7 @@ export class MapRendererComponent implements AfterViewInit {
 
   toggleButton(allow: boolean, el?: HTMLElement) {
     if (el) {
-      el.style.display = allow && !this.historyMode.value ? 'block' : 'none';
+      el.style.display = allow && !this.isReadOnly.value ? 'block' : 'none';
     }
   }
 
