@@ -131,6 +131,8 @@ export class ZsMapStateService {
               symbolId: result.id,
             };
             this.addDrawElement(element);
+            this.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
+
           } else {
             this._snackBar.open(this.i18n.get('addSignatureManually'), this.i18n.get('ok'), { duration: 5000 });
             this._elementToDraw.next({ type: ZsMapDrawElementStateType.SYMBOL, layer, symbolId: result.id });

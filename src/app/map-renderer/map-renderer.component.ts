@@ -878,7 +878,7 @@ export class MapRendererComponent implements AfterViewInit {
     const coordinates = posFlag.coordinates;
     if (coordinates) {
       this._state.drawSignatureAtCoordinate(coordinates);
-      this.hidePositionFlag();
+      this.toggleFlagButtons(false);
     }
   }
 
