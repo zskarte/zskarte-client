@@ -81,6 +81,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _initialRotation = 0;
   private _lastModificationPointCoordinates: number[] = [];
   private _drawHole!: DrawHole;
+  private _mergeMode = false;
   public currentSketchSize = new BehaviorSubject<string | null>(null);
   public mousePosition = new BehaviorSubject<number[]>([0, 0]);
   public mouseCoordinates = new BehaviorSubject<number[]>([0, 0]);
@@ -131,6 +132,13 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._state.observeHistoryMode().subscribe(this.historyMode);
+
+    this._state
+      .observeMergeMode()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((mode) => {
+        this._mergeMode = mode;
+      });
   }
 
   public ngOnDestroy(): void {
@@ -154,7 +162,13 @@ export class MapRendererComponent implements AfterViewInit {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
       for (const feature of event.selected) {
-        this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
+        if (this._mergeMode) {
+          const selectedElement = this._drawElementCache[this.selectedFeature.getValue()?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+          const elementToMerge = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+          this._state.mergePolygons(selectedElement.element, elementToMerge.element);
+        } else {
+          this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
+        }
       }
 
       if (event.selected.length === 0) {
