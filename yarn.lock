@@ -2359,6 +2359,14 @@
   resolved "https://registry.yarnpkg.com/@petamoriken/float16/-/float16-3.7.1.tgz#4a0cc0854a3a101cc2d697272f120e1a05975ce5"
   integrity sha512-oXZOc+aePd0FnhTWk15pyqK+Do87n0TyLV1nxdEougE95X/WXWDqmQobfhgnSY7QsWn5euZUWuDVeTQvoQ5VNw==
 
+"@playwright/test@^1.29.2":
+  version "1.29.2"
+  resolved "https://registry.yarnpkg.com/@playwright/test/-/test-1.29.2.tgz#c48184721d0f0b7627a886e2ec42f1efb2be339d"
+  integrity sha512-+3/GPwOgcoF0xLz/opTnahel1/y42PdcgZ4hs+BZGIUjtmEFSXGg+nFoaH3NSmuc7a6GSFwXDJ5L7VXpqzigNg==
+  dependencies:
+    "@types/node" "*"
+    playwright-core "1.29.2"
+
 "@schematics/angular@15.1.1":
   version "15.1.1"
   resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-15.1.1.tgz#a6eed3b983e4d2aa23d08f63c15587d6f4fced29"
@@ -7519,6 +7527,11 @@ pkg-dir@^4.1.0:
   integrity sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==
   dependencies:
     find-up "^4.0.0"
+
+playwright-core@1.29.2:
+  version "1.29.2"
+  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.29.2.tgz#2e8347e7e8522409f22b244e600e703b64022406"
+  integrity sha512-94QXm4PMgFoHAhlCuoWyaBYKb92yOcGVHdQLoxQ7Wjlc7Flg4aC/jbFW7xMR52OfXMVkWicue4WXE7QEegbIRA==
 
 plist@^3.0.1, plist@^3.0.4:
   version "3.0.6"
