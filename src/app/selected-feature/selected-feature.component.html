@@ -174,7 +174,7 @@
           </mat-expansion-panel>
         </ng-container>
 
-        <mat-expansion-panel *ngIf="editMode | async">
+        <mat-expansion-panel *ngIf="(editMode | async) && isLine()">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('line') }}</mat-panel-title>
           </mat-expansion-panel-header>
@@ -219,6 +219,10 @@
               <option value="filled">{{ i18n.get('filled') }}</option>
             </select>
           </mat-form-field>
+
+          <button *ngIf="drawElement.symbolId"
+          mat-flat-button color="primary"
+          (click)="resetLine(drawElement)">{{ i18n.get('defaultValues') }}</button>
         </mat-expansion-panel>
 
         <mat-expansion-panel *ngIf="(editMode | async) && isPolygon()">
