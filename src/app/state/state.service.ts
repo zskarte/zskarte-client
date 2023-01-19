@@ -189,7 +189,9 @@ export class ZsMapStateService {
     }
     if (this._drawElementCache) {
       for (const key in this._drawElementCache) {
-        this._drawElementCache[key].unsubscribe();
+        if (!newState?.drawElements?.find((e) => e.id === key)) {
+          this._drawElementCache[key].unsubscribe();
+        }
       }
     }
     this._drawElementCache = {};
@@ -823,6 +825,7 @@ export class ZsMapStateService {
 
   public async refreshMapState(): Promise<void> {
     if (this._session.getOperationId()) {
+      await this._sync.sendCachedMapStatePatches();
       const sha256 = async (str: string): Promise<string> => {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
         return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
@@ -835,6 +838,7 @@ export class ZsMapStateService {
           sha256(JSON.stringify(result.mapState)),
         ]);
         if (oldDigest !== newDigest) {
+          console.log('update map state', result);
           this.setMapState(result.mapState);
         }
       }

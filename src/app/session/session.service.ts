@@ -35,6 +35,7 @@ export class SessionService {
 
   constructor(private _router: Router, private _api: ApiService) {
     this._session.pipe(skip(1)).subscribe(async (session) => {
+      this._clearOperation.next();
       if (session && session.jwt) {
         await db.sessions.put(session);
         if (session.operationId) {
@@ -52,7 +53,6 @@ export class SessionService {
             });
         } else {
           await this._router.navigateByUrl('/operations');
-          this._clearOperation.next();
           this._state.setMapState(undefined);
           this._state.setDisplayState(undefined);
         }
@@ -61,7 +61,6 @@ export class SessionService {
 
       await db.displayStates.clear();
       await db.sessions.clear();
-      this._clearOperation.next();
       return;
     });
 
@@ -145,7 +144,6 @@ export class SessionService {
     const sessions = await db.sessions.toArray();
     if (sessions.length === 1) {
       const session: IZsMapSession = sessions[0];
-      this._session.next(session);
       return session;
     }
     if (sessions.length > 1) {
