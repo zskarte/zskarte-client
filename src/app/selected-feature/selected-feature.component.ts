@@ -125,7 +125,8 @@ export class SelectedFeatureComponent implements OnDestroy {
     return this.featureType === 'LineString';
   }
 
-  isText(element: ZsMapDrawElementState) {
+  isText(element?: ZsMapDrawElementState) {
+    if (!element) return false;
     return element.type === ZsMapDrawElementStateType.TEXT;
   }
 
