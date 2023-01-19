@@ -51,11 +51,7 @@
     </mat-expansion-panel-header>
 
     <mat-selection-list>
-      <mat-list-option
-        *ngFor="let category of signCategories"
-        (click)="toggleCategoryFilter(category)"
-        [selected]="!category.isHidden"
-      >
+      <mat-list-option *ngFor="let category of signCategories" (click)="toggleCategoryFilter(category)" [selected]="!category.isHidden">
         <div class="categoryDot" [style.background-color]="category.color"></div>
         {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
       </mat-list-option>
