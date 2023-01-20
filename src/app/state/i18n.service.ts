@@ -1164,6 +1164,11 @@ export class I18NService {
       fr: 'Carte pixelisée en gris',
       en: 'Gray pixel map',
     },
+    reportNumber: {
+      de: 'Meldenummer',
+      en: 'Report number',
+      fr: 'Numéro de rapport',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

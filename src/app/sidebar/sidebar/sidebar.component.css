@@ -43,10 +43,3 @@ mat-form-field,
 mat-slider {
   width: 100%;
 }
-
-@media (max-width: 500px) {
-  mat-form-field,
-  mat-slider {
-    max-width: 10px;
-  }
-}

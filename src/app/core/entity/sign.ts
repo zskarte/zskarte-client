@@ -43,6 +43,7 @@ export interface Sign {
   filterValue?: string;
   origSrc?: string;
   createdAt?: Date;
+  reportNumber?: number;
 }
 
 export function isMoreOptimalIconCoordinate(

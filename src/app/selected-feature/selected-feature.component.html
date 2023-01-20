@@ -34,6 +34,14 @@
                 {{ drawElement['text'] }}
               </div>
             </div>
+
+            <mat-form-field *ngIf="(editMode | async)">
+              <mat-label>{{ i18n.get('reportNumber') }}</mat-label>
+              <input matInput type="number" min="1"
+                              [ngModel]="drawElement['reportNumber']"
+                              (ngModelChange)="updateProperty(drawElement, 'reportNumber', $event)">
+            </mat-form-field>
+
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
             <mat-checkbox *ngIf="editMode | async" [(ngModel)]="useColorPicker" class="color-mode-toggle">
               {{ i18n.get('colorPickerMode') }}
@@ -71,6 +79,7 @@
               *ngIf="(editMode | async) && (selectedSignature.type === 'Point' || selectedSignature.src)"
               >{{ i18n.get('labelShow') }}</mat-checkbox
             >
+            <br />
             <div *ngIf="drawElement.createdAt" class="label-right">
               {{ drawElement.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
             </div>

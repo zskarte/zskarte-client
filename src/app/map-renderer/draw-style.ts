@@ -12,7 +12,14 @@ import LineString from 'ol/geom/LineString';
 import Circle from 'ol/style/Circle';
 import { Md5 } from 'ts-md5';
 import ConvexHull from 'ol-ext/geom/ConvexHull';
-import { defineDefaultValuesForSignature, FillStyle, getFirstCoordinate, getLastCoordinate, Sign } from '../core/entity/sign';
+import {
+  defineDefaultValuesForSignature,
+  FillStyle,
+  getFirstCoordinate,
+  getLastCoordinate,
+  Sign,
+  signatureDefaultValues,
+} from '../core/entity/sign';
 import { MultiPolygon } from 'ol/geom';
 import { FeatureLike } from 'ol/Feature';
 
@@ -320,7 +327,7 @@ export class DrawStyle {
     if (signature.text) {
       const zIndex = selected ? Infinity : this.getZIndex(feature);
       const color = signature.color ?? '';
-      const fontSize = signature.fontSize ?? 1;
+      const fontSize = signature.fontSize ?? signatureDefaultValues.fontSize;
 
       styles.push(
         new Style({
@@ -427,6 +434,7 @@ export class DrawStyle {
         fillStyleSize: signature.fillStyle ? signature.fillStyle.size : null,
         fillStyleAngle: signature.fillStyle ? signature.fillStyle.angle : null,
         fillStyleSpacing: signature.fillStyle ? signature.fillStyle.spacing : null,
+        reportNumber: signature.reportNumber,
       }),
     ).toString();
   }
