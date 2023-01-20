@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { ZsMapStateSource, ZsMapDrawElementStateType, SidebarContext } from '../state/interfaces';
@@ -9,7 +9,7 @@ import { ZsMapStateService } from '../state/state.service';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent implements OnInit {
+export class MapComponent {
   ZsMapStateSource = ZsMapStateSource;
   ZsMapDrawElementStateType = ZsMapDrawElementStateType;
   sidebarContext = SidebarContext;
@@ -20,8 +20,6 @@ export class MapComponent implements OnInit {
     this.sidebarContext$ = state.observeSidebarContext();
     this.activeLayer$ = state.observeActiveLayer();
   }
-  
-  ngOnInit(): void {}
 
   public drawElements = [
     { text: 'Text', type: ZsMapDrawElementStateType.TEXT },
