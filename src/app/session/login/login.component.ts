@@ -77,6 +77,7 @@ export class LoginComponent {
 
   public onCloseAutocomplete() {
     if (this.selectedOrganization?.name === this.filterControl.value?.name) return;
+    if (!this.filterControl.value) return;
     this.filterControl.setValue(this.selectedOrganization);
   }
 
