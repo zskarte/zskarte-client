@@ -1,5 +1,4 @@
 import { Draw } from 'ol/interaction';
-import { Sign } from '../core/entity/sign';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { ZsMapFreehandDrawElement } from '../map-renderer/elements/freehand-draw.element';
 import { ZsMapLineDrawElement } from '../map-renderer/elements/line-draw-element';

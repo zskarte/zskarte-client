@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
@@ -7,7 +9,6 @@ import { I18NService } from '../state/i18n.service';
 import { FillStyle, getColorForCategory, Sign, signatureDefaultValues } from '../core/entity/sign';
 import { ZsMapStateService } from '../state/state.service';
 import { Signs } from '../map-renderer/signs';
-import { CustomImageStoreService } from '../state/custom-image-store.service';
 import { DrawStyle } from '../map-renderer/draw-style';
 import { BehaviorSubject, EMPTY, firstValueFrom, Observable, Subject } from 'rxjs';
 import { Feature } from 'ol';
@@ -46,7 +47,7 @@ export class SelectedFeatureComponent implements OnDestroy {
       viewValue: 'resources',
     },
     {
-      value: getColorForCategory('danger'), //TODO
+      value: getColorForCategory('danger'), // red
       viewValue: 'danger',
     },
     {
@@ -261,14 +262,14 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   getOriginalImageUrl(file: string) {
-    return CustomImageStoreService.getOriginalImageDataUrl(file);
+    return undefined; // CustomImageStoreService.getOriginalImageDataUrl(file);
   }
 
   getImageUrl(file: string) {
-    const imageFromStore = CustomImageStoreService.getImageDataUrl(file);
-    if (imageFromStore) {
-      return imageFromStore;
-    }
+    // const imageFromStore = CustomImageStoreService.getImageDataUrl(file);
+    // if (imageFromStore) {
+    //   return imageFromStore;
+    // }
     return DrawStyle.getImageUrl(file);
   }
 
@@ -299,10 +300,10 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   findSigBySrc(src: any) {
-    const fromCustomStore = CustomImageStoreService.getSign(src);
-    if (fromCustomStore) {
-      return fromCustomStore;
-    }
+    // const fromCustomStore = CustomImageStoreService.getSign(src);
+    // if (fromCustomStore) {
+    //   return fromCustomStore;
+    // }
     return Signs.getSignBySource(src);
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Style, { StyleLike } from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
@@ -244,16 +245,7 @@ export class DrawStyle {
             const icon = src;
             iconCount[icon] = (iconCount[icon] ? iconCount[icon] : 0) + 1;
             let imageFromMemory;
-            let scaledSize;
-            // let naturalDim = null;
-            // const imageFromMemoryDataUrl = CustomImageStoreService.getImageDataUrl(icon);
 
-            // if (imageFromMemoryDataUrl) {
-            //   imageFromMemory = new Image();
-            //   imageFromMemory.src = imageFromMemoryDataUrl;
-            //   naturalDim = Math.min.apply(null, CustomImageStoreService.getDimensions(icon));
-            //   scaledSize = 60 / naturalDim;
-            // }
             styles.push(
               new Style({
                 image: new Icon({
@@ -279,7 +271,7 @@ export class DrawStyle {
             new Style({
               fill: DrawStyle.getAreaFill(DrawStyle.colorFunction('#dedede', 0.6), 1, { name: 'filled' }),
               stroke: DrawStyle.createDefaultStroke(scale, '#3399CC', true),
-              geometry: function (feature) {
+              geometry: function () {
                 return new Polygon([hull]);
               },
             }),

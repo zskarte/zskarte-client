@@ -14,6 +14,7 @@ import { SessionService } from '../session/session.service';
 })
 export class GeoadminService {
   private _featuresCache: GeoFeatures | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _legendCache: any;
 
   constructor(private http: HttpClient, public i18n: I18NService, private _session: SessionService) {}
@@ -28,6 +29,7 @@ export class GeoadminService {
       .pipe(tap((data) => (this._featuresCache = data)));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getLegend(layerId: string): Observable<any> {
     if (this._legendCache) {
       return of(this._legendCache);
@@ -40,6 +42,7 @@ export class GeoadminService {
       .pipe(tap((data) => (this._legendCache = data)));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   queryPolygons(layerId: string, searchField: string, searchText: string): Promise<any[]> {
     return new Promise((resolve) =>
       this.http

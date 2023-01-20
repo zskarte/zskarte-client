@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Session } from 'electron';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Sign, signCategories } from '../core/entity/sign';
 import capitalizeFirstLetter from '../helper/capitalizeFirstLetter';
 import { DrawStyle } from '../map-renderer/draw-style';
@@ -32,6 +29,7 @@ export class DrawingDialogComponent implements OnInit {
     private _session: SessionService,
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isCustomImage(sign: Sign) {
     return false;
     // return CustomImageStoreService.isCustomImage(sign.src);
@@ -81,6 +79,7 @@ export class DrawingDialogComponent implements OnInit {
     this.dialogRef.close(JSON.parse(JSON.stringify(sign)));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   editSymbol(sign: Sign) {
     // const symbolEdit = this.dialog.open(CustomImagesComponent, {
     //   data: sign,
@@ -108,6 +107,7 @@ export class DrawingDialogComponent implements OnInit {
     // });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   deleteSymbol(sign: Sign) {
     // const confirm = this.dialog.open(ConfirmationDialogComponent, {
     //   data: this.i18n.get('deleteSymbolConfirm'),
