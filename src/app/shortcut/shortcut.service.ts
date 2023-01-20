@@ -79,18 +79,18 @@ export class ShortcutService {
     // this._listen({ shortcut: 'mod+c' }).subscribe(() => {
     //   this._copiedFeatureId = undefined;
     //   if (this._selectedFeatureId) {
-    //     console.log('todo', 'ctrl+c', this._selectedFeatureId);
+    //     console.warn('todo', 'ctrl+c', this._selectedFeatureId);
     //     this._copiedFeatureId = this._selectedFeatureId;
     //   }
     // });
 
     // this._listen({ shortcut: 'mod+x' }).subscribe(() => {
-    //   console.log('todo', 'ctrl+x');
+    //   console.warn('todo', 'ctrl+x');
     // });
 
     // this._listen({ shortcut: 'mod+v' }).subscribe(() => {
     //   if (this._copiedFeatureId) {
-    //     console.log('todo', 'ctrl+v', this._copiedFeatureId);
+    //     console.warn('todo', 'ctrl+v', this._copiedFeatureId);
     //     this._copiedFeatureId = undefined;
     //   }
     // });

@@ -159,7 +159,7 @@ export class MapRendererComponent implements AfterViewInit {
         this._mergeMode = mode;
       });
 
-    // this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
+    this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
   }
 
   public ngOnDestroy(): void {
@@ -285,8 +285,8 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._view = new OlView({
-      center: [849861.97, 5905812.55], // TODO get from newly implemented session
-      zoom: 16, // TODO get from newly implemented session
+      center: [828675.7379587183, 5933353.2073429795], // will be overwritten once session is loaded via display state
+      zoom: 16,
     });
 
     this._map = new OlMap({
@@ -419,9 +419,8 @@ export class MapRendererComponent implements AfterViewInit {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((center) => {
         if (!areArraysEqual(this._view.getCenter() || [0, 0], center)) {
-          // TODO implement proper fallback center
           if (!center[0] && !center[1]) {
-            center = [849861.97, 5905812.55];
+            center = [828675.7379587183, 5933353.2073429795];
           }
           this._view.setCenter(center);
         }
@@ -432,7 +431,6 @@ export class MapRendererComponent implements AfterViewInit {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((zoom) => {
         if (this._view.getZoom() !== zoom) {
-          // TODO implement proper fallback zoom
           if (!zoom) {
             zoom = 16;
           }

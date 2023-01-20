@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/cor
 import { I18NService, Locale, LOCALES } from '../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ZsMapStateService } from '../state/state.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -12,7 +11,7 @@ import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-el
 import { DatePipe } from '@angular/common';
 import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../helper/protocolEntry';
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
-import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-toolbar',
@@ -32,11 +31,10 @@ export class ToolbarComponent implements OnDestroy {
     public i18n: I18NService,
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
-    private sanitizer: DomSanitizer,
     public zsMapStateService: ZsMapStateService,
     public session: SessionService,
     private datePipe: DatePipe,
-    private _router: Router,
+    private _snackBar: MatSnackBar,
   ) {
     if (this.isInitialLaunch()) {
       this.dialog.open(HelpComponent, {
@@ -113,5 +111,6 @@ export class ToolbarComponent implements OnDestroy {
   async copyShareLink(): Promise<void> {
     const url = await this.session.generateShareUrl();
     await navigator.clipboard.writeText(url);
+    this._snackBar.open(this.i18n.get('copiedToClipboard'), this.i18n.get('ok'), { duration: 2000 });
   }
 }

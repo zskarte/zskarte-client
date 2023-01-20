@@ -8,7 +8,9 @@ import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
-import { IZsMapOperation } from './operations/operation.interfaces';
+import { IZsMapOperation, IZsMapOrganization } from './operations/operation.interfaces';
+import { transform } from 'ol/proj';
+import { coordinatesProjection, mercatorProjection } from '../helper/projections';
 
 @Injectable({
   providedIn: 'root',
@@ -166,13 +168,16 @@ export class SessionService {
       return;
     }
 
-    const { error, result: meResult } = await this._api.get<{ organization: { id: number; logo: { url: string } } }>(
+    const { error, result: meResult } = await this._api.get<{ organization: IZsMapOrganization }>(
       '/api/users/me?populate[0]=organization.logo',
       {
         token: jwt,
       },
     );
-    if (error || !meResult) return;
+    if (error || !meResult) {
+      await this.logout();
+      return;
+    }
 
     const currentSession = await this.getSavedSession();
     let newSession: IZsMapSession;
@@ -182,12 +187,6 @@ export class SessionService {
     } else {
       newSession = {
         id: 'current',
-        jwt: undefined,
-        operationId: undefined,
-        operationName: undefined,
-        operationDescription: undefined,
-        organizationLogo: undefined,
-        organizationId: undefined,
         locale: DEFAULT_LOCALE,
       };
     }
@@ -212,6 +211,13 @@ export class SessionService {
 
     if (decoded.operationId) {
       newSession.operationId = decoded.operationId;
+    }
+
+    if (meResult.organization) {
+      newSession.organizationId = meResult.organization.id;
+      newSession.defaultLatitude = meResult.organization.mapLatitude;
+      newSession.defaultLongitude = meResult.organization.mapLongitude;
+      newSession.defaultZoomLevel = meResult.organization.mapZoomLevel;
     }
 
     this._session.next(newSession);
@@ -310,5 +316,20 @@ export class SessionService {
 
   public hasWritePermission(): boolean {
     return !(this._session.value?.permission === PermissionType.READ);
+  }
+
+  public getDefaultMapCenter(): number[] {
+    if (coordinatesProjection && mercatorProjection && this._session.value?.defaultLatitude && this._session.value?.defaultLongitude) {
+      return transform(
+        [this._session.value?.defaultLongitude, this._session.value?.defaultLatitude],
+        coordinatesProjection,
+        mercatorProjection,
+      );
+    }
+    return [828675.7379587183, 5933353.2073429795];
+  }
+
+  public getDefaultMapZoom(): number {
+    return this._session.value?.defaultZoomLevel ?? 16;
   }
 }

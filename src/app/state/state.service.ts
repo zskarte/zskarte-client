@@ -248,6 +248,9 @@ export class ZsMapStateService {
   public observeMapZoom(): Observable<number> {
     return this._display.pipe(
       map((o) => {
+        if (!o?.mapZoom || o.mapZoom === 16) {
+          return this._session.getDefaultMapZoom();
+        }
         return o?.mapZoom;
       }),
       distinctUntilChanged((x, y) => x === y),
@@ -297,6 +300,17 @@ export class ZsMapStateService {
   public observeMapCenter(): Observable<number[]> {
     return this._display.pipe(
       map((o) => {
+        if (
+          !o?.mapCenter ||
+          o.mapCenter.length !== 2 ||
+          !o.mapCenter[0] ||
+          !o.mapCenter[1] ||
+          o.mapCenter[0] === 0 ||
+          o.mapCenter[1] === 0 ||
+          (o.mapCenter[0] === 828675.7379587183 && o.mapCenter[1] === 5933353.2073429795)
+        ) {
+          return this._session.getDefaultMapCenter();
+        }
         return o?.mapCenter;
       }),
       distinctUntilChanged((x, y) => areArraysEqual(x, y)),
