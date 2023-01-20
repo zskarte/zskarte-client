@@ -20,6 +20,12 @@ jobs:
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
 
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.yarn
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         run: yarn
 
@@ -34,30 +40,21 @@ jobs:
       - name: Build
         run: yarn build
 
-      # Figures out the version of playwright that's installed.
-      # 1. Because we don't know what version yarn will resolve it to, we have
-      #    to use `yarn why` to get the actually installed version.
-      # 2. Because we're in a workspace, we need to make sure we get the version
-      #    for the root and not any children, hence the `grep`. If not using
-      #    workspaces, this can be skipped.
-      # 3. jq comes pre-installed in the Ubuntu runner, so we use that to get
-      #    the correct version string.
-      # 4. Finally, we use sed to extract just the version number (eg; '1.22.0')
-      # The result is stored in steps.playwright-version.outputs.version
-      - name: Get installed Playwright version
-        id: playwright-version
-        run: echo "::set-output name=version::$(yarn why --json @playwright/test | grep -h 'workspace:.' | jq --raw-output '.children[].locator' | sed -e 's/@playwright\/test@.*://')"
+      - name: Store Playwright's Version
+        run: |
+          PLAYWRIGHT_VERSION=$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')
+          echo "Playwright's Version: $PLAYWRIGHT_VERSION"
+          echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
 
-      - uses: actions/cache@v3
-        id: playwright-cache
+      - name: Cache Playwright Browsers for Playwright's Version
+        id: cache-playwright-browsers
+        uses: actions/cache@v3
         with:
-          path: '~/.cache/ms-playwright'
-          key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
-          restore-keys: |
-            ${{ runner.os }}-playwright-
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}
 
-      - name: Install Playwright's dependencies
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
+      - name: Setup Playwright
+        if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests

@@ -16,9 +16,8 @@ async function globalSetup(config: FullConfig) {
   await page.getByText('Bearbeiten').waitFor();
   await page.getByPlaceholder('Name eingeben').fill('e2e test');
   await page.getByPlaceholder('Beschreibung eingeben').fill('e2e test');
-  const save = page.getByRole('button', { name: 'Speichern' });
-  await save.waitFor();
-  await save.click();
+  await page.getByTestId('operation-save').click();
+  await page.waitForResponse(/api\/operations/);
   await browser.close();
 
   // Teardown, remove operation
