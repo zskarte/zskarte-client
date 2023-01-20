@@ -1,13 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { I18NService } from '../state/i18n.service';
-import { tap, Observable, of } from 'rxjs';
-import { GeoFeatures } from './entity/geoFeature';
+import { firstValueFrom, Observable, of, tap } from 'rxjs';
+import { GeoFeature, GeoFeatures, GeoJSONFeature, WMTSFeature } from './entity/geoFeature';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileGridWMTS from 'ol/tilegrid/WMTS';
 import OlTileWMTS from 'ol/source/WMTS';
 import { swissProjection } from '../helper/projections';
+import { bbox } from 'ol/loadingstrategy';
 import { SessionService } from '../session/session.service';
+import BaseLayer from 'ol/layer/Base';
+import VectorSource from 'ol/source/Vector';
+import { GeoJSON } from 'ol/format';
+import VectorLayer from 'ol/layer/Vector';
+import { StyleFunction } from 'ol/style/Style';
+import { Style } from 'ol/style';
+import { FeatureLike } from 'ol/Feature';
+import OlStyleForPropertyValue from '../helper/getOlStyleFromLiterals';
 
 @Injectable({
   providedIn: 'root',
@@ -80,7 +89,11 @@ export class GeoadminService {
     );
   }
 
-  createGeoAdminLayer(layerId: string, timestamp: string, extension: string, zIndex: number) {
+  createGeoAdminWMTSLayer(feature: WMTSFeature): BaseLayer {
+    const layerId = feature.serverLayerName;
+    const timestamp = feature.timestamps[0];
+    const extension = feature.format;
+    const zIndex = feature.zIndex;
     return new OlTileLayer({
       source: new OlTileWMTS({
         projection: swissProjection,
@@ -98,5 +111,42 @@ export class GeoadminService {
       opacity: 0.6,
       zIndex: zIndex,
     });
+  }
+
+  async createGeoAdminGeoJSONLayer(feature: GeoJSONFeature): Promise<BaseLayer | undefined> {
+    const styleLiterals = await firstValueFrom(this.http.get<any>(`https:${feature.styleUrl}`));
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const styles = new OlStyleForPropertyValue(styleLiterals);
+
+    const styleFunction: StyleFunction = (f: FeatureLike, res): Style | void => {
+      return styles.getFeatureStyle(f, res);
+    };
+
+    const vectorSource = new VectorSource({
+      format: new GeoJSON({ featureProjection: swissProjection }),
+      url: () => feature.geojsonUrl,
+      strategy: bbox,
+    });
+
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
+      visible: true,
+      zIndex: feature.zIndex,
+      opacity: 0.6,
+      style: styleFunction,
+    });
+
+    return vectorLayer;
+  }
+
+  async createGeoAdminLayer(feature: GeoFeature): Promise<BaseLayer | undefined> {
+    switch (feature.type) {
+      case 'wmts':
+        return this.createGeoAdminWMTSLayer(feature as WMTSFeature);
+      case 'geojson':
+        return this.createGeoAdminGeoJSONLayer(feature as GeoJSONFeature);
+    }
+    return undefined;
   }
 }

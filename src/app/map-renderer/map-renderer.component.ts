@@ -34,6 +34,7 @@ import { MatButton } from '@angular/material/button';
 import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import BaseLayer from 'ol/layer/Base';
 
 @Component({
   selector: 'app-map-renderer',
@@ -74,7 +75,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _allLayers: VectorLayer<VectorSource>[] = [];
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
-  private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
+  private _featureLayerCache: Map<string, BaseLayer> = new Map();
   private _modifyCache = new Collection<Feature>([]);
   private _currentSketch: FeatureLike | undefined;
   private _rotating = false;
@@ -486,13 +487,9 @@ export class MapRendererComponent implements AfterViewInit {
         const cacheNames = Array.from(this._featureLayerCache.keys());
         features
           .filter((el) => !cacheNames.includes(el.serverLayerName))
-          .forEach((feature) => {
-            const layer = this.geoAdminService.createGeoAdminLayer(
-              feature.serverLayerName,
-              feature.timestamps[0],
-              feature.format,
-              feature.zIndex,
-            );
+          .forEach(async (feature) => {
+            const layer = await this.geoAdminService.createGeoAdminLayer(feature);
+            if (!layer) return;
             this._map.addLayer(layer);
             this._featureLayerCache.set(feature.serverLayerName, layer);
 
