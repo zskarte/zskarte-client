@@ -8,25 +8,29 @@
     <mat-card-content>
       <mat-form-field class="full-width" appearance="fill">
         <mat-label>ZSO</mat-label>
-        <mat-select [(ngModel)]="selectedOrganization" name="identifier">
-          <mat-select-trigger>
-            <div class="option-wrapper">
-              <img
-                *ngIf="selectedOrganization?.logoSrc"
-                [src]="selectedOrganization?.logoSrc"
-                [srcset]="selectedOrganization?.logoSrcSet"
-                class="login-logo"
-              />
-              {{ selectedOrganization?.name }}
-            </div>
-          </mat-select-trigger>
-          <mat-option *ngFor="let organization of organizations | async" [value]="organization">
+        <input
+          matInput
+          [formControl]="filterControl"
+          (input)="filterOrganizations()"
+          [value]="selectedOrganization?.name"
+          [matAutocomplete]="auto"
+          placeholder="Organisation eingeben"
+        />
+        <mat-icon matSuffix>arrow_drop_down</mat-icon>
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="onSelectOrg($event)"
+          (closed)="onCloseAutocomplete()"
+          autoActiveFirstOption
+          [displayWith]="nameProperty"
+        >
+          <mat-option *ngFor="let organization of filteredOrganizations | async" [value]="organization">
             <div class="option-wrapper">
               <img *ngIf="organization.logoSrc" [src]="organization.logoSrc" [srcset]="organization.logoSrcSet" class="login-logo" />
               {{ organization.name }}
             </div>
           </mat-option>
-        </mat-select>
+        </mat-autocomplete>
       </mat-form-field>
       <mat-form-field class="full-width" appearance="fill">
         <mat-label>Passwort</mat-label>
