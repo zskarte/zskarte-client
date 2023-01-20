@@ -147,7 +147,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     return options;
   }
   protected static _parseFeature(event: Feature<Geometry>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
-    console.log('static fn _parseFeature is not implemented', { event, state, element });
+    console.error('static fn _parseFeature is not implemented', { event, state, element });
     throw new Error('static fn _parseFeature is not implemented');
   }
 }

@@ -16,6 +16,9 @@ export interface IZsMapSession {
   organizationId?: number;
   jwt?: string;
   locale: Locale;
+  defaultLatitude?: number;
+  defaultLongitude?: number;
+  defaultZoomLevel?: number;
 }
 
 export interface IZso {
