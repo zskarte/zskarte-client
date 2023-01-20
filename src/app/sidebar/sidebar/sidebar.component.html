@@ -20,9 +20,11 @@
         </mat-slider>
       </div>
       <mat-action-list *ngFor="let layer of mapSources">
-        <button mat-list-item (click)="switchLayer(layer)">
-          {{ layer }}
-        </button>
+        <mat-radio-group>
+          <mat-radio-button [value]="layer.key" (click)="switchLayer(layer.key)" [checked]="layer.selected">
+            {{ layer.translation }}
+          </mat-radio-button>
+        </mat-radio-group>
       </mat-action-list>
     </div>
   </mat-expansion-panel>
