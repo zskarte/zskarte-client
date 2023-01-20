@@ -1,66 +1,67 @@
 <div mat-dialog-content>
   <mat-vertical-stepper>
     <mat-step [label]="i18n.get('docLoginTitle')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docLogin')"></div>
-        <div class="screenshot"><img src="assets/doc/login.png" /></div>
+      <div class="flexContainer">
+       <img class="responsive" src="assets/doc/login.png" />
+        <p class="description" [innerHTML]="i18n.get('docLogin')"></p>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docCreateOrLoadTitle')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docCreateOrLoad')"></div>
-        <div class="screenshot"><img src="assets/doc/load.png" /></div>
+      <div class="flexContainer">
+        <p class="description" [innerHTML]="i18n.get('docCreateOrLoad')"></p>
+        <img class="responsive" src="assets/doc/load.png" />
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docMainViewTitle')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docMainView')"></div>
-        <div class="screenshot"><img src="assets/doc/map.png" /></div>
+      <div class="flexColContainer">
+        <img class="big no-rounding" src="assets/doc/map.png" />
+        <p class="description" [innerHTML]="i18n.get('docMainView')"></p>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docMapMenuTitle')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docMapMenu')"></div>
-        <div class="screenshot"><img src="assets/doc/map-menu.png" /></div>
+      <div class="flexContainer">
+        <p class="description" [innerHTML]="i18n.get('docMapMenu')"></p>
+       <img class="limitHeight" src="assets/doc/map-menu.png" />
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('findPlace')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docSearch')"></div>
-        <div class="screenshot"><img src="assets/doc/search.png" /></div>
-        <div class="screenshot"><img src="assets/doc/flag.png" /></div>
+      <div class="flexContainer">
+        <img class="limitHeight" src="assets/doc/search.png" />
+        <p class="description" [innerHTML]="i18n.get('docSearch')"></p>
+      </div>
+      <div class="flexContainer">
+        <div class="description" [innerHTML]="i18n.get('docMarker')"></div>
+        <img class="responsive" src="assets/doc/flag.png" />
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('draw')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docDraw')"></div>
-        <div class="screenshot"><img src="assets/doc/draw.png" /></div>
+      <div class="flexRowContainer">
+        <img class="limitHeight" src="assets/doc/draw.png" />
+        <p class="description" [innerHTML]="i18n.get('docDraw')"></p>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docSymbolSelectionTitle')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docSymbolSelection')"></div>
-        <div class="screenshot"><img src="assets/doc/signature.png" /></div>
+      <div class="flexColContainer">
+        <img class="big no-rounding" src="assets/doc/signature.png" />
+        <p class="description" [innerHTML]="i18n.get('docSymbolSelection')"></p>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docSelectionTitle')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docSelection')"></div>
-        <div class="screenshot">
-          <img src="assets/doc/select.png" />
-        </div>
+      <div class="flexContainer">
+        <img src="assets/doc/select.png" class="responsive"/>
+        <p class="description" [innerHTML]="i18n.get('docSelection')"></p> 
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docMapFunctionsTitle')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docMapFunctions')"></div>
-        <div class="screenshot"><img src="assets/doc/map-functions.png" /></div>
+      <div class="flexRowContainer">
+        <img class="limitHeight" src="assets/doc/map-functions.png" />
+        <p class="description" [innerHTML]="i18n.get('docMapFunctions')"></p>
       </div>
     </mat-step>
     <mat-step [label]="i18n.get('docQuickFunctionsTitle')" completed="false">
-      <div class="section">
-        <div class="description" [innerHTML]="i18n.get('docQuickFunctions')"></div>
-        <div class="screenshot"><img src="assets/doc/quick-functions.png" /></div>
+      <div class="flexContainer">
+        <p class="description" [innerHTML]="i18n.get('docQuickFunctions')"></p>
+        <img class="responsive" src="assets/doc/quick-functions.png" />
       </div>
     </mat-step>
   </mat-vertical-stepper>

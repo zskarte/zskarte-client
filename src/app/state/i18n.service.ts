@@ -974,12 +974,12 @@ export class I18NService {
       fr: 'Connexion',
     },
     docLogin: {
-      de: `Melden Sie sich <strong>über Ihre Zivilschutzorganisation</strong> an. Wenden Sie sich dafür an diese, falls Sie <strong>Anmeldeinformationen benötigen</strong>. 
-  Testen Sie die Applikation in einer <strong>Gast-Sitzung</strong>. Bitte beachten Sie, dass diese jeden Abend um 00:00 Uhr <strong>zurückgesetzt wird</strong> und <strong>nicht für den Ernstfall geeignet</strong> ist.`,
-      fr: `Connectez-vous <strong>via votre organisation de défense civile</strong>. Si vous avez besoin des <strong>informations d'identification</strong>, veuillez vous adresser à elle.
-  Testez l'application en utilisant une <strong>session invité</strong>. Veuillez noter que celle-ci est réinitialisée chaque soir à 00:00 et <strong>n'est pas adaptée pour les situations d'urgence</strong>`,
-      en: `Login <strong>via your civil defense organization</strong>. If you need <strong> login credentials</strong>, please contact them.
-  Test the application with a <strong>guest session</strong>. Please note that it will be reset every night at 00:00 and it is <strong>not suitable for emergency situations</strong>`,
+      de: `Melden Sie sich <strong>über Ihre Zivilschutzorganisation</strong> an. Wenden Sie sich dafür an diese, falls Sie Anmeldeinformationen benötigen.<br/>
+  Zusätzlich besteht die Möglichkeit, die Applikation in einer <strong>Gast-Sitzung</strong> zu testen. Bitte beachten Sie, dass diese jeden Abend um 00:00 Uhr <strong>zurückgesetzt wird</strong> und <strong>nicht für den Ernstfall geeignet</strong> ist.`,
+      en: `Log in <strong>via your civil protection organization</strong>. Please contact them if you need login information.<br/>
+    In addition, you can test the application in a <strong>guest session</strong>. Please note that this is <strong>reset every evening at 00:00</strong> and <strong>not suitable for the real emergency</strong>.`,
+      fr: `Connectez-vous <strong>via votre organisation de protection civile</strong>. Veuillez contacter cette dernière si vous avez besoin d'informations de connexion.<br/>
+    En outre, vous pouvez tester l'application dans une <strong>session d'invité</strong>. Veuillez noter que celle-ci est <strong>réinitialisée chaque soir à 00:00</strong> et <strong>non adaptée à l'urgence réelle</strong>.`,
     },
     docCreateOrLoadTitle: {
       de: 'Ereignis auswählen',
@@ -999,7 +999,7 @@ export class I18NService {
     },
 
     docMapMenuTitle: {
-      de: 'Kartenmenu',
+      de: 'Kartenmenü',
       en: 'Map menu',
       fr: 'Menu de la carte',
     },
@@ -1011,16 +1011,16 @@ export class I18NService {
     docMainView: {
       de: `<p>Die <strong>Lagekarte</strong> stellt die <strong>Hauptansicht</strong> der ZS Karten App dar. Wichtige Informationen und Funktionen sind hier zugänglich:
       <ol>
-        <li>Die ZSO und das aktuell ausgewählte Ereignis sind sichtbar</li>
+        <li>Die ZSO und das aktuell ausgewählte Ereignis</li>
         <li>Die Möglichkeit Orte, Straßen und Gebäude auf der Karte mittels <strong>Suchfunktion</strong> zu finden</li>
-        <li>Die aktuelle Zeit wird angezeigt, das <strong>Hamburgersymbol</strong> öffnet das Kartenmenü</li>
+        <li>Die aktuelle Zeit wird angezeigt, das Hamburgersymbol öffnet das <strong>Kartenmenü</strong></li>
         <li>Zugriff auf verschiedene <strong>Kartenfunktionen</strong></li>
-        <li>Möglichkeit zum hinzufügen von <strong>Zeichnungselementen</strong> auf der Karte.</li>
+        <li>Möglichkeit zum Hinzufügen von <strong>Zeichnungselementen</strong> auf der Karte</li>
       </ol>
       </p>`,
       fr: `<p>La <strong>carte</strong> représente la <strong>vue principale</strong> de l'application de cartes ZS. Les informations et fonctions importantes sont accessibles ici:
       <ol>
-        <li>Ici, vous pouvez voir l'organisation de défense civile et l'événement sélectionné</li>
+        <li>L'organisation de défense civile et l'événement sélectionné</li>
         <li>La <strong>fonction de recherche</strong>, qui permet de trouver des points sur la carte (lieux, rues, bâtiments)</li>
         <li>Ici est affiché l'<strong>heure actuelle</strong>, cliquez sur l'icône de hamburger pour ouvrir le menu de la carte</li>
         <li>Fonctionnalités de la carte</li>
@@ -1039,12 +1039,15 @@ export class I18NService {
     },
 
     docSearch: {
-      de: `<p>Die <strong>Suche</strong> kann dazu verwendet werden, <strong>Adressen und andere Orte</strong> zu finden und mittels Selektion den entsprechenden Ort auf der Karte mit einem <strong>Standortmarker</strong> hervorzuheben.</p>
-    <p>Ein Klick auf den Standortmarker zeigt die beiden Symbole, das <strong>X-Symbol</strong> entfernt den Standortmarker von der Karte. Mit dem <strong>Sternsymbol</strong> wird der Zeichnungsdialog geöffnet und es kann an dem markierten Ort eine Signatur eingefügt werden.</p>`,
-      fr: `<p>La <strong>recherche</strong> peut être utilisée pour trouver des <strong>adresses et d'autres lieux</strong> et pour mettre en évidence le lieu correspondant sur la carte à l'aide d'un <strong>marqueur de position</strong> en le sélectionnant.</p>
-    <p>Un clic sur le marqueur de position affiche les deux icônes, l'icône <strong>X</strong> supprime le marqueur de position de la carte. Avec l'icône <strong>étoile</strong>, la boîte de dialogue de dessin s'ouvre et vous pouvez insérer une signature à l'endroit marqué.</p>`,
-      en: `<p>The <strong>search</strong> can be used to find <strong>addresses and other places</strong> and to highlight the corresponding place on the map using a <strong>location marker</strong> by selecting it.</p>
-    <p>A click on the location marker displays the two icons, the <strong>X icon</strong> removes the location marker from the map. With the <strong>star icon</strong>, the drawing dialog opens and you can insert a signature at the marked location.</p>`,
+      de: `<p>Die <strong>Suche</strong> kann dazu verwendet werden, <strong>Adressen und andere Orte</strong> zu finden und mittels Selektion den entsprechenden Ort auf der Karte mit einem <strong>Standortmarker</strong> hervorzuheben.</p>`,
+      fr: `<p>La <strong>recherche</strong> peut être utilisée pour trouver des <strong>adresses et d'autres lieux</strong> et pour mettre en évidence le lieu correspondant sur la carte à l'aide d'un <strong>marqueur de position</strong> en le sélectionnant.</p>`,
+      en: `<p>The <strong>search</strong> can be used to find <strong>addresses and other places</strong> and to highlight the corresponding place on the map using a <strong>location marker</strong> by selecting it.</p>`,
+    },
+
+    docMarker: {
+      de: `<p>Ein Klick auf den Standortmarker zeigt die beiden Symbole, das <strong>X-Symbol</strong> entfernt den Standortmarker von der Karte. Mit dem <strong>Sternsymbol</strong> wird der Zeichnungsdialog geöffnet und es kann an dem markierten Ort eine Signatur eingefügt werden.</p>`,
+      fr: `<p>Un clic sur le marqueur de position affiche les deux icônes, l'icône <strong>X</strong> supprime le marqueur de position de la carte. Avec l'icône <strong>étoile</strong>, la boîte de dialogue de dessin s'ouvre et vous pouvez insérer une signature à l'endroit marqué.</p>`,
+      en: `<p>A click on the location marker displays the two icons, the <strong>X icon</strong> removes the location marker from the map. With the <strong>star icon</strong>, the drawing dialog opens and you can insert a signature at the marked location.</p>`,
     },
 
     docDraw: {
@@ -1082,9 +1085,9 @@ export class I18NService {
       fr: 'Séléction de symbole',
     },
     docSymbolSelection: {
-      de: `<p>In dieser Ansicht können <strong>Signaturen</strong> ausgewählt werden. Nutzen Sie die <strong>Such- und Filterfunktion</strong> um Symbole einfacher zu finden. <strong>Kürzlich verwendete Signaturen</strong> werden hier angezeigt. Die <strong>dritte Spalte</strong> der Tabelle enthält Icons, die den <strong>Typen der Signatur</strong> darstellen. Es gibt: normale Signaturen (Stern), Polygone (vier Qudrate) und Linien (gezackte Linie).</p>`,
-      fr: `<p>Dans cette vue, vous pouvez sélectionner des <strong>symboles</strong>. Utilisez la <strong>fonction de recherche et de filtrage</strong> pour trouver des symboles plus facilement. Les <strong>derniers symboles utilisés</strong> sont affichés ici. La <strong>troisième colonne</strong> du tableau contient des icônes qui représentent le <strong>type de symbole</strong>. Il y a: symboles normaux (étoile), polygones (quatre carrés) et lignes (ligne ondulée).</p>`,
-      en: `<p>In this view, you can select <strong>symbols</strong>. Use the <strong>search and filter function</strong> to find symbols more easily. <strong>Recently used symbols</strong> are displayed here. The <strong>third column</strong> of the table contains icons that represent the <strong>type of symbol</strong>. There are: normal symbols (star), polygons (four squares) and lines (wavy line).</p>`,
+      de: `<p>In dieser Ansicht können <strong>Signaturen</strong> ausgewählt werden. Nutzen Sie die <strong>Such- und Filterfunktion</strong> um Symbole einfacher zu finden. <strong>Kürzlich verwendete Signaturen</strong> werden hier angezeigt. Die dritte Spalte der Tabelle enthält Icons, die den <strong>Typen der Signatur</strong> darstellen. Es gibt: normale Signaturen (Stern), Polygone (vier Qudrate) und Linien (gezackte Linie).</p>`,
+      fr: `<p>Dans cette vue, vous pouvez sélectionner des <strong>symboles</strong>. Utilisez la <strong>fonction de recherche et de filtrage</strong> pour trouver des symboles plus facilement. Les <strong>derniers symboles utilisés</strong> sont affichés ici. La troisième colonne du tableau contient des icônes qui représentent le <strong>type de symbole</strong>. Il y a: symboles normaux (étoile), polygones (quatre carrés) et lignes (ligne ondulée).</p>`,
+      en: `<p>In this view, you can select <strong>symbols</strong>. Use the <strong>search and filter function</strong> to find symbols more easily. <strong>Recently used symbols</strong> are displayed here. The third column of the table contains icons that represent the <strong>type of symbol</strong>. There are: normal symbols (star), polygons (four squares) and lines (wavy line).</p>`,
     },
     docSelectionTitle: {
       de: 'Detailansicht der Zeichnung',
@@ -1102,7 +1105,7 @@ export class I18NService {
       en: 'Map functions',
     },
     docMapFunctions: {
-      de: `Die Kartenfunktionen von Oben Nach unten sind: <ul><li>Hineinzoomen</li><li>Hinauszoomen</li><li>Ebenen: Hier kann die Art der Karte verändert werden und es können weitere Ebenen überlagert und ein- und ausgeblendet werden.</li><li>Filter: Hier können Zeichnungen entsprechend Kategorie oder Typ ein- und ausgeblendet werden.</li><li>Ortungsfunktion: Ihr Standort wird auf der Karte angezeigt und die Karte wird auf diesen Standort zentriert.</li></ul>`,
+      de: `Die Kartenfunktionen von oben nach unten sind: <ul><li>Hineinzoomen</li><li>Herauszoomen</li><li>Ebenen: Hier kann die Art der Karte verändert werden und es können weitere Ebenen überlagert und ein- und ausgeblendet werden.</li><li>Filter: Hier können Zeichnungen entsprechend Kategorie oder Typ ein- und ausgeblendet werden.</li><li>Ortungsfunktion: Ihr Standort wird auf der Karte angezeigt und die Karte wird auf diesen Standort zentriert.</li></ul>`,
       fr: `Les fonctions de la carte de haut en bas sont: <ul><li>Zoom avant</li><li>Zoom arrière</li><li>Niveaux: Ici, vous pouvez changer le type de carte et superposer et afficher ou masquer des niveaux supplémentaires.</li><li>Filtres: Ici, vous pouvez afficher ou masquer les dessins en fonction de la catégorie ou du type.</li><li>Fonction de localisation: Votre emplacement est affiché sur la carte et la carte est centrée sur cet emplacement.</li></ul>`,
       en: `The map functions from top to bottom are: <ul><li>Zoom in</li><li>Zoom out</li><li>Layers: Here you can change the map type and overlay and show or hide additional layers.</li><li>Filters: Here you can show or hide drawings according to category or type.</li><li>Location function: Your location is displayed on the map and the map is centered on this location.</li></ul>`,
     },
@@ -1116,7 +1119,6 @@ export class I18NService {
       fr: `Cliquez sur un <strong>dessin</strong> sur la carte pour afficher les <strong>fonctions rapides</strong>. Cela comprend: <ul><li>Supprimer le dessin ou le point d'ancrage</li><li>Copier le dessin: Cliquez à nouveau sur la carte pour insérer la <strong>copie</strong> du dessin</li><li>Rotation de la signature</li></ul>`,
       en: `Click on a <strong>drawing</strong> on the map to display the <strong>quick functions</strong>. This includes: <ul><li>Delete the drawing or anchor point</li><li>Copy the drawing: Click again on the map to insert the <strong>copy</strong> of the drawing</li><li>Rotate the signature</li></ul>`,
     },
-
   };
 
   public getLabelForSign(sign: Sign): string {
