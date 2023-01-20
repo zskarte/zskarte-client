@@ -4,6 +4,8 @@
   "main": "dist/electron/index.js",
   "scripts": {
     "ng:serve": "ng serve --port 4300",
+    "ng:serve:dev": "ng serve --port 4300 --configuration development",
+    "ng:serve:prod": "ng serve --port 4300 --configuration production",
     "ng:build:prod": "ng build --configuration production",
     "ng:build:dev": "ng build --configuration development",
     "electron:serve": "yarn electron:build && wait-on http-get://localhost:4300/ && electron ./ --serve",
