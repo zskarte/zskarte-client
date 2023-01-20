@@ -1,8 +1,8 @@
 .wrapper {
-  min-width: 100%;
   display: flex;
   align-items: center;
   margin: 1em;
+  flex-wrap: wrap;
 }
 
 .wrapper img {
@@ -16,4 +16,8 @@
   line-height: unset;
   padding: 5px;
   margin: 0 10px 0 10px;
+}
+
+.container {
+  margin: 20px 0;
 }
