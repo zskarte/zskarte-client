@@ -119,6 +119,7 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   fontSize?: number;
   images?: string[];
   zindex?: number;
+  reportNumber?: number;
 }
 
 export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
