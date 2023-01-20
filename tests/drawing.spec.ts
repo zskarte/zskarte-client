@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { Page } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { login } from './global-setup';
 
 async function clickOnMap(page: Page, position: { x: number; y: number }) {

@@ -46,6 +46,8 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
+    video: 'on',
+
     navigationTimeout: 90000,
   },
 
@@ -106,7 +108,7 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `yarn ng:serve:dev --port ${PORT}`,
+    command: `yarn ng:serve:dev --host 0.0.0.0 --port ${PORT}`,
     port: PORT,
     reuseExistingServer: true,
     timeout: 120 * 1000,

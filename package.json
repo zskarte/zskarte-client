@@ -15,10 +15,7 @@
     "start": "run-p ng:serve electron:serve",
     "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
     "prettify": "prettier --write \"**/*.{js,ts,html,css,json,md}\"",
-    "test:e2e": "playwright test",
-    "test:e2e:wait": "run-s wait test:e2e",
-    "test:e2e:ci": "run-p ng:serve:dev test:e2e:wait",
-    "wait": "wait-on http://localhost:4300"
+    "test:e2e": "playwright test"
   },
   "private": true,
   "dependencies": {
