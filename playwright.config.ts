@@ -108,7 +108,7 @@ const config: PlaywrightTestConfig = {
   webServer: {
     command: `yarn ng:serve:dev --port ${PORT}`,
     port: PORT,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120 * 1000,
   },
 };
