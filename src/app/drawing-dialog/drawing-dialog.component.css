@@ -30,8 +30,19 @@
   cursor: pointer;
 }
 
+.mat-column-symbol {
+  width: 32px;
+  padding-right: 24px;
+  text-align: center;
+}
+
 .mat-mdc-table .mat-mdc-row:hover {
   background-color: rgba(0, 0, 0, 0.04);
+}
+
+.overflow-auto {
+  overflow-x: auto;
+  margin: 0 20px;
 }
 
 @media screen and (max-width: 700px) {
@@ -39,3 +50,4 @@
     flex-direction: column;
   }
 }
+

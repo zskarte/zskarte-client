@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Style, { StyleLike } from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
@@ -11,7 +12,14 @@ import LineString from 'ol/geom/LineString';
 import Circle from 'ol/style/Circle';
 import { Md5 } from 'ts-md5';
 import ConvexHull from 'ol-ext/geom/ConvexHull';
-import { defineDefaultValuesForSignature, FillStyle, getFirstCoordinate, getLastCoordinate, Sign } from '../core/entity/sign';
+import {
+  defineDefaultValuesForSignature,
+  FillStyle,
+  getFirstCoordinate,
+  getLastCoordinate,
+  Sign,
+  signatureDefaultValues,
+} from '../core/entity/sign';
 import { MultiPolygon } from 'ol/geom';
 import { FeatureLike } from 'ol/Feature';
 
@@ -244,16 +252,7 @@ export class DrawStyle {
             const icon = src;
             iconCount[icon] = (iconCount[icon] ? iconCount[icon] : 0) + 1;
             let imageFromMemory;
-            let scaledSize;
-            // let naturalDim = null;
-            // const imageFromMemoryDataUrl = CustomImageStoreService.getImageDataUrl(icon);
 
-            // if (imageFromMemoryDataUrl) {
-            //   imageFromMemory = new Image();
-            //   imageFromMemory.src = imageFromMemoryDataUrl;
-            //   naturalDim = Math.min.apply(null, CustomImageStoreService.getDimensions(icon));
-            //   scaledSize = 60 / naturalDim;
-            // }
             styles.push(
               new Style({
                 image: new Icon({
@@ -279,7 +278,7 @@ export class DrawStyle {
             new Style({
               fill: DrawStyle.getAreaFill(DrawStyle.colorFunction('#dedede', 0.6), 1, { name: 'filled' }),
               stroke: DrawStyle.createDefaultStroke(scale, '#3399CC', true),
-              geometry: function (feature) {
+              geometry: function () {
                 return new Polygon([hull]);
               },
             }),
@@ -328,7 +327,7 @@ export class DrawStyle {
     if (signature.text) {
       const zIndex = selected ? Infinity : this.getZIndex(feature);
       const color = signature.color ?? '';
-      const fontSize = signature.fontSize ?? 1;
+      const fontSize = signature.fontSize ?? signatureDefaultValues.fontSize;
 
       styles.push(
         new Style({
@@ -435,6 +434,7 @@ export class DrawStyle {
         fillStyleSize: signature.fillStyle ? signature.fillStyle.size : null,
         fillStyleAngle: signature.fillStyle ? signature.fillStyle.angle : null,
         fillStyleSpacing: signature.fillStyle ? signature.fillStyle.spacing : null,
+        reportNumber: signature.reportNumber,
       }),
     ).toString();
   }

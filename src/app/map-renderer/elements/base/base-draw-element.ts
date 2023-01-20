@@ -24,7 +24,6 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, _id);
     this._element = this._state.observeMapState().pipe(
       map((o) => {
-        // TODO typings
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return o.drawElements?.find((o) => o.id === this._id) as any;
       }),
@@ -62,6 +61,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       fontSize: state.fontSize,
       text: state['text'],
       zindex: state.zindex,
+      reportNumber: state.reportNumber,
     });
   }
 
@@ -142,13 +142,13 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     return draw;
   }
   protected static _getOlDrawType(symbolId?: number): Type {
-    throw new Error('static fn _getOlDrawType is not implemented');
+    throw new Error('static fn _getOlDrawType is not implemented ' + symbolId);
   }
   protected static _enhanceOlDrawOptions(options: Options) {
     return options;
   }
   protected static _parseFeature(event: Feature<Geometry>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
-    console.log('static fn _parseFeature is not implemented', { event, state, element });
+    console.error('static fn _parseFeature is not implemented', { event, state, element });
     throw new Error('static fn _parseFeature is not implemented');
   }
 }

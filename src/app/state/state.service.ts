@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
@@ -15,7 +15,7 @@ import {
   ZsMapPolygonDrawElementState,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map, mergeMap, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
@@ -35,9 +35,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
-import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
 import { Feature } from 'ol';
-import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 
 @Injectable({
   providedIn: 'root',
@@ -81,9 +80,9 @@ export class ZsMapStateService {
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
-      positionFlag: { coordinates: [0, 0], isVisible: false },
-      mapCenter: [0, 0],
-      mapZoom: 16,
+      positionFlag: { coordinates: DEFAULT_COORDINATES, isVisible: false },
+      mapCenter: DEFAULT_COORDINATES,
+      mapZoom: DEFAULT_ZOOM,
       activeLayer: undefined,
       source: ZsMapStateSource.OPEN_STREET_MAP,
       layerOpacity: {},
@@ -250,6 +249,9 @@ export class ZsMapStateService {
   public observeMapZoom(): Observable<number> {
     return this._display.pipe(
       map((o) => {
+        if (!o?.mapZoom || o.mapZoom === DEFAULT_ZOOM) {
+          return this._session.getDefaultMapZoom();
+        }
         return o?.mapZoom;
       }),
       distinctUntilChanged((x, y) => x === y),
@@ -299,6 +301,17 @@ export class ZsMapStateService {
   public observeMapCenter(): Observable<number[]> {
     return this._display.pipe(
       map((o) => {
+        if (
+          !o?.mapCenter ||
+          o.mapCenter.length !== 2 ||
+          !o.mapCenter[0] ||
+          !o.mapCenter[1] ||
+          o.mapCenter[0] === 0 ||
+          o.mapCenter[1] === 0 ||
+          (o.mapCenter[0] === DEFAULT_COORDINATES[0] && o.mapCenter[1] === DEFAULT_COORDINATES[1])
+        ) {
+          return this._session.getDefaultMapCenter();
+        }
         return o?.mapCenter;
       }),
       distinctUntilChanged((x, y) => areArraysEqual(x, y)),
@@ -733,6 +746,7 @@ export class ZsMapStateService {
 
   public filterAll(active: boolean, featureTypes: string[], categoryNames: string[]) {
     this.updateDisplayState((draft) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       draft.hiddenSymbols = active ? [...Signs.SIGNS.map((s) => s.id!)] : [];
       draft.hiddenFeatureTypes = active ? featureTypes : [];
       draft.hiddenCategories = active ? categoryNames : [];

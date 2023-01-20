@@ -11,6 +11,7 @@ export const DEFAULT_LOCALE: Locale = LOCALES[0];
 })
 export class I18NService {
   constructor(private _session: SessionService) {}
+
   private static TRANSLATIONS = {
     de: {
       de: 'Deutsch',
@@ -86,11 +87,6 @@ export class I18NService {
       de: 'Zeichnen',
       fr: 'Dessiner',
       en: 'Draw',
-    },
-    createOrLoad: {
-      de: 'Ereignis erstellen / laden',
-      en: 'Create / load event',
-      fr: 'Créer / charger événement',
     },
     newMap: {
       de: 'Neue Karte erstellen',
@@ -722,289 +718,6 @@ export class I18NService {
       en: 'Help',
       fr: 'Aide',
     },
-    docWelcomeTitle: {
-      de: 'Willkommen!',
-      en: 'Welcome!',
-      fr: 'Bienvenue !',
-    },
-    docWelcome: {
-      de:
-        '<h1>Herzlich Willkommen bei Zivilschutz-Karte</h1>\n' +
-        'Sie finden hier einige Informationen zur Verwendung der Applikation. \n\n' +
-        'Sie können diesen Schritt selbstverständlich jederzeit überspringen und bei Bedarf über das Hilfe-Menü wieder aufrufen.\n\n' +
-        'Wir wünschen Ihnen viel Spass bei der Verwendung!',
-      fr:
-        '<h1>Bienvenue à Zivilschutz-Karte</h1>\n' +
-        "Vous trouverez ici quelques informations sur la manière d'utiliser l'application.\n\n" +
-        'Vous pouvez sauter cette étape à tout moment et la rappeler via le menu principal si nécessaire.\n\n' +
-        "Nous espérons que vous prendrez plaisir à l'utiliser !",
-      en:
-        '<h1>Welcome to Zivilschutz-Karte</h1>\n' +
-        'You will find here some information on how to use the application. \n\n' +
-        'You can skip this step at any time and call it up again via the main menu if required.\n\n' +
-        'We hope you enjoy using it!',
-    },
-    docNewMap: {
-      de:
-        '<ul>' +
-        '<li>Um eine neue Karte zu erstellen, müssen Sie zuerst Ihre Zivilschutz-Organisation definieren (welche bei einem zweiten Mal vorgemerkt wird). Ausserdem sollten Sie Ihre Karte benennen (z.B. anhand des aktuellen Ereignisses).</li>' +
-        '<li>Falls bereits Karten bestehen, finden Sie eine entsprechende Möglichkeit, diese zu öffnen</li>' +
-        '<li>Falls Sie eine Karte exportiert haben / von jemandem mit dem Dateiformat .zsjson erhalten haben, können Sie diese hier importieren</li>' +
-        '</ul>',
-      en:
-        '<ul>' +
-        '<li>To create a new map, you must first define your organisation (which will be memorized for a second time). You should also name your map (e.g. based on the current event).</li>' +
-        '<li>If some maps already exist, you will find a menu entry to open them</li>' +
-        '<li>If you have exported / received a map from someone with the .zsjson file format, you can import it here</li>' +
-        '</ul>',
-      fr:
-        '<ul>' +
-        "<li>Pour créer une nouvelle carte, vous devez d'abord définir votre organisation de protection civile (qui sera reprise une seconde fois). Vous devez également nommer votre carte.</li>" +
-        "<li>Si d'autres cartes existent déjà, vous trouverez une zone pour les ouvrir</li>" +
-        "<li>Si vous avez exporté / reçu une carte de quelqu'un avec le format de fichier .zsjson, vous pouvez l'importer ici</li>" +
-        '</ul>',
-    },
-    docInitialViewTitle: {
-      de: 'Initiale Ansicht',
-      en: 'Initial view',
-      fr: 'Vue initiale',
-    },
-    docInitialView: {
-      de:
-        'Nach dem erstellen / laden / importieren einer neuen Karte befinden Sie sich bei der Initial-Darstellung der Karte.\n' +
-        'Sie finden im obersten Bereich folgende Elemente vor:' +
-        '<ul>' +
-        '<li>Das Logo der gewählten Zivilschutzorganisation inkl. der Sprachwahl.</li>' +
-        '<li>Den Kartentitel und das <strong>Hauptmenü</strong> (in blau)</li>' +
-        '<li>Die aktuelle Uhrzeit</li>' +
-        '<li>Eine Suche (<strong>Ort finden</strong>) um nach einer Adresse oder einem gezeichneten Element zu suchen</li>' +
-        '<li>Das Menü <strong>Zeichnen</strong></li>' +
-        '<li>Das Menü <strong>Aktuelle Zeichnung</strong></li>' +
-        '<li>as Menü <strong>Ebenen</strong></li>' +
-        '<li>Den <strong>Modus-Schalter</strong> um vom Zeichnungs- zum History / Lese-Modus zu gelangen</li>' +
-        '<li>Einen Knopf um das <strong>Menü zu reduzieren</strong> um den Kartenbereich zu maximieren</li>' +
-        '</ul>',
-      en:
-        'After creating / loading / importing a new map you are at the initial view of the map.\n' +
-        'You will find the following elements in the top section:\n' +
-        '<ul>' +
-        '<li>The logo of the chosen organization including the language choice.</li>' +
-        '<li>The map title and <strong>main menu</strong> (in blue)</li>' +
-        '<li>The current date and time</li>' +
-        '<li>A mechanism (<strong>Find location</strong>) to search for an address or a drawn element</li>' +
-        '<li>The <strong>draw</strong> menu</li>' +
-        '<li>The menu <strong>current drawing</strong></li>' +
-        '<li>The menu <strong>layers</strong></li>' +
-        '<li>The <strong>mode switch</strong> to switch from drawing to history / read mode</li>' +
-        '<li>A button to reduce the <strong>menu</strong> to maximize the map area</li>' +
-        '</ul>',
-      fr:
-        'Après avoir créé / chargé / importé une nouvelle carte, vous vous trouvez à la vue initiale de la carte.\n' +
-        'Vous trouverez les éléments suivants dans la section supérieure:\n' +
-        "* Le logo de l'organisation de protection civile y compris le choix de la langue.\n" +
-        '<li>Le titre de la carte et <strong>le menu principal</strong> (en bleu)</li>' +
-        "* L'heure actuelle\n" +
-        '<li>Un élément (<strong>Trouver un lieu</strong>) pour rechercher une adresse ou un élément dessiné</li>' +
-        '<li>Le menu <strong>dessiner</strong></li>' +
-        'Le menu <strong>dessin actuel</strong>\n' +
-        '<li>Le menu <strong>couches cartographiques</strong></li>' +
-        "* Le <strong>mode switch</strong> pour passer du dessin à l'histoire / mode lecture\n" +
-        '<li>Un bouton pour réduire le <strong>menu</strong> pour maximiser la surface de la carte</li>',
-    },
-    docMainMenuTitle: {
-      de: 'Hauptmenü',
-      en: 'Main menu',
-      fr: 'Menu principal',
-    },
-    docMainMenu: {
-      de:
-        'Das Hauptmenü beinhaltet Funktionen \n' +
-        '<li>zum erstellen / laden einer Karte (analog Schritt 2)</li>' +
-        '<li>zum editieren / umbenennen der aktuellen Karte</li>' +
-        '<li>zum exportieren der aktuellen Karte (mit oder ohne History) - das Ergebnis kann dann z.B. auf einem anderen Browser importiert werden.</li>' +
-        '<li>um die Karte zu löschen</li>' +
-        '<li>um diese Hilfe aufzurufen</li>',
-      en:
-        'The main menu contains functions \n' +
-        '<li>to create / load a map (step 2)</li>' +
-        '<li>to edit / rename the current map</li>' +
-        '<li>to export the current map (with or without history) - the result can then be imported e.g. on another machine.</li>' +
-        '<li>to erase the map</li>' +
-        '<li>to indicate this help</li>',
-      fr:
-        'Le menu principal contient des fonctions \n' +
-        '<li>pour créer / charger une carte</li>' +
-        '<li>pour éditer / renommer la carte actuelle</li>' +
-        '<li>pour exporter la carte actuelle (avec ou sans historique) - le résultat peut être importé par exemple sur une autre machine.</li>' +
-        '<li>pour effacer la carte</li>' +
-        '<li>pour indiquer cette aide</li>',
-    },
-    docSearch: {
-      de: 'Die Suche kann dazu verwendet werden, Adressen und andere Orte zu finden und mittels Selektion zum entsprechenden Ort auf der Karte zu navigieren. Die Suche unterstützt ausserdem gezeichnete Signaturen inkl. deren Namen',
-      en: 'The search can be used to find addresses and other places and navigate to the corresponding location on the map. The search also supports drawn symbols by including their names',
-      fr: "La recherche peut être utilisée pour trouver des adresses et d'autres lieux et naviguer jusqu'à l'endroit correspondant sur la carte. La recherche prend également en compte les symboles dessinés, y compris leurs noms",
-    },
-    docDraw: {
-      de:
-        'Dieses Menü erlaubt es, verschiedene Elemente auf die Karte zu zeichnen:\n' +
-        '<li><strong>Text</strong>: Ein Dialog erscheint, welcher es erlaubt einen Text zu definieren. Nach dem Schliessen des Dialoges kann eine Linie auf die Karte gezeichnet werden indem auf die Karte geklickt wird (beenden mit Doppelklick). Anschliessend wird der Text dargestellt und unten links erscheint die <strong>Selektionsansicht</strong>.</li>' +
-        '<li><strong>Signatur</strong>: Es erscheint der <strong>Signaturauswahl</strong> Dialog - nach der entsprechenden Auswahl kann (je nach Signatur) ein Punkt, eine Linie oder eine Fläche (Polygon) gezeichnet werden.</li>' +
-        '<li><strong>Polygon</strong>: Es kann direkt begonnen werden, eine Fläche zu zeichnen (bei Bedarf kann auch später über die <strong>Selektionsansicht</strong> eine Signatur definiert werden).</li>' +
-        '<li><strong>Linie</strong>: Analog dem Polygon kann direkt begonnen werden, eine Linie zu zeichnen. Eine Linie kann über die <strong>Selektionsansicht</strong> auch in einen Pfeil umgewandelt werden.</li>',
-      en:
-        'This menu allows you to draw different elements on the map: \n' +
-        '<li><strong>Text</strong>: A dialog appears, which allows you to define a text. After closing the dialog, a line can be drawn on the map by clicking on the map (finish by double click). The text is then displayed and the <strong>selection view</strong> is shown.</li>' +
-        '<li><strong>Symbol</strong>: The <strong>symbol selection</strong> dialog appears - after the corresponding selection a point, a line or a area (polygon) can be drawn (depending on the symbol).</li>' +
-        '<li><strong>Polygon</strong>: You can start drawing a surface directly (if necessary, you can also define a symbol later using the <strong>selection view</strong>).</li>' +
-        '<li><strong>Line</strong>: Just as with the polygon, you can directly start drawing a line. A line can also be converted into an arrow using the <strong>selection view</strong>"</li>',
-      fr:
-        'Ce menu vous permet de dessiner différents éléments sur la carte:\n' +
-        '<li><strong>Texte</strong> : Un dialogue apparaît, qui vous permet de définir un texte. Après avoir fermé le dialogue, une ligne peut être tracée sur la carte en cliquant sur la carte (terminer par un double clic). Le texte est alors affiché et la <strong>vue de sélection</strong> apparaît dans le coin inférieur gauche.</li>' +
-        '<li><strong>Symbole</strong> : Le dialogue <strong>sélection de symbole</strong> apparaît - après la sélection correspondante, un point, une ligne ou une surface (polygone) peut être dessiné (selon le symbole).</li>' +
-        '<li><strong>Polygone</strong> : Vous pouvez commencer à dessiner une surface directement (si nécessaire, vous pouvez également définir un symbole plus tard en utilisant la <strong>vue de sélection</strong>).</li>' +
-        '<li><strong>Ligne</strong> : Comme pour le polygone, vous pouvez directement commencer à tracer une ligne. Une ligne peut également être convertie en flèche en utilisant la <strong>vue de sélection</strong></li>',
-    },
-    docSymbolSelectionTitle: {
-      de: 'Signaturauswahl',
-      en: 'Symbol selection',
-      fr: 'Séléction de symbole',
-    },
-    docSymbolSelection: {
-      de:
-        'Die Signaturauswahl erlaubt es, aus vordefinierten Signaturen auszuwählen, oder eigene Signaturen über den Knopf neben dem Filter zu definieren.\n\n' +
-        'Wurde eine eigene Signatur hochgeladen, so kann definiert werden, um welche Geometrie es sich handelt (Punkt / Linie / Polygon), es kann eine Benennung in einer oder mehreren der unterstützten Sparchen definiert und eine zugehörige Farbe gewählt werden.\n\n' +
-        'Grundsätzlich werden Bilder, welche als Signaturen hinzugefügt werden als Kreis ausgeschnitten. Soll das Bild in seiner Originalform für die spätere Detailansicht erhalten bleiben, so kann dies hier selektiert werden. \n\n' +
-        'Auch kann eine Signatur für die Verwendung durch andere Karten auf diesem Browser freigegeben werden.',
-      en:
-        'Symbol selection allows you to choose from predefined symbols, or to define your own symbols using the button next to the filter.\n' +
-        'If a custom symbol has been uploaded, you can define the geometry (point / line / polygon), define a name in one or more of the supported languages and choose a color.\n' +
-        'By default, images that are added as symbols are cut out as a circle. If you want to keep the picture in its original form for the detail view, you can define this here.\n' +
-        'Also, an icon can be shared for use by other maps on this browser.\n',
-      fr:
-        "La sélection de symboles vous permet de choisir parmi des symboles prédéfinis, ou de définir vos propres symboles à l'aide du bouton situé à côté du filtre.\n" +
-        'Si un symbole personnalisé a été téléchargé, vous pouvez définir la géométrie (point / ligne / polygone), définir un nom dans une ou plusieurs des langues supportées et choisir une couleur.\n' +
-        "Fondamentalement, les images qui sont ajoutées en tant que symboles sont découpées en forme de cercle. Si vous souhaitez conserver l'image dans sa forme originale pour la vue détaillée, vous pouvez la sélectionner ici.\n" +
-        "De plus, une icône peut être partagée pour être utilisée par d'autres cartes sur cette machine.",
-    },
-    docSelectionTitle: {
-      de: 'Selektionsansicht',
-      en: 'Selection view',
-      fr: 'Vue de la sélection',
-    },
-    docSelection: {
-      de:
-        'Wird ein Element auf der Karte selektiert (z.B. eine Signatur, eine Linie, eine Fläche, etc.), so erscheint in der unteren linken Ecke des Bildschirms eine Selektionsansicht.\n\n' +
-        'Für alle Elemente sind die folgenden Funktionen vorhanden:\n' +
-        '<li>Es kann ein Name angegeben werden (u.a. um nach dem gezeichneten Element zu suchen)</li>' +
-        '<li>Es kann eine Farbe definiert werden</li>' +
-        '<li>Die Position kann fixiert werden (solange dies aktiviert ist, ist es nicht möglich das Element zu verschieben oder seine Geometrie zu ändern).</li>' +
-        '<li>Unter "Funktionen" kann ein Element in den Vordergrund oder Hintergrund gebracht werden und die Koordinaten des Elements können manuell definiert werden.</li>' +
-        '<li>Das Element kann gelöscht werden.\n</li>' +
-        'Zusätzlich unterscheiden sich einige Optionen je nach gewählter Geometrie:\n' +
-        '<li><strong>Text</strong>: Die Schriftgrösse kann definiert werden</li>' +
-        '<li><strong>Linie</strong>: Die Linie kann als gestrichelt oder durchgängig definiert und die Liniendicke und ein Pfeilende angegeben werden</li>' +
-        '<li><strong>Polygon</strong>: </li>' +
-        '   * Es kann - neben der Möglichkeit die Linie als gestrichelt oder durchgängig sowie deren Dicke zu definieren - ein Muster sowie die Transparenz angegben werden, welches zum Füllen der Fläche verwendet werden soll.\n' +
-        '   * Es kann ein Loch in ein Polygon gezeichnet werden\n' +
-        '   * Polygone können zusammen gruppiert werden (z.B. um unzusammenhängende Bereiche zu vereinen)\n' +
-        '<li><strong>Alle ausser Text</strong>: </li>' +
-        '   * Es kann eine Beschreibung definiert werden indem Bilder (existierende oder selbstgewählte Signaturen - ein Klick auf das Bild öffnet die Detailansicht) und/oder Text.\n' +
-        '   * Signaturen können definiert / ersetzt / ausgeblendet / vergrössert / verkleinert und gedreht werden und es ist möglich, die Darstellung der Signatur zur besseren Sichtbarkeit vom Ankerpunkt aus zu verschieben',
-      en:
-        'If an element on the map is selected (e.g. a symbol, a line, an area, etc.), a selection view appears in the lower left corner of the screen.\n\n' +
-        'The following functions are available for all elements:\n' +
-        '<li>A name can be specified (e.g. to allow the search for the drawn element)</li>' +
-        '<li>A color can be defined</li>' +
-        '<li>The position can be fixed (if this is activated, it is not possible to move the element or change its geometry).</li>' +
-        '<li>Under "Functions" an element can be brought into the foreground or background and the coordinates of the element can be defined manually.</li>' +
-        '<li>The item can be deleted. \n</li>' +
-        'In addition, some options differ depending on the selected geometry:\n' +
-        '<li><strong>Text</strong>: The font size can be defined</li>' +
-        '<li><strong>Line</strong>: The line can be defined as dashed or continuous. The line thickness can be changed and an arrow end can be specified</li>' +
-        '<li><strong>Polygon</strong>: </li>' +
-        '   * In addition to the option of defining the line as dashed or continuous and its thickness, you can also specify a pattern and the transparency to be used to fill the area. \n ' +
-        '   * A hole can be drawn in a polygon\n' +
-        '   * Polygons can be grouped together (e.g. to combine unconnected areas)\n ' +
-        '<li><strong>All except text</strong> </li>' +
-        '   * A description can be defined by images (existing or self-selected symbols - a click on the image opens the detail view) and/or text.\n' +
-        '   * Symbols can be defined / replaced / hidden / resized and rotated and it is possible to "move" the representation of the symbol from the anchor point for better visibility',
-      fr:
-        "Si un élément de la carte est sélectionné (par exemple, un symbole, une ligne, une zone, etc.), une vue de sélection apparaît dans le coin inférieur gauche de l'écran.\n" +
-        'Pour tous les éléments, les fonctions suivants sont disponibles:\n' +
-        "* Un nom peut être spécifié (entre autres pour rechercher l'élément dessiné)\n" +
-        '<li>Une couleur peut être définie</li>' +
-        "* La position peut être fixée (tant qu'elle est activée, il n'est pas possible de déplacer l'élément ou de modifier sa géométrie).\n" +
-        '<li>Sous "Fonctions", un élément peut être mis au premier plan ou à l\'arrière-plan et les coordonnées de l\'élément peuvent être définies manuellement.</li>' +
-        "* L'élément peut être supprimé.\n" +
-        'En outre, certaines options diffèrent en fonction de la géométrie choisie:\n' +
-        '<li><strong>Texte</strong> : La taille de la police peut être définie</li>' +
-        "* <strong>Ligne</strong> : La ligne peut être définie comme pointillée ou continue. L'épaisseur de la ligne peut être modifiée et une extrémité de flèche peut être spécifiée\n" +
-        '<li><strong>Polygone</strong> : </li>' +
-        '   * En plus de la possibilité de définir la ligne comme pointillée ou continue et son épaisseur, vous pouvez également spécifier un motif et la transparence à utiliser pour remplir le polygone.\n' +
-        '   * Un trou peut être dessiné dans un polygone\\n" +\n' +
-        '   * Les polygones peuvent être regroupés (par exemple pour combiner des zones non connectées)\n' +
-        '<li><strong>Tout sauf le texte</strong></li>' +
-        "   * Une description peut être définie par des images (symboles existants ou sélectionnés - un clic sur l'image ouvre la vue détaillée) et/ou du texte.\n" +
-        '   * Les symboles peuvent être définis / remplacés / cachés / zoomés / dézoomés et pivotés et il est possible de "déplacer" la représentation du symbole à partir du point d\'ancrage pour une meilleure visibilité',
-    },
-    docFilter: {
-      de: 'Der Filter erlaubt es, einzelne Signaturen oder alle (Symbol: durchgestrichenes Auge) auszublenden, resp. einzublenden (Symbol: Auge)',
-      en: 'The filter allows you to hide or show individual or all symbols',
-      fr: "Le filtre vous permet de cacher ou d'afficher des symboles individuels ou tous",
-    },
-    docCurrentDrawing: {
-      de:
-        'Dieses Menü beinhaltet die Möglichkeiten:\n' +
-        '<li>Zeichnungen / Geometrien von einer Datei oder von einem Geoadmin-Layer (z.B. Gemeindegrenzen) zu importieren (es handelt sich dabei ausschliesslich um die gezeichneten Elemente - nicht um die History o.ä.). Soll eine Karte komplett importiert werden, so soll die Möglichkeit des Karten ladens im <strong>Hauptmenü</strong> verwendet werden.</li>' +
-        '<li>Die Zeichnung herunterzuladen (im geojson Format)</li>' +
-        '<li>Die Zeichnung zu taggen (dem aktuellen Stand einen Namen zu geben um diesen dann im <strong>History- / Lese-Modus</strong> wiederfinden zu können)</li>' +
-        '<li>Die Zeichnung zu drucken</li>' +
-        '<li>Die gezeichneten Elemente zu löschen</li>',
-      en:
-        'This menu contains the options:\n' +
-        '<li>import drawings / geometries from a file or from a geoadmin layer (e.g. municipal boundaries) (only the drawn elements are imported - not the history or similar). If a map is to be imported completely, the option to load maps in the <strong>main menu</strong> should be used.</li>' +
-        '<li>To download the drawing (in geojson format)</li>' +
-        '<li>To tag the drawing (give a name to the current state to be able to find it again in <strong>history / read mode</strong>)</li>' +
-        '<li>To print the drawing</li>' +
-        '<li>To delete the drawn elements</li>',
-      fr:
-        'Ce menu contient les options suivantes:\n' +
-        "* importer des dessins / géométries à partir d'un fichier ou d'une couche géoadmin (par exemple, les limites municipales) (seuls les éléments dessinés sont importés - pas l'historique ou similaire). Si une carte doit être importée complètement, il faut utiliser l'option de chargement des cartes dans le <strong>menu principal</strong>.\n" +
-        '<li>Pour télécharger le dessin (au format geojson)</li>' +
-        "* Marquer le dessin (donner un nom à l'état actuel pour pouvoir le retrouver en <strong>histoire / mode lecture</strong>)\n" +
-        '<li>Pour imprimer le dessin</li>' +
-        '<li>Pour supprimer les éléments dessinés</li>',
-    },
-    docLayers: {
-      de:
-        'Es können verschiedene Karten gewählt werden (u.a. Open Street Map, Satellitenbilder von GeoAdmin oder die Offline-Variante sofern installiert).\n\n' +
-        'Ausserdem kann die Transparenz der aktuellen Karte definiert werden.\n\n' +
-        'Zusätzliche Ebenen stammen von GeoAdmin, welche es erlauben die gezeichnete Karte mit spezifischen Themenkarten zu unterlegen',
-      fr:
-        'Différentes cartes peuvent être sélectionnées (entre autres Open Street Map, des images satellites de GeoAdmin ou la version hors ligne si elle est installée).\n' +
-        'Vous pouvez également définir la transparence de la carte actuelle. \n' +
-        'Des couches supplémentaires proviennent de GeoAdmin, qui permettent de sous-tendre la carte dessinée avec des cartes thématiques spécifiques',
-      en:
-        'Different maps can be selected (among others Open Street Map, satellite images from GeoAdmin or the offline version if installed).\n' +
-        'You can also define the transparency of the current map. \n' +
-        'Additional layers come from GeoAdmin, which allow to underlay the drawn map with specific theme maps\n',
-    },
-    docHistory: {
-      de:
-        'Dieser Modus dient dem Lesen / Präsentieren der Karte. Hier werden Signaturen gebündelt, sofern die Karte weit ausgezoomt wird. Ausserdem ist es hier möglich, frühere Kartenzustände welche automatisch aufgezeichnet oder explizit durch den Benutzer getagged wurden aufgerufen werden.\n\n' +
-        'Bei der Selektion eines Elementes erscheint in der linken unteren Ecke eine Übersicht über die definierten Informationen wie Name, Beschreibung, Bilder, etc.',
-      fr:
-        "Ce mode permet de lire / présenter la carte. C'est là que les symboles sont regroupés, à condition que la carte soit largement dézoomée. Il est également possible d'appeler des états de carte précédents qui ont été automatiquement enregistrés ou explicitement marqués par l'utilisateur.\n" +
-        "Lors de la sélection d'un élément, une vue d'ensemble des informations définies telles que le nom, la description, les images, etc. apparaît dans le coin inférieur gauche\n",
-      en:
-        'This mode is for reading / presenting the map. This is where symbols are grouped, provided the map is zoomed out widely. It is also possible to call up previous map states which have been automatically recorded or explicitly tagged by the user.\n' +
-        'When selecting an element, an overview of the defined information such as name, description, images, etc. appears in the lower left corner\n',
-    },
-    docOfflineMap: {
-      de: "Diese Karte kann nur ausgewählt werden, wenn ein eigener Karten-Server unter '${offlineHost}/' (Statuscode: 200) erreichbar ist. Der Karten-Server kann durch den GET Parameter '&offlineHost=http://localhost:8080' gesetzt werden.",
-      fr: "Cette carte ne peut être sélectionnée que si votre propre serveur de carte est disponible sous '${offlineHost}/' (code d'état: 200). Le serveur de carte peut être défini à l'aide du paramètre GET '&offlineHost=http://localhost:8080'.",
-      en: "This map can only be selected if your own map server is available under '${offlineHost}/' (status code: 200). The map server can be set using the GET parameter '&offlineHost=http://localhost:8080'.",
-    },
     keyboardShortcutsTitle: {
       de: 'Tastenbelegungen',
       en: 'Keyboard shortcuts',
@@ -1279,6 +992,182 @@ export class I18NService {
       de: 'In Zwischenablage kopiert',
       en: 'Copied to clipboard',
       fr: 'Copié dans le presse-papiers',
+    },
+    docLoginTitle: {
+      de: 'Login',
+      en: 'Login',
+      fr: 'Connexion',
+    },
+    docLogin: {
+      de: `Melden Sie sich <strong>über Ihre Zivilschutzorganisation</strong> an. Wenden Sie sich dafür an diese, falls Sie Anmeldeinformationen benötigen.<br/>
+  Zusätzlich besteht die Möglichkeit, die Applikation in einer <strong>Gast-Sitzung</strong> zu testen. Bitte beachten Sie, dass diese jeden Abend um 00:00 Uhr <strong>zurückgesetzt wird</strong> und <strong>nicht für den Ernstfall geeignet</strong> ist.`,
+      en: `Log in <strong>via your civil protection organization</strong>. Please contact them if you need login information.<br/>
+    In addition, you can test the application in a <strong>guest session</strong>. Please note that this is <strong>reset every evening at 00:00</strong> and <strong>not suitable for the real emergency</strong>.`,
+      fr: `Connectez-vous <strong>via votre organisation de protection civile</strong>. Veuillez contacter cette dernière si vous avez besoin d'informations de connexion.<br/>
+    En outre, vous pouvez tester l'application dans une <strong>session d'invité</strong>. Veuillez noter que celle-ci est <strong>réinitialisée chaque soir à 00:00</strong> et <strong>non adaptée à l'urgence réelle</strong>.`,
+    },
+    docCreateOrLoadTitle: {
+      de: 'Ereignis auswählen',
+      en: 'Select event',
+      fr: 'Sélectionner un événement',
+    },
+
+    docCreateOrLoad: {
+      de: `<p> Auf diesem Bildschirm können Sie <strong>bereits erstellte Ereignisse bearbeiten</strong> oder <strong>neue Ereignisse erstellen</strong>. Die Ereignisse und deren Lagekarten werden <strong>in Echtzeit unter allen Benutzern synchronisiert</strong>.</p>`,
+      fr: `<p> Sur cet écran, vous pouvez <strong>modifier des événements déjà créés</strong> ou <strong>créer de nouveaux événements</strong>. Les événements et leurs cartes de localisation sont <strong>synchronisés en temps réel avec tous les utilisateurs</strong>.</p>`,
+      en: `<p> On this screen you can <strong>edit already created events</strong> or <strong>create new events</strong>. The events and their location maps are <strong>synchronized in real-time among all users</strong>.</p>`,
+    },
+    docMainViewTitle: {
+      de: 'Kartenansicht',
+      en: 'Map view',
+      fr: 'Vue de la carte',
+    },
+
+    docMapMenuTitle: {
+      de: 'Kartenmenü',
+      en: 'Map menu',
+      fr: 'Menu de la carte',
+    },
+    docMapMenu: {
+      de: `Die Funktionen des Kartenmenüs sind von oben nach unten:<ul><li>Umschalten zwischen History- / Lese-Modus und Zeichnungsmodus</li><li>Sprache auswählen</li><li>Karte Drucken</li><li>Protokoll der auf der Karte dargestellten Zeichnungen anzeigen oder exportieren</li><li>Hilfefunktion öffnen</li><li>Ausloggen oder Ereignis wechseln</li></ul>`,
+      fr: `Les fonctions du menu de la carte sont de haut en bas:<ul><li>Basculer entre le mode Histoire / Lecture et le mode de dessin</li><li>Sélectionner la langue</li><li>Imprimer la carte</li><li>Afficher ou exporter le journal des dessins affichés sur la carte</li><li>Ouvrir l'aide</li><li>Se déconnecter ou changer d'événement</li></ul>`,
+      en: `The functions of the map menu are from top to bottom:<ul><li>Switch between History / Read-Only mode and Drawing mode</li><li>Select language</li><li>Print map</li><li>Show or export log of drawings displayed on the map</li><li>Open help</li><li>Log out or change event</li></ul>`,
+    },
+    docMainView: {
+      de: `<p>Die <strong>Lagekarte</strong> stellt die <strong>Hauptansicht</strong> der ZS Karten App dar. Wichtige Informationen und Funktionen sind hier zugänglich:
+      <ol>
+        <li>Die ZSO und das aktuell ausgewählte Ereignis</li>
+        <li>Die Möglichkeit Orte, Straßen und Gebäude auf der Karte mittels <strong>Suchfunktion</strong> zu finden</li>
+        <li>Die aktuelle Zeit wird angezeigt, das Hamburgersymbol öffnet das <strong>Kartenmenü</strong></li>
+        <li>Zugriff auf verschiedene <strong>Kartenfunktionen</strong></li>
+        <li>Möglichkeit zum Hinzufügen von <strong>Zeichnungselementen</strong> auf der Karte</li>
+      </ol>
+      </p>`,
+      fr: `<p>La <strong>carte</strong> représente la <strong>vue principale</strong> de l'application de cartes ZS. Les informations et fonctions importantes sont accessibles ici:
+      <ol>
+        <li>L'organisation de défense civile et l'événement sélectionné</li>
+        <li>La <strong>fonction de recherche</strong>, qui permet de trouver des points sur la carte (lieux, rues, bâtiments)</li>
+        <li>Ici est affiché l'<strong>heure actuelle</strong>, cliquez sur l'icône de hamburger pour ouvrir le menu de la carte</li>
+        <li>Fonctionnalités de la carte</li>
+        <li>Fonctionnalités de dessin, ajout d'éléments à la carte</li>
+      </ol>
+      </p>`,
+      en: `<p>The <strong>map</strong> represents the <strong>main view</strong> of the ZS map app. Important information and functions are accessible here:
+      <ol>
+        <li>Here you can see the civil defense organization and the selected event</li>
+        <li>The <strong>search function</strong>, which allows you to find points on the map (places, streets, buildings)</li>
+        <li>Here the <strong>current time</strong> is displayed, click on the hamburger icon to open the map menu</li>
+        <li>Map functions</li>
+        <li>Drawing functions, add elements to the map</li>
+      </ol>
+      </p>`,
+    },
+
+    docSearch: {
+      de: `<p>Die <strong>Suche</strong> kann dazu verwendet werden, <strong>Adressen und andere Orte</strong> zu finden und mittels Selektion den entsprechenden Ort auf der Karte mit einem <strong>Standortmarker</strong> hervorzuheben.</p>`,
+      fr: `<p>La <strong>recherche</strong> peut être utilisée pour trouver des <strong>adresses et d'autres lieux</strong> et pour mettre en évidence le lieu correspondant sur la carte à l'aide d'un <strong>marqueur de position</strong> en le sélectionnant.</p>`,
+      en: `<p>The <strong>search</strong> can be used to find <strong>addresses and other places</strong> and to highlight the corresponding place on the map using a <strong>location marker</strong> by selecting it.</p>`,
+    },
+
+    docMarker: {
+      de: `<p>Ein Klick auf den Standortmarker zeigt die beiden Symbole, das <strong>X-Symbol</strong> entfernt den Standortmarker von der Karte. Mit dem <strong>Sternsymbol</strong> wird der Zeichnungsdialog geöffnet und es kann an dem markierten Ort eine Signatur eingefügt werden.</p>`,
+      fr: `<p>Un clic sur le marqueur de position affiche les deux icônes, l'icône <strong>X</strong> supprime le marqueur de position de la carte. Avec l'icône <strong>étoile</strong>, la boîte de dialogue de dessin s'ouvre et vous pouvez insérer une signature à l'endroit marqué.</p>`,
+      en: `<p>A click on the location marker displays the two icons, the <strong>X icon</strong> removes the location marker from the map. With the <strong>star icon</strong>, the drawing dialog opens and you can insert a signature at the marked location.</p>`,
+    },
+
+    docDraw: {
+      de: `<p>Dieses Menü ermöglicht das Zeichnen verschiedener Elemente auf die Karte:</p>
+            <ol>
+            <li>Text: Ein Dialogfeld wird geöffnet, in dem Sie einen Text definieren können. Nach dem Schließen des Dialogfelds kann eine Linie auf der Karte gezeichnet werden, indem auf die Karte geklickt wird (beenden durch Doppelklick). Der Text wird anschließend angezeigt und unten links erscheint die Auswahlansicht.</li>
+            <li>Polygon: Sie können direkt mit dem Zeichnen einer Fläche beginnen (später kann über die Auswahlansicht eine Signatur definiert werden, falls gewünscht).</li>
+            <li>Linie: Analog zum Polygon können Sie direkt mit dem Zeichnen einer Linie beginnen. Eine Linie kann über die Auswahlansicht auch in einen Pfeil umgewandelt werden.</li>
+            <li>Freihand: Sie können direkt mit dem Zeichnen in Freihand beginnen. </li>
+            <li>Signatur: Es öffnet sich ein Dialogfeld zur Auswahl der Signatur - nach der entsprechenden Auswahl kann (je nach Signatur) ein Punkt, eine Linie oder eine Fläche (Polygon) gezeichnet werden.</li>
+            </ol>
+            </p>`,
+      fr: `<p>Ce menu permet de dessiner différents éléments sur la carte:</p>
+            <ol>
+            <li>Texte: Une boîte de dialogue s'ouvre dans laquelle vous pouvez définir un texte. Après la fermeture de la boîte de dialogue, vous pouvez dessiner une ligne sur la carte en cliquant sur la carte (terminer par un double clic). Le texte s'affiche ensuite et la vue de sélection apparaît en bas à gauche.</li>
+            <li>Polygone: Vous pouvez commencer à dessiner une surface directement (vous pouvez définir une signature via la vue de sélection, si vous le souhaitez).</li>
+            <li>Ligne: De la même manière que pour le polygone, vous pouvez commencer à dessiner une ligne directement. Une ligne peut également être convertie en flèche via la vue de sélection.</li>
+            <li>Libre: Vous pouvez commencer à dessiner librement directement.</li>
+            <li>Signature: Une boîte de dialogue s'ouvre pour sélectionner la signature - après la sélection appropriée, vous pouvez dessiner un point, une ligne ou une surface (polygone) (selon la signature).</li>
+            </ol>
+            </p>`,
+      en: `<p>This menu allows you to draw different elements on the map:</p>
+            <ol>
+            <li>Text: A dialog box opens in which you can define a text. After closing the dialog box, you can draw a line on the map by clicking on the map (finish by double-click). The text is then displayed and the selection view appears in the bottom left.</li>
+            <li>Polygon: You can start drawing a surface directly (you can define a signature via the selection view, if desired).</li>
+            <li>Line: In the same way as for the polygon, you can start drawing a line directly. A line can also be converted into an arrow via the selection view.</li>
+            <li>Free: You can start drawing freely directly.</li>
+            <li>Signature: A dialog box opens to select the signature - after the appropriate selection, you can draw a point, a line or a surface (polygon) (depending on the signature).</li>
+            </ol>
+            </p>`,
+    },
+    docSymbolSelectionTitle: {
+      de: 'Signaturauswahl',
+      en: 'Symbol selection',
+      fr: 'Séléction de symbole',
+    },
+    docSymbolSelection: {
+      de: `<p>In dieser Ansicht können <strong>Signaturen</strong> ausgewählt werden. Nutzen Sie die <strong>Such- und Filterfunktion</strong> um Symbole einfacher zu finden. <strong>Kürzlich verwendete Signaturen</strong> werden hier angezeigt. Die dritte Spalte der Tabelle enthält Icons, die den <strong>Typen der Signatur</strong> darstellen. Es gibt: normale Signaturen (Stern), Polygone (vier Qudrate) und Linien (gezackte Linie).</p>`,
+      fr: `<p>Dans cette vue, vous pouvez sélectionner des <strong>symboles</strong>. Utilisez la <strong>fonction de recherche et de filtrage</strong> pour trouver des symboles plus facilement. Les <strong>derniers symboles utilisés</strong> sont affichés ici. La troisième colonne du tableau contient des icônes qui représentent le <strong>type de symbole</strong>. Il y a: symboles normaux (étoile), polygones (quatre carrés) et lignes (ligne ondulée).</p>`,
+      en: `<p>In this view, you can select <strong>symbols</strong>. Use the <strong>search and filter function</strong> to find symbols more easily. <strong>Recently used symbols</strong> are displayed here. The third column of the table contains icons that represent the <strong>type of symbol</strong>. There are: normal symbols (star), polygons (four squares) and lines (wavy line).</p>`,
+    },
+    docSelectionTitle: {
+      de: 'Detailansicht der Zeichnung',
+      en: 'Detail view of the drawing',
+      fr: 'Vue détaillée du dessin',
+    },
+    docSelection: {
+      de: `<p>Die Detailansicht öffnet sich, wenn ein gezeichnetes Element auf der Karte ausgewählt wird. Die Funktionen sind in verschiedene Untergruppen gruppiert. Von oben nach unten sind das:</p><p><strong>Name der Zeichnung ändern</strong></p><p><strong>Farbauswahlmodus ändern (Aktivierung ermöglicht stufenlose Farbauswahl)</strong></p><p><strong>Farbe der Zeichnung ändern</strong></p><p><strong>Zeichnung auf Karte fixieren (Zeichnung kann nicht mehr bewegt werden)</strong></p><p><strong>Namen der Zeichnung auf Karte anzeigen</strong></p><p><strong>Beschreibung:</strong><ul><li>Beschreibung hinzufügen. Die Beschreibung dient zur Dokumentation und ist auf der Karte nicht sichtbar, erscheint jedoch im Export.</li></ul></p><p><strong>Signatur:</strong><ul><li>Signatur hinzufügen/ersetzen</li><li>Signatur auf Karte verstecken</li><li>Größe der Signatur auf Karte ändern</li><li>Versatz der Signatur auf Karte ändern (Diese Funktion kann hilfreich sein, wenn sich mehrere Signaturen am gleichen Ort befinden)</li><li>Signatur rotieren</li><li>Deckkraft der Signatur ändern</li></ul></p><p><strong>Linie:</strong><ul><li>Linientyp definieren</li><li>Liniendicke definieren</li><li>Linie mit Pfeil versehen</li></ul></p><p><strong>Funktionen:</strong><ul><li>In den Vordergrund</li><li>In den Hintergrund</li><li>Zeichnung an Koordinaten verschieben</li></ul></p><p><strong>Kopie der Zeichnung anfertigen.</strong> Diese Funktion ist nur für Signaturen verfügbar. Die Signatur kann anschließend auf der Karte eingefügt werden.</p><p><strong>Signatur löschen</strong></p><p>Bitte beachten Sie, dass je nach Kontext bestimmte Funktionen nicht verfügbar sind.</p>`,
+      fr: `<p>La vue détaillée s'ouvre lorsque vous sélectionnez un élément dessiné sur la carte. Les fonctions sont regroupées en différentes sous-groupes. De haut en bas, ce sont:</p><p><strong>Changer le nom du dessin</strong></p><p><strong>Changer le mode de sélection de la couleur (l'activation permet une sélection de couleur continue)</strong></p><p><strong>Changer la couleur du dessin</strong></p><p><strong>Fixer le dessin sur la carte (le dessin ne peut plus être déplacé)</strong></p><p><strong>Afficher le nom du dessin sur la carte</strong></p><p><strong>Description:</strong><ul><li>Ajouter une description. La description sert à la documentation et n'est pas visible sur la carte, mais apparaît dans l'export.</li></ul></p><p><strong>Symbole:</strong><ul><li>Ajouter / remplacer le symbole</li><li>Masquer le symbole sur la carte</li><li>Modifier la taille du symbole sur la carte</li><li>Modifier le décalage du symbole sur la carte (Cette fonction peut être utile si plusieurs symboles se trouvent au même endroit)</li><li>Faire pivoter le symbole</li><li>Modifier l'opacité du symbole</li></ul></p><p><strong>Ligne:</strong><ul><li>Définir le type de ligne</li><li>Définir l'épaisseur de la ligne</li><li>Marquer la ligne avec une flèche</li></ul></p><p><strong>Fonctions:</strong><ul><li>Mettre au premier plan</li><li>Mettre au dernier plan</li><li>Déplacer le dessin aux coordonnées</li></ul></p><p><strong>Copier le dessin.</strong> Cette fonction est uniquement disponible pour les symboles. Le symbole peut ensuite être inséré sur la carte.</p><p><strong>Supprimer le symbole</strong></p><p>Veuillez noter que certaines fonctions ne sont pas disponibles dans certains contextes.</p>`,
+      en: `<p>The detailed view opens when a drawn element on the map is selected. The functions are grouped in different subgroups. From top to bottom, these are:</p><p><strong>Change the name of the drawing</strong></p><p><strong>Change the color selection mode (activation allows for continuous color selection)</strong></p><p><strong>Change the color of the drawing</strong></p><p><strong>Fix the drawing on the map (the drawing can no longer be moved)</strong></p><p><strong>Show the name of the drawing on the map</strong></p><p><strong>Description:</strong><ul><li>Add a description. The description serves for documentation and is not visible on the map, but appears in the export.</li></ul></p><p><strong>Symbol:</strong><ul><li>Add / replace the symbol</li><li>Hide the symbol on the map</li><li>Change the size of the symbol on the map</li><li>Change the offset of the symbol on the map (This function can be useful if several symbols are located at the same place)</li><li>Rotate the symbol</li><li>Change the opacity of the symbol</li></ul></p><p><strong>Line:</strong><ul><li>Define the line type</li><li>Define the line thickness</li><li>Mark the line with an arrow</li></ul></p><p><strong>Functions:</strong><ul><li>Bring to the front</li><li>Bring to the back</li><li>Move the drawing to the coordinates</li></ul></p><p><strong>Copy the drawing.</strong> This function is only available for symbols. The symbol can then be inserted on the map.</p><p><strong>Delete the symbol</strong></p><p>Please note that certain functions are not available in certain contexts.</p>`,
+    },
+    docMapFunctionsTitle: {
+      de: 'Kartenfunktionen',
+      fr: 'Fonctions de la carte',
+      en: 'Map functions',
+    },
+    docMapFunctions: {
+      de: `Die Kartenfunktionen von oben nach unten sind: <ul><li>Hineinzoomen</li><li>Herauszoomen</li><li>Ebenen: Hier kann die Art der Karte verändert werden und es können weitere Ebenen überlagert und ein- und ausgeblendet werden.</li><li>Filter: Hier können Zeichnungen entsprechend Kategorie oder Typ ein- und ausgeblendet werden.</li><li>Ortungsfunktion: Ihr Standort wird auf der Karte angezeigt und die Karte wird auf diesen Standort zentriert.</li></ul>`,
+      fr: `Les fonctions de la carte de haut en bas sont: <ul><li>Zoom avant</li><li>Zoom arrière</li><li>Niveaux: Ici, vous pouvez changer le type de carte et superposer et afficher ou masquer des niveaux supplémentaires.</li><li>Filtres: Ici, vous pouvez afficher ou masquer les dessins en fonction de la catégorie ou du type.</li><li>Fonction de localisation: Votre emplacement est affiché sur la carte et la carte est centrée sur cet emplacement.</li></ul>`,
+      en: `The map functions from top to bottom are: <ul><li>Zoom in</li><li>Zoom out</li><li>Layers: Here you can change the map type and overlay and show or hide additional layers.</li><li>Filters: Here you can show or hide drawings according to category or type.</li><li>Location function: Your location is displayed on the map and the map is centered on this location.</li></ul>`,
+    },
+    docQuickFunctionsTitle: {
+      de: 'Schnellfunktionen',
+      fr: 'Fonctions rapides',
+      en: 'Quick functions',
+    },
+    docQuickFunctions: {
+      de: `Klicken Sie auf eine <strong>Zeichnung</strong> auf der Karte, um die <strong>Schnellfunktionen</strong> anzuzeigen. Diese beinhalten: <ul><li>Zeichnung oder Ankerpunkt löschen</li><li>Zeichnung <strong>kopieren</strong>: Klicken Sie erneut auf die Karte, um die <strong>Kopie</strong> der Zeichnung einzufügen</li><li>Signatur <strong>rotieren</strong></li></ul>`,
+      fr: `Cliquez sur un <strong>dessin</strong> sur la carte pour afficher les <strong>fonctions rapides</strong>. Cela comprend: <ul><li>Supprimer le dessin ou le point d'ancrage</li><li>Copier le dessin: Cliquez à nouveau sur la carte pour insérer la <strong>copie</strong> du dessin</li><li>Rotation de la signature</li></ul>`,
+      en: `Click on a <strong>drawing</strong> on the map to display the <strong>quick functions</strong>. This includes: <ul><li>Delete the drawing or anchor point</li><li>Copy the drawing: Click again on the map to insert the <strong>copy</strong> of the drawing</li><li>Rotate the signature</li></ul>`,
+    },
+    openStreetMap: {
+      de: 'OpenStreetMap',
+      fr: 'OpenStreetMap',
+      en: 'OpenStreetMap',
+    },
+    geoAdminSwissImage: {
+      de: 'SWISSIMAGE',
+      fr: 'SWISSIMAGE',
+      en: 'SWISSIMAGE',
+    },
+    geoAdminPixel: {
+      de: 'Pixelkarte farbig',
+      fr: 'Carte pixelisée en couleur',
+      en: 'Colored pixel map',
+    },
+    geoAdminPixelBW: {
+      de: 'Pixelkarte grau',
+      fr: 'Carte pixelisée en gris',
+      en: 'Gray pixel map',
+    },
+    reportNumber: {
+      de: 'Meldenummer',
+      en: 'Report number',
+      fr: 'Numéro de rapport',
     },
   };
 

@@ -1,3 +1,7 @@
+import { Coordinate } from 'ol/coordinate';
+import { FeatureLike } from 'ol/Feature';
+import { LineString, MultiPolygon, Point, Polygon } from 'ol/geom';
+
 export interface FillStyle {
   name: string;
   size?: number;
@@ -39,9 +43,13 @@ export interface Sign {
   filterValue?: string;
   origSrc?: string;
   createdAt?: Date;
+  reportNumber?: number;
 }
 
-export function isMoreOptimalIconCoordinate(coordinateToTest: any, currentCoordinate: any) {
+export function isMoreOptimalIconCoordinate(
+  coordinateToTest: Coordinate | Coordinate[],
+  currentCoordinate: Coordinate | Coordinate[] | undefined | null,
+) {
   if (currentCoordinate === undefined || currentCoordinate === null) {
     return true;
   } else if (coordinateToTest[1] > currentCoordinate[1]) {
@@ -52,38 +60,43 @@ export function isMoreOptimalIconCoordinate(coordinateToTest: any, currentCoordi
   return false;
 }
 
-export function getFirstCoordinate(feature: any) {
-  switch (feature.getGeometry().getType()) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getFirstCoordinate(feature: FeatureLike): any {
+  switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
     case 'MultiPolygon':
-      return feature.getGeometry().getCoordinates()[0][0];
+      return (feature?.getGeometry() as MultiPolygon)?.getCoordinates()[0][0];
     case 'LineString':
-      return feature.getGeometry().getCoordinates()[0];
+      return (feature?.getGeometry() as LineString)?.getCoordinates()[0];
     case 'Point':
-      return feature.getGeometry().getCoordinates();
+      return (feature?.getGeometry() as Point)?.getCoordinates();
   }
+  return [];
 }
 
-export function getLastCoordinate(feature: any) {
-  const coordinates = feature.getGeometry().getCoordinates();
-
-  switch (feature.getGeometry().getType()) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getLastCoordinate(feature: FeatureLike): any {
+  switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
     case 'MultiPolygon':
-      return coordinates[coordinates.length - 2][0]; // -2 because the last coordinates are the same as the first
+      const pCoordinates = (feature?.getGeometry() as Polygon)?.getCoordinates();
+      return pCoordinates[pCoordinates.length - 2][0]; // -2 because the last coordinates are the same as the first
     case 'LineString':
-      return coordinates[coordinates.length - 1];
+      const lCoordinates = (feature?.getGeometry() as LineString)?.getCoordinates();
+      return lCoordinates[lCoordinates.length - 1];
     case 'Point':
-      return feature.getGeometry().getCoordinates();
+      return (feature?.getGeometry() as Point)?.getCoordinates();
   }
+
+  return [];
 }
 
-export function getMostTopCoordinate(feature: any) {
+export function getMostTopCoordinate(feature: FeatureLike) {
   let symbolAnchorCoordinate = null;
-  switch (feature.getGeometry().getType()) {
+  switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
     case 'MultiPolygon':
-      for (const coordinateGroup of feature.getGeometry().getCoordinates()) {
+      for (const coordinateGroup of (feature.getGeometry() as Polygon).getCoordinates()) {
         for (const coordinate of coordinateGroup) {
           if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
             symbolAnchorCoordinate = coordinate;
@@ -92,14 +105,14 @@ export function getMostTopCoordinate(feature: any) {
       }
       break;
     case 'LineString':
-      for (const coordinate of feature.getGeometry().getCoordinates()) {
+      for (const coordinate of (feature.getGeometry() as LineString).getCoordinates()) {
         if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
           symbolAnchorCoordinate = coordinate;
         }
       }
       break;
     case 'Point':
-      symbolAnchorCoordinate = feature.getGeometry().getCoordinates();
+      symbolAnchorCoordinate = (feature.getGeometry() as Point).getCoordinates();
       break;
   }
   return symbolAnchorCoordinate;
@@ -198,7 +211,7 @@ export interface SignatureDefaultValues {
   iconSize: number;
   iconOpacity: number;
   rotation: number;
-  images: any[];
+  images: string[];
   flipIcon: boolean;
   hideIcon: boolean;
 }

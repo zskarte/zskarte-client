@@ -1,9 +1,10 @@
+import { Coordinate } from 'ol/coordinate';
 import { Geometry } from 'ol/geom';
 import { getLength, getArea } from 'ol/sphere';
 
 export const areCoordinatesEqual = (
-  c1: undefined | null | number | number[] | number[][] | any[],
-  c2: undefined | null | number | number[] | number[][] | any[],
+  c1: undefined | null | number | number[] | number[][] | Coordinate,
+  c2: undefined | null | number | number[] | number[][] | Coordinate,
 ): boolean => {
   if (typeof c1 !== typeof c2) {
     return false;

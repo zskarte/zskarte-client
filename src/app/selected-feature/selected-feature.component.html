@@ -34,6 +34,14 @@
                 {{ drawElement['text'] }}
               </div>
             </div>
+
+            <mat-form-field *ngIf="(editMode | async)">
+              <mat-label>{{ i18n.get('reportNumber') }}</mat-label>
+              <input matInput type="number" min="1"
+                              [ngModel]="drawElement['reportNumber']"
+                              (ngModelChange)="updateProperty(drawElement, 'reportNumber', $event)">
+            </mat-form-field>
+
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
             <mat-checkbox *ngIf="editMode | async" [(ngModel)]="useColorPicker" class="color-mode-toggle">
               {{ i18n.get('colorPickerMode') }}
@@ -71,8 +79,9 @@
               *ngIf="(editMode | async) && (selectedSignature.type === 'Point' || selectedSignature.src)"
               >{{ i18n.get('labelShow') }}</mat-checkbox
             >
-            <div *ngIf="selectedSignature.createdAt" class="label-right">
-              {{ selectedSignature.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
+            <br />
+            <div *ngIf="drawElement.createdAt" class="label-right">
+              {{ drawElement.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
             </div>
             <div class="clearfix"></div>
             <div *ngIf="selectedSignature.size" class="label-right">
@@ -168,9 +177,9 @@
               </mat-slider>
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
-            <button *ngIf="drawElement.symbolId"
-                    mat-flat-button color="primary"
-                    (click)="resetSignature(drawElement)">{{ i18n.get('defaultValues') }}</button>
+            <button *ngIf="drawElement.symbolId" mat-flat-button color="primary" (click)="resetSignature(drawElement)">
+              {{ i18n.get('defaultValues') }}
+            </button>
           </mat-expansion-panel>
         </ng-container>
 
@@ -220,9 +229,7 @@
             </select>
           </mat-form-field>
 
-          <button
-          mat-flat-button color="primary"
-          (click)="resetLine(drawElement)">{{ i18n.get('defaultValues') }}</button>
+          <button mat-flat-button color="primary" (click)="resetLine(drawElement)">{{ i18n.get('defaultValues') }}</button>
         </mat-expansion-panel>
 
         <mat-expansion-panel *ngIf="(editMode | async) && isPolygon()">
@@ -257,7 +264,11 @@
           <mat-form-field *ngIf="drawElement.fillStyle?.name && drawElement.fillStyle?.name !== 'filled'">
             <mat-label>{{ i18n.get('width') }}</mat-label>
             <mat-slider [max]="10" [min]="1" [step]="0.1">
-              <input matSliderThumb [ngModel]="drawElement.fillStyle?.size" (ngModelChange)="updateFillStyle(drawElement, 'size', $event)" />
+              <input
+                matSliderThumb
+                [ngModel]="drawElement.fillStyle?.size"
+                (ngModelChange)="updateFillStyle(drawElement, 'size', $event)"
+              />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
@@ -285,9 +296,7 @@
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
-          <button
-          mat-flat-button color="primary"
-          (click)="resetPolygon(drawElement)">{{ i18n.get('defaultValues') }}</button>
+          <button mat-flat-button color="primary" (click)="resetPolygon(drawElement)">{{ i18n.get('defaultValues') }}</button>
         </mat-expansion-panel>
 
         <mat-expansion-panel *ngIf="(editMode | async) && isText(drawElement)">
@@ -303,7 +312,6 @@
           </mat-form-field>
         </mat-expansion-panel>
 
-        <!-- TODO: implement functions -->
         <mat-expansion-panel id="functionsPanel" class="noPadding" *ngIf="editMode | async">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>

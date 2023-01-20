@@ -5,6 +5,9 @@ import { ZsMapStateService } from '../state/state.service';
 import { transform } from 'ol/proj';
 import { SessionService } from '../session/session.service';
 import { Subject, takeUntil } from 'rxjs';
+import { Geometry, LineString, Point, Polygon } from 'ol/geom';
+import { FeatureLike } from 'ol/Feature';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 interface IFoundLocation {
   attrs: IFoundLocationAttrs;
@@ -49,19 +52,19 @@ export class GeocoderComponent implements OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  private getCoordinate(geometry: any) {
+  private getCoordinate(geometry: Geometry) {
     switch (geometry.getType()) {
       case 'Point':
-        return geometry.getCoordinates();
+        return (geometry as Point).getCoordinates();
       case 'LineString':
-        return geometry.getCoordinates()[0];
+        return (geometry as LineString).getCoordinates()[0];
       case 'Polygon':
-        return geometry.getCoordinates()[0][0];
+        return (geometry as Polygon).getCoordinates()[0][0];
     }
     return null;
   }
 
-  private mapFeatureForSearch(f: any) {
+  private mapFeatureForSearch(f: FeatureLike) {
     const sig = f.get('sig');
     const sign = this.i18n.getLabelForSign(sig);
     let label = '';
@@ -80,7 +83,8 @@ export class GeocoderComponent implements OnDestroy {
         allHits = false;
       }
     });
-    const coordinates = this.getCoordinate(f.getGeometry());
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const coordinates = this.getCoordinate((f as any).getGeometry());
     return {
       attrs: {
         label: label,
@@ -99,27 +103,6 @@ export class GeocoderComponent implements OnDestroy {
       this.http.get(this.geocoderUrl + this.inputText).subscribe((result) => {
         if (this.inputText === originalInput) {
           this.foundLocations = [];
-          // TODO: Why is this code needed?
-          /*
-          this.drawLayer.source
-            .getFeatures()
-            .map((f) => this.mapFeatureForSearch(f))
-            .filter((f) => {
-              return f.attrs.hit;
-            })
-            .forEach((f) => {
-              this.foundLocations.push(f);
-            });
-          this.drawLayer.clusterSource
-            .getFeatures()
-            .map((f) => this.mapFeatureForSearch(f))
-            .filter((f) => {
-              return f.attrs.hit;
-            })
-            .forEach((f) => {
-              this.foundLocations.push(f);
-            });*/
-
           result['results'].forEach((r: IFoundLocation) => this.foundLocations.push(r));
         }
       });
@@ -133,25 +116,21 @@ export class GeocoderComponent implements OnDestroy {
     return selected ? selected.label.replace(/<[^>]*>/g, '') : '';
   }
 
-  geoCodeSelected(event: any) {
+  geoCodeSelected(event: MatAutocompleteSelectedEvent) {
     this.selected = event.option.value;
     this.goToCoordinate(true);
     this.inputText = '';
   }
 
-  previewCoordinate(element: any) {
-    this.doGoToCoordinate(element, false, false);
+  previewCoordinate(element: IFoundLocationAttrs) {
+    this.doGoToCoordinate(element, false);
   }
 
-  private doGoToCoordinate(element: IFoundLocationAttrs | null, center: boolean, select: boolean) {
+  private doGoToCoordinate(element: IFoundLocationAttrs | null, center: boolean) {
     if (element) {
       let coordinates;
       if (element.mercatorCoordinates) {
         coordinates = [element.mercatorCoordinates[1], element.mercatorCoordinates[0]];
-        // TODO: Why is this code needed?
-        if (select) {
-          //this.sharedState.selectFeature(element.feature);
-        }
         this.zsMapStateService.updatePositionFlag({
           isVisible: true,
           coordinates: coordinates,
@@ -176,7 +155,7 @@ export class GeocoderComponent implements OnDestroy {
   }
 
   goToCoordinate(center: boolean) {
-    this.doGoToCoordinate(this.selected, center, true);
+    this.doGoToCoordinate(this.selected, center);
   }
 
   removeSelectedLocation() {

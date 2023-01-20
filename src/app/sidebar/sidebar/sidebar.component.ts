@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
-import findOfflineHost from '../../helper/findOfflineHost';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { ZsMapStateSource } from 'src/app/state/interfaces';
 import { GeoadminService } from 'src/app/core/geoadmin.service';
 import { GeoFeature } from '../../core/entity/geoFeature';
-import { map, Observable, tap, share, combineLatest, startWith } from 'rxjs';
+import { map, Observable, share, combineLatest, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
 
@@ -22,7 +21,9 @@ export class SidebarComponent {
   selectedLayersOpenState = false;
   favoriteLayersOpenState = false;
   availableLayersOpenState = false;
-  mapSources = Object.values(ZsMapStateSource);
+  mapSources = Object.values(ZsMapStateSource)
+    .map((key) => ({ key, translation: this.i18n.get(key), selected: false }))
+    .sort((a, b) => a.translation.localeCompare(b.translation));
   filteredAvailableFeatures$: Observable<GeoFeature[]>;
   favouriteFeatures$: Observable<GeoFeature[]>;
   favouriteFeaturesList = [
@@ -57,13 +58,30 @@ export class SidebarComponent {
     const filter$ = this.layerFilter.valueChanges.pipe(startWith(''));
 
     this.filteredAvailableFeatures$ = combineLatest([availableFeatures$, filter$]).pipe(
-      map(([features, filter]) =>
-        filter === '' ? features : features.filter((f) => f.label.toLowerCase().includes(filter?.toLowerCase() ?? '')),
-      ),
+      map(([features, filter]) => {
+        features = features.sort((a: GeoFeature, b: GeoFeature) => a.label.localeCompare(b.label));
+        return filter === '' ? features : features.filter((f) => f.label.toLowerCase().includes(filter?.toLowerCase() ?? ''));
+      }),
     );
     this.favouriteFeatures$ = availableFeatures$.pipe(
-      map((features) => features.filter((feature: GeoFeature) => this.favouriteFeaturesList.includes(feature.label.toLowerCase()))),
+      map((features) =>
+        features
+          .filter((feature: GeoFeature) => this.favouriteFeaturesList.includes(feature.label.toLowerCase()))
+          .sort((a: GeoFeature, b: GeoFeature) => a.label.localeCompare(b.label)),
+      ),
     );
+
+    mapState
+      .observeMapSource()
+      .pipe(
+        map((currentMapSource) => {
+          this.mapSources.map((mapSource) => {
+            mapSource.selected = currentMapSource === mapSource.key ? true : false;
+            return mapSource;
+          });
+        }),
+      )
+      .subscribe();
   }
 
   switchLayer(layer: ZsMapStateSource) {

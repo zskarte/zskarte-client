@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Coordinate } from 'ol/coordinate';
 import { I18NService } from '../state/i18n.service';
 
 @Component({
@@ -13,7 +14,7 @@ export class EditCoordinatesComponent {
   error = '';
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: { geometry: string; coordinates: string },
     public i18n: I18NService,
     public dialogRef: MatDialogRef<EditCoordinatesComponent>,
   ) {
@@ -54,15 +55,15 @@ export class EditCoordinatesComponent {
     }
   }
 
-  private isValidPointCoordinate(coordinates: any) {
+  private isValidPointCoordinate(coordinates: Coordinate | number) {
     return Array.isArray(coordinates) && coordinates.length === 2 && coordinates.filter((c) => typeof c !== 'number').length === 0;
   }
 
-  private isValidLine(coordinates: any) {
+  private isValidLine(coordinates: Coordinate) {
     return Array.isArray(coordinates) && coordinates.length > 1 && coordinates.filter((c) => !this.isValidPointCoordinate(c)).length === 0;
   }
 
-  private isValidPolygon(coordinates: any) {
+  private isValidPolygon(coordinates: Coordinate) {
     return (
       Array.isArray(coordinates) &&
       coordinates.length > 0 &&

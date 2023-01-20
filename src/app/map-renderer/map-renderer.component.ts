@@ -5,7 +5,7 @@ import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -36,6 +36,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Signs } from './signs';
 import { SessionService } from '../session/session.service';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 
 @Component({
   selector: 'app-map-renderer',
@@ -159,7 +160,7 @@ export class MapRendererComponent implements AfterViewInit {
         this._mergeMode = mode;
       });
 
-    // this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
+    this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
   }
 
   public ngOnDestroy(): void {
@@ -168,7 +169,6 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    // TODO
     const select = new Select({
       hitTolerance: 10,
       style: (feature: FeatureLike, resolution: number) => {
@@ -207,7 +207,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._modify = new Modify({
       features: this._modifyCache,
-      condition: (event) => {
+      condition: () => {
         if (!this.areFeaturesModifiable() || this.isReadOnly.getValue()) {
           this.toggleEditButtons(false);
           return false;
@@ -272,6 +272,7 @@ export class MapRendererComponent implements AfterViewInit {
       // only the first feature is relevant
       const feature = e.features.getArray()[0];
       const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
 
       if (element.element.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
@@ -285,8 +286,8 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._view = new OlView({
-      center: [849861.97, 5905812.55], // TODO get from newly implemented session
-      zoom: 16, // TODO get from newly implemented session
+      center: DEFAULT_COORDINATES, // will be overwritten once session is loaded via display state
+      zoom: DEFAULT_ZOOM, // will be overwritten once session is loaded via display state
     });
 
     this._map = new OlMap({
@@ -419,9 +420,8 @@ export class MapRendererComponent implements AfterViewInit {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((center) => {
         if (!areArraysEqual(this._view.getCenter() || [0, 0], center)) {
-          // TODO implement proper fallback center
           if (!center[0] && !center[1]) {
-            center = [849861.97, 5905812.55];
+            center = DEFAULT_COORDINATES;
           }
           this._view.setCenter(center);
         }
@@ -432,9 +432,8 @@ export class MapRendererComponent implements AfterViewInit {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((zoom) => {
         if (this._view.getZoom() !== zoom) {
-          // TODO implement proper fallback zoom
           if (!zoom) {
-            zoom = 16;
+            zoom = DEFAULT_ZOOM;
           }
           this._view.setZoom(zoom);
         }

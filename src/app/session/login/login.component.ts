@@ -9,6 +9,8 @@ import { GUEST_USER_IDENTIFIER, GUEST_USER_PASSWORD } from '../userLogic';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
 import { I18NService } from '../../state/i18n.service';
+import { FormControl } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +21,7 @@ export class LoginComponent {
   public selectedOrganization?: IZso = undefined;
   public password = '';
   public organizations = new BehaviorSubject<IZso[]>([]);
+  public filteredOrganizations = new BehaviorSubject<IZso[]>([]);
 
   constructor(public session: SessionService, public i18n: I18NService, private _api: ApiService, private _dialog: MatDialog) {}
 
@@ -44,7 +47,38 @@ export class LoginComponent {
         if (this.selectedOrganization) continue;
       }
       this.organizations.next(orgs);
+      this.filteredOrganizations.next(orgs);
     }
+  }
+
+  compareFn(o1: IZso, o2: IZso) {
+    return o1 && o2 ? o1.name === o2.name : o1 === o2;
+  }
+
+  filterControl = new FormControl();
+
+  filterOrganizations() {
+    const currentFiltered = this.organizations.value.filter((option) =>
+      option.name.toLowerCase().includes(this.filterControl.value.toLowerCase()),
+    );
+    if (currentFiltered.length === 0 && this.selectedOrganization) {
+      currentFiltered.push(this.selectedOrganization);
+    }
+    this.filteredOrganizations.next(currentFiltered);
+  }
+
+  public nameProperty(zso: IZso) {
+    return zso?.name;
+  }
+
+  public onSelectOrg(event: MatAutocompleteSelectedEvent) {
+    this.selectedOrganization = event.option.value;
+  }
+
+  public onCloseAutocomplete() {
+    if (this.selectedOrganization?.name === this.filterControl.value?.name) return;
+    if (!this.filterControl.value) return;
+    this.filterControl.setValue(this.selectedOrganization);
   }
 
   public async login(): Promise<void> {

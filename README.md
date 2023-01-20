@@ -31,4 +31,5 @@ Run `ng generate component component-name` to generate a new component. You can 
 A build is automatically created when merging into master.
 
 ### Help or Feedback
+
 Create an issue here on github or send feedback to feedback@zskarte.ch. We will use your feedback in the next iteration of the project.

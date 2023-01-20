@@ -56,6 +56,7 @@ function getMercatorProjection() {
 }
 
 function getSwissProjection() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const projection = get('EPSG:2056') as any; // see: https://epsg.io/2056 > Swiss CH1903+ / LV95
   if (projection) {
     projection.setExtent([2420000, 130000, 2900000, 1350000]);
