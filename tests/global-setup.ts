@@ -9,16 +9,16 @@ export async function login(page: Page) {
 
 async function globalSetup(config: FullConfig) {
   const { baseURL } = config.projects[0].use;
-  // const browser = await chromium.launch();
-  // const page = await browser.newPage({ baseURL });
-  // await login(page);
-  // await page.getByRole('button', { name: 'Neues Ereignis' }).click();
-  // await page.getByText('Bearbeiten').waitFor();
-  // await page.getByPlaceholder('Name eingeben').fill('e2e test');
-  // await page.getByPlaceholder('Beschreibung eingeben').fill('e2e test');
-  // await page.getByTestId('operation-save').click();
-  // await page.waitForResponse(/api\/operations/);
-  // await browser.close();
+  const browser = await chromium.launch();
+  const page = await browser.newPage({ baseURL });
+  await login(page);
+  await page.getByRole('button', { name: 'Neues Ereignis' }).click();
+  await page.getByText('Bearbeiten').waitFor();
+  await page.getByPlaceholder('Name eingeben').fill('e2e test');
+  await page.getByPlaceholder('Beschreibung eingeben').fill('e2e test');
+  await page.getByTestId('operation-save').click();
+  await page.waitForResponse(/api\/operations/);
+  await browser.close();
 
   // Teardown, remove operation
   return async () => {
