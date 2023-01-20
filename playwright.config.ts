@@ -1,7 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 
-const PORT = 43000;
+const PORT = 4300;
 
 /**
  * Read environment variables from file.
