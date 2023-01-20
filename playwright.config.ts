@@ -15,7 +15,7 @@ const PORT = 43000;
 const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */
-  timeout: 60 * 1000,
+  timeout: 30 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -104,7 +104,7 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `yarn ng:serve:dev --host 0.0.0.0 --port ${PORT}`,
+    command: `yarn ng:serve:dev --port ${PORT}`,
     port: PORT,
     reuseExistingServer: true,
   },
