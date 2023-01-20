@@ -1,7 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 
-const PORT = 4300;
+const PORT = 43000;
 
 /**
  * Read environment variables from file.
@@ -24,7 +24,7 @@ const config: PlaywrightTestConfig = {
     timeout: 5000,
   },
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -104,7 +104,7 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `npx ng serve --host=0.0.0.0 --port=${PORT}`,
+    command: `yarn ng:serve:dev --host 0.0.0.0 --port ${PORT}`,
     port: PORT,
     reuseExistingServer: true,
   },
