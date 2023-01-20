@@ -36,6 +36,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Signs } from './signs';
 import { SessionService } from '../session/session.service';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 
 @Component({
   selector: 'app-map-renderer',
@@ -285,8 +286,8 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._view = new OlView({
-      center: [828675.7379587183, 5933353.2073429795], // will be overwritten once session is loaded via display state
-      zoom: 16,
+      center: DEFAULT_COORDINATES, // will be overwritten once session is loaded via display state
+      zoom: DEFAULT_ZOOM, // will be overwritten once session is loaded via display state
     });
 
     this._map = new OlMap({
@@ -420,7 +421,7 @@ export class MapRendererComponent implements AfterViewInit {
       .subscribe((center) => {
         if (!areArraysEqual(this._view.getCenter() || [0, 0], center)) {
           if (!center[0] && !center[1]) {
-            center = [828675.7379587183, 5933353.2073429795];
+            center = DEFAULT_COORDINATES;
           }
           this._view.setCenter(center);
         }
@@ -432,7 +433,7 @@ export class MapRendererComponent implements AfterViewInit {
       .subscribe((zoom) => {
         if (this._view.getZoom() !== zoom) {
           if (!zoom) {
-            zoom = 16;
+            zoom = DEFAULT_ZOOM;
           }
           this._view.setZoom(zoom);
         }

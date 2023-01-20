@@ -36,6 +36,7 @@ import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { Feature } from 'ol';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 
 @Injectable({
   providedIn: 'root',
@@ -79,9 +80,9 @@ export class ZsMapStateService {
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
-      positionFlag: { coordinates: [0, 0], isVisible: false },
-      mapCenter: [0, 0],
-      mapZoom: 16,
+      positionFlag: { coordinates: DEFAULT_COORDINATES, isVisible: false },
+      mapCenter: DEFAULT_COORDINATES,
+      mapZoom: DEFAULT_ZOOM,
       activeLayer: undefined,
       source: ZsMapStateSource.OPEN_STREET_MAP,
       layerOpacity: {},
@@ -248,7 +249,7 @@ export class ZsMapStateService {
   public observeMapZoom(): Observable<number> {
     return this._display.pipe(
       map((o) => {
-        if (!o?.mapZoom || o.mapZoom === 16) {
+        if (!o?.mapZoom || o.mapZoom === DEFAULT_ZOOM) {
           return this._session.getDefaultMapZoom();
         }
         return o?.mapZoom;
@@ -307,7 +308,7 @@ export class ZsMapStateService {
           !o.mapCenter[1] ||
           o.mapCenter[0] === 0 ||
           o.mapCenter[1] === 0 ||
-          (o.mapCenter[0] === 828675.7379587183 && o.mapCenter[1] === 5933353.2073429795)
+          (o.mapCenter[0] === DEFAULT_COORDINATES[0] && o.mapCenter[1] === DEFAULT_COORDINATES[1])
         ) {
           return this._session.getDefaultMapCenter();
         }

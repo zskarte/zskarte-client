@@ -11,6 +11,7 @@ import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
 import { IZsMapOperation, IZsMapOrganization } from './operations/operation.interfaces';
 import { transform } from 'ol/proj';
 import { coordinatesProjection, mercatorProjection } from '../helper/projections';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from './default-map-values';
 
 @Injectable({
   providedIn: 'root',
@@ -326,10 +327,10 @@ export class SessionService {
         mercatorProjection,
       );
     }
-    return [828675.7379587183, 5933353.2073429795];
+    return DEFAULT_COORDINATES;
   }
 
   public getDefaultMapZoom(): number {
-    return this._session.value?.defaultZoomLevel ?? 16;
+    return this._session.value?.defaultZoomLevel || DEFAULT_ZOOM;
   }
 }
