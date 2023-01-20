@@ -1144,6 +1144,26 @@ export class I18NService {
       fr: `Cliquez sur un <strong>dessin</strong> sur la carte pour afficher les <strong>fonctions rapides</strong>. Cela comprend: <ul><li>Supprimer le dessin ou le point d'ancrage</li><li>Copier le dessin: Cliquez à nouveau sur la carte pour insérer la <strong>copie</strong> du dessin</li><li>Rotation de la signature</li></ul>`,
       en: `Click on a <strong>drawing</strong> on the map to display the <strong>quick functions</strong>. This includes: <ul><li>Delete the drawing or anchor point</li><li>Copy the drawing: Click again on the map to insert the <strong>copy</strong> of the drawing</li><li>Rotate the signature</li></ul>`,
     },
+    openStreetMap: {
+      de: 'OpenStreetMap',
+      fr: 'OpenStreetMap',
+      en: 'OpenStreetMap',
+    },
+    geoAdminSwissImage: {
+      de: 'SWISSIMAGE',
+      fr: 'SWISSIMAGE',
+      en: 'SWISSIMAGE',
+    },
+    geoAdminPixel: {
+      de: 'Pixelkarte farbig',
+      fr: 'Carte pixelisée en couleur',
+      en: 'Colored pixel map',
+    },
+    geoAdminPixelBW: {
+      de: 'Pixelkarte grau',
+      fr: 'Carte pixelisée en gris',
+      en: 'Gray pixel map',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

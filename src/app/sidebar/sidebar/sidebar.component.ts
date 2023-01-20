@@ -21,7 +21,9 @@ export class SidebarComponent {
   selectedLayersOpenState = false;
   favoriteLayersOpenState = false;
   availableLayersOpenState = false;
-  mapSources = Object.values(ZsMapStateSource);
+  mapSources = Object.values(ZsMapStateSource)
+    .map((key) => ({ key, translation: this.i18n.get(key), selected: false }))
+    .sort((a, b) => a.translation.localeCompare(b.translation));
   filteredAvailableFeatures$: Observable<GeoFeature[]>;
   favouriteFeatures$: Observable<GeoFeature[]>;
   favouriteFeaturesList = [
@@ -68,6 +70,18 @@ export class SidebarComponent {
           .sort((a: GeoFeature, b: GeoFeature) => a.label.localeCompare(b.label)),
       ),
     );
+
+    mapState
+      .observeMapSource()
+      .pipe(
+        map((currentMapSource) => {
+          this.mapSources.map((mapSource) => {
+            mapSource.selected = currentMapSource === mapSource.key ? true : false;
+            return mapSource;
+          });
+        }),
+      )
+      .subscribe();
   }
 
   switchLayer(layer: ZsMapStateSource) {
