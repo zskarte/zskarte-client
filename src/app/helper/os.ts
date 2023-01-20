@@ -1,4 +1,5 @@
 export function isElectron(): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return !!(typeof window !== 'undefined' && (window as any).zskarte);
 }
 

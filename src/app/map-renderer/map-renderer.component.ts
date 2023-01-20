@@ -5,7 +5,7 @@ import OlView from 'ol/View';
 import OlTileLayer from 'ol/layer/Tile';
 import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -168,7 +168,6 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    // TODO
     const select = new Select({
       hitTolerance: 10,
       style: (feature: FeatureLike, resolution: number) => {
@@ -207,7 +206,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._modify = new Modify({
       features: this._modifyCache,
-      condition: (event) => {
+      condition: () => {
         if (!this.areFeaturesModifiable() || this.isReadOnly.getValue()) {
           this.toggleEditButtons(false);
           return false;
@@ -272,6 +271,7 @@ export class MapRendererComponent implements AfterViewInit {
       // only the first feature is relevant
       const feature = e.features.getArray()[0];
       const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
 
       if (element.element.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {

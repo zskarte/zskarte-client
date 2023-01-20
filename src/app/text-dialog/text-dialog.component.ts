@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Sign } from '../core/entity/sign';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
 import { I18NService } from '../state/i18n.service';
@@ -22,12 +21,6 @@ export class TextDialogComponent {
   }
 
   submit(): void {
-    const textSign: Sign = {
-      type: 'LineString',
-      text: this.text,
-      filterValue: 'text_element',
-      src: '',
-    };
     this.layer?.draw(ZsMapDrawElementStateType.TEXT);
     this.dialogRef.close(this.text);
   }

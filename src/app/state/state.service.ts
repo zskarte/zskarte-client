@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
@@ -15,7 +15,7 @@ import {
   ZsMapPolygonDrawElementState,
   ZsMapStateSource,
 } from './interfaces';
-import { distinctUntilChanged, map, mergeMap, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
@@ -35,9 +35,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
-import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
 import { Feature } from 'ol';
-import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
 
 @Injectable({
   providedIn: 'root',
@@ -733,6 +731,7 @@ export class ZsMapStateService {
 
   public filterAll(active: boolean, featureTypes: string[], categoryNames: string[]) {
     this.updateDisplayState((draft) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       draft.hiddenSymbols = active ? [...Signs.SIGNS.map((s) => s.id!)] : [];
       draft.hiddenFeatureTypes = active ? featureTypes : [];
       draft.hiddenCategories = active ? categoryNames : [];

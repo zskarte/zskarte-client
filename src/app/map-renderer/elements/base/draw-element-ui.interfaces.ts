@@ -7,7 +7,6 @@ export enum ZsMapInputType {
   COLOR = 'color',
 }
 
-// TODO types
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ZsMapInput<T = any> {
   label: string;

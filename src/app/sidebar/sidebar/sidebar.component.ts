@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
-import findOfflineHost from '../../helper/findOfflineHost';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { ZsMapStateSource } from 'src/app/state/interfaces';
 import { GeoadminService } from 'src/app/core/geoadmin.service';
 import { GeoFeature } from '../../core/entity/geoFeature';
-import { map, Observable, tap, share, combineLatest, startWith } from 'rxjs';
+import { map, Observable, share, combineLatest, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
 
