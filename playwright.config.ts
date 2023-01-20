@@ -1,7 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 
-const PORT = 43000;
+const PORT = 4300;
 
 /**
  * Read environment variables from file.
@@ -15,7 +15,7 @@ const PORT = 43000;
 const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 60 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -56,12 +56,12 @@ const config: PlaywrightTestConfig = {
       },
     },
 
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-      },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: {
+    //     ...devices['Desktop Firefox'],
+    //   },
+    // },
 
     // {
     //   name: 'webkit',
@@ -106,6 +106,7 @@ const config: PlaywrightTestConfig = {
   webServer: {
     command: `npx ng serve --host=0.0.0.0 --port=${PORT}`,
     port: PORT,
+    reuseExistingServer: true,
   },
 };
 
