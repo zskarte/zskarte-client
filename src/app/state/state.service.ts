@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
@@ -35,9 +35,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
-import { OperationExportFile, OperationExportFileVersion } from '../core/entity/operationExportFile';
 import { Feature } from 'ol';
-import { ZsMapPolygonDrawElement } from '../map-renderer/elements/polygon-draw-element';
 
 @Injectable({
   providedIn: 'root',
@@ -127,7 +125,6 @@ export class ZsMapStateService {
       const dialogRef = this.drawDialog.open(DrawingDialogComponent);
       dialogRef.afterClosed().subscribe((result: Sign) => {
         if (result) {
-          console.log(result);
           if (result.type === 'Point') {
             const element: ZsMapDrawElementState = {
               type: ZsMapDrawElementStateType.SYMBOL,
@@ -189,7 +186,9 @@ export class ZsMapStateService {
     }
     if (this._drawElementCache) {
       for (const key in this._drawElementCache) {
-        this._drawElementCache[key].unsubscribe();
+        if (!newState?.drawElements?.find((e) => e.id === key)) {
+          this._drawElementCache[key].unsubscribe();
+        }
       }
     }
     this._drawElementCache = {};
@@ -224,13 +223,17 @@ export class ZsMapStateService {
     });
   }
 
-  public observeHistoryMode(): Observable<boolean> {
+  public observeIsHistoryMode(): Observable<boolean> {
     return this._display.pipe(
       map((o) => {
         return o.displayMode === ZsMapDisplayMode.HISTORY;
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public isHistoryMode(): boolean {
+    return this._display.value?.displayMode === ZsMapDisplayMode.HISTORY;
   }
 
   public saveDisplayState(): void {
@@ -682,6 +685,9 @@ export class ZsMapStateService {
   }
 
   public updateMapState(fn: (draft: IZsMapState) => void, preventPatches = false) {
+    if (!preventPatches && !this._session.hasWritePermission()) {
+      return;
+    }
     const newState = produce<IZsMapState>(this._map.value || {}, fn, (patches, inversePatches) => {
       if (preventPatches) {
         return;
@@ -725,6 +731,7 @@ export class ZsMapStateService {
 
   public filterAll(active: boolean, featureTypes: string[], categoryNames: string[]) {
     this.updateDisplayState((draft) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       draft.hiddenSymbols = active ? [...Signs.SIGNS.map((s) => s.id!)] : [];
       draft.hiddenFeatureTypes = active ? featureTypes : [];
       draft.hiddenCategories = active ? categoryNames : [];
@@ -823,6 +830,7 @@ export class ZsMapStateService {
 
   public async refreshMapState(): Promise<void> {
     if (this._session.getOperationId()) {
+      await this._sync.sendCachedMapStatePatches();
       const sha256 = async (str: string): Promise<string> => {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
         return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
@@ -839,5 +847,15 @@ export class ZsMapStateService {
         }
       }
     }
+  }
+
+  observeIsReadOnly(): Observable<boolean> {
+    return merge(this.observeIsHistoryMode(), this._session.observeHasWritePermission()).pipe(
+      map(() => {
+        const isHistoryMode = this.isHistoryMode();
+        const hasWritePermission = this._session.hasWritePermission();
+        return !hasWritePermission || isHistoryMode;
+      }),
+    );
   }
 }

@@ -1,19 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
 import { MatSliderChange } from '@angular/material/slider';
 import { I18NService } from '../state/i18n.service';
-import { FillStyle, getColorForCategory, Sign } from '../core/entity/sign';
+import { FillStyle, getColorForCategory, Sign, signatureDefaultValues } from '../core/entity/sign';
 import { ZsMapStateService } from '../state/state.service';
 import { Signs } from '../map-renderer/signs';
-import { CustomImageStoreService } from '../state/custom-image-store.service';
 import { DrawStyle } from '../map-renderer/draw-style';
-import { EMPTY, firstValueFrom, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, EMPTY, firstValueFrom, Observable, Subject } from 'rxjs';
 import { Feature } from 'ol';
-import { Point, SimpleGeometry } from 'ol/geom';
+import { SimpleGeometry } from 'ol/geom';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { ZsMapDisplayMode, ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
+import { ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
 import { EditCoordinatesComponent } from '../edit-coordinates/edit-coordinates.component';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
@@ -25,7 +26,7 @@ import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.compone
 })
 export class SelectedFeatureComponent implements OnDestroy {
   groupedFeatures = null;
-  editMode: Observable<boolean>;
+  editMode = new BehaviorSubject(true);
   selectedFeature: Observable<Feature<SimpleGeometry> | undefined>;
   selectedSignature: Observable<Sign | undefined>;
   selectedDrawElement: Observable<ZsMapDrawElementState | undefined>;
@@ -46,7 +47,7 @@ export class SelectedFeatureComponent implements OnDestroy {
       viewValue: 'resources',
     },
     {
-      value: getColorForCategory('danger'), //TODO
+      value: getColorForCategory('danger'), // red
       viewValue: 'danger',
     },
     {
@@ -88,10 +89,12 @@ export class SelectedFeatureComponent implements OnDestroy {
       }
     });
 
-    this.editMode = this.zsMapStateService.observeDisplayState().pipe(
-      takeUntil(this._ngUnsubscribe),
-      map((displayState) => displayState.displayMode === ZsMapDisplayMode.DRAW),
-    );
+    this.zsMapStateService
+      .observeIsReadOnly()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((isReadOnly) => {
+        this.editMode.next(!isReadOnly);
+      });
 
     this.zsMapStateService
       .observeDrawElements()
@@ -125,7 +128,8 @@ export class SelectedFeatureComponent implements OnDestroy {
     return this.featureType === 'LineString';
   }
 
-  isText(element: ZsMapDrawElementState) {
+  isText(element?: ZsMapDrawElementState) {
+    if (!element) return false;
     return element.type === ZsMapDrawElementStateType.TEXT;
   }
 
@@ -194,9 +198,12 @@ export class SelectedFeatureComponent implements OnDestroy {
 
   updateFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]) {
     if (element.id) {
-      const fillStyle = { ...element.fillStyle, [field]: value } as FillStyle;
-      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', fillStyle);
+      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', this.getUpdatedFillStyle(element, field, value));
     }
+  }
+
+  getUpdatedFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]): FillStyle {
+    return { ...element.fillStyle, [field]: value } as FillStyle;
   }
 
   chooseSymbol(drawElement: ZsMapDrawElementState) {
@@ -255,14 +262,14 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   getOriginalImageUrl(file: string) {
-    return CustomImageStoreService.getOriginalImageDataUrl(file);
+    return undefined; // CustomImageStoreService.getOriginalImageDataUrl(file);
   }
 
   getImageUrl(file: string) {
-    const imageFromStore = CustomImageStoreService.getImageDataUrl(file);
-    if (imageFromStore) {
-      return imageFromStore;
-    }
+    // const imageFromStore = CustomImageStoreService.getImageDataUrl(file);
+    // if (imageFromStore) {
+    //   return imageFromStore;
+    // }
     return DrawStyle.getImageUrl(file);
   }
 
@@ -293,10 +300,10 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   findSigBySrc(src: any) {
-    const fromCustomStore = CustomImageStoreService.getSign(src);
-    if (fromCustomStore) {
-      return fromCustomStore;
-    }
+    // const fromCustomStore = CustomImageStoreService.getSign(src);
+    // if (fromCustomStore) {
+    //   return fromCustomStore;
+    // }
     return Signs.getSignBySource(src);
   }
 
@@ -318,5 +325,27 @@ export class SelectedFeatureComponent implements OnDestroy {
     };
     updateProp(this.selectedSignature, field.split('.'), event.value);
     //this.redraw();
+  }
+
+  resetSignature(element: ZsMapDrawElementState) {
+    if (!element.id) return;
+    this.zsMapStateService.updateDrawElementState(element.id, 'iconSize', signatureDefaultValues.iconSize);
+    this.zsMapStateService.updateDrawElementState(element.id, 'iconOffset', signatureDefaultValues.iconOffset);
+    this.zsMapStateService.updateDrawElementState(element.id, 'rotation', signatureDefaultValues.rotation);
+    this.zsMapStateService.updateDrawElementState(element.id, 'flipIcon', signatureDefaultValues.flipIcon);
+    this.zsMapStateService.updateDrawElementState(element.id, 'iconOpacity', signatureDefaultValues.iconOpacity);
+    this.zsMapStateService.updateDrawElementState(element.id, 'hideIcon', signatureDefaultValues.hideIcon);
+  }
+
+  resetLine(element: ZsMapDrawElementState) {
+    if (!element.id) return;
+    this.zsMapStateService.updateDrawElementState(element.id, 'style', signatureDefaultValues.style);
+    this.zsMapStateService.updateDrawElementState(element.id, 'strokeWidth', signatureDefaultValues.strokeWidth);
+    this.zsMapStateService.updateDrawElementState(element.id, 'arrow', signatureDefaultValues.arrow);
+  }
+
+  resetPolygon(element: ZsMapDrawElementState) {
+    if (!element.id) return;
+    this.updateFillStyle(element, 'name', signatureDefaultValues.fillStyle.name);
   }
 }

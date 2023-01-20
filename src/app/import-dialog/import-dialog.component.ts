@@ -1,7 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { I18NService } from '../state/i18n.service';
-import { GeoadminService } from '../core/geoadmin.service';
 import { OperationExportFile } from '../core/entity/operationExportFile';
 
 @Component({

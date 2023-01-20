@@ -20,12 +20,11 @@ export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawE
     this.observeCoordinates()
       .pipe(takeUntil(this._unsubscribe))
       .subscribe((coordinates) => {
-        // TODO types
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this._olPolygon?.setCoordinates(coordinates as any);
       });
   }
 
-  // TODO types
   protected _initialize(element: ZsMapSymbolDrawElementState): void {
     this._olPolygon = new Polygon(element.coordinates as number[]);
     this._olFeature.setGeometry(this._olPolygon);
@@ -36,7 +35,7 @@ export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawE
   protected static override _parseFeature(feature: Feature<Polygon>, state: ZsMapStateService, element: ZsMapElementToDraw): void {
     const drawElement = state.addDrawElement({
       type: ZsMapDrawElementStateType.POLYGON,
-      // TODO types
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       coordinates: (feature.getGeometry()?.getCoordinates() as any) || [],
       layer: element.layer,
     });

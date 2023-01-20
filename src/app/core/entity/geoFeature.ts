@@ -1,6 +1,3 @@
-import OlTileLayer from 'ol/layer/Tile';
-import OlTileWMTS from 'ol/source/WMTS';
-
 export interface GeoFeature {
   attribution: string;
   attributionUrl: string;

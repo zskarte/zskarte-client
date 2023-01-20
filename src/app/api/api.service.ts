@@ -10,6 +10,7 @@ export interface IApiRequestOptions {
   token?: string;
   retries?: number;
   transformerOptions?: TransformerOptions;
+  preventAuthorization?: boolean;
 }
 
 export interface ApiResponse<T> {
@@ -77,8 +78,10 @@ export class ApiService {
 
   private _getDefaultHeaders(options?: IApiRequestOptions): { [key: string]: string } {
     const defaults: { [key: string]: string } = {};
-    if (options?.token || this._session.getToken()) {
-      defaults['Authorization'] = `Bearer ${options?.token || this._session.getToken()}`;
+    if (!options?.preventAuthorization) {
+      if (options?.token || this._session.getToken()) {
+        defaults['Authorization'] = `Bearer ${options?.token || this._session.getToken()}`;
+      }
     }
     return { ...defaults, ...(options?.headers || {}) };
   }

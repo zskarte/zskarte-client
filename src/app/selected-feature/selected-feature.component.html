@@ -123,7 +123,7 @@
                 >{{ i18n.get('hideSymbol') }}</mat-checkbox
               >
             </div>
-            <mat-form-field *ngIf="drawElement.symbolId">
+            <mat-form-field *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('symbolSize') }}</mat-label>
               <mat-slider [max]="2" [min]="0.5" [step]="0.1">
                 <input matSliderThumb [ngModel]="drawElement.iconSize" (ngModelChange)="updateProperty(drawElement, 'iconSize', $event)" />
@@ -131,7 +131,7 @@
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
 
-            <mat-form-field *ngIf="drawElement.symbolId">
+            <mat-form-field *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('symbolOffset') }}</mat-label>
               <mat-slider [max]="5000" [min]="0.1" [step]="100">
                 <input
@@ -168,10 +168,13 @@
               </mat-slider>
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
+            <button *ngIf="drawElement.symbolId" mat-flat-button color="primary" (click)="resetSignature(drawElement)">
+              {{ i18n.get('defaultValues') }}
+            </button>
           </mat-expansion-panel>
         </ng-container>
 
-        <mat-expansion-panel *ngIf="editMode | async">
+        <mat-expansion-panel *ngIf="(editMode | async) && isLine()">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('line') }}</mat-panel-title>
           </mat-expansion-panel-header>
@@ -203,7 +206,7 @@
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
 
-          <mat-form-field *ngIf="isLine()">
+          <mat-form-field>
             <mat-label>{{ i18n.get('arrow') }}:</mat-label>
             <select
               #ctrl="ngModel"
@@ -216,6 +219,8 @@
               <option value="filled">{{ i18n.get('filled') }}</option>
             </select>
           </mat-form-field>
+
+          <button mat-flat-button color="primary" (click)="resetLine(drawElement)">{{ i18n.get('defaultValues') }}</button>
         </mat-expansion-panel>
 
         <mat-expansion-panel *ngIf="(editMode | async) && isPolygon()">
@@ -250,7 +255,11 @@
           <mat-form-field *ngIf="drawElement.fillStyle?.name && drawElement.fillStyle?.name !== 'filled'">
             <mat-label>{{ i18n.get('width') }}</mat-label>
             <mat-slider [max]="10" [min]="1" [step]="0.1">
-              <input matSliderThumb [ngModel]="drawElement.fillStyle?.size" (ngModelChange)="updateProperty(drawElement, 'size', $event)" />
+              <input
+                matSliderThumb
+                [ngModel]="drawElement.fillStyle?.size"
+                (ngModelChange)="updateFillStyle(drawElement, 'size', $event)"
+              />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
@@ -261,7 +270,7 @@
               <input
                 matSliderThumb
                 [ngModel]="drawElement.fillStyle?.spacing"
-                (ngModelChange)="updateProperty(drawElement, 'spacing', $event)"
+                (ngModelChange)="updateFillStyle(drawElement, 'spacing', $event)"
               />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
@@ -273,11 +282,12 @@
               <input
                 matSliderThumb
                 [ngModel]="drawElement.fillStyle?.angle"
-                (ngModelChange)="updateProperty(drawElement, 'angle', $event)"
+                (ngModelChange)="updateFillStyle(drawElement, 'angle', $event)"
               />
             </mat-slider>
             <input type="text" matInput hidden value="-" />
           </mat-form-field>
+          <button mat-flat-button color="primary" (click)="resetPolygon(drawElement)">{{ i18n.get('defaultValues') }}</button>
         </mat-expansion-panel>
 
         <mat-expansion-panel *ngIf="(editMode | async) && isText(drawElement)">
@@ -293,7 +303,6 @@
           </mat-form-field>
         </mat-expansion-panel>
 
-        <!-- TODO: implement functions -->
         <mat-expansion-panel id="functionsPanel" class="noPadding" *ngIf="editMode | async">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ i18n.get('functions') }}</mat-panel-title>

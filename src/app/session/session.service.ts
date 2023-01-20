@@ -1,20 +1,7 @@
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  distinctUntilChanged,
-  filter,
-  interval,
-  map,
-  Observable,
-  of,
-  retry,
-  skip,
-  Subject,
-  switchMap,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, retry, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { db } from '../db/db';
-import { IAuthResult, IZsMapSession } from './session.interfaces';
+import { IAuthResult, IZsMapSession, PermissionType } from './session.interfaces';
 import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
 import jwtDecode from 'jwt-decode';
@@ -35,6 +22,7 @@ export class SessionService {
 
   constructor(private _router: Router, private _api: ApiService) {
     this._session.pipe(skip(1)).subscribe(async (session) => {
+      this._clearOperation.next();
       if (session && session.jwt) {
         await db.sessions.put(session);
         if (session.operationId) {
@@ -50,9 +38,10 @@ export class SessionService {
                 db.displayStates.put({ ...displayState, id: this._session.value.operationId });
               }
             });
+
+          await this._router.navigateByUrl('/map');
         } else {
           await this._router.navigateByUrl('/operations');
-          this._clearOperation.next();
           this._state.setMapState(undefined);
           this._state.setDisplayState(undefined);
         }
@@ -61,7 +50,6 @@ export class SessionService {
 
       await db.displayStates.clear();
       await db.sessions.clear();
-      this._clearOperation.next();
       return;
     });
 
@@ -145,7 +133,6 @@ export class SessionService {
     const sessions = await db.sessions.toArray();
     if (sessions.length === 1) {
       const session: IZsMapSession = sessions[0];
-      this._session.next(session);
       return session;
     }
     if (sessions.length > 1) {
@@ -157,7 +144,7 @@ export class SessionService {
   public async loadSavedSession(): Promise<void> {
     const session = await this.getSavedSession();
     if (session?.jwt) {
-      return await this._loginWithJWT(session?.jwt);
+      return await this.updateJWT(session?.jwt);
     }
     this._session.next(undefined);
   }
@@ -169,12 +156,12 @@ export class SessionService {
       this._router.navigateByUrl('/login');
       return;
     }
-    await this._loginWithJWT(result.jwt);
-    this._router.navigateByUrl('/map');
+    await this.updateJWT(result.jwt);
   }
 
-  private async _loginWithJWT(jwt: string) {
-    if (this._isJWTExpired(jwt)) {
+  public async updateJWT(jwt: string) {
+    const decoded = this._decodeJWT(jwt);
+    if (decoded.expired) {
       await this.logout();
       return;
     }
@@ -205,9 +192,27 @@ export class SessionService {
       };
     }
 
+    newSession.permission = decoded.permission || PermissionType.ALL;
+
+    // update organization values
     newSession.jwt = jwt;
-    newSession.organizationLogo = meResult.organization.logo.url;
-    newSession.organizationId = meResult.organization.id;
+    newSession.organizationLogo = meResult.organization?.logo?.url;
+    newSession.organizationId = meResult.organization?.id;
+
+    // update operation values
+    const operationId = decoded.operationId || currentSession?.operationId;
+    if (operationId) {
+      const { result: operation } = await this._api.get<IZsMapOperation>('/api/operations/' + operationId, { token: jwt });
+      if (operation) {
+        newSession.operationId = operation?.id;
+        newSession.operationName = operation?.name;
+        newSession.operationDescription = operation?.description;
+      }
+    }
+
+    if (decoded.operationId) {
+      newSession.operationId = decoded.operationId;
+    }
 
     this._session.next(newSession);
   }
@@ -231,7 +236,7 @@ export class SessionService {
       return await this.logout();
     }
 
-    await this._loginWithJWT(result.jwt);
+    await this.updateJWT(result.jwt);
 
     return;
   }
@@ -246,7 +251,7 @@ export class SessionService {
         if (!session?.jwt) {
           return false;
         }
-        if (this._isJWTExpired(session.jwt)) {
+        if (this._decodeJWT(session.jwt).expired) {
           this.logout();
           return false;
         }
@@ -275,11 +280,35 @@ export class SessionService {
     return this._isOnline.value;
   }
 
-  private _isJWTExpired(jwt: string): boolean {
-    const token = jwtDecode<{ exp: number }>(jwt);
-    if (token.exp < Date.now() / 1000) {
-      return true;
+  private _decodeJWT(jwt: string): { expired: boolean; operationId: number; permission: PermissionType } {
+    const token = jwtDecode<{ exp: number; operationId: number; permission: PermissionType }>(jwt);
+    return { ...token, expired: token.exp < Date.now() / 1000 };
+  }
+
+  public async generateShareUrl(permission: PermissionType = PermissionType.READ): Promise<string> {
+    if (!this.getOperationId()) {
+      throw new Error('OperationId is not defined');
     }
-    return false;
+    const response = await this._api.post<{ accessToken: string }>('/api/accesses/auth/token/generate', {
+      type: permission,
+      operationId: this.getOperationId(),
+    });
+    if (!response.result?.accessToken) {
+      throw new Error('Unable to generate share url');
+    }
+    const url = `${window.location.origin}/share/${response.result.accessToken}`;
+    return url;
+  }
+
+  public observeHasWritePermission(): Observable<boolean> {
+    return this._session.pipe(
+      map((session) => {
+        return !(session?.permission === PermissionType.READ);
+      }),
+    );
+  }
+
+  public hasWritePermission(): boolean {
+    return !(this._session.value?.permission === PermissionType.READ);
   }
 }

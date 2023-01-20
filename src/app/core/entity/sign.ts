@@ -1,3 +1,7 @@
+import { Coordinate } from 'ol/coordinate';
+import { FeatureLike } from 'ol/Feature';
+import { LineString, MultiPolygon, Point, Polygon } from 'ol/geom';
+
 export interface FillStyle {
   name: string;
   size?: number;
@@ -41,7 +45,10 @@ export interface Sign {
   createdAt?: Date;
 }
 
-export function isMoreOptimalIconCoordinate(coordinateToTest: any, currentCoordinate: any) {
+export function isMoreOptimalIconCoordinate(
+  coordinateToTest: Coordinate | Coordinate[],
+  currentCoordinate: Coordinate | Coordinate[] | undefined | null,
+) {
   if (currentCoordinate === undefined || currentCoordinate === null) {
     return true;
   } else if (coordinateToTest[1] > currentCoordinate[1]) {
@@ -52,38 +59,43 @@ export function isMoreOptimalIconCoordinate(coordinateToTest: any, currentCoordi
   return false;
 }
 
-export function getFirstCoordinate(feature: any) {
-  switch (feature.getGeometry().getType()) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getFirstCoordinate(feature: FeatureLike): any {
+  switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
     case 'MultiPolygon':
-      return feature.getGeometry().getCoordinates()[0][0];
+      return (feature?.getGeometry() as MultiPolygon)?.getCoordinates()[0][0];
     case 'LineString':
-      return feature.getGeometry().getCoordinates()[0];
+      return (feature?.getGeometry() as LineString)?.getCoordinates()[0];
     case 'Point':
-      return feature.getGeometry().getCoordinates();
+      return (feature?.getGeometry() as Point)?.getCoordinates();
   }
+  return [];
 }
 
-export function getLastCoordinate(feature: any) {
-  const coordinates = feature.getGeometry().getCoordinates();
-
-  switch (feature.getGeometry().getType()) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getLastCoordinate(feature: FeatureLike): any {
+  switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
     case 'MultiPolygon':
-      return coordinates[coordinates.length - 2][0]; // -2 because the last coordinates are the same as the first
+      const pCoordinates = (feature?.getGeometry() as Polygon)?.getCoordinates();
+      return pCoordinates[pCoordinates.length - 2][0]; // -2 because the last coordinates are the same as the first
     case 'LineString':
-      return coordinates[coordinates.length - 1];
+      const lCoordinates = (feature?.getGeometry() as LineString)?.getCoordinates();
+      return lCoordinates[lCoordinates.length - 1];
     case 'Point':
-      return feature.getGeometry().getCoordinates();
+      return (feature?.getGeometry() as Point)?.getCoordinates();
   }
+
+  return [];
 }
 
-export function getMostTopCoordinate(feature: any) {
+export function getMostTopCoordinate(feature: FeatureLike) {
   let symbolAnchorCoordinate = null;
-  switch (feature.getGeometry().getType()) {
+  switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
     case 'MultiPolygon':
-      for (const coordinateGroup of feature.getGeometry().getCoordinates()) {
+      for (const coordinateGroup of (feature.getGeometry() as Polygon).getCoordinates()) {
         for (const coordinate of coordinateGroup) {
           if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
             symbolAnchorCoordinate = coordinate;
@@ -92,14 +104,14 @@ export function getMostTopCoordinate(feature: any) {
       }
       break;
     case 'LineString':
-      for (const coordinate of feature.getGeometry().getCoordinates()) {
+      for (const coordinate of (feature.getGeometry() as LineString).getCoordinates()) {
         if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
           symbolAnchorCoordinate = coordinate;
         }
       }
       break;
     case 'Point':
-      symbolAnchorCoordinate = feature.getGeometry().getCoordinates();
+      symbolAnchorCoordinate = (feature.getGeometry() as Point).getCoordinates();
       break;
   }
   return symbolAnchorCoordinate;
@@ -128,64 +140,77 @@ export function getColorForCategory(category: string): string {
 }
 
 export function defineDefaultValuesForSignature(signature: Sign) {
-  if (!signature.style) {
-    signature.style = 'solid';
-  }
-  if (!signature.size) {
-    signature.size = undefined;
-  }
-  if (!signature.color) {
-    if (signature.kat) {
-      signature.color = getColorForCategory(signature.kat);
+  signature.style = signature.style || signatureDefaultValues.style;
+  signature.size = signature.size || signatureDefaultValues.size;
+  signature.color = signature.color || signatureDefaultValues.color(signature.kat);
+  signature.fillOpacity = signature.fillOpacity || signatureDefaultValues.fillOpacity;
+  signature.strokeWidth = signature.strokeWidth || signatureDefaultValues.strokeWidth;
+  signature.fontSize = signature.fontSize || signatureDefaultValues.fontSize;
+  signature.fillStyle = signature.fillStyle || signatureDefaultValues.fillStyle;
+  signature.fillStyle.angle = signature.fillStyle.angle || signatureDefaultValues.fillStyleAngle;
+  signature.fillStyle.size = signature.fillStyle.size || signatureDefaultValues.fillStyleSize;
+  signature.fillStyle.spacing = signature.fillStyle.spacing || signatureDefaultValues.fillStyleSpacing;
+  signature.iconOffset = signature.iconOffset || signatureDefaultValues.iconOffset;
+  signature.protected = signature.protected || signatureDefaultValues.protected;
+  signature.labelShow = signature.labelShow || signatureDefaultValues.labelShow;
+  signature.arrow = signature.arrow || signatureDefaultValues.arrow;
+  signature.iconSize = signature.iconSize || signatureDefaultValues.iconSize;
+  signature.iconOpacity = signature.iconOpacity || signatureDefaultValues.iconOpacity;
+  signature.rotation = signature.rotation || signatureDefaultValues.rotation;
+  signature.images = signature.images || signatureDefaultValues.images;
+  signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
+}
+
+export const signatureDefaultValues: SignatureDefaultValues = {
+  style: 'solid',
+  size: undefined,
+  color: (kat?: string): string => {
+    if (kat) {
+      return getColorForCategory(kat);
     } else {
-      signature.color = '#535353';
+      return '#535353';
     }
-  }
-  if (!signature.fillOpacity) {
-    signature.fillOpacity = 0.2;
-  }
-  if (!signature.strokeWidth) {
-    signature.strokeWidth = 1;
-  }
-  if (!signature.fontSize) {
-    signature.fontSize = 1;
-  }
-  if (!signature.fillStyle) {
-    signature.fillStyle = {
-      name: 'filled',
-    };
-  }
-  if (!signature.fillStyle.angle) {
-    signature.fillStyle.angle = 45;
-  }
-  if (!signature.fillStyle.size) {
-    signature.fillStyle.size = 4;
-  }
-  if (!signature.fillStyle.spacing) {
-    signature.fillStyle.spacing = 10;
-  }
-  if (!signature.iconOffset) {
-    signature.iconOffset = 0.1;
-  }
-  if (signature.protected === undefined) {
-    signature.protected = false;
-  }
-  if (signature.labelShow === undefined) {
-    signature.labelShow = true;
-  }
-  if (!signature.arrow) {
-    signature.arrow = 'none';
-  }
-  if (!signature.iconSize) {
-    signature.iconSize = 1;
-  }
-  if (!signature.iconOpacity) {
-    signature.iconOpacity = 0.5;
-  }
-  if (!signature.rotation) {
-    signature.rotation = 1;
-  }
-  if (!signature.images) {
-    signature.images = [];
-  }
+  },
+  fillOpacity: 0.2,
+  strokeWidth: 1,
+  fontSize: 1,
+  fillStyle: {
+    name: 'filled',
+  },
+  fillStyleAngle: 45,
+  fillStyleSize: 5,
+  fillStyleSpacing: 10,
+  iconOffset: 0.1,
+  protected: false,
+  labelShow: true,
+  arrow: 'none',
+  iconSize: 1,
+  iconOpacity: 0.5,
+  rotation: 1,
+  images: [],
+  flipIcon: false,
+  hideIcon: false,
+};
+
+export interface SignatureDefaultValues {
+  style: string;
+  size?: string;
+  color: (kat?: string) => string;
+  fillOpacity: number;
+  strokeWidth: number;
+  fontSize: number;
+  fillStyle: FillStyle;
+  fillStyleAngle: number;
+  fillStyleSize: number;
+  fillStyleSpacing: number;
+  iconOffset: number;
+  protected: boolean;
+  labelShow: boolean;
+  arrow: string;
+  iconSize: number;
+  iconOpacity: number;
+  rotation: number;
+  images: string[];
+  flipIcon: boolean;
+  hideIcon: boolean;
 }
