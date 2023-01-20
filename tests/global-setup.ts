@@ -11,6 +11,7 @@ async function globalSetup(config: FullConfig) {
   const { baseURL, storageState } = config.projects[0].use;
   const browser = await chromium.launch();
   const page = await browser.newPage({ baseURL });
+  page.setDefaultTimeout(90000);
   await login(page);
   await page.getByRole('button', { name: 'Neues Ereignis' }).click();
   await page.getByText('Bearbeiten').waitFor();
