@@ -15,21 +15,13 @@ export class MapComponent implements OnInit {
   sidebarContext = SidebarContext;
   sidebarContext$: Observable<SidebarContext | null>;
   activeLayer$: Observable<ZsMapBaseLayer | undefined>;
-  width = window.innerWidth;
 
   constructor(public state: ZsMapStateService) {
     this.sidebarContext$ = state.observeSidebarContext();
     this.activeLayer$ = state.observeActiveLayer();
   }
-
-  ngOnInit(): void {
-    this.setWidth();
-  }
-
-  @HostListener('window:resize', ['$event'])
-  setWidth(): void {
-    this.width = window.innerWidth;
-  }
+  
+  ngOnInit(): void {}
 
   public drawElements = [
     { text: 'Text', type: ZsMapDrawElementStateType.TEXT },

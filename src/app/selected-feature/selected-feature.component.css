@@ -6,21 +6,11 @@ mat-card.selection {
   background-color: #f1f1f1;
   margin-bottom: 0;
   max-height: 100%;
-  min-width: 20vw;
-  max-width: 25vw;
+  margin-right: 30px;
+  max-width: calc(100vw - 30px);
   overflow: auto;
   border-radius: 0;
   z-index: 55;
-}
-
-@media screen and (max-width: 768px) {
-  mat-card.selection {
-    top: 0;
-    left: 0;
-    bottom: 0;
-    max-width: initial;
-    width: 218;
-  }
 }
 
 .titleCard {

@@ -1,15 +1,3 @@
-mat-card-title {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 300px;
-  flex-shrink: 0;
-}
-
-h1 {
-  margin: 0;
-}
-
 mat-toolbar {
   display: flex;
   flex-direction: row;
@@ -40,15 +28,8 @@ mat-toolbar {
   gap: 0.5em;
 }
 
-@media (max-width: 800px) {
-  .clock,
-  mat-card-title {
+@media (max-width: 730px) {
+  app-clock  {
     display: none;
-  }
-  app-geocoder {
-    width: 100%;
-  }
-  .inputField {
-    width: 100%;
   }
 }
