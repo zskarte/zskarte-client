@@ -56,12 +56,17 @@ export class SidebarComponent {
     const filter$ = this.layerFilter.valueChanges.pipe(startWith(''));
 
     this.filteredAvailableFeatures$ = combineLatest([availableFeatures$, filter$]).pipe(
-      map(([features, filter]) =>
-        filter === '' ? features : features.filter((f) => f.label.toLowerCase().includes(filter?.toLowerCase() ?? '')),
-      ),
+      map(([features, filter]) => {
+        features = features.sort((a: GeoFeature, b: GeoFeature) => a.label.localeCompare(b.label));
+        return filter === '' ? features : features.filter((f) => f.label.toLowerCase().includes(filter?.toLowerCase() ?? ''));
+      }),
     );
     this.favouriteFeatures$ = availableFeatures$.pipe(
-      map((features) => features.filter((feature: GeoFeature) => this.favouriteFeaturesList.includes(feature.label.toLowerCase()))),
+      map((features) =>
+        features
+          .filter((feature: GeoFeature) => this.favouriteFeaturesList.includes(feature.label.toLowerCase()))
+          .sort((a: GeoFeature, b: GeoFeature) => a.label.localeCompare(b.label)),
+      ),
     );
   }
 
