@@ -6,7 +6,6 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('create operation', async ({ page }) => {
-  await page.waitForResponse(/api\/operations/);
   await page.getByRole('button', { name: 'Neues Ereignis' }).click();
   await page.getByText('Bearbeiten').waitFor();
   await page.getByPlaceholder('Name eingeben').fill('e2e test');
