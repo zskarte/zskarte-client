@@ -57,7 +57,6 @@ export class OperationsComponent implements OnDestroy {
     );
     if (error || !operations) return;
     this.operations.next(operations);
-    this.operationToEdit.next(undefined);
   }
 
   public async selectOperation(operation: IZsMapOperation): Promise<void> {
@@ -132,6 +131,7 @@ export class OperationsComponent implements OnDestroy {
     }
 
     await this._reload();
+    this.operationToEdit.next(undefined);
   }
 
   public async exportOperation(operationId: number | undefined): Promise<void> {
