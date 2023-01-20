@@ -79,6 +79,7 @@
               *ngIf="(editMode | async) && (selectedSignature.type === 'Point' || selectedSignature.src)"
               >{{ i18n.get('labelShow') }}</mat-checkbox
             >
+            <br />
             <div *ngIf="drawElement.createdAt" class="label-right">
               {{ drawElement.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
             </div>

@@ -1,4 +1,3 @@
-
 .flexContainer {
   display: flex;
   flex-direction: column;
@@ -59,5 +58,15 @@ img {
   }
   .responsive {
     min-width: 50%;
+  }
+}
+
+@media (max-width: 600px) {
+  .flexRowContainer {
+    flex-direction: column;
+  }
+  .description {
+    font-size: 12px;
+    text-align: start;
   }
 }
