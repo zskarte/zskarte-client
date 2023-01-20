@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://api-dev.zskarte.ch',
+  // apiUrl: 'https://api-dev.zskarte.ch',
+  apiUrl: 'http://localhost:1337',
 };
 
 /*

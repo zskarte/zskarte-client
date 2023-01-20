@@ -1,7 +1,14 @@
 import { Locale } from '../state/i18n.service';
 
+export enum PermissionType {
+  READ = 'read',
+  WRITE = 'write',
+  ALL = 'all',
+}
+
 export interface IZsMapSession {
   id: string;
+  permission?: PermissionType;
   operationId?: number;
   operationName?: string;
   operationDescription?: string;

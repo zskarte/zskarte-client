@@ -162,6 +162,11 @@ export class I18NService {
       en: 'Export event',
       fr: 'Exporter événement',
     },
+    deleteOperation: {
+      de: 'Ereignis löschen',
+      en: 'Delete event',
+      fr: 'Effacer événement',
+    },
     downloadMapCSV: {
       de: 'Als CSV exportieren',
       en: 'Export as CSV',
@@ -266,6 +271,11 @@ export class I18NService {
       de: 'Deckkraft',
       fr: 'Opacité',
       en: 'Opacity',
+    },
+    defaultValues: {
+      de: 'Standardwerte zurücksetzen',
+      fr: 'Valeurs par défaut',
+      en: 'Reset Default Values',
     },
     solidLine: {
       de: 'Durchgezogen',
@@ -1254,6 +1264,21 @@ export class I18NService {
       de: 'Bitte fügen Sie die Signatur manuell ein',
       en: 'Please add the signature manually',
       fr: 'Veuillez ajouter la signature manuellement',
+    },
+    copyShareLink: {
+      de: 'Freigabe-Link kopieren',
+      en: 'Copy share link',
+      fr: 'Copier le lien de partage',
+    },
+    logout: {
+      de: 'Logout',
+      en: 'Logout',
+      fr: 'Logout',
+    },
+    copiedToClipboard: {
+      de: 'In Zwischenablage kopiert',
+      en: 'Copied to clipboard',
+      fr: 'Copié dans le presse-papiers',
     },
   };
 
