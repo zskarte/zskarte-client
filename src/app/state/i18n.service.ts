@@ -810,8 +810,8 @@ export class I18NService {
     },
     navigateOperations: {
       de: 'Zurück zu Operationen',
-      en: 'Retour aux opérations',
-      fr: 'Back to Operations',
+      en: 'Back to Operations',
+      fr: 'Retour aux opérations',
     },
     expand: {
       de: 'Ansicht wechseln',
