@@ -2,7 +2,7 @@ import { chromium, FullConfig, Page } from '@playwright/test';
 
 export async function login(page: Page) {
   await page.goto('./login');
-  await page.getByRole('button', { name: 'Login als Gast' }).click();
+  await page.getByRole('button', { name: 'Als Gast fortfahren' }).click();
   await page.getByRole('button', { name: 'Bestätigen' }).click();
   await page.waitForResponse(/api\/operations/);
 }
