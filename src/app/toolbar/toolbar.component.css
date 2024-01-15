@@ -4,9 +4,17 @@ mat-toolbar {
   flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5em;
+  gap: 2em;
   padding: 0.5em;
   height: 66px;
+}
+
+app-geocoder, app-geocoder *, app-geocoder * * {
+  flex-grow: 2;
+}
+
+app-geocoder div {
+  width: 100%;
 }
 
 @media print {
