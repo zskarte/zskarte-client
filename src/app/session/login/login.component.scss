@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: url('/assets/img/login-bg.webp') no-repeat center center fixed;
+  background: url('/assets/img/login-bg-blurred.png') no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -32,13 +32,6 @@
   }
 }
 
-.guest-login {
-  margin-top: 8px;
-}
-
-.guest-login-button:not(:disabled) {
-  color: white;
-}
 
 .login-logo {
   height: 2rem;

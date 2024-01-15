@@ -64,6 +64,7 @@ import { SyncService } from './sync/sync.service';
 import { ZsMapStateService } from './state/state.service';
 import { ApiService } from './api/api.service';
 import { ShareComponent } from './session/share/share.component';
+import { TextDividerComponent } from './text-divider/text-divider.component';
 
 registerLocaleData(localeCH);
 
@@ -107,6 +108,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     StackComponent,
     ProtocolTableComponent,
     ShareComponent,
+    TextDividerComponent,
   ],
   imports: [
     BrowserModule,
