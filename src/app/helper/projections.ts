@@ -31,9 +31,9 @@ export const availableProjections: Array<ZsKarteProjection> = [
       };
       return (
         'LV95' +
-        (coords != null && coords.length == 2
-          ? ' E' + coords[0].toLocaleString('de-CH', numberFormatOptions) + ' / N' + coords[1].toLocaleString('de-CH', numberFormatOptions)
-          : '')
+        (coords != null && coords.length == 2 ?
+          ' E' + coords[0].toLocaleString('de-CH', numberFormatOptions) + ' / N' + coords[1].toLocaleString('de-CH', numberFormatOptions)
+        : '')
       );
     },
   },
