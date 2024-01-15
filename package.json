@@ -3,7 +3,8 @@
   "version": "3.0.0-alpha.0",
   "main": "dist/electron/index.js",
   "engines": {
-    "node": ">=20.11.0"
+    "node": ">=20",
+    "yarn": ">=3"
   },
   "scripts": {
     "ng:serve": "ng serve --port 4300",
