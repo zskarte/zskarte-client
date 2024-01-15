@@ -9,9 +9,8 @@ mat-toolbar {
   height: 66px;
 }
 
-app-geocoder,
-app-geocoder *,
-app-geocoder * * {
+app-geocoder {
+  max-width: 480px;
   flex-grow: 2;
 }
 
