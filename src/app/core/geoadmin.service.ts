@@ -53,12 +53,13 @@ export class GeoadminService {
         .get(
           `https://api3.geo.admin.ch/rest/services/api/MapServer/find?layer=${layerId}&searchField=${searchField}&searchText=${searchText}&geometryFormat=geojson&sr=3857`,
         )
-        .subscribe((data) => {
-          if (data?['results']) {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        .subscribe((data: any) => {
+          if (data?.results) {
             /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
             const features: any[] = [];
-            for (const r of data['results']) {
-              const geometry = r['geometry'];
+            for (const r of data.results) {
+              const geometry = r.geometry;
               if (geometry['type'] && geometry['type'] === 'MultiPolygon') {
                 const coordinates = geometry['coordinates'];
                 const flatCoordinates: number[] = [];
