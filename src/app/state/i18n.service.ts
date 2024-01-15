@@ -1,4 +1,4 @@
-import { Injectable, TRANSLATIONS } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Sign } from '../core/entity/sign';
 import { SessionService } from '../session/session.service';
 
