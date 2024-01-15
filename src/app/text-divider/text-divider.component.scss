@@ -1,19 +1,18 @@
 .text-divider {
-    display: flex;
-    width: 100%;
-    gap: 20px;
-    align-items: center;
-    justify-content: center;
-    
-  }
-  
-  .text-divider__line {
-    flex: 1;
-    height: 1px;
-    background-color: #d6d6d6;
-  }
-  
-  .text-divider__text {
-    font-weight: 500;
-    color: #949494;
-  }
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-divider__line {
+  flex: 1;
+  height: 1px;
+  background-color: #d6d6d6;
+}
+
+.text-divider__text {
+  font-weight: 500;
+  color: #949494;
+}

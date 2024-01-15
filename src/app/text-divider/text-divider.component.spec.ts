@@ -8,9 +8,8 @@ describe('TextDividerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TextDividerComponent ]
-    })
-    .compileComponents();
+      declarations: [TextDividerComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TextDividerComponent);
     component = fixture.componentInstance;
