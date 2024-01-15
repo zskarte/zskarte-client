@@ -34,7 +34,7 @@ jobs:
           key: node-modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
-        run: yarn
+        run: yarn install --immutable --immutable-cache --check-cache --inline-builds
 
       - name: Lint
         run: yarn lint
