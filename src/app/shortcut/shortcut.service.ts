@@ -29,6 +29,7 @@ export class ShortcutService {
     // ⏎
     backspace: '\u232B',
   };
+  private _inputs = ['INPUT', 'TEXTAREA'];
   private _keydownObserver: Observable<KeyboardEvent>;
 
   constructor(private _state: ZsMapStateService) {
@@ -116,6 +117,11 @@ export class ShortcutService {
       filter((event) => {
         if (!shortcut || !key) {
           return true;
+        }
+
+        // While writing into an input, don't allow shortcuts
+        if (this._inputs.includes((event.target as HTMLElement).tagName)) {
+          return false;
         }
 
         const eventCmdOrCtrlKey = event.ctrlKey || event.metaKey;
