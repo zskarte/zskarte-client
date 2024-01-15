@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn cache clean
-          yarn install --check-cache --inline-builds
+          yarn install
 
       - name: Lint
         run: yarn lint
