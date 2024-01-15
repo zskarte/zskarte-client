@@ -17,7 +17,11 @@ export class GeoadminService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _legendCache: any;
 
-  constructor(private http: HttpClient, public i18n: I18NService, private _session: SessionService) {}
+  constructor(
+    private http: HttpClient,
+    public i18n: I18NService,
+    private _session: SessionService,
+  ) {}
 
   getFeatures(): Observable<GeoFeatures> {
     if (this._featuresCache) {
@@ -50,13 +54,14 @@ export class GeoadminService {
           `https://api3.geo.admin.ch/rest/services/api/MapServer/find?layer=${layerId}&searchField=${searchField}&searchText=${searchText}&geometryFormat=geojson&sr=3857`,
         )
         .subscribe((data) => {
-          if (data?.results) {
-            const features = [];
+          if (data?['results']) {
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+            const features: any[] = [];
             for (const r of data['results']) {
               const geometry = r['geometry'];
               if (geometry['type'] && geometry['type'] === 'MultiPolygon') {
                 const coordinates = geometry['coordinates'];
-                const flatCoordinates = [];
+                const flatCoordinates: number[] = [];
                 for (const polygon of coordinates) {
                   for (const polygonCoordinates of polygon) {
                     flatCoordinates.push(polygonCoordinates);

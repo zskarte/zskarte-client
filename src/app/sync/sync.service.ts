@@ -23,7 +23,10 @@ export class SyncService {
   private _state!: ZsMapStateService;
   private _connectingPromise: Promise<void> | undefined;
 
-  constructor(private _api: ApiService, private _session: SessionService) {
+  constructor(
+    private _api: ApiService,
+    private _session: SessionService,
+  ) {
     merge(this._session.observeOperationId(), this._session.observeIsOnline())
       .pipe(debounceTime(250))
       .subscribe(async () => {

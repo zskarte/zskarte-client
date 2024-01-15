@@ -11,7 +11,10 @@ import { OperationExportFile } from '../core/entity/operationExportFile';
 export class ImportDialogComponent {
   @ViewChild('fileInput', { static: false }) el!: ElementRef;
 
-  constructor(public dialogRef: MatDialogRef<ImportDialogComponent, OperationExportFile | null>, public i18n: I18NService) {}
+  constructor(
+    public dialogRef: MatDialogRef<ImportDialogComponent, OperationExportFile | null>,
+    public i18n: I18NService,
+  ) {}
 
   onNoClick(): void {
     this.dialogRef.close(null);

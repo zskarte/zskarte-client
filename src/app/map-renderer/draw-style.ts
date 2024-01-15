@@ -410,7 +410,7 @@ export class DrawStyle {
     editMode: boolean,
   ): string {
     feature = DrawStyle.getSubFeature(feature);
-    let relevantCoordinates = null;
+    let relevantCoordinates: any[] | null = null;
     if (feature?.getGeometry()?.getType() === 'LineString' && signature.arrow && signature.arrow !== 'none') {
       const coordinates = (feature?.getGeometry() as LineString)?.getCoordinates();
       relevantCoordinates = [coordinates[Math.max(0, coordinates.length - 1)], coordinates[Math.max(0, coordinates.length - 2)]];

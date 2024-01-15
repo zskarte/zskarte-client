@@ -14,7 +14,10 @@ import { takeUntil } from 'rxjs';
 
 export class ZsMapLineDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
   protected _olLine!: LineString;
-  constructor(protected override _id: string, protected override _state: ZsMapStateService) {
+  constructor(
+    protected override _id: string,
+    protected override _state: ZsMapStateService,
+  ) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.LINE);
     this.observeCoordinates()

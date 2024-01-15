@@ -56,7 +56,11 @@ export class SelectedFeatureComponent implements OnDestroy {
     },
   ];
 
-  constructor(public dialog: MatDialog, public i18n: I18NService, public zsMapStateService: ZsMapStateService) {
+  constructor(
+    public dialog: MatDialog,
+    public i18n: I18NService,
+    public zsMapStateService: ZsMapStateService,
+  ) {
     this.selectedFeature = this.zsMapStateService.observeSelectedElement().pipe(
       takeUntil(this._ngUnsubscribe),
       map((element) => element?.getOlFeature() as Feature<SimpleGeometry> | undefined),
