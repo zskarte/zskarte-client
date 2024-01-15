@@ -14,7 +14,11 @@ export class FabMenuComponent {
   text = '';
   isOpen = false;
 
-  constructor(public drawDialog: MatDialog, public textDialog: MatDialog, public i18n: I18NService) {}
+  constructor(
+    public drawDialog: MatDialog,
+    public textDialog: MatDialog,
+    public i18n: I18NService,
+  ) {}
 
   openDrawDialog(): void {
     this.layer?.draw(ZsMapDrawElementStateType.SYMBOL);

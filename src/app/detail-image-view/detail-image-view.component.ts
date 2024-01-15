@@ -13,7 +13,10 @@ export class DetailImageViewComponent {
   title;
   imageSrc;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Sign, public i18n: I18NService) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: Sign,
+    public i18n: I18NService,
+  ) {
     this.title = i18n.getLabelForSign(data);
     // this.imageSrc = CustomImageStoreService.getOriginalImageDataUrl(data.src);
     // if (!this.imageSrc) {

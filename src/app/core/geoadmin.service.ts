@@ -17,7 +17,11 @@ export class GeoadminService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _legendCache: any;
 
-  constructor(private http: HttpClient, public i18n: I18NService, private _session: SessionService) {}
+  constructor(
+    private http: HttpClient,
+    public i18n: I18NService,
+    private _session: SessionService,
+  ) {}
 
   getFeatures(): Observable<GeoFeatures> {
     if (this._featuresCache) {
@@ -51,12 +55,13 @@ export class GeoadminService {
         )
         .subscribe((data) => {
           if (data && data['results']) {
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
             const features: any[] = [];
             for (const r of data['results']) {
               const geometry = r['geometry'];
               if (geometry['type'] && geometry['type'] === 'MultiPolygon') {
                 const coordinates = geometry['coordinates'];
-                const flatCoordinates: any[] = [];
+                const flatCoordinates: number[] = [];
                 for (const polygon of coordinates) {
                   for (const polygonCoordinates of polygon) {
                     flatCoordinates.push(polygonCoordinates);
