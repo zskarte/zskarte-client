@@ -89,7 +89,7 @@ export class OperationsComponent implements OnDestroy {
           name: result.name,
           description: result.description,
           status: 'active',
-          mapState: result.mapState,
+          mapState: result.map,
         };
         this.saveOperation(operation);
       }
