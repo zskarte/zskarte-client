@@ -15,7 +15,7 @@ export interface IApiRequestOptions {
 
 export interface ApiResponse<T> {
   result?: T;
-  error?: HttpErrorResponse | undefined;
+  error?: HttpErrorResponse;
 }
 
 @Injectable({
