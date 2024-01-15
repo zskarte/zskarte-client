@@ -5,4 +5,4 @@ import { Component } from '@angular/core';
   templateUrl: './text-divider.component.html',
   styleUrls: ['./text-divider.component.scss'],
 })
-export class TextDividerComponent {}
+export class TextDividerComponent extends Component {}
