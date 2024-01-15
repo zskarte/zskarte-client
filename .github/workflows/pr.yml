@@ -27,12 +27,6 @@ jobs:
           corepack enable
           corepack prepare yarn@^3 --activate
 
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.yarn
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
       - name: Install dependencies
         run: yarn
 
