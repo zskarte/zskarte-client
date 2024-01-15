@@ -29,7 +29,7 @@ export class SessionService {
   ) {
     this._session.pipe(skip(1)).subscribe(async (session) => {
       this._clearOperation.next();
-      if (session && session.jwt) {
+      if (session?.jwt) {
         await db.sessions.put(session);
         if (session.operationId) {
           await this._state?.refreshMapState();

@@ -704,7 +704,7 @@ export class DrawStyle {
   }
 
   private static getAreaFill(color: string, scale: number, fillStyle: FillStyle | undefined) {
-    if (fillStyle && fillStyle.name && fillStyle.name != 'filled') {
+    if (fillStyle?.name && fillStyle.name !== 'filled') {
       return new FillPattern({
         pattern: fillStyle.name,
         ratio: 1,

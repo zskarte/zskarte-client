@@ -80,7 +80,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     );
 
     this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((feature) => {
-      if (feature && feature.get('features')) {
+      if (feature?.get('features')) {
         if (feature.get('features').length === 1) {
           this.groupedFeatures = null;
           this.featureType = feature.get('features')[0].getGeometry()?.getType();
