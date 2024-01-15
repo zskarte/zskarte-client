@@ -8,10 +8,9 @@ describe('SidebarHistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SidebarHistoryComponent]
-    })
-    .compileComponents();
-    
+      imports: [SidebarHistoryComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(SidebarHistoryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -7,9 +7,11 @@
       @switch (sidebarContext$ | async) {
         @case (sidebarContext.Filters) {
           <app-sidebar-filters></app-sidebar-filters>
-        } @case (sidebarContext.Layers) {
+        }
+        @case (sidebarContext.Layers) {
           <app-sidebar></app-sidebar>
-        } @case (sidebarContext.History) {
+        }
+        @case (sidebarContext.History) {
           <app-sidebar-history></app-sidebar-history>
         }
       }
