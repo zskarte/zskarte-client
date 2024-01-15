@@ -38,6 +38,11 @@ export class I18NService {
       en: 'Symbol',
       fr: 'Symbole',
     },
+    or: {
+      de: 'oder',
+      en: 'or',
+      fr: 'ou',
+    },
     name: {
       de: 'Name',
       en: 'Name',
@@ -969,8 +974,8 @@ export class I18NService {
       fr: 'Les données saisies sont effacées chaque soir à 00:00. Les données ne sont plus disponibles après ce processus.',
     },
     guestLogin: {
-      de: 'Login als Gast',
-      en: 'Login as guest',
+      de: 'Als Gast fortfahren',
+      en: 'Continue as guest',
       fr: 'Connexion en tant que visiteur',
     },
     addSignatureManually: {

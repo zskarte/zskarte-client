@@ -5,4 +5,5 @@ module.exports = {
   printWidth: 140,
   endOfLine: 'auto',
   tabWidth: 2,
+  experimentalTernaries: true
 };
