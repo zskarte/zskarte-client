@@ -49,8 +49,7 @@ import { EditCoordinatesComponent } from './edit-coordinates/edit-coordinates.co
 import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filters.component';
 import { SessionService } from './session/session.service';
 
-import { registerLocaleData } from '@angular/common';
-import { DatePipe } from '@angular/common';
+import { registerLocaleData, DatePipe } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
 import { LoginComponent } from './session/login/login.component';
 import { MapComponent } from './map/map.component';
