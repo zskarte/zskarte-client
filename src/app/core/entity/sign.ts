@@ -92,7 +92,7 @@ export function getLastCoordinate(feature: FeatureLike): any {
 }
 
 export function getMostTopCoordinate(feature: FeatureLike) {
-  let symbolAnchorCoordinate = null;
+  let symbolAnchorCoordinate: Coordinate | null = null;
   switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
     case 'MultiPolygon':

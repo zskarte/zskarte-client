@@ -51,12 +51,12 @@ export class GeoadminService {
         )
         .subscribe((data) => {
           if (data && data['results']) {
-            const features = [];
+            const features: any[] = [];
             for (const r of data['results']) {
               const geometry = r['geometry'];
               if (geometry['type'] && geometry['type'] === 'MultiPolygon') {
                 const coordinates = geometry['coordinates'];
-                const flatCoordinates = [];
+                const flatCoordinates: any[] = [];
                 for (const polygon of coordinates) {
                   for (const polygonCoordinates of polygon) {
                     flatCoordinates.push(polygonCoordinates);
