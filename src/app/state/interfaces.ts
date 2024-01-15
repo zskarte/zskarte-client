@@ -147,6 +147,7 @@ export interface ZsMapFreehandDrawElementState extends IZsMapBaseDrawElementStat
 export enum SidebarContext {
   Layers,
   Filters,
+  History,
 }
 
 export interface ZsMapElementToDraw {

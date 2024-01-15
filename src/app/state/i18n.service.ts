@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, TRANSLATIONS } from '@angular/core';
 import { Sign } from '../core/entity/sign';
 import { SessionService } from '../session/session.service';
 
@@ -1168,6 +1168,21 @@ export class I18NService {
       de: 'Meldenummer',
       en: 'Report number',
       fr: 'Numéro de rapport',
+    },
+    snapshotTimestamp: {
+      de: 'Sicherungszeitpunkt',
+      en: 'Backup time',
+      fr: 'Date de sauvegarde',
+    },
+    noSnapshots: {
+      de: 'Keine Sicherungen gefunden',
+      en: 'No backups found',
+      fr: 'Aucune sauvegarde trouvée',
+    },
+    toasSnapshotApplied: {
+      de: 'Sicherung angewendet',
+      en: 'Backup applied',
+      fr: 'Sauvegarde appliqué',
     },
   };
 
