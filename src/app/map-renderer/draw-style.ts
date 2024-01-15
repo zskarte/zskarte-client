@@ -497,7 +497,7 @@ export class DrawStyle {
   }
 
   private static showIcon(signature: Sign): boolean {
-    return !signature.hideIcon && !!signature.src;
+    return !signature.hideIcon && Boolean(signature.src);
   }
 
   private static createDefaultStroke(scale: number, color: string, dashed = false, opacity = 1): Stroke {

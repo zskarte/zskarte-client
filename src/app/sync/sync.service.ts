@@ -127,7 +127,7 @@ export class SyncService {
       const patches = this._mapStatePatchQueue.map((p) => ({ ...p, timestamp: new Date(), identifier: this._connectionId }));
       const { error } = await this._api.post('/api/operations/mapstate/patch', patches, {
         headers: {
-          operationId: this._session.getOperationId() + '',
+          operationId: String(this._session.getOperationId()),
           identifier: this._connectionId,
         },
       });

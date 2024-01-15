@@ -511,7 +511,7 @@ export class ZsMapStateService {
         return o?.features?.find((feature) => feature.serverLayerName === serverLayerName);
       }),
       distinctUntilChanged((x, y) => x === y),
-      takeWhile((feature) => !!feature),
+      takeWhile((feature) => Boolean(feature)),
     );
   }
 
