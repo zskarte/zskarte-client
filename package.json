@@ -2,6 +2,9 @@
   "name": "zskarte-v3",
   "version": "3.0.0-alpha.0",
   "main": "dist/electron/index.js",
+  "engines": {
+    "node": ">=20.11.0"
+  },
   "scripts": {
     "ng:serve": "ng serve --port 4300",
     "ng:serve:dev": "ng serve --port 4300 --configuration development",
