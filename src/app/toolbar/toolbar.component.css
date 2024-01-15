@@ -29,7 +29,7 @@ mat-toolbar {
 }
 
 @media (max-width: 730px) {
-  app-clock  {
+  app-clock {
     display: none;
   }
 }

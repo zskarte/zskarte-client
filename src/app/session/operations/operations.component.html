@@ -18,7 +18,9 @@
       </mat-card-content>
       <mat-card-actions>
         <button class="button" mat-button (click)="operationToEdit.next(undefined)">{{ i18n.get('cancel') }}</button>
-        <button class="button" mat-raised-button color="primary" data-testid="operation-save" (click)="saveOperation(edit)">{{ i18n.get('save') }}</button>
+        <button class="button" mat-raised-button color="primary" data-testid="operation-save" (click)="saveOperation(edit)">
+          {{ i18n.get('save') }}
+        </button>
       </mat-card-actions>
     </ng-container>
 

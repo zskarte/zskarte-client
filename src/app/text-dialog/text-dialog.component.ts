@@ -14,7 +14,10 @@ export class TextDialogComponent {
   @Input() layer?: ZsMapDrawLayer;
   text = '';
 
-  constructor(public dialogRef: MatDialogRef<DrawingDialogComponent>, public i18n: I18NService) {}
+  constructor(
+    public dialogRef: MatDialogRef<DrawingDialogComponent>,
+    public i18n: I18NService,
+  ) {}
 
   cancel(): void {
     this.dialogRef.close(null);

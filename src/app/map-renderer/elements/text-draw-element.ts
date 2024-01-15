@@ -9,7 +9,10 @@ import { takeUntil } from 'rxjs';
 
 export class ZsMapTextDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
   protected _olGeometryItem!: SimpleGeometry;
-  constructor(protected override _id: string, protected override _state: ZsMapStateService) {
+  constructor(
+    protected override _id: string,
+    protected override _state: ZsMapStateService,
+  ) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.TEXT);
     this.observeCoordinates()

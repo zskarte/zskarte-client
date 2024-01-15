@@ -17,7 +17,11 @@ export class GeoadminService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _legendCache: any;
 
-  constructor(private http: HttpClient, public i18n: I18NService, private _session: SessionService) {}
+  constructor(
+    private http: HttpClient,
+    public i18n: I18NService,
+    private _session: SessionService,
+  ) {}
 
   getFeatures(): Observable<GeoFeatures> {
     if (this._featuresCache) {

@@ -51,7 +51,6 @@ img {
   padding: 20px;
 }
 
-
 @media (min-width: 1200px) {
   .flexContainer {
     flex-direction: row;

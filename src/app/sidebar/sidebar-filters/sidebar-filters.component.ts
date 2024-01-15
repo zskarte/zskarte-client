@@ -28,7 +28,10 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   capitalizeFirstLetter = capitalizeFirstLetter;
   private _ngUnsubscribe = new Subject<void>();
 
-  constructor(public i18n: I18NService, private mapState: ZsMapStateService) {
+  constructor(
+    public i18n: I18NService,
+    private mapState: ZsMapStateService,
+  ) {
     this.hiddenSymbols$ = this.mapState.observeHiddenSymbols().pipe(takeUntil(this._ngUnsubscribe));
     this.hiddenFeatureTypes$ = this.mapState.observeHiddenFeatureTypes().pipe(takeUntil(this._ngUnsubscribe));
     this.hiddenCategories$ = this.mapState.observeHiddenCategories().pipe(takeUntil(this._ngUnsubscribe));
