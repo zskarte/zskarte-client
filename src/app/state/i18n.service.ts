@@ -43,6 +43,16 @@ export class I18NService {
       en: 'Name',
       fr: 'Nom',
     },
+    myName: {
+      de: 'Mein Name',
+      en: 'My name',
+      fr: 'Mon nom',
+    },
+    activeConnections: {
+      de: 'Aktive Verbindungen',
+      en: 'Active connections',
+      fr: 'Connexions actives',
+    },
     distance: {
       de: 'Distanz',
       en: 'Distance',
@@ -837,6 +847,11 @@ export class I18NService {
       de: 'Aktuelle position',
       en: 'Current location',
       fr: 'Emplacement actuel',
+    },
+    connections: {
+      de: 'Verbindungen',
+      en: 'Connections',
+      fr: 'Connexions',
     },
     generalFilters: {
       de: 'Globale Filter',

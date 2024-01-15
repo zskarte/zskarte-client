@@ -1,0 +1,15 @@
+<mat-selection-list>
+  <mat-form-field>
+    <mat-label>{{ i18n.get('myName') }}</mat-label>
+    <input type="text" matInput [ngModel]="session.getLabel()" (ngModelChange)="session.setLabel($event)" />
+  </mat-form-field>
+  <mat-label class="font-bold">{{ i18n.get('activeConnections') }}</mat-label>
+  <mat-list-item *ngFor="let connection of connections$ | async" class="flex-container">
+    <div class="flex-container">
+      <mat-icon mat-list-icon>network_wifi</mat-icon>
+      <span>{{ connection.label }}</span>
+      <span *ngIf="connection.currentLocation">{{ connection.currentLocation.long }}</span>
+      <span *ngIf="connection.currentLocation">{{ connection.currentLocation.lat }}</span>
+    </div>
+  </mat-list-item>
+</mat-selection-list>

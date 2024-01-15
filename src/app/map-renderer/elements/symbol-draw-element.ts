@@ -12,10 +12,7 @@ import { takeUntil } from 'rxjs';
 export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDrawElementState> {
   protected _olGeometryItem!: SimpleGeometry;
   protected _olStyles!: StyleLike;
-  constructor(
-    protected override _id: string,
-    protected override _state: ZsMapStateService,
-  ) {
+  constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.SYMBOL);
     this.observeCoordinates()

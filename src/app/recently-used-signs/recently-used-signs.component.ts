@@ -14,10 +14,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class RecentlyUsedSignsComponent implements OnInit, OnDestroy {
   private _ngUnsubscribe = new Subject<void>();
-  constructor(
-    public i18n: I18NService,
-    private sharedState: ZsMapStateService,
-  ) {}
+  constructor(public i18n: I18NService, private sharedState: ZsMapStateService) {}
 
   ngOnInit() {
     this.sharedState

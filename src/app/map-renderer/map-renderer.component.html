@@ -24,12 +24,21 @@
   </button>
   <button
     mat-icon-button
+    [color]="(sidebarContext | async) === sidebarContextValues.Connections ? 'primary' : 'basic'"
+    (click)="setSidebarContext(sidebarContextValues.Connections)"
+    [attr.aria-label]="i18n.get('connections')"
+  >
+    <mat-icon>network_wifi</mat-icon>
+  </button>
+  <button
+    mat-icon-button
     [color]="isDevicePositionFlagVisible ? 'primary' : 'basic'"
     (click)="toggleShowCurrentLocation()"
     [attr.aria-label]="i18n.get('myLocation')"
   >
     <mat-icon>my_location</mat-icon>
   </button>
+
   <button
     mat-icon-button
     *ngIf="(sidebarContext | async) !== null"

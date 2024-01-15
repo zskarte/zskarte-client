@@ -7,10 +7,7 @@ import { SessionService } from './session.service';
   providedIn: 'root',
 })
 export class SessionGuard implements CanActivate {
-  constructor(
-    private _session: SessionService,
-    private _router: Router,
-  ) {}
+  constructor(private _session: SessionService, private _router: Router) {}
   async canActivate(): Promise<boolean | UrlTree> {
     const isAuthenticated = await firstValueFrom(this._session.observeAuthenticated());
     if (isAuthenticated) {

@@ -22,10 +22,7 @@ export abstract class ZsMapBaseLayer {
     },
   });
 
-  constructor(
-    protected _id: string,
-    protected _state: ZsMapStateService,
-  ) {
+  constructor(protected _id: string, protected _state: ZsMapStateService) {
     this._layer = this._state.observeMapState().pipe(
       map((o) => {
         if (o?.layers && o.layers.length > 0) {

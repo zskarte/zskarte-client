@@ -8,8 +8,5 @@ import { I18NService } from '../state/i18n.service';
   styleUrls: ['./help.component.css'],
 })
 export class HelpComponent {
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public initialLoad: boolean,
-    public i18n: I18NService,
-  ) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public initialLoad: boolean, public i18n: I18NService) {}
 }

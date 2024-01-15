@@ -18,10 +18,7 @@ import { Signs } from '../../signs';
 export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsMapDrawElementState> extends ZsMapBaseElement<T> {
   public elementState?: T;
 
-  constructor(
-    protected override _id: string,
-    protected override _state: ZsMapStateService,
-  ) {
+  constructor(protected override _id: string, protected override _state: ZsMapStateService) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.IS_DRAW_ELEMENT, true);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, _id);

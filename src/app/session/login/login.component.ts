@@ -23,12 +23,7 @@ export class LoginComponent {
   public organizations = new BehaviorSubject<IZso[]>([]);
   public filteredOrganizations = new BehaviorSubject<IZso[]>([]);
 
-  constructor(
-    public session: SessionService,
-    public i18n: I18NService,
-    private _api: ApiService,
-    private _dialog: MatDialog,
-  ) {}
+  constructor(public session: SessionService, public i18n: I18NService, private _api: ApiService, private _dialog: MatDialog) {}
 
   async ngOnInit() {
     const { error, result } = await this._api.get<IZsMapOrganization[]>(

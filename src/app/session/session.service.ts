@@ -23,10 +23,7 @@ export class SessionService {
   private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
   private _isOnline = new BehaviorSubject<boolean>(true);
 
-  constructor(
-    private _router: Router,
-    private _api: ApiService,
-  ) {
+  constructor(private _router: Router, private _api: ApiService) {
     this._session.pipe(skip(1)).subscribe(async (session) => {
       this._clearOperation.next();
       if (session && session.jwt) {
@@ -96,6 +93,22 @@ export class SessionService {
 
   public getOrganizationId(): number | undefined {
     return this._session.value?.organizationId;
+  }
+
+  public getLabel(): string | undefined {
+    return this._session.value?.label;
+  }
+
+  public observeLabel(): Observable<string | undefined> {
+    return this._session.pipe(map((session) => session?.label));
+  }
+
+  public setLabel(label: string): void {
+    const currentSession = this._session.value;
+    if (currentSession) {
+      currentSession.label = label;
+      this._session.next(currentSession);
+    }
   }
 
   public getAuthError(): HttpErrorResponse | undefined {
@@ -196,6 +209,8 @@ export class SessionService {
     }
 
     newSession.permission = decoded.permission || PermissionType.ALL;
+
+    newSession.label = newSession.label || meResult.organization?.name || meResult.organization?.id.toString();
 
     // update organization values
     newSession.jwt = jwt;

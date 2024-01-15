@@ -64,6 +64,7 @@ import { SyncService } from './sync/sync.service';
 import { ZsMapStateService } from './state/state.service';
 import { ApiService } from './api/api.service';
 import { ShareComponent } from './session/share/share.component';
+import { SidebarConnectionsComponent } from './sidebar/sidebar-connections/sidebar-connections.component';
 
 registerLocaleData(localeCH);
 
@@ -92,6 +93,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     // sidebar
     SidebarComponent,
     SidebarFiltersComponent,
+    SidebarConnectionsComponent,
     MapLegendDisplayComponent,
     FabMenuComponent,
     DrawingDialogComponent,

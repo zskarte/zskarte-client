@@ -37,6 +37,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { Signs } from './signs';
 import { SessionService } from '../session/session.service';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
+import { SyncService } from '../sync/sync.service';
 
 @Component({
   selector: 'app-map-renderer',
@@ -102,7 +103,7 @@ export class MapRendererComponent implements AfterViewInit {
 
   constructor(
     private _state: ZsMapStateService,
-    private _session: SessionService,
+    private _sync: SyncService,
     public i18n: I18NService,
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
@@ -856,6 +857,13 @@ export class MapRendererComponent implements AfterViewInit {
     // only track if the position flag is visible
     this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
     this._geolocation.setTracking(this.isDevicePositionFlagVisible);
+
+    this._geolocation.on('change', () => {
+      const coordinates = this._geolocation.getPosition();
+      if (!coordinates) return;
+      const longlat = transform(coordinates, this._view.getProjection(), 'EPSG:4326');
+      this._sync.publishCurrentLocation({ long: longlat[0], lat: longlat[1] });
+    });
 
     this._geolocation.once('change:position', () => {
       const coordinates = this._geolocation.getPosition();

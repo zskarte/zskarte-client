@@ -14,11 +14,7 @@ export class ClockComponent {
   public now: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
   private _ngUnsubscribe = new Subject<void>();
 
-  constructor(
-    public i18n: I18NService,
-    public zsMapStateService: ZsMapStateService,
-    public session: SessionService,
-  ) {
+  constructor(public i18n: I18NService, public zsMapStateService: ZsMapStateService, public session: SessionService) {
     interval(1000)
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(() => {

@@ -11,6 +11,7 @@ export interface IZsMapSession {
   permission?: PermissionType;
   operationId?: number;
   operationName?: string;
+  label?: string;
   operationDescription?: string;
   organizationLogo?: string;
   organizationId?: number;
