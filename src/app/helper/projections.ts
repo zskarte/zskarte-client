@@ -29,12 +29,10 @@ export const availableProjections: Array<ZsKarteProjection> = [
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       };
-      return (
-        'LV95' +
-        (coords != null && coords.length == 2 ?
-          ' E' + coords[0].toLocaleString('de-CH', numberFormatOptions) + ' / N' + coords[1].toLocaleString('de-CH', numberFormatOptions)
-        : '')
-      );
+      if (!coords || coords.length !== 2) return '';
+      const x = coords[0].toLocaleString('de-CH', numberFormatOptions);
+      const y = coords[1].toLocaleString('de-CH', numberFormatOptions);
+      return `LV95 E${x} / N${y}`;
     },
   },
   {
