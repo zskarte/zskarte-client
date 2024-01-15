@@ -783,11 +783,6 @@ export class I18NService {
       en: 'Formations',
       fr: 'Formations',
     },
-    signVehicles: {
-      de: 'Fahrzeuge',
-      en: 'Vehicles',
-      fr: 'Véhicules',
-    },
     signEffect: {
       de: 'Auswirkungen',
       en: 'Effects',

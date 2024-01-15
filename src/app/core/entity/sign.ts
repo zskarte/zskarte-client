@@ -121,7 +121,6 @@ export function getMostTopCoordinate(feature: FeatureLike) {
 export const signCategories: SignCategory[] = [
   { name: 'place', color: '#0000FF' },
   { name: 'formation', color: '#0000FF' },
-  { name: 'vehicles', color: '#0000FF' },
   { name: 'action', color: '#0000FF' },
   { name: 'damage', color: '#FF0000' },
   { name: 'incident', color: '#FF0000' },
