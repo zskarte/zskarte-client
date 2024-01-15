@@ -6,3 +6,6 @@ name = "javascript"
   [analyzers.meta]
   plugins = ["angular"]
   environment = ["browser"]
+
+[[transformers]]
+name = "prettier"
