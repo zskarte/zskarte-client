@@ -748,7 +748,7 @@ export class MapRendererComponent implements AfterViewInit {
       } else if (coordinationGroup.coordinateGroupIndex) {
         // It's not the last coordination group - so we need to get rid of the coordination group inside the feature
         const oldCoordinates = coordinationGroup.feature.getGeometry()?.getCoordinates();
-        const newCoordinates = [];
+        const newCoordinates: Coordinate[] = [];
 
         if (oldCoordinates) {
           for (let i = 0; i < oldCoordinates.length; i++) {

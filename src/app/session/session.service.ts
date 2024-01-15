@@ -23,7 +23,10 @@ export class SessionService {
   private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
   private _isOnline = new BehaviorSubject<boolean>(true);
 
-  constructor(private _router: Router, private _api: ApiService) {
+  constructor(
+    private _router: Router,
+    private _api: ApiService,
+  ) {
     this._session.pipe(skip(1)).subscribe(async (session) => {
       this._clearOperation.next();
       if (session && session.jwt) {

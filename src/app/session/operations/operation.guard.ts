@@ -7,7 +7,10 @@ import { SessionService } from '../session.service';
   providedIn: 'root',
 })
 export class OperationGuard implements CanActivate {
-  constructor(private _router: Router, private _session: SessionService) {}
+  constructor(
+    private _router: Router,
+    private _session: SessionService,
+  ) {}
 
   canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (!this._session.getOperationId()) {
