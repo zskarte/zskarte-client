@@ -81,7 +81,7 @@ export class OperationsComponent implements OnDestroy {
     });
   }
 
-  public async importOperation(): Promise<void> {
+  public importOperation(): void {
     const importDialog = this._dialog.open(ImportDialogComponent);
     importDialog.afterClosed().subscribe((result) => {
       if (result) {
