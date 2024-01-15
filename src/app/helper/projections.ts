@@ -30,9 +30,9 @@ export const availableProjections: Array<ZsKarteProjection> = [
         maximumFractionDigits: 2,
       };
       if (!coords || coords.length !== 2) return '';
-      const e = coords[0].toLocaleString('de-CH', numberFormatOptions);
-      const n = coords[1].toLocaleString('de-CH', numberFormatOptions);
-      return `LV95 E${e} / N${n}`;
+      const longitude = coords[0].toLocaleString('de-CH', numberFormatOptions);
+      const latitude = coords[1].toLocaleString('de-CH', numberFormatOptions);
+      return `LV95 E${longitude} / N${latitude}`;
     },
   },
   {
