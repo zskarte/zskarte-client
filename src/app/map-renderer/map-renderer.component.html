@@ -1,20 +1,12 @@
 <div #mapElement id="map" class="map"></div>
 <div class="zoom noprint">
-  <button 
-    class="mat-elevation-z3" 
-    mat-icon-button (click)="zoomIn()" 
-    [attr.aria-label]="i18n.get('zoomIn')">
-    
+  <button class="mat-elevation-z3" mat-icon-button (click)="zoomIn()" [attr.aria-label]="i18n.get('zoomIn')">
     <mat-icon>zoom_in</mat-icon>
   </button>
-  <button 
-    class="mat-elevation-z3" 
-    mat-icon-button (click)="zoomOut()" 
-    [attr.aria-label]="i18n.get('zoomOut')">
-
+  <button class="mat-elevation-z3" mat-icon-button (click)="zoomOut()" [attr.aria-label]="i18n.get('zoomOut')">
     <mat-icon>zoom_out</mat-icon>
   </button>
-  <button 
+  <button
     class="mat-elevation-z3"
     mat-icon-button
     [color]="(sidebarContext | async) === sidebarContextValues.Layers ? 'primary' : 'basic'"
@@ -23,7 +15,7 @@
   >
     <mat-icon>layers</mat-icon>
   </button>
-  <button 
+  <button
     class="mat-elevation-z3"
     mat-icon-button
     [color]="(sidebarContext | async) === sidebarContextValues.Filters ? 'primary' : 'basic'"
@@ -32,7 +24,7 @@
   >
     <mat-icon>filter_alt</mat-icon>
   </button>
-  <button 
+  <button
     class="mat-elevation-z3"
     mat-icon-button
     [color]="isDevicePositionFlagVisible ? 'primary' : 'basic'"
@@ -41,7 +33,7 @@
   >
     <mat-icon>my_location</mat-icon>
   </button>
-  <button 
+  <button
     class="mat-elevation-z3"
     mat-icon-button
     *ngIf="(sidebarContext | async) !== null"

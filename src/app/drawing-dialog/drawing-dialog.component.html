@@ -14,19 +14,19 @@
       </mat-select>
     </mat-form-field>
   </div>
-    <app-recently-used-signs [dialog]="this" (selectSign)="select($event)"> </app-recently-used-signs>
+  <app-recently-used-signs [dialog]="this" (selectSign)="select($event)"> </app-recently-used-signs>
   <div class="overflow-auto">
     <table mat-table [dataSource]="filteredSigns">
       <ng-container matColumnDef="symbol">
         <th mat-header-cell *matHeaderCellDef>{{ i18n.get('symbol') }}</th>
-          <td mat-cell *matCellDef="let sign"><img width="25" height="25" [src]="getImageUrl(sign.src)" /></td>
+        <td mat-cell *matCellDef="let sign"><img width="25" height="25" [src]="getImageUrl(sign.src)" /></td>
       </ng-container>
-  
+
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>{{ i18n.get('name') }}</th>
         <td mat-cell *matCellDef="let sign">{{ i18n.getLabelForSign(sign) }}</td>
       </ng-container>
-  
+
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>{{ i18n.get('type') }}</th>
         <td mat-cell *matCellDef="let sign">
@@ -35,10 +35,9 @@
           </mat-icon>
         </td>
       </ng-container>
-  
+
       <tr mat-header-row *matHeaderRowDef="['symbol', 'name', 'actions']"></tr>
       <tr mat-row class="row" *matRowDef="let row; columns: ['symbol', 'name', 'actions']" (click)="select(row)"></tr>
     </table>
   </div>
-  
 </form>

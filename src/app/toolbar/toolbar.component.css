@@ -9,7 +9,9 @@ mat-toolbar {
   height: 66px;
 }
 
-app-geocoder, app-geocoder *, app-geocoder * * {
+app-geocoder,
+app-geocoder *,
+app-geocoder * * {
   flex-grow: 2;
 }
 
@@ -37,7 +39,7 @@ app-geocoder div {
 }
 
 @media (max-width: 730px) {
-  app-clock  {
+  app-clock {
     display: none;
   }
 }
