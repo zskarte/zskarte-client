@@ -25,8 +25,8 @@ export function mapProtocolEntry(
       date: datePipe.transform(element.elementState?.createdAt, 'dd.MM.yyyy HH:mm'),
       group: sk && i18n.has(sk) ? i18n.get(sk) : '',
       sign:
-        currentLocale == 'fr' ? sig.fr
-        : currentLocale == 'en' ? sig.en
+        currentLocale === 'fr' ? sig.fr
+        : currentLocale === 'en' ? sig.en
         : sig.de,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       location: JSON.stringify((geometry as any).getCoordinates() || []),
