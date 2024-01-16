@@ -11,7 +11,7 @@
     </button>
   </div>
   <hr />
-  <mat-slide-toggle [ngModel]="showCurrentLocation$ | async" (change)="state.updateShowCurrentLocation($event.checked)">
+  <mat-slide-toggle color="primary" [ngModel]="showCurrentLocation$ | async" (change)="state.updateShowCurrentLocation($event.checked)">
     <mat-label>{{ i18n.get('shareLocation') }}</mat-label>
   </mat-slide-toggle>
   <hr />
