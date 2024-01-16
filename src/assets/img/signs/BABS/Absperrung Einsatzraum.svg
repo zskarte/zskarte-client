@@ -1,21 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 497,313 L 56,557 36,522 478,278 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 950,450 L 469,317 481,278 961,411 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 1085,607 L 615,978 589,946 1060,575 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 1070,615 L 929,435 961,410 1102,590 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 568,250 L 584,224 733,476 702,476 850,224 866,250 568,250 Z M 897,215 L 717,520 537,215 897,215 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 77,512 L 248,781 213,803 43,534 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 616,979 L 425,912 439,873 629,940 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 172,909 L 397,653 427,680 203,935 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 236,969 L 460,713 490,739 266,995 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 466,705 L 551,780 524,810 439,735 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 345,602 L 430,677 403,707 318,632 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 258,945 L 343,1020 316,1050 231,975 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 137,839 L 222,914 195,944 110,869 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+	
+		.st1{clip-path:url(#SVGID_00000060025754979755927040000005731494581264484233_);fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+	.st2{clip-path:url(#SVGID_00000060025754979755927040000005731494581264484233_);fill:#0000FF;}
+	.st3{fill:none;}
+</style>
+<g>
+	<polygon class="st0" points="-4.66,0 160.66,0 160.66,156 -4.66,156 -4.66,0 	"/>
+	<polygon class="st0" points="-2.71,3.37 158.25,3.37 158.25,152.63 -2.71,152.63 -2.71,3.37 	"/>
+	<g>
+		<defs>
+			<polygon id="SVGID_1_" points="-2.2,152.13 157.74,152.13 157.74,3.88 -2.2,3.88 -2.2,152.13 			"/>
+		</defs>
+		<clipPath id="SVGID_00000064344005358064649180000009757124756862392452_">
+			<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+		</clipPath>
+		
+			<polygon style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;" points="
+			-1.86,5.59 153.9,5.59 153.9,147.62 -1.86,147.62 -1.86,5.59 		"/>
+		
+			<rect x="-4.51" y="52.28" transform="matrix(0.8754 -0.4835 0.4835 0.8754 -22.7002 22.4342)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="73.34" height="5.93"/>
+		
+			<rect x="94.42" y="11.26" transform="matrix(0.2662 -0.9639 0.9639 0.2662 25.6577 128.7437)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="5.93" height="72.52"/>
+		
+			<rect x="71.52" y="104.46" transform="matrix(0.7847 -0.6199 0.6199 0.7847 -41.8258 94.4444)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="87.03" height="5.93"/>
+		
+			<rect x="138.05" y="52.46" transform="matrix(0.7869 -0.6171 0.6171 0.7869 -12.607 101.7602)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="5.93" height="33.34"/>
+		<path style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" d="M97.63,70.24
+			L71.44,25.83h52.37L97.63,70.24z M80.6,31.06l17.02,28.87l17.02-28.87H80.6z"/>
+		
+			<rect x="11.51" y="67.11" transform="matrix(0.8459 -0.5333 0.5333 0.8459 -45.8835 21.6181)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="5.93" height="46.23"/>
+		
+			<rect x="67.01" y="114.59" transform="matrix(0.329 -0.9443 0.9443 0.329 -75.0761 152.7904)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="5.93" height="29.27"/>
+		
+			<rect x="12.23" y="107.14" transform="matrix(0.6592 -0.752 0.752 0.6592 -70.1661 65.2911)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="49.43" height="5.82"/>
+		
+			<rect x="21.43" y="115.82" transform="matrix(0.6592 -0.752 0.752 0.6592 -73.5532 75.1683)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="49.43" height="5.82"/>
+		
+			<rect x="62.36" y="96.48" transform="matrix(0.6604 -0.7509 0.7509 0.6604 -56.4698 84.5698)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="5.81" height="16.47"/>
+		
+			<rect x="44.8" y="81.52" transform="matrix(0.6605 -0.7509 0.7509 0.6605 -51.1997 66.2946)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="5.81" height="16.47"/>
+		
+			<rect x="32.18" y="131.33" transform="matrix(0.6605 -0.7509 0.7509 0.6605 -92.8831 73.7321)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="5.81" height="16.47"/>
+		
+			<rect x="14.61" y="115.94" transform="matrix(0.6604 -0.7509 0.7509 0.6604 -87.2914 55.3232)" style="clip-path:url(#SVGID_00000064344005358064649180000009757124756862392452_);fill:#0000FF;" width="5.81" height="16.47"/>
+	</g>
+	<polygon class="st3" points="-4.27,155.61 160.27,155.61 160.27,0.39 -4.27,0.39 -4.27,155.61 	"/>
+</g>
 </svg>

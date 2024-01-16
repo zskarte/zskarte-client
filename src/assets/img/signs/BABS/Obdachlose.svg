@@ -1,14 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(255,0,0)" stroke="none" d="M 142,35 L 148,1076 37,1077 32,36 142,35 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 142,35 L 148,1076 37,1077 32,36 142,35 Z"/>
-  <path fill="rgb(255,0,0)" stroke="none" d="M 1088,31 L 1093,1072 984,1073 978,32 1088,31 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 1088,31 L 1093,1072 984,1073 978,32 1088,31 Z"/>
-  <path fill="rgb(255,0,0)" stroke="none" d="M 1078,1075 L 39,1081 38,970 1078,965 1078,1075 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 1078,1075 L 39,1081 38,970 1078,965 1078,1075 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+	.st1{fill:#FF0000;}
+	.st2{fill:none;}
+</style>
+<g>
+	<polygon class="st0" points="0.23,0 155.77,0 155.77,156 0.23,156 0.23,0 	"/>
+	<polygon class="st0" points="2.34,2.17 148.14,2.17 148.14,146.6 2.34,146.6 2.34,2.17 	"/>
+	
+		<rect x="3.24" y="3.56" transform="matrix(1 -5.022987e-03 5.022987e-03 1 -0.3749 0.0549)" class="st1" width="15" height="142.22"/>
+	
+		<rect x="132.41" y="3" transform="matrix(1 -5.036176e-03 5.036176e-03 1 -0.3715 0.7055)" class="st1" width="15" height="142.22"/>
+	
+		<rect x="3.73" y="130.85" transform="matrix(1 -5.052993e-03 5.052993e-03 1 -0.6981 0.3792)" class="st1" width="141.93" height="15"/>
+	<polygon class="st2" points="0.7,155.53 155.3,155.53 155.3,0.47 0.7,0.47 0.7,155.53 	"/>
+</g>
 </svg>

@@ -1,17 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 222,35 L 937,35 937,1113 222,1113 222,35 Z M 305,1071 L 263,1029 895,1029 852,1071 852,77 895,120 263,120 305,77 305,1071 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 289,600 L 857,600 857,655 289,655 289,600 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 289,600 L 857,600 857,655 289,655 289,600 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 296,471 L 864,471 864,527 296,527 296,471 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 296,471 L 864,471 864,527 296,527 296,471 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 327,350 L 582,137 617,179 363,392 327,350 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 327,350 L 582,137 617,179 363,392 327,350 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 579,133 L 833,347 799,389 543,175 579,133 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 579,133 L 833,347 799,389 543,175 579,133 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+	.st1{fill:#0000FF;}
+	.st2{fill:none;}
+</style>
+<g>
+	<polygon class="st0" points="25.03,0 130.97,0 130.97,156 25.03,156 25.03,0 	"/>
+	<polygon class="st0" points="28.04,1.99 128,1.99 128,152.31 28.04,152.31 28.04,1.99 	"/>
+	<path class="st1" d="M127.5,151.81H28.54V2.5h98.95V151.81z M40.22,140.12h75.59V14.18H40.22V140.12z"/>
+	<rect x="37.93" y="80.71" class="st1" width="78.41" height="7.62"/>
+	<rect x="38.95" y="62.93" class="st1" width="78.4" height="7.62"/>
+	
+		<rect x="40.17" y="30.47" transform="matrix(0.766 -0.6429 0.6429 0.766 -7.2591 48.6185)" class="st1" width="45.96" height="7.62"/>
+	
+		<rect x="89.27" y="10.8" transform="matrix(0.6428 -0.7661 0.7661 0.6428 7.3803 83.3709)" class="st1" width="7.62" height="45.95"/>
+	<polygon class="st2" points="25.51,155.51 130.49,155.51 130.49,0.49 25.51,0.49 25.51,155.51 	"/>
+</g>
 </svg>

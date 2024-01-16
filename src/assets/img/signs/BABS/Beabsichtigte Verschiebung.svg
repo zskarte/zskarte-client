@@ -1,11 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 26,543 L 145,543 145,583 26,583 26,543 Z M 186,543 L 305,543 305,583 186,583 186,543 Z M 345,543 L 465,543 465,583 345,583 345,543 Z M 505,543 L 626,543 626,583 505,583 505,543 Z M 666,543 L 786,543 786,583 666,583 666,543 Z M 826,543 L 946,543 946,582 826,583 826,543 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 968,487 L 1092,562 968,638 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 966,484 L 1096,562 966,642 966,484 Z M 970,638 L 967,636 1091,561 1091,565 967,489 970,487 970,638 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#0000FF;stroke:#0000FF;stroke-width:0.1375;stroke-miterlimit:10;}
+	.st1{fill:#0000FF;}
+</style>
+<g id="MasterSlide_1_Standard">
+	<g id="Drawing_1">
+		<path class="st0" d="M3.36,73.22h16.37v5.5H3.36V73.22z M25.37,73.22h16.37v5.5H25.37V73.22z M47.23,73.22h16.5v5.5h-16.5V73.22z
+			 M69.23,73.22h16.64v5.5H69.23V73.22z M91.38,73.22h16.5v5.5h-16.5V73.22z M113.38,73.22h16.5v5.36l-16.5,0.14V73.22z"/>
+		<path class="st1" d="M132.91,65.52l17.05,10.31l-17.05,10.45V65.52z"/>
+		<path class="st0" d="M132.63,65.11l17.88,10.73l-17.88,11V65.11z M133.18,86.29l-0.41-0.28l17.05-10.31v0.55L132.77,65.8
+			l0.41-0.28V86.29z"/>
+	</g>
+</g>
 </svg>

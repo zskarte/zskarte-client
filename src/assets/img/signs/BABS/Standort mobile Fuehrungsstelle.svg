@@ -1,11 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 606,22 L 606,950 549,950 549,22 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 493,867 L 699,1075 659,1116 453,908 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 699,908 L 493,1117 453,1076 659,868 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+	.st1{fill:#0000FF;}
+	.st2{fill:none;}
+</style>
+<g>
+	<polygon class="st0" points="58.75,0 97.25,0 97.25,156 58.75,156 58.75,0 	"/>
+	<polygon class="st0" points="60.2,1.3 94.99,1.3 94.99,153.58 60.2,153.58 60.2,1.3 	"/>
+	<rect x="73.83" y="1.46" class="st1" width="8" height="128.76"/>
+	
+		<rect x="73.65" y="115.67" transform="matrix(0.7078 -0.7064 0.7064 0.7078 -73.4178 94.6053)" class="st1" width="8" height="40.77"/>
+	
+		<rect x="57.26" y="132.14" transform="matrix(0.7056 -0.7086 0.7086 0.7056 -73.6071 95.1093)" class="st1" width="40.79" height="7.99"/>
+	<polygon class="st2" points="59.24,155.51 96.76,155.51 96.76,0.49 59.24,0.49 59.24,155.51 	"/>
+</g>
 </svg>

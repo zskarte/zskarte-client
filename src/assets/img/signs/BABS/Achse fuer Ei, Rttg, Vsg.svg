@@ -1,9 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 43,539 L 213,539 213,592 43,592 43,539 Z M 270,539 L 440,539 440,592 270,592 270,539 Z M 497,539 L 668,539 668,592 497,592 497,539 Z M 724,539 L 895,539 895,592 724,592 724,539 Z M 951,539 L 1100,539 1100,592 951,592 951,539 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#0000FF;stroke:#0000FF;stroke-width:0.1402;stroke-miterlimit:10;}
+</style>
+<g>
+	<g id="MasterSlide_1_Standard">
+		<g id="Drawing_1">
+			<path class="st0" d="M0,74.29h23.83v7.43H0V74.29z M31.82,74.29h23.83v7.43H31.82V74.29z M63.63,74.29H87.6v7.43H63.63V74.29z
+				 M95.45,74.29h23.97v7.43H95.45V74.29z M127.27,74.29h20.88v7.43h-20.88V74.29z"/>
+		</g>
+	</g>
+</g>
 </svg>

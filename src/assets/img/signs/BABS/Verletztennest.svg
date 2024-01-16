@@ -1,13 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 209,28 L 909,28 909,1084 209,1084 209,28 Z M 291,1043 L 250,1001 868,1001 827,1043 827,69 868,110 250,110 291,69 291,1043 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 577,73 L 577,1048 531,1048 531,73 577,73 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 577,73 L 577,1048 531,1048 531,73 577,73 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 861,581 L 264,581 264,535 861,535 861,581 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 861,581 L 264,581 264,535 861,535 861,581 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+	.st1{fill:#0000FF;}
+	.st2{fill:none;}
+</style>
+<g>
+	<polygon class="st0" points="23.71,0 132.29,0 132.29,156 23.71,156 23.71,0 	"/>
+	<polygon class="st0" points="26.65,1.5 123.9,1.5 123.9,147.61 26.65,147.61 26.65,1.5 	"/>
+	<path class="st1" d="M123.44,147.12H27.12V1.99h96.32V147.12z M38.47,135.77h73.62V13.34H38.47V135.77z"/>
+	<rect x="71.33" y="8.16" class="st1" width="6.42" height="133.92"/>
+	<rect x="34.76" y="71.59" class="st1" width="82" height="6.42"/>
+	<polygon class="st2" points="24.18,155.53 131.82,155.53 131.82,0.47 24.18,0.47 24.18,155.53 	"/>
+</g>
 </svg>

@@ -1,15 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="none" d="M 853,535 L 251,535 251,488 853,488 853,535 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 853,535 L 251,535 251,488 853,488 853,535 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 210,28 L 911,28 911,1077 210,1077 210,28 Z M 292,1036 L 251,996 870,996 829,1036 829,69 870,110 251,110 292,69 292,1036 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 575,69 L 575,1039 528,1039 528,69 575,69 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 575,69 L 575,1039 528,1039 528,69 575,69 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 842,638 L 240,638 240,592 842,592 842,638 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 842,638 L 240,638 240,592 842,592 842,638 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+	.st1{fill:#0000FF;}
+	.st2{fill:none;}
+</style>
+<g>
+	<polygon class="st0" points="24.49,0 131.51,0 131.51,156 24.49,156 24.49,0 	"/>
+	<polygon class="st0" points="26.46,1.51 124.19,1.51 124.19,147.19 26.46,147.19 26.46,1.51 	"/>
+	<rect x="32.63" y="65.49" class="st1" width="82.83" height="6.4"/>
+	<path class="st1" d="M123.68,146.7h-96.7V2h96.7V146.7z M38.29,135.38h74.06V13.32H38.29V135.38z"/>
+	<rect x="70.89" y="7.66" class="st1" width="6.4" height="133.7"/>
+	<rect x="31.15" y="79.77" class="st1" width="82.83" height="6.39"/>
+	<polygon class="st2" points="24.97,155.52 131.03,155.52 131.03,0.48 24.97,0.48 24.97,155.52 	"/>
+</g>
 </svg>
