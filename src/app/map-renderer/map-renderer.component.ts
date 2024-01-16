@@ -2,8 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostList
 import { Draw, Select, Translate, defaults, Modify } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
-import OlTileLayer from 'ol/layer/Tile';
-import OlTileWMTS from 'ol/source/WMTS';
+import OlTileLayer from 'ol/layer/WebGLTile';
 import DrawHole from 'ol-ext/interaction/DrawHole';
 import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
@@ -81,7 +80,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _allLayers: VectorLayer<VectorSource>[] = [];
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
-  private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
+  private _featureLayerCache: Map<string, OlTileLayer> = new Map();
   private _modifyCache = new Collection<Feature>([]);
   private _currentSketch: FeatureLike | undefined;
   private _rotating = false;
@@ -597,6 +596,7 @@ export class MapRendererComponent implements AfterViewInit {
    */
   initDrawHole() {
     this._drawHole = new DrawHole({
+      // @ts-expect-error this is the correct type
       layers: this._allLayers,
       type: 'Polygon',
     });

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { I18NService } from '../state/i18n.service';
 import { tap, Observable, of } from 'rxjs';
 import { GeoFeatures } from './entity/geoFeature';
-import OlTileLayer from 'ol/layer/Tile';
+import OlTileLayer from 'ol/layer/WebGLTile';
 import OlTileGridWMTS from 'ol/tilegrid/WMTS';
 import OlTileWMTS from 'ol/source/WMTS';
 import { swissProjection } from '../helper/projections';
