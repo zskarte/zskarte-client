@@ -5,13 +5,15 @@
 <table *ngIf="snapshots$ | async; let snapshots" mat-table [dataSource]="snapshots.data" class="mat-elevation-z8">
   <ng-container matColumnDef="createdAt">
     <th mat-header-cell *matHeaderCellDef>{{ i18n.get('snapshotTimestamp') }}</th>
-    <td mat-cell *matCellDef="let element" (click)="setHistory(element)" aria-role="button"> {{element.attributes.createdAt | date:'dd.MM.yyyy HH:mm:ss'}} </td>
+    <td mat-cell *matCellDef="let element" (click)="setHistory(element)" aria-role="button">
+      {{ element.attributes.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="['createdAt']"></tr>
-  <tr mat-row *matRowDef="let row; columns: ['createdAt'];"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['createdAt']"></tr>
   <tr class="mat-mdc-row" *matNoDataRow>
-    <td class="mat-mdc-cell mdc-data-table__cell">{{i18n.get('noSnapshots')}}</td>
+    <td class="mat-mdc-cell mdc-data-table__cell">{{ i18n.get('noSnapshots') }}</td>
   </tr>
 </table>
 <mat-paginator [length]="resultSize" [pageSize]="50" aria-label="Select page of Snapshot search result"></mat-paginator>
