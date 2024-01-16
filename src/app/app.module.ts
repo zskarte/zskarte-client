@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule, isDevMode } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -65,6 +65,7 @@ import { ApiService } from './api/api.service';
 import { ShareComponent } from './session/share/share.component';
 import { ShareDialogComponent } from './session/share-dialog/share-dialog.component';
 import { TextDividerComponent } from './text-divider/text-divider.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 registerLocaleData(localeCH);
 
@@ -144,6 +145,12 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     MatListModule,
     MatFormFieldModule,
     MatSortModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-CH' },
