@@ -65,6 +65,8 @@ import { ApiService } from './api/api.service';
 import { ShareComponent } from './session/share/share.component';
 import { ShareDialogComponent } from './session/share-dialog/share-dialog.component';
 import { TextDividerComponent } from './text-divider/text-divider.component';
+import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 registerLocaleData(localeCH);
@@ -94,6 +96,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     // sidebar
     SidebarComponent,
     SidebarFiltersComponent,
+    SidebarHistoryComponent,
     MapLegendDisplayComponent,
     FabMenuComponent,
     DrawingDialogComponent,
@@ -145,6 +148,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     MatListModule,
     MatFormFieldModule,
     MatSortModule,
+    MatPaginatorModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable
