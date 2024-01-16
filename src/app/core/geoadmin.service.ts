@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { I18NService } from '../state/i18n.service';
-import { tap, Observable, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { GeoFeatures } from './entity/geoFeature';
-import OlTileLayer from 'ol/layer/Tile';
 import OlTileGridWMTS from 'ol/tilegrid/WMTS';
 import OlTileWMTS from 'ol/source/WMTS';
 import { swissProjection } from '../helper/projections';
 import { SessionService } from '../session/session.service';
+import OlTileLayer from 'ol/layer/Tile';
 
 @Injectable({
   providedIn: 'root',
