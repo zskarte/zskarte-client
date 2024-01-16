@@ -148,19 +148,23 @@ export class MapRendererComponent implements AfterViewInit {
     this._state
       .ObserveShowCurrentLocation()
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((show) => {
+      .subscribe(async (show) => {
         this.isDevicePositionFlagVisible = show;
         if (!this._deviceTrackingLayer) return;
+
+        if (!show) {
+          this._sync.publishCurrentLocation(undefined);
+        }
 
         // only track if the position flag is visible
         this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
         this._geolocation.setTracking(this.isDevicePositionFlagVisible);
 
-        this._geolocation.on('change', () => {
+        this._geolocation.on('change', async () => {
           const coordinates = this._geolocation.getPosition();
           if (!coordinates) return;
           const longlat = transform(coordinates, this._view.getProjection(), 'EPSG:4326');
-          this._sync.publishCurrentLocation({ long: longlat[0], lat: longlat[1] });
+          await this._sync.publishCurrentLocation({ long: longlat[0], lat: longlat[1] });
         });
 
         this._geolocation.once('change:position', () => {

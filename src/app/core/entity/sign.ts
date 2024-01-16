@@ -21,6 +21,7 @@ export interface Sign {
   en?: string;
   text?: string;
   label?: string;
+  createdBy?: string;
   labelShow?: boolean;
   fontSize?: number;
   style?: string;
@@ -159,6 +160,7 @@ export function defineDefaultValuesForSignature(signature: Sign) {
   signature.rotation = signature.rotation || signatureDefaultValues.rotation;
   signature.images = signature.images || signatureDefaultValues.images;
   signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
+  signature.createdBy = signature.createdBy || '';
 }
 
 export const signatureDefaultValues: SignatureDefaultValues = {

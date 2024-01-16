@@ -395,6 +395,10 @@ export class ZsMapStateService {
     return this._display.value.activeLayer ? this._layerCache[this._display.value.activeLayer] : undefined;
   }
 
+  public getShowCurrentLocation(): boolean {
+    return this._display.value.showMyLocation;
+  }
+
   public observeActiveLayer(): Observable<ZsMapBaseLayer | undefined> {
     return this._display.pipe(
       map((o) => {
@@ -616,12 +620,14 @@ export class ZsMapStateService {
     const activeLayerState = this.getActiveLayerState();
     if (activeLayerState?.type === ZsMapLayerStateType.DRAW) {
       const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
+      if (!sign.createdBy) sign.createdBy = this._session.getLabel();
       defineDefaultValuesForSignature(sign);
       const drawElement: ZsMapDrawElementState = {
         color: sign.color,
         protected: sign.protected,
         iconSize: sign.iconSize,
         hideIcon: sign.hideIcon,
+        createdBy: sign.createdBy,
         iconOffset: sign.iconOffset,
         flipIcon: sign.flipIcon,
         rotation: sign.rotation,
