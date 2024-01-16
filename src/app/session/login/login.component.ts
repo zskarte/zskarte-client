@@ -94,9 +94,8 @@ export class LoginComponent {
     if (this.isLoginWithCodeEnabled) {
       const joinLink = `share/${this.joinCode}`;
       await this.router.navigateByUrl(joinLink);
-    } else
-    {
-          await this.session.login({ identifier: this.selectedOrganization?.identifier || '', password: this.password });
+    } else {
+      await this.session.login({ identifier: this.selectedOrganization?.identifier || '', password: this.password });
     }
   }
 
