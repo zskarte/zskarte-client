@@ -30,7 +30,7 @@ import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
-import { Point, SimpleGeometry } from 'ol/geom';
+import { SimpleGeometry } from 'ol/geom';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { I18NService } from '../state/i18n.service';
 import { ApiService } from '../api/api.service';

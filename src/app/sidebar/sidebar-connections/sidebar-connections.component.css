@@ -29,6 +29,7 @@ mat-form-field {
   justify-content: space-between;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 58px;
 }
 
 hr {

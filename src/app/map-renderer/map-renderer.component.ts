@@ -199,8 +199,8 @@ export class MapRendererComponent implements AfterViewInit {
                 anchor: [0.5, 0.5],
                 anchorXUnits: 'fraction',
                 anchorYUnits: 'fraction',
-                src: 'assets/img/online.png',
-                scale: 0.1,
+                src: 'assets/img/person_pin.svg',
+                scale: 2.5,
               }),
             }),
           );
