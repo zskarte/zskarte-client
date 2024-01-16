@@ -7,7 +7,7 @@ import OlTileGridWMTS from 'ol/tilegrid/WMTS';
 import OlTileWMTS from 'ol/source/WMTS';
 import { swissProjection } from '../helper/projections';
 import { SessionService } from '../session/session.service';
-import { OlTileLayer } from '../map-renderer/utils';
+import OlTileLayer from 'ol/layer/Tile';
 
 @Injectable({
   providedIn: 'root',
