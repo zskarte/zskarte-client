@@ -6,7 +6,7 @@
     </mat-card-header>
 
     <mat-card-content>
-      <mat-form-field class="full-width" appearance="fill">
+      <mat-form-field class="full-width" appearance="fill" *ngIf="!isLoginWithCodeEnabled">
         <mat-label>ZSO</mat-label>
         <input
           matInput
@@ -32,17 +32,24 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <mat-form-field class="full-width" appearance="fill">
+      <mat-form-field class="full-width" appearance="fill" *ngIf="!isLoginWithCodeEnabled">
         <mat-label>Passwort</mat-label>
         <input matInput type="password" placeholder="Passwort eingeben" [(ngModel)]="password" name="password" />
       </mat-form-field>
-      <mat-error *ngIf="session.getAuthError()">{{
+      <mat-error *ngIf="session.getAuthError() && !isLoginWithCodeEnabled">{{
         session.getAuthError()?.error?.error?.message || session.getAuthError()?.statusText || session.getAuthError()?.message
       }}</mat-error>
+
+      <mat-form-field class="full-width" appearance="fill" *ngIf="isLoginWithCodeEnabled">
+        <mat-label>Login-Code</mat-label>
+        <input matInput type="text" placeholder="Login-Code eingeben" [(ngModel)]="joinCode" name="joinCode" />
+      </mat-form-field>
       <stack [spacing]="5">
         <button class="login-button" mat-raised-button color="primary" (click)="login()">Login</button>
-        <text-divider>{{ i18n.get('or') }}</text-divider>
-        <button class="login-button" mat-raised-button mat-button (click)="guestLogin()">{{ i18n.get('guestLogin') }}</button>
+        <button class="alternative-login-button" *ngIf="!isLoginWithCodeEnabled" mat-raised-button (click)="isLoginWithCodeEnabled = true">{{ i18n.get('codeLogin') }}</button>
+        <button class="alternative-login-button" *ngIf="isLoginWithCodeEnabled" mat-raised-button (click)="isLoginWithCodeEnabled = false">{{ i18n.get('cancel') }}</button>
+        <text-divider *ngIf="!isLoginWithCodeEnabled">{{ i18n.get('or') }}</text-divider>
+        <button class="alternative-login-button" *ngIf="!isLoginWithCodeEnabled" mat-raised-button (click)="guestLogin()">{{ i18n.get('guestLogin') }}</button>
       </stack>
     </mat-card-content>
   </mat-card>

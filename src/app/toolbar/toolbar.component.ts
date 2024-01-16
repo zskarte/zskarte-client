@@ -12,6 +12,7 @@ import { DatePipe } from '@angular/common';
 import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../helper/protocolEntry';
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ShareDialogComponent } from '../session/share-dialog/share-dialog.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -35,6 +36,7 @@ export class ToolbarComponent implements OnDestroy {
     public session: SessionService,
     private datePipe: DatePipe,
     private _snackBar: MatSnackBar,
+    private _dialog: MatDialog,
   ) {
     if (this.isInitialLaunch()) {
       this.dialog.open(HelpComponent, {
@@ -112,5 +114,13 @@ export class ToolbarComponent implements OnDestroy {
     const url = await this.session.generateShareUrl();
     await navigator.clipboard.writeText(url);
     this._snackBar.open(this.i18n.get('copiedToClipboard'), this.i18n.get('ok'), { duration: 2000 });
+  }
+
+  async generateShareQrCode(): Promise<void> {
+    const joinCode = await this.session.generateShareQrCode();
+    const importDialog = this._dialog.open(ShareDialogComponent, {
+      data: joinCode,
+    });
+    importDialog.afterClosed().subscribe(() => {});
   }
 }
