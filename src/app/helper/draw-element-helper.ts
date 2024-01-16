@@ -27,7 +27,7 @@ export class DrawElementHelper {
 
   public static createInstance(id: string, state: ZsMapStateService): ZsMapBaseDrawElement {
     const element = state.getDrawElementState(id);
-    if (element && element.type && element.id) {
+    if (element?.type && element.id) {
       switch (element?.type) {
         case ZsMapDrawElementStateType.TEXT:
           return new ZsMapTextDrawElement(element.id, state);

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, retry, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { db } from '../db/db';
-import { IAuthResult, IZsMapSession, PermissionType } from './session.interfaces';
+import { AccessTokenType, IAuthResult, IZsMapSession, PermissionType } from './session.interfaces';
 import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
 import jwtDecode from 'jwt-decode';
@@ -26,7 +26,7 @@ export class SessionService {
   constructor(private _router: Router, private _api: ApiService) {
     this._session.pipe(skip(1)).subscribe(async (session) => {
       this._clearOperation.next();
-      if (session && session.jwt) {
+      if (session?.jwt) {
         await db.sessions.put(session);
         if (session.operationId) {
           await this._state?.refreshMapState();
@@ -317,12 +317,28 @@ export class SessionService {
     const response = await this._api.post<{ accessToken: string }>('/api/accesses/auth/token/generate', {
       type: permission,
       operationId: this.getOperationId(),
+      tokenType: AccessTokenType.LONG,
     });
     if (!response.result?.accessToken) {
       throw new Error('Unable to generate share url');
     }
     const url = `${window.location.origin}/share/${response.result.accessToken}`;
     return url;
+  }
+
+  public async generateShareQrCode(permission: PermissionType = PermissionType.READ): Promise<string> {
+    if (!this.getOperationId()) {
+      throw new Error('OperationId is not defined');
+    }
+    const response = await this._api.post<{ accessToken: string }>('/api/accesses/auth/token/generate', {
+      type: permission,
+      operationId: this.getOperationId(),
+      tokenType: AccessTokenType.SHORT,
+    });
+    if (!response.result?.accessToken) {
+      throw new Error('Unable to generate share url');
+    }
+    return response.result.accessToken;
   }
 
   public observeHasWritePermission(): Observable<boolean> {

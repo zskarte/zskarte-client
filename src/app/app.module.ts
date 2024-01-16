@@ -50,8 +50,7 @@ import { EditCoordinatesComponent } from './edit-coordinates/edit-coordinates.co
 import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filters.component';
 import { SessionService } from './session/session.service';
 
-import { registerLocaleData } from '@angular/common';
-import { DatePipe } from '@angular/common';
+import { registerLocaleData, DatePipe } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
 import { LoginComponent } from './session/login/login.component';
 import { MapComponent } from './map/map.component';
@@ -66,6 +65,10 @@ import { ZsMapStateService } from './state/state.service';
 import { ApiService } from './api/api.service';
 import { ShareComponent } from './session/share/share.component';
 import { SidebarConnectionsComponent } from './sidebar/sidebar-connections/sidebar-connections.component';
+import { ShareDialogComponent } from './session/share-dialog/share-dialog.component';
+import { TextDividerComponent } from './text-divider/text-divider.component';
+import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 registerLocaleData(localeCH);
 
@@ -95,6 +98,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     SidebarComponent,
     SidebarFiltersComponent,
     SidebarConnectionsComponent,
+    SidebarHistoryComponent,
     MapLegendDisplayComponent,
     FabMenuComponent,
     DrawingDialogComponent,
@@ -110,6 +114,8 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     StackComponent,
     ProtocolTableComponent,
     ShareComponent,
+    ShareDialogComponent,
+    TextDividerComponent,
   ],
   imports: [
     BrowserModule,
@@ -145,6 +151,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     MatListModule,
     MatFormFieldModule,
     MatSortModule,
+    MatPaginatorModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-CH' },

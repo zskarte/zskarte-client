@@ -31,6 +31,10 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       takeUntil(this._unsubscribe),
     );
     this._element.pipe(takeUntil(this._unsubscribe)).subscribe((element) => {
+      if (!element) {
+        this.unsubscribe();
+        return;
+      }
       this._setSignatureState(element);
     });
   }

@@ -81,15 +81,18 @@ export class OperationsComponent implements OnDestroy {
     });
   }
 
-  public async importOperation(): Promise<void> {
+  public importOperation(): void {
     const importDialog = this._dialog.open(ImportDialogComponent);
     importDialog.afterClosed().subscribe((result) => {
       if (result) {
+        // Prior to V2 the "map" key was used to store the map state.
+        // To keep consistent with our internal naming, use "mapState" from V2 on
+        const mapState = result.version === OperationExportFileVersion.V2 ? result.mapState : result.map;
         const operation: IZsMapOperation = {
           name: result.name,
           description: result.description,
           status: 'active',
-          mapState: result.mapState,
+          mapState,
         };
         this.saveOperation(operation);
       }
@@ -143,8 +146,8 @@ export class OperationsComponent implements OnDestroy {
     const saveFile = {
       name: operation?.name,
       description: operation?.description,
-      version: OperationExportFileVersion.V1,
-      map: operation?.mapState,
+      version: OperationExportFileVersion.V2,
+      mapState: operation?.mapState,
     };
     await this.ipc.saveFile({
       data: JSON.stringify(saveFile),

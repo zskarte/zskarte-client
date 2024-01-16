@@ -74,12 +74,12 @@ export class GeocoderComponent implements OnDestroy {
     if (sig.label) {
       label += sig.label;
     }
-    const normalizedLabel = label.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const normalizedLabel = label.normalize('NFD').replace(/[\u0300-\u036f]/gu, '');
     const words = this.inputText.toLowerCase().split(' ');
     let allHits = true;
 
     words.forEach((word) => {
-      if (!normalizedLabel.toLowerCase().includes(word.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) {
+      if (!normalizedLabel.toLowerCase().includes(word.normalize('NFD').replace(/[\u0300-\u036f]/gu, ''))) {
         allHits = false;
       }
     });

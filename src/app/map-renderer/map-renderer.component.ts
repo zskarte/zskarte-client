@@ -921,7 +921,7 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   areFeaturesModifiable() {
-    return this._modifyCache.getArray().every((feature) => feature && feature.get('sig') && !feature.get('sig').protected);
+    return this._modifyCache.getArray().every((feature) => feature?.get('sig') && !feature.get('sig').protected);
   }
 
   zoomIn() {

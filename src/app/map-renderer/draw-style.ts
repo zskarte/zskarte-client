@@ -497,7 +497,7 @@ export class DrawStyle {
   }
 
   private static showIcon(signature: Sign): boolean {
-    return !signature.hideIcon && !!signature.src;
+    return !signature.hideIcon && Boolean(signature.src);
   }
 
   private static createDefaultStroke(scale: number, color: string, dashed = false, opacity = 1): Stroke {
@@ -704,7 +704,7 @@ export class DrawStyle {
   }
 
   private static getAreaFill(color: string, scale: number, fillStyle: FillStyle | undefined) {
-    if (fillStyle && fillStyle.name && fillStyle.name != 'filled') {
+    if (fillStyle?.name && fillStyle.name !== 'filled') {
       return new FillPattern({
         pattern: fillStyle.name,
         ratio: 1,

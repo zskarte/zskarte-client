@@ -149,6 +149,7 @@ export enum SidebarContext {
   Layers,
   Filters,
   Connections,
+  History,
 }
 
 export interface ZsMapElementToDraw {

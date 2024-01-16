@@ -210,8 +210,13 @@ export class ZsMapStateService {
     return this._map.asObservable();
   }
 
-  public toggleDisplayMode(): void {
+  public async toggleDisplayMode() {
+    // Make sure to get the latest mapState when the historyMode is toggled
+    // This prevents old states from the history getting applied to the state
+    await this.refreshMapState();
     this.updateDisplayState((draft) => {
+      // Reset sidebarcontext on historymode change
+      draft.sidebarContext = null;
       if (draft.displayMode == ZsMapDisplayMode.HISTORY) {
         draft.displayMode = ZsMapDisplayMode.DRAW;
         this._snackBar.open(this.i18n.get('toastDrawing'), 'OK', {
@@ -519,7 +524,7 @@ export class ZsMapStateService {
         return o?.features?.find((feature) => feature.serverLayerName === serverLayerName);
       }),
       distinctUntilChanged((x, y) => x === y),
-      takeWhile((feature) => !!feature),
+      takeWhile((feature) => Boolean(feature)),
     );
   }
 
@@ -742,7 +747,11 @@ export class ZsMapStateService {
       this._mapPatches.next(this._mapPatches.value);
       this._mapInversePatches.value.push(...inversePatches);
       this._mapInversePatches.next(this._mapInversePatches.value);
-      this._sync.publishMapStatePatches(patches);
+
+      // Only publish map state changes when not in history mode
+      if (!this.isHistoryMode()) {
+        this._sync.publishMapStatePatches(patches);
+      }
     });
     this._map.next(newState);
   }
@@ -876,7 +885,9 @@ export class ZsMapStateService {
 
   public async refreshMapState(): Promise<void> {
     if (this._session.getOperationId()) {
-      await this._sync.sendCachedMapStatePatches();
+      if (!this.isHistoryMode()) {
+        await this._sync.sendCachedMapStatePatches();
+      }
       const sha256 = async (str: string): Promise<string> => {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
         return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
