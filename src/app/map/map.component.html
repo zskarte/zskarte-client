@@ -4,15 +4,20 @@
   </div>
   <mat-sidenav-container style="flex: 1">
     <mat-sidenav class="sidenav" position="end" mode="side" #sidenav [opened]="(sidebarContext$ | async) !== null">
-      @switch (sidebarContext$ | async) { @case (sidebarContext.Filters) {
-      <app-sidebar-filters></app-sidebar-filters>
-      } @case (sidebarContext.Layers) {
-      <app-sidebar></app-sidebar>
-      } @case (sidebarContext.History) {
-      <app-sidebar-history></app-sidebar-history>
-      } @case (sidebarContext.Connections) {
-      <app-sidebar-connections></app-sidebar-connections>
-      } }
+      @switch (sidebarContext$ | async) {
+        @case (sidebarContext.Filters) {
+          <app-sidebar-filters></app-sidebar-filters>
+        }
+        @case (sidebarContext.Layers) {
+          <app-sidebar></app-sidebar>
+        }
+        @case (sidebarContext.History) {
+          <app-sidebar-history></app-sidebar-history>
+        }
+        @case (sidebarContext.Connections) {
+          <app-sidebar-connections></app-sidebar-connections>
+        }
+      }
     </mat-sidenav>
     <mat-sidenav-content>
       <div class="map">

@@ -11,7 +11,10 @@ export class CreditsComponent {
   public operationName = '';
   public logo = '';
 
-  constructor(public i18n: I18NService, public session: SessionService) {
+  constructor(
+    public i18n: I18NService,
+    public session: SessionService,
+  ) {
     this.operationName = session.getOperationName() ?? '';
     this.logo = session.getLogo() ?? '';
   }

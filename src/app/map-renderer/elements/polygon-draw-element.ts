@@ -14,7 +14,10 @@ import { takeUntil } from 'rxjs';
 
 export class ZsMapPolygonDrawElement extends ZsMapBaseDrawElement<ZsMapTextDrawElementState> {
   protected _olPolygon!: Polygon;
-  constructor(protected override _id: string, protected override _state: ZsMapStateService) {
+  constructor(
+    protected override _id: string,
+    protected override _state: ZsMapStateService,
+  ) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_TYPE, ZsMapDrawElementStateType.POLYGON);
     this.observeCoordinates()

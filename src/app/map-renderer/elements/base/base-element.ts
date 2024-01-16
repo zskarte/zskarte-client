@@ -11,7 +11,10 @@ export abstract class ZsMapBaseElement<T> {
   protected _isInitialized = false;
   protected _unsubscribe = new Subject<void>();
 
-  constructor(protected _id: string, protected _state: ZsMapStateService) {
+  constructor(
+    protected _id: string,
+    protected _state: ZsMapStateService,
+  ) {
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, _id);
   }
 
