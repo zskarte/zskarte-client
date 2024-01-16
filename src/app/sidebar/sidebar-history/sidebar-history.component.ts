@@ -58,7 +58,7 @@ export class SidebarHistoryComponent implements AfterViewInit {
 
     this.stateService.setMapState(fullSnapshot.result.mapState);
 
-    this.snackBarService.open(`${this.i18n.get('toasSnapshotApplied')}: ${snapshot.attributes.createdAt.toLocaleString()}`, 'OK', {
+    this.snackBarService.open(`${this.i18n.get('toastSnapshotApplied')}: ${snapshot.attributes.createdAt.toLocaleString()}`, 'OK', {
       duration: 2000,
     });
   }
