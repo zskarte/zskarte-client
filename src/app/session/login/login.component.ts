@@ -23,7 +23,7 @@ export class LoginComponent {
   public password = '';
   public organizations = new BehaviorSubject<IZso[]>([]);
   public filteredOrganizations = new BehaviorSubject<IZso[]>([]);
-  public isLoginWithCodeEnabled: boolean = false;
+  public isLoginWithCodeEnabled = false;
   public joinCode = '';
 
   constructor(
