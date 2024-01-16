@@ -38,7 +38,10 @@ export class SyncService {
   private _connectingPromise: Promise<void> | undefined;
   private _connections = new BehaviorSubject<Connection[]>([]);
 
-  constructor(private _api: ApiService, private _session: SessionService) {
+  constructor(
+    private _api: ApiService,
+    private _session: SessionService,
+  ) {
     merge(this._session.observeOperationId(), this._session.observeIsOnline(), this._session.observeLabel())
       .pipe(debounceTime(250))
       .subscribe(async () => {
@@ -46,19 +49,11 @@ export class SyncService {
         const isOnline = this._session.isOnline();
         const label = this._session.getLabel();
         if (!isOnline || !operationId || !label) {
-          if (isOnline) {
-            if (operationId) {
-              await this._reconnect();
-              await this._publishMapStatePatches();
-            } else {
-              await this._disconnect();
-            }
-          } else {
-            await this._disconnect();
-            return;
-          }
-          await this._reconnect();
+          await this._disconnect();
+          return;
         }
+        await this._reconnect();
+        await this._publishMapStatePatches();
       });
   }
 
