@@ -8,10 +8,9 @@ describe('ShareDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShareDialogComponent]
-    })
-    .compileComponents();
-    
+      imports: [ShareDialogComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ShareDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
