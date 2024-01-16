@@ -973,15 +973,30 @@ export class I18NService {
       en: 'Continue as guest',
       fr: 'Connexion en tant que visiteur',
     },
+    codeLogin: {
+      de: 'Login mit Code',
+      en: 'Login with code',
+      fr: 'Connexion avec code',
+    },
     addSignatureManually: {
       de: 'Bitte fügen Sie die Signatur manuell ein',
       en: 'Please add the signature manually',
       fr: 'Veuillez ajouter la signature manuellement',
     },
+    share: {
+      de: 'Freigeben',
+      en: 'Share',
+      fr: 'Partager',
+    },
     copyShareLink: {
       de: 'Freigabe-Link kopieren',
       en: 'Copy share link',
       fr: 'Copier le lien de partage',
+    },
+    showShareQrCode: {
+      de: 'QR-Code anzeigen',
+      en: 'Show qr code',
+      fr: 'Copier le qr code de partage',
     },
     logout: {
       de: 'Logout',
