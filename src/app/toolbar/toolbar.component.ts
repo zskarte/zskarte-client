@@ -13,6 +13,8 @@ import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../helper/
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ShareDialogComponent } from '../session/share-dialog/share-dialog.component';
+import { PermissionType } from '../session/session.interfaces';
+import { RevokeShareDialogComponent } from '../session/revoke-share-dialog/revoke-share-dialog.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -110,16 +112,20 @@ export class ToolbarComponent implements OnDestroy {
     this.session.setOperation(undefined);
   }
 
-  async copyShareLink(): Promise<void> {
-    const url = await this.session.generateShareUrl();
+  async copyShareLink(readOnly: boolean = true): Promise<void> {
+    const url = await this.session.generateShareUrl(readOnly ? PermissionType.READ : PermissionType.WRITE);
     await navigator.clipboard.writeText(url);
     this._snackBar.open(this.i18n.get('copiedToClipboard'), this.i18n.get('ok'), { duration: 2000 });
   }
 
-  async generateShareQrCode(): Promise<void> {
-    const joinCode = await this.session.generateShareQrCode();
+  async generateShareQrCode(readOnly: boolean = true): Promise<void> {
+    const joinCode = await this.session.generateShareQrCode(readOnly ? PermissionType.READ : PermissionType.WRITE);
     this._dialog.open(ShareDialogComponent, {
       data: joinCode,
     });
+  }
+
+  async showRevokeShareDialog(): Promise<void> {
+    this._dialog.open(RevokeShareDialogComponent);
   }
 }

@@ -998,6 +998,11 @@ export class I18NService {
       en: 'Show qr code',
       fr: 'Copier le qr code de partage',
     },
+    rewokeAccess: {
+      de: 'Freigabelinks verwalten',
+      en: 'Revoke share link',
+      fr: 'Arranger les liens de partage',
+    },
     logout: {
       de: 'Logout',
       en: 'Logout',
