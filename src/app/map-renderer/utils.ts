@@ -1,7 +1,7 @@
 import CPUTileLayer from 'ol/layer/Tile';
 import GPUTileLayer from 'ol/layer/WebGLTile';
 import TileWMTS from 'ol/source/WMTS';
-import {Subject} from 'rxjs';
+import { Subject } from 'rxjs';
 
 export type RenderStrategy = 'webgl' | 'default';
 
