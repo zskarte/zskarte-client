@@ -5,7 +5,7 @@ import QRCode from 'qrcode';
 @Component({
   selector: 'app-share-dialog',
   templateUrl: './share-dialog.component.html',
-  styleUrl: './share-dialog.component.scss',
+  styleUrls: ['./share-dialog.component.scss'],
 })
 export class ShareDialogComponent {
   public qrCodeDataUrl!: Promise<string>;

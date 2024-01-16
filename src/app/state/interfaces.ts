@@ -39,6 +39,7 @@ export interface IZsMapDisplayState {
   mapOpacity: number;
   mapCenter: number[];
   mapZoom: number;
+  showMyLocation: boolean;
   activeLayer: string | undefined;
   layerVisibility: Record<string, boolean>;
   layerOpacity: Record<string, number>;
@@ -147,6 +148,7 @@ export interface ZsMapFreehandDrawElementState extends IZsMapBaseDrawElementStat
 export enum SidebarContext {
   Layers,
   Filters,
+  Connections,
   History,
 }
 

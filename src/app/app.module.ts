@@ -27,6 +27,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatListModule } from '@angular/material/list';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
@@ -63,6 +64,7 @@ import { SyncService } from './sync/sync.service';
 import { ZsMapStateService } from './state/state.service';
 import { ApiService } from './api/api.service';
 import { ShareComponent } from './session/share/share.component';
+import { SidebarConnectionsComponent } from './sidebar/sidebar-connections/sidebar-connections.component';
 import { ShareDialogComponent } from './session/share-dialog/share-dialog.component';
 import { TextDividerComponent } from './text-divider/text-divider.component';
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
@@ -96,6 +98,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     // sidebar
     SidebarComponent,
     SidebarFiltersComponent,
+    SidebarConnectionsComponent,
     SidebarHistoryComponent,
     MapLegendDisplayComponent,
     FabMenuComponent,
@@ -126,6 +129,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     OverlayModule,
     MatProgressSpinnerModule,
     MatCheckboxModule,
+    MatBadgeModule,
     MatExpansionModule,
     MatSlideToggleModule,
     MatStepperModule,

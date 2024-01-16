@@ -98,6 +98,22 @@ export class SessionService {
     return this._session.value?.organizationId;
   }
 
+  public getLabel(): string | undefined {
+    return this._session.value?.label;
+  }
+
+  public observeLabel(): Observable<string | undefined> {
+    return this._session.pipe(map((session) => session?.label));
+  }
+
+  public setLabel(label: string): void {
+    const currentSession = this._session.value;
+    if (currentSession) {
+      currentSession.label = label;
+      this._session.next(currentSession);
+    }
+  }
+
   public getAuthError(): HttpErrorResponse | undefined {
     return this._authError.value;
   }
@@ -196,6 +212,8 @@ export class SessionService {
     }
 
     newSession.permission = decoded.permission || PermissionType.ALL;
+
+    newSession.label = newSession.label || meResult.organization?.name || meResult.organization?.id.toString();
 
     // update organization values
     newSession.jwt = jwt;
