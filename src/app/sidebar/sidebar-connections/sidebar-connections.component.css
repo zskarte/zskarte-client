@@ -5,9 +5,24 @@
   gap: 10px;
 }
 
-mat-list {
+.connections-container {
   margin-left: 20px;
   margin-right: 20px;
+}
+
+.offline-container {
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 50px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.offline-container > .mat-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 48px;
 }
 
 mat-list mat-list-item {
@@ -20,6 +35,9 @@ mat-form-field {
 
 .font-semibold {
   font-weight: 500;
+}
+.font-gray {
+  color: #8c8c8c;
 }
 
 .flex-label {

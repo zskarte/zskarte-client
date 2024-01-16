@@ -18,9 +18,15 @@ export class SidebarConnectionsComponent implements OnDestroy {
   label$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   showCurrentLocation$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   labelEdit$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public isOnline = new BehaviorSubject<boolean>(true);
   private _ngUnsubscribe = new Subject<void>();
 
-  constructor(public i18n: I18NService, private syncService: SyncService, public session: SessionService, public state: ZsMapStateService) {
+  constructor(
+    public i18n: I18NService,
+    private syncService: SyncService,
+    public session: SessionService,
+    public state: ZsMapStateService,
+  ) {
     this.connections$ = this.syncService.observeConnections().pipe(takeUntil(this._ngUnsubscribe));
     this.label$?.next(this.session.getLabel() || '');
     this.state
@@ -28,6 +34,12 @@ export class SidebarConnectionsComponent implements OnDestroy {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((showCurrentLocation) => {
         this.showCurrentLocation$.next(showCurrentLocation);
+      });
+    this.session
+      .observeIsOnline()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((isOnline) => {
+        this.isOnline.next(isOnline);
       });
   }
 

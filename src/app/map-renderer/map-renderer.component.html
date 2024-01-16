@@ -6,7 +6,8 @@
     (click)="setSidebarContext(sidebarContextValues.Connections)"
     [attr.aria-label]="i18n.get('connections')"
   >
-    <mat-icon [matBadge]="connectionCount | async" matBadgePosition="after">people</mat-icon>
+    <mat-icon *ngIf="isOnline | async" [matBadge]="connectionCount | async" matBadgePosition="after">people</mat-icon>
+    <mat-icon *ngIf="!(isOnline | async)" [matBadge]="0" matBadgeColor="warn" matBadgePosition="after">cloud_off</mat-icon>
   </button>
 
   <button class="mat-elevation-z3" mat-icon-button (click)="zoomIn()" [attr.aria-label]="i18n.get('zoomIn')">

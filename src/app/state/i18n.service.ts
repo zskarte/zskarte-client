@@ -53,6 +53,11 @@ export class I18NService {
       en: 'Name',
       fr: 'Nom',
     },
+    youAreOffline: {
+      de: 'Sie sind offline',
+      en: 'You are offline',
+      fr: 'Vous êtes hors ligne',
+    },
     myName: {
       de: 'Mein Name',
       en: 'My name',

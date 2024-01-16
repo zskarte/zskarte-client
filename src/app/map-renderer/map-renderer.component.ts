@@ -37,6 +37,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { Signs } from './signs';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 import { SyncService } from '../sync/sync.service';
+import { SessionService } from '../session/session.service';
 
 @Component({
   selector: 'app-map-renderer',
@@ -101,10 +102,12 @@ export class MapRendererComponent implements AfterViewInit {
   public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
   private existingCurrentLocations: VectorLayer<VectorSource<Point>> | undefined;
   public connectionCount = new BehaviorSubject<number>(0);
+  public isOnline = new BehaviorSubject<boolean>(true);
 
   constructor(
     private _state: ZsMapStateService,
     private _sync: SyncService,
+    private _session: SessionService,
     public i18n: I18NService,
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
@@ -134,6 +137,13 @@ export class MapRendererComponent implements AfterViewInit {
         return this.availableProjections[this.selectedProjectionIndex].translate(transform);
       }),
     );
+
+    this._session
+      .observeIsOnline()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((isOnline) => {
+        this.isOnline.next(isOnline);
+      });
 
     this._state
       .ObserveShowCurrentLocation()
