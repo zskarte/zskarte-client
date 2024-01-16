@@ -976,7 +976,7 @@ export class I18NService {
     codeLogin: {
       de: 'Login mit Code',
       en: 'Login with code',
-      fr: 'Connexion avec code'
+      fr: 'Connexion avec code',
     },
     addSignatureManually: {
       de: 'Bitte fügen Sie die Signatur manuell ein',
