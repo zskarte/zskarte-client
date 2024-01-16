@@ -135,6 +135,46 @@ export class MapRendererComponent implements AfterViewInit {
       }),
     );
 
+    this._state
+      .ObserveShowCurrentLocation()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((show) => {
+        this.isDevicePositionFlagVisible = show;
+        if (!this._deviceTrackingLayer) return;
+
+        // only track if the position flag is visible
+        this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
+        this._geolocation.setTracking(this.isDevicePositionFlagVisible);
+
+        this._geolocation.on('change', () => {
+          const coordinates = this._geolocation.getPosition();
+          if (!coordinates) return;
+          const longlat = transform(coordinates, this._view.getProjection(), 'EPSG:4326');
+          this._sync.publishCurrentLocation({ long: longlat[0], lat: longlat[1] });
+        });
+
+        this._geolocation.once('change:position', () => {
+          const coordinates = this._geolocation.getPosition();
+
+          this._devicePositionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
+
+          this._devicePositionFlag.setGeometry(this._devicePositionFlagLocation);
+          this._devicePositionFlag.changed();
+        });
+      });
+
+    this._state
+      .ObserveCurrentMapCenter()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((coordinates) => {
+        if (coordinates && coordinates[0] && coordinates[1] && this._map) {
+          this._map.getView().animate({
+            center: transform(coordinates, 'EPSG:4326', 'EPSG:3857'),
+            zoom: 14,
+          });
+        }
+      });
+
     this._sync
       .observeConnections()
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -894,33 +934,6 @@ export class MapRendererComponent implements AfterViewInit {
 
   setSidebarContext(context: SidebarContext | null) {
     this._state.toggleSidebarContext(context);
-  }
-
-  toggleShowCurrentLocation() {
-    this.isDevicePositionFlagVisible = !this.isDevicePositionFlagVisible;
-
-    // only track if the position flag is visible
-    this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
-    this._geolocation.setTracking(this.isDevicePositionFlagVisible);
-
-    this._geolocation.on('change', () => {
-      const coordinates = this._geolocation.getPosition();
-      if (!coordinates) return;
-      const longlat = transform(coordinates, this._view.getProjection(), 'EPSG:4326');
-      this._sync.publishCurrentLocation({ long: longlat[0], lat: longlat[1] });
-    });
-
-    this._geolocation.once('change:position', () => {
-      const coordinates = this._geolocation.getPosition();
-
-      this._devicePositionFlagLocation = coordinates ? new Point(coordinates) : new Point([0, 0]);
-      this._map.getView().animate({
-        center: coordinates,
-        zoom: 14,
-      });
-      this._devicePositionFlag.setGeometry(this._devicePositionFlagLocation);
-      this._devicePositionFlag.changed();
-    });
   }
 
   async rotateProjection() {

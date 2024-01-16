@@ -1,15 +1,30 @@
-<mat-selection-list>
-  <mat-form-field>
-    <mat-label>{{ i18n.get('myName') }}</mat-label>
-    <input type="text" matInput [ngModel]="session.getLabel()" (ngModelChange)="session.setLabel($event)" />
-  </mat-form-field>
-  <mat-label class="font-bold">{{ i18n.get('activeConnections') }}</mat-label>
+<mat-list>
+  <div class="flex-label">
+    <mat-form-field *ngIf="labelEdit$ | async" style="margin-bottom: -1.25em">
+      <mat-label>{{ i18n.get('myName') }}</mat-label>
+      <input type="text" matInput [ngModel]="session.getLabel()" (ngModelChange)="label$.next($event)" />
+    </mat-form-field>
+    <span *ngIf="!(labelEdit$ | async)">{{ session.getLabel() }}</span>
+    <button mat-icon-button color="basic" (click)="toggleEditLabel()">
+      <mat-icon *ngIf="!(labelEdit$ | async)">edit</mat-icon>
+      <mat-icon *ngIf="labelEdit$ | async">save</mat-icon>
+    </button>
+  </div>
+  <hr />
+  <mat-slide-toggle [ngModel]="showCurrentLocation$ | async" (change)="state.updateShowCurrentLocation($event.checked)">
+    <mat-label>{{ i18n.get('shareLocation') }}</mat-label>
+  </mat-slide-toggle>
+  <hr />
+  <mat-label class="font-semibold">{{ i18n.get('online') }}</mat-label>
   <mat-list-item *ngFor="let connection of connections$ | async" class="flex-container">
-    <div class="flex-container">
-      <mat-icon mat-list-icon>person</mat-icon>
-      <span>{{ connection.label }}</span>
-      <span *ngIf="connection.currentLocation">{{ connection.currentLocation.long }}</span>
-      <span *ngIf="connection.currentLocation">{{ connection.currentLocation.lat }}</span>
+    <div class="flex-container-connection">
+      <div style="display: flex; gap: 5px; align-items: center">
+        <mat-icon mat-list-icon>person</mat-icon>
+        <span>{{ connection.label }}</span>
+      </div>
+      <button *ngIf="connection.currentLocation" mat-icon-button color="primary" (click)="centerMap(connection.currentLocation)">
+        <mat-icon mat-list-icon *ngIf="connection.currentLocation">person_pin_circle</mat-icon>
+      </button>
     </div>
   </mat-list-item>
-</mat-selection-list>
+</mat-list>

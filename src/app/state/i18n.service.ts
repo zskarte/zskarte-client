@@ -48,10 +48,15 @@ export class I18NService {
       en: 'My name',
       fr: 'Mon nom',
     },
-    activeConnections: {
-      de: 'Aktive Verbindungen',
-      en: 'Active connections',
-      fr: 'Connexions actives',
+    shareLocation: {
+      de: 'Standort teilen',
+      en: 'Share location',
+      fr: 'Partager la position',
+    },
+    online: {
+      de: 'Online',
+      en: 'Online',
+      fr: 'En ligne',
     },
     distance: {
       de: 'Distanz',

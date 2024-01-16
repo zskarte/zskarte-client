@@ -1,18 +1,45 @@
-.flex-container {
+.flex-container-connection {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
 }
 
-mat-selection-list {
+mat-list {
   margin-left: 20px;
   margin-right: 20px;
+}
+
+mat-list mat-list-item {
+  padding: 0;
 }
 
 mat-form-field {
   width: 100%;
 }
 
-.font-bold {
-  font-weight: bold;
+.font-semibold {
+  font-weight: 500;
+}
+
+.flex-label {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: rgb(228, 217, 217);
+  background-image: linear-gradient(to right, rgba(228, 217, 217, 0), rgba(228, 217, 217, 0.75), rgba(228, 217, 217, 0));
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  margin-bottom: -1.25em;
 }
