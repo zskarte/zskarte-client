@@ -417,6 +417,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular/pwa@npm:^17.0.10":
+  version: 17.0.10
+  resolution: "@angular/pwa@npm:17.0.10"
+  dependencies:
+    "@angular-devkit/schematics": 17.0.10
+    "@schematics/angular": 17.0.10
+    parse5-html-rewriting-stream: 7.0.0
+  peerDependencies:
+    "@angular/cli": ^17.0.0
+  peerDependenciesMeta:
+    "@angular/cli":
+      optional: true
+  checksum: f2a1b6cffc56d7f18e524de136367de1a725d12e89eb33c7ebe14d1bf89330a5a6510c832bb9a95bc5884e3eb0a19d66f3e494c17182b6778ec1a9dc86549e5b
+  languageName: node
+  linkType: hard
+
 "@angular/router@npm:^17.0.9":
   version: 17.0.9
   resolution: "@angular/router@npm:17.0.9"
@@ -428,6 +444,20 @@ __metadata:
     "@angular/platform-browser": 17.0.9
     rxjs: ^6.5.3 || ^7.4.0
   checksum: a77859ea5b6c401e5a44cb9f8b95583ae35df8198a8a5266896c8d5ebe562cb576e07e9744fa0a7f9c503d39ef611bbfc7a8fed45e3b16d014b907bf392e6387
+  languageName: node
+  linkType: hard
+
+"@angular/service-worker@npm:^17.0.9":
+  version: 17.0.9
+  resolution: "@angular/service-worker@npm:17.0.9"
+  dependencies:
+    tslib: ^2.3.0
+  peerDependencies:
+    "@angular/common": 17.0.9
+    "@angular/core": 17.0.9
+  bin:
+    ngsw-config: ngsw-config.js
+  checksum: ad84f57f30edd6bc8a57d3f4ad9b452ee86935498d23d54315480d5af934eaba8b4fc24f8d724588b930fd4c0824cc717cfe153186b976c28616c6f061e076c2
   languageName: node
   linkType: hard
 
@@ -13803,7 +13833,9 @@ __metadata:
     "@angular/material": 17.0.5
     "@angular/platform-browser": ^17.0.9
     "@angular/platform-browser-dynamic": ^17.0.9
+    "@angular/pwa": ^17.0.10
     "@angular/router": ^17.0.9
+    "@angular/service-worker": ^17.0.9
     "@playwright/test": ^1.29.2
     "@types/file-saver": ^2.0.5
     "@types/geojson": ^7946.0.10
