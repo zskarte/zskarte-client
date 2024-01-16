@@ -46,11 +46,9 @@
       </mat-form-field>
       <stack [spacing]="5">
         <button class="login-button" mat-raised-button color="primary" (click)="login()">Login</button>
-        <button class="alternative-login-button" *ngIf="!isLoginWithCodeEnabled" mat-raised-button (click)="isLoginWithCodeEnabled = true">
-          {{ i18n.get('codeLogin') }}
-        </button>
-        <button class="alternative-login-button" *ngIf="isLoginWithCodeEnabled" mat-raised-button (click)="isLoginWithCodeEnabled = false">
-          {{ i18n.get('cancel') }}
+        <button class="alternative-login-button" *ngIf="!isLoginWithCodeEnabled" mat-raised-button (click)="isLoginWithCodeEnabled = !isLoginWithCodeEnabled">
+          <span *ngIf="!isLoginWithCodeEnabled">{{ i18n.get('codeLogin') }}</span>
+          <span *ngIf="isLoginWithCodeEnabled">{{ i18n.get('cancel') }}</span>
         </button>
         <text-divider *ngIf="!isLoginWithCodeEnabled">{{ i18n.get('or') }}</text-divider>
         <button class="alternative-login-button" *ngIf="!isLoginWithCodeEnabled" mat-raised-button (click)="guestLogin()">
