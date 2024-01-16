@@ -1179,7 +1179,7 @@ export class I18NService {
       en: 'No backups found',
       fr: 'Aucune sauvegarde trouvée',
     },
-    toasSnapshotApplied: {
+    toastSnapshotApplied: {
       de: 'Sicherung angewendet',
       en: 'Backup applied',
       fr: 'Sauvegarde appliqué',
