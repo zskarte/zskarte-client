@@ -35,6 +35,7 @@ export class SyncService {
         if (isOnline) {
           if (operationId) {
             await this._reconnect();
+            await this._publishMapStatePatches();
           } else {
             await this._disconnect();
           }
