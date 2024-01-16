@@ -118,9 +118,8 @@ export class ToolbarComponent implements OnDestroy {
 
   async generateShareQrCode(): Promise<void> {
     const joinCode = await this.session.generateShareQrCode();
-    const importDialog = this._dialog.open(ShareDialogComponent, {
+    this._dialog.open(ShareDialogComponent, {
       data: joinCode,
     });
-    importDialog.afterClosed().subscribe(() => {});
   }
 }
