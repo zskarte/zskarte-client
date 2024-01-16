@@ -41,9 +41,9 @@
     </button>
     <mat-divider></mat-divider>
     <ng-container *ngIf="session.observeHasWritePermission() | async">
-      <button mat-menu-item (click)="copyShareLink()">
-        <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('copyShareLink')">share</mat-icon>
-        {{ i18n.get('copyShareLink') }}
+      <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="shareOptions">
+        <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('share')">share</mat-icon>
+        {{ i18n.get('share') }}
       </button>
       <mat-divider></mat-divider>
       <button mat-menu-item class="tools-menu-item" (click)="navigateEvents()">
@@ -71,6 +71,16 @@
     <button mat-menu-item class="tools-menu-item" (click)="protocolExcelExport()">
       <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolSaveAsExcel')">save</mat-icon>
       {{ i18n.get('protocolSaveAsExcel') }}
+    </button>
+  </mat-menu>
+  <mat-menu #shareOptions="matMenu">
+    <button mat-menu-item (click)="copyShareLink()">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('copyShareLink')">share</mat-icon>
+      {{ i18n.get('copyShareLink') }}
+    </button>
+    <button mat-menu-item (click)="generateShareQrCode()">
+      <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('showShareQrCode')">qr_code</mat-icon>
+      {{ i18n.get('showShareQrCode') }}
     </button>
   </mat-menu>
 </mat-toolbar>
