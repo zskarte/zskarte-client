@@ -97,12 +97,10 @@ export class ShortcutService {
     // });
 
     this._listen({ shortcut: 'mod+y' }).subscribe(() => {
-      console.log('Undo');
       this._state.undoMapStateChange();
     });
 
     this._listen({ shortcut: 'mod+z' }).subscribe(() => {
-      console.log('Redo');
       this._state.redoMapStateChange();
     });
   }
