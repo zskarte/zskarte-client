@@ -53,6 +53,26 @@ export class I18NService {
       en: 'Name',
       fr: 'Nom',
     },
+    youAreOffline: {
+      de: 'Sie sind offline',
+      en: 'You are offline',
+      fr: 'Vous êtes hors ligne',
+    },
+    myName: {
+      de: 'Mein Name',
+      en: 'My name',
+      fr: 'Mon nom',
+    },
+    shareLocation: {
+      de: 'Standort teilen',
+      en: 'Share location',
+      fr: 'Partager la position',
+    },
+    online: {
+      de: 'Online',
+      en: 'Online',
+      fr: 'En ligne',
+    },
     distance: {
       de: 'Distanz',
       en: 'Distance',
@@ -842,6 +862,11 @@ export class I18NService {
       de: 'Aktuelle position',
       en: 'Current location',
       fr: 'Emplacement actuel',
+    },
+    connections: {
+      de: 'Verbindungen',
+      en: 'Connections',
+      fr: 'Connexions',
     },
     generalFilters: {
       de: 'Globale Filter',

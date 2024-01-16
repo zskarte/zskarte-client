@@ -1,5 +1,15 @@
 <div #mapElement id="map" class="map"></div>
 <div class="zoom noprint">
+  <button
+    mat-icon-button
+    [color]="(sidebarContext | async) === sidebarContextValues.Connections ? 'primary' : 'basic'"
+    (click)="setSidebarContext(sidebarContextValues.Connections)"
+    [attr.aria-label]="i18n.get('connections')"
+  >
+    <mat-icon *ngIf="isOnline | async" [matBadge]="connectionCount | async" matBadgePosition="after">people</mat-icon>
+    <mat-icon *ngIf="!(isOnline | async)" [matBadge]="0" matBadgeColor="warn" matBadgePosition="after">cloud_off</mat-icon>
+  </button>
+
   <button class="mat-elevation-z3" mat-icon-button (click)="zoomIn()" [attr.aria-label]="i18n.get('zoomIn')">
     <mat-icon>zoom_in</mat-icon>
   </button>
@@ -24,15 +34,7 @@
   >
     <mat-icon>filter_alt</mat-icon>
   </button>
-  <button
-    class="mat-elevation-z3"
-    mat-icon-button
-    [color]="isDevicePositionFlagVisible ? 'primary' : 'basic'"
-    (click)="toggleShowCurrentLocation()"
-    [attr.aria-label]="i18n.get('myLocation')"
-  >
-    <mat-icon>my_location</mat-icon>
-  </button>
+
   <button
     class="mat-elevation-z3"
     mat-icon-button
@@ -52,34 +54,34 @@
   >
     <mat-icon>close</mat-icon>
   </button>
+
+  <button mat-mini-fab class="edit-button" color="warn" #delete>
+    <i class="material-icons">delete_forever</i>
+  </button>
+  <button mat-mini-fab class="edit-button rotate-button" color="primary" #rotate>
+    <i class="material-icons">rotate_left</i>
+  </button>
+  <button mat-mini-fab class="edit-button" color="primary" #copy>
+    <i class="material-icons">content_copy</i>
+  </button>
+
+  <button mat-mini-fab class="edit-button" color="primary" #draw>
+    <mat-icon>stars</mat-icon>
+  </button>
+  <button mat-mini-fab class="edit-button" #close>
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <ng-container *ngIf="mousePosition | async as mousePosition">
+    <div
+      class="tooltip noprint"
+      *ngIf="currentSketchSize | async as sketchSize"
+      [style.left.px]="mousePosition[0]"
+      [style.top.px]="mousePosition[1]"
+      [innerHTML]="sketchSize"
+    ></div>
+  </ng-container>
 </div>
-<ng-container *ngIf="mousePosition | async as mousePosition">
-  <div
-    class="tooltip noprint"
-    *ngIf="currentSketchSize | async as sketchSize"
-    [style.left.px]="mousePosition[0]"
-    [style.top.px]="mousePosition[1]"
-    [innerHTML]="sketchSize"
-  ></div>
-</ng-container>
-
-<button mat-mini-fab class="edit-button" color="warn" #delete>
-  <i class="material-icons">delete_forever</i>
-</button>
-<button mat-mini-fab class="edit-button rotate-button" color="primary" #rotate>
-  <i class="material-icons">rotate_left</i>
-</button>
-<button mat-mini-fab class="edit-button" color="primary" #copy>
-  <i class="material-icons">content_copy</i>
-</button>
-
-<button mat-mini-fab class="edit-button" color="primary" #draw>
-  <mat-icon>stars</mat-icon>
-</button>
-<button mat-mini-fab class="edit-button" #close>
-  <mat-icon>close</mat-icon>
-</button>
-
 <div class="coordinates">
   <ng-container *ngIf="{ feature: selectedFeature | async } as context">
     <span *ngIf="!context.feature">
