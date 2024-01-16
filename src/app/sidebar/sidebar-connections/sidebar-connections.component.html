@@ -1,0 +1,36 @@
+<div *ngIf="isOnline | async" class="connections-container">
+  <div class="flex-label">
+    <mat-form-field *ngIf="labelEdit$ | async" style="margin-bottom: -1.25em">
+      <mat-label>{{ i18n.get('myName') }}</mat-label>
+      <input type="text" matInput [ngModel]="session.getLabel()" (ngModelChange)="label$.next($event)" />
+    </mat-form-field>
+    <span *ngIf="!(labelEdit$ | async)">{{ session.getLabel() }}</span>
+    <button mat-icon-button color="basic" (click)="toggleEditLabel()">
+      <mat-icon *ngIf="!(labelEdit$ | async)">edit</mat-icon>
+      <mat-icon *ngIf="labelEdit$ | async">save</mat-icon>
+    </button>
+  </div>
+  <hr />
+  <mat-slide-toggle color="primary" [ngModel]="showCurrentLocation$ | async" (change)="state.updateShowCurrentLocation($event.checked)">
+    <mat-label>{{ i18n.get('shareLocation') }}</mat-label>
+  </mat-slide-toggle>
+  <hr />
+  <mat-label class="font-semibold">{{ i18n.get('online') }}</mat-label>
+  <mat-list>
+    <mat-list-item *ngFor="let connection of connections$ | async" class="flex-container">
+      <div class="flex-container-connection">
+        <div style="display: flex; gap: 5px; align-items: center">
+          <mat-icon mat-list-icon>person</mat-icon>
+          <span>{{ connection.label }}</span>
+        </div>
+        <button *ngIf="connection.currentLocation" mat-icon-button color="primary" (click)="centerMap(connection.currentLocation)">
+          <mat-icon mat-list-icon *ngIf="connection.currentLocation">person_pin_circle</mat-icon>
+        </button>
+      </div>
+    </mat-list-item>
+  </mat-list>
+</div>
+<div class="offline-container" *ngIf="!(isOnline | async)">
+  <mat-icon>cloud_off</mat-icon>
+  <mat-label class="font-gray">{{ i18n.get('youAreOffline') }}</mat-label>
+</div>
