@@ -3,14 +3,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{fill:none;}
+	.st0{fill:#0000FF;}
 </style>
-<g>
-	<polygon class="st0" points="-1.17,0 157.17,0 157.17,156 -1.17,156 -1.17,0 	"/>
-	<polygon class="st0" points="2.4,3.44 144.58,3.44 144.58,142.18 2.4,142.18 2.4,3.44 	"/>
-	<path class="st1" d="M73.49,141.82L2.7,19.87h141.57L73.49,141.82z M27.01,33.87l46.48,80.08l46.48-80.08H27.01z"/>
-	<polygon class="st2" points="-0.7,155.53 156.7,155.53 156.7,0.47 -0.7,0.47 -0.7,155.53 	"/>
-</g>
+<path class="st0" d="M73.5,141.8L2.7,19.9h141.6L73.5,141.8z M27,33.9l46.5,80.1L120,33.9C120,33.9,27,33.9,27,33.9z"/>
 </svg>

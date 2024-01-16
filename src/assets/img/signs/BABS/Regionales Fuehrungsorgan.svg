@@ -3,28 +3,23 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#0000FF;}
-	.st3{font-family:'MyriadPro-Regular';}
-	.st4{font-size:27.7084px;}
-	.st5{letter-spacing:5.02;}
-	.st6{letter-spacing:3.01;}
-	.st7{fill:none;}
+	.st0{fill:#0000FF;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#0000FF;}
+	.st2{font-family:'MyriadPro-Regular';}
+	.st3{font-size:27.7084px;}
+	.st4{letter-spacing:4;}
+	.st5{letter-spacing:2;}
 </style>
 <g>
-	<polygon class="st0" points="27.89,0 128.11,0 128.11,156 27.89,156 27.89,0 	"/>
-	<polygon class="st0" points="28.53,0.98 126.97,0.98 126.97,152.98 28.53,152.98 28.53,0.98 	"/>
-	<rect x="39.87" y="41.2" class="st1" width="7.92" height="91.52"/>
-	<path class="st2" d="M29.16,137.94c0-7.96,6.67-14.41,14.91-14.41l0,0l0,0c8.23,0,14.91,6.45,14.91,14.41l0,0l0,0
-		c0,7.96-6.67,14.41-14.91,14.41l0,0l0,0C35.84,152.35,29.16,145.9,29.16,137.94L29.16,137.94L29.16,137.94z"/>
-	<path class="st1" d="M44.07,152.82c-8.48,0-15.38-6.68-15.38-14.88s6.9-14.88,15.38-14.88c8.48,0,15.38,6.67,15.38,14.88
-		S52.55,152.82,44.07,152.82z M44.07,124c-7.96,0-14.43,6.25-14.43,13.93c0,7.69,6.48,13.94,14.43,13.94s14.43-6.25,14.43-13.94
-		C58.5,130.26,52.03,124,44.07,124z"/>
-	<path class="st1" d="M81.22,81.1c-22.71,0-41.19-17.93-41.19-39.98S58.51,1.14,81.22,1.14s41.19,17.94,41.19,39.98
-		S103.93,81.1,81.22,81.1z M81.22,9.06c-18.35,0-33.27,14.38-33.27,32.06s14.93,32.06,33.27,32.06c18.35,0,33.27-14.38,33.27-32.06
-		S99.57,9.06,81.22,9.06z"/>
-	<text transform="matrix(0.9964 0 0 1 52.0505 51.4053)"><tspan x="0" y="0" class="st1 st3 st4 st5">R</tspan><tspan x="19.95" y="0" class="st1 st3 st4 st6">F</tspan><tspan x="36.88" y="0" class="st1 st3 st4">O</tspan></text>
-	<polygon class="st7" points="28.39,155.51 127.61,155.51 127.61,0.49 28.39,0.49 28.39,155.51 	"/>
+	<rect x="39.9" y="41.2" class="st0" width="7.9" height="91.5"/>
+	<path class="st1" d="M29.2,137.9c0-8,6.7-14.4,14.9-14.4l0,0l0,0c8.2,0,14.9,6.4,14.9,14.4l0,0l0,0c0,8-6.7,14.4-14.9,14.4l0,0l0,0
+		C35.8,152.4,29.2,145.9,29.2,137.9L29.2,137.9L29.2,137.9z"/>
+	<path class="st0" d="M44.1,152.8c-8.5,0-15.4-6.7-15.4-14.9s6.9-14.9,15.4-14.9s15.4,6.7,15.4,14.9S52.5,152.8,44.1,152.8z
+		 M44.1,124c-8,0-14.4,6.2-14.4,13.9c0,7.7,6.5,13.9,14.4,13.9s14.4-6.2,14.4-13.9C58.5,130.3,52,124,44.1,124z"/>
+	<path class="st0" d="M81.2,81.1c-22.7,0-41.2-17.9-41.2-40s18.5-40,41.2-40s41.2,17.9,41.2,40S103.9,81.1,81.2,81.1z M81.2,9.1
+		C62.9,9.1,48,23.4,48,41.1s14.9,32.1,33.3,32.1c18.3,0,33.3-14.4,33.3-32.1S99.6,9.1,81.2,9.1z"/>
+	<text transform="matrix(0.9964 0 0 1 52.0508 51.4053)" class="st0 st2 st3 st4">R</text>
+	<text transform="matrix(0.9964 0 0 1 71.9287 51.4053)" class="st0 st2 st3 st5">F</text>
+	<text transform="matrix(0.9964 0 0 1 88.7979 51.4053)" class="st0 st2 st3">O</text>
 </g>
 </svg>

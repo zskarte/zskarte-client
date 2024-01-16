@@ -3,18 +3,13 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{fill:none;}
+	.st0{fill:#0000FF;}
 </style>
 <g>
-	<polygon class="st0" points="23.71,0 132.29,0 132.29,156 23.71,156 23.71,0 	"/>
-	<polygon class="st0" points="26.2,2.48 122.96,2.48 122.96,148.15 26.2,148.15 26.2,2.48 	"/>
-	<rect x="32.34" y="66.95" class="st1" width="84.76" height="6.4"/>
-	<path class="st1" d="M122.48,147.66h-95.8V2.97h95.8V147.66z M38,136.34h73.16V14.29H38V136.34z"/>
-	<rect x="64.5" y="8.63" class="st1" width="6.4" height="133.7"/>
-	<rect x="30.87" y="79.75" class="st1" width="84.76" height="6.4"/>
-	<rect x="78.26" y="8.63" class="st1" width="6.4" height="133.7"/>
-	<polygon class="st2" points="24.18,155.53 131.82,155.53 131.82,0.47 24.18,0.47 24.18,155.53 	"/>
+	<rect x="32.3" y="66.9" class="st0" width="84.8" height="6.4"/>
+	<path class="st0" d="M122.5,147.7H26.7V3h95.8V147.7z M38,136.3h73.2v-122H38V136.3z"/>
+	<rect x="64.5" y="8.6" class="st0" width="6.4" height="133.7"/>
+	<rect x="30.9" y="79.8" class="st0" width="84.8" height="6.4"/>
+	<rect x="78.3" y="8.6" class="st0" width="6.4" height="133.7"/>
 </g>
 </svg>

@@ -3,39 +3,31 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#FF0000;}
-	.st2{font-family:'MyriadPro-Regular';}
-	.st3{font-size:36.4986px;}
-	.st4{letter-spacing:1;}
-	.st5{fill-rule:evenodd;clip-rule:evenodd;fill:#FF0000;}
-	.st6{fill:none;}
+	.st0{fill:#FF0000;}
+	.st1{font-family:'MyriadPro-Regular';}
+	.st2{font-size:36.4986px;}
+	.st3{fill-rule:evenodd;clip-rule:evenodd;fill:#FF0000;}
 </style>
 <g>
-	<polygon class="st0" points="6.21,0 149.79,0 149.79,156 6.21,156 6.21,0 	"/>
-	<polygon class="st0" points="7.12,0.62 147.78,0.62 147.78,154 7.12,154 7.12,0.62 	"/>
 	
-		<rect x="19.49" y="73.25" transform="matrix(0.6871 -0.7265 0.7265 0.6871 -45.3833 43.979)" class="st1" width="17.77" height="2.87"/>
+		<rect x="19.5" y="73.2" transform="matrix(0.6871 -0.7265 0.7265 0.6871 -45.3813 43.9783)" class="st0" width="17.8" height="2.9"/>
 	
-		<rect x="13.68" y="87.09" transform="matrix(0.6871 -0.7265 0.7265 0.6871 -51.1824 58.1958)" class="st1" width="56.6" height="2.87"/>
+		<rect x="13.7" y="87.1" transform="matrix(0.6871 -0.7265 0.7265 0.6871 -51.182 58.1926)" class="st0" width="56.6" height="2.9"/>
+	<rect x="8" y="100.4" transform="matrix(0.69 -0.7238 0.7238 0.69 -56.665 71.3421)" class="st0" width="94" height="2.9"/>
+	<rect x="15.1" y="108.4" transform="matrix(0.69 -0.7238 0.7238 0.69 -56.8097 86.9462)" class="st0" width="116" height="2.9"/>
+	<rect x="42.2" y="107.9" transform="matrix(0.69 -0.7238 0.7238 0.69 -48.2724 105.929)" class="st0" width="114.7" height="2.9"/>
 	
-		<rect x="7.97" y="100.39" transform="matrix(0.69 -0.7238 0.7238 0.69 -56.6679 71.3451)" class="st1" width="93.98" height="2.87"/>
+		<rect x="133.2" y="145.1" transform="matrix(0.6929 -0.721 0.721 0.6929 -62.4855 146.4008)" class="st0" width="14.8" height="2.9"/>
 	
-		<rect x="15.11" y="108.36" transform="matrix(0.69 -0.7238 0.7238 0.69 -56.8086 86.9465)" class="st1" width="115.98" height="2.87"/>
+		<rect x="72.5" y="118.1" transform="matrix(0.6725 -0.7401 0.7401 0.6725 -50.3476 125.2131)" class="st0" width="87.6" height="2.9"/>
 	
-		<rect x="42.19" y="107.89" transform="matrix(0.69 -0.7238 0.7238 0.69 -48.2751 105.9254)" class="st1" width="114.68" height="2.87"/>
+		<rect x="101.4" y="132.1" transform="matrix(0.69 -0.7238 0.7238 0.69 -56.9032 134.1826)" class="st0" width="53.5" height="2.9"/>
+	<path d="M147.4,153.5H20.8V66.1h126.5V153.5z M24.2,150h119.7V69.5H24.2V150z"/>
+	<text transform="matrix(1.0029 0 0 1 29.2495 144.8828)" class="st1 st2">1</text>
+	<text transform="matrix(1.0029 0 0 1 49.5283 144.8828)" class="st1 st2">3</text>
+	<path d="M147.1,30H78.8V0.8h68.3V30z M82.2,26.6h61.4V4.2H82.2V26.6z"/>
 	
-		<rect x="133.24" y="145.11" transform="matrix(0.6929 -0.721 0.721 0.6929 -62.4765 146.4138)" class="st1" width="14.79" height="2.87"/>
-	
-		<rect x="72.5" y="118.07" transform="matrix(0.6725 -0.7401 0.7401 0.6725 -50.3576 125.2091)" class="st1" width="87.62" height="2.87"/>
-	
-		<rect x="101.44" y="132.09" transform="matrix(0.69 -0.7238 0.7238 0.69 -56.9077 134.1852)" class="st1" width="53.53" height="2.87"/>
-	<path d="M147.37,153.46H20.84V66.1h126.53V153.46z M24.25,150.04h119.69V69.52H24.25V150.04z"/>
-	<text transform="matrix(1.0029 0 0 1 29.2499 144.8827)"><tspan x="0" y="0" class="st2 st3 st4">1</tspan><tspan x="20.22" y="0" class="st2 st3">3</tspan></text>
-	<path d="M147.09,30.01H78.83V0.76h68.26V30.01z M82.24,26.6h61.43V4.18H82.24V26.6z"/>
-	
-		<rect x="72.48" y="49.81" transform="matrix(0.6647 -0.7471 0.7471 0.6647 -6.4755 88.0648)" class="st1" width="44.77" height="2.87"/>
-	<polygon class="st5" points="102.45,31.9 113.57,30.22 113.22,41.42 102.45,31.9 	"/>
-	<polygon class="st6" points="6.71,155.5 149.29,155.5 149.29,0.5 6.71,0.5 6.71,155.5 	"/>
+		<rect x="72.5" y="49.8" transform="matrix(0.6647 -0.7471 0.7471 0.6647 -6.4837 88.0603)" class="st0" width="44.8" height="2.9"/>
+	<polygon class="st3" points="102.4,31.9 113.6,30.2 113.2,41.4 	"/>
 </g>
 </svg>

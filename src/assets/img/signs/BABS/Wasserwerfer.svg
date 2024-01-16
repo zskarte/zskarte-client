@@ -3,23 +3,18 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{font-family:'MyriadPro-Regular';}
-	.st3{font-size:28.5897px;}
-	.st4{fill-rule:evenodd;clip-rule:evenodd;fill:#0000FF;}
-	.st5{fill:none;}
+	.st0{fill:#0000FF;}
+	.st1{font-family:'MyriadPro-Regular';}
+	.st2{font-size:28.5897px;}
+	.st3{fill-rule:evenodd;clip-rule:evenodd;fill:#0000FF;}
 </style>
 <g>
-	<polygon class="st0" points="0,36.64 156,36.64 156,119.36 0,119.36 	"/>
-	<polygon class="st0" points="0.33,37.23 154.5,37.23 154.5,117.77 0.33,117.77 	"/>
-	<path class="st1" d="M154.42,117.7H0.41V37.3h154.01L154.42,117.7L154.42,117.7z M7.04,111.07H147.8V43.92H7.04V111.07z"/>
-	<path class="st1" d="M100.23,115.16V41.08l48.46,37.04L100.23,115.16z M106.85,54.48v47.29l30.93-23.64L106.85,54.48z"/>
-	<text transform="matrix(1.001 0 0 1 20.4834 86.752)" class="st1 st2 st3">W</text>
-	<rect x="66.35" y="72.59" class="st1" width="33.28" height="9.73"/>
-	<polygon class="st4" points="94.75,62.85 114.24,77.46 94.74,92.07 	"/>
-	<path class="st4" d="M51.8,77.54c0-3.55,2.89-6.43,6.47-6.43l0,0l0,0c3.57,0,6.47,2.88,6.47,6.43l0,0l0,0
-		c0,3.55-2.9,6.43-6.47,6.43l0,0l0,0C54.7,83.96,51.8,81.09,51.8,77.54L51.8,77.54L51.8,77.54z"/>
-	<polygon class="st5" points="0.26,119.1 155.74,119.1 155.74,36.9 0.26,36.9 	"/>
+	<path class="st0" d="M154.4,117.7H0.4V37.3h154V117.7L154.4,117.7z M7,111.1h140.8V43.9H7V111.1z"/>
+	<path class="st0" d="M100.2,115.2V41.1l48.5,37L100.2,115.2z M106.8,54.5v47.3l30.9-23.6L106.8,54.5z"/>
+	<text transform="matrix(1.001 0 0 1 20.4834 86.752)" class="st0 st1 st2">W</text>
+	<rect x="66.3" y="72.6" class="st0" width="33.3" height="9.7"/>
+	<polygon class="st3" points="94.8,62.8 114.2,77.5 94.7,92.1 	"/>
+	<path class="st3" d="M51.8,77.5c0-3.6,2.9-6.4,6.5-6.4l0,0l0,0c3.6,0,6.5,2.9,6.5,6.4l0,0l0,0c0,3.6-2.9,6.4-6.5,6.4l0,0l0,0
+		C54.7,84,51.8,81.1,51.8,77.5L51.8,77.5L51.8,77.5z"/>
 </g>
 </svg>

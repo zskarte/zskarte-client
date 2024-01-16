@@ -3,26 +3,21 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}
-	.st2{enable-background:new    ;}
-	.st3{fill:#FF9900;}
-	.st4{font-family:'MyriadPro-Regular';}
-	.st5{font-size:39.3248px;}
-	.st6{letter-spacing:6;}
-	.st7{fill:none;}
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}
+	.st1{enable-background:new    ;}
+	.st2{fill:#FF9900;}
+	.st3{font-family:'MyriadPro-Regular';}
+	.st4{font-size:39.3248px;}
+	.st5{letter-spacing:5;}
 </style>
 <g>
-	<polygon class="st0" points="0,10.33 156,10.33 156,145.67 0,145.67 	"/>
-	<polygon class="st0" points="1.39,11.95 153.21,11.95 153.21,142.3 1.39,142.3 	"/>
-	<path class="st1" d="M153.02,142.11H1.59L77.3,12.14L153.02,142.11L153.02,142.11L153.02,142.11z M133.97,132.63L77.3,34.25
-		l-56.68,98.38H133.97L133.97,132.63L133.97,132.63z"/>
-	<g class="st2">
-		<text transform="matrix(1.0002 0 0 1 52.1123 118.4092)" class="st3 st4 st5 st6">E</text>
+	<path class="st0" d="M153,142.1H1.6l75.7-130L153,142.1L153,142.1L153,142.1z M134,132.6L77.3,34.2l-56.7,98.4H134L134,132.6
+		L134,132.6z"/>
+	<g class="st1">
+		<text transform="matrix(1.0002 0 0 1 52.1123 118.4092)" class="st2 st3 st4 st5">E</text>
 	</g>
-	<g class="st2">
-		<text transform="matrix(1.0002 0 0 1 78.2651 118.4092)" class="st3 st4 st5">x</text>
+	<g class="st1">
+		<text transform="matrix(1.0002 0 0 1 78.2651 118.4092)" class="st2 st3 st4">x</text>
 	</g>
-	<polygon class="st7" points="0.43,145.24 155.57,145.24 155.57,10.76 0.43,10.76 	"/>
 </g>
 </svg>

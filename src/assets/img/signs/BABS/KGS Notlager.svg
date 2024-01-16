@@ -1,31 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 157 157" style="enable-background:new 0 0 157 157;" xml:space="preserve">
+	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#0000FF;}
-	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st2{fill:#FFFFFF;}
-	.st3{fill-rule:evenodd;clip-rule:evenodd;fill:#0000FF;}
 </style>
 <g>
-	<path class="st0" d="M31.1,156.5V51.09L76.44,0.5l49.46,50.59V156.5H31.1L31.1,156.5z M117.66,148.07l-4.12,4.22V51.09l4.12,4.22
-		L72.32,13.15h8.24L39.34,55.31v-4.22v101.19l-4.12-4.22h82.44V148.07z"/>
-	<polygon class="st1" points="105.29,114.34 76.44,84.82 105.29,59.53 	"/>
-	<path class="st2" d="M105.29,114.34L105.29,114.34L105.29,114.34L76.44,84.82l0,0l0,0l28.85-25.3l0,0l0,0V114.34L105.29,114.34z
-		 M105.29,55.31v4.22l-28.85,25.3l0,0l28.85,29.51l0,0V59.53V55.31z"/>
-	<polygon class="st1" points="51.71,114.34 76.44,84.82 51.71,59.53 	"/>
-	<path class="st2" d="M51.71,114.34h-4.12l28.85-29.51l0,0l-28.85-25.3h4.12L51.71,114.34L51.71,114.34z M47.58,59.53h4.12l0,0
-		l24.73,25.3l0,0L51.7,114.34l0,0h-4.12V59.53L47.58,59.53z"/>
-	<polygon class="st3" points="51.71,114.34 76.44,84.82 105.29,114.34 76.44,143.85 	"/>
-	<path class="st0" d="M47.58,114.34L47.58,114.34l28.85-29.51l0,0l28.85,29.51l0,0l-28.85,29.51l0,0L47.58,114.34L47.58,114.34z
-		 M76.44,143.85L76.44,143.85l28.85-29.51l0,0L76.44,84.82l0,0l-24.73,29.51l0,0L76.44,143.85L76.44,143.85z"/>
-	<polygon class="st3" points="101.17,59.53 76.44,84.82 51.71,59.53 	"/>
-	<path class="st0" d="M101.17,59.53L101.17,59.53L101.17,59.53l-24.73,25.3l0,0l-24.73-25.3l0,0l0,0L101.17,59.53L101.17,59.53z
-		 M51.71,59.53L51.71,59.53l24.73,25.3l0,0l28.85-29.52l-4.12,4.22H51.71L51.71,59.53z"/>
-	<path class="st0" d="M47.58,59.53v-4.22h57.71v4.22v54.81l0,0H47.58l0,0V59.53L47.58,59.53z M51.71,114.34h-4.12h57.71l0,0
-		l-0.01-59.03l-4.12,4.22H51.71l0,0l-4.13-4.22l0.01,59.03H51.71z"/>
+	<path class="st0" d="M78,0L31.5,50.6v96.9v8.5H40h76h2.4h6.1V50.6L78,0z M40,147.5V54.8l38-41.2l38,41.2v92.7H40z"/>
+	<polygon class="st0" points="78,84.3 105.4,56.9 78,56.9 50.6,56.9 78,84.3 50.5,111.7 78,139.1 105.4,111.7 	"/>
 </g>
-<rect x="43.19" y="55.31" class="st2" width="4.4" height="59.03"/>
-<rect x="105.3" y="55.31" class="st2" width="4.4" height="59.03"/>
 </svg>

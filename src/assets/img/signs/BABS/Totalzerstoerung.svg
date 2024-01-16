@@ -3,25 +3,20 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#FF0000;}
-	.st2{fill:none;}
+	.st0{fill:#FF0000;}
 </style>
 <g>
-	<polygon class="st0" points="0,0 156,0 156,156 0,156 0,0 	"/>
-	<polygon class="st0" points="3.21,1.4 150.14,1.4 150.14,148.76 3.21,148.76 3.21,1.4 	"/>
 	
-		<rect x="-10.59" y="46.27" transform="matrix(0.7073 -0.7069 0.7069 0.7073 -21.0906 52.8632)" class="st1" width="127.75" height="11.27"/>
+		<rect x="-10.6" y="46.3" transform="matrix(0.7073 -0.7069 0.7069 0.7073 -21.0969 52.864)" class="st0" width="127.7" height="11.3"/>
 	
-		<rect x="12.75" y="69.61" transform="matrix(0.7073 -0.7069 0.7069 0.7073 -30.7637 76.192)" class="st1" width="127.75" height="11.27"/>
+		<rect x="12.7" y="69.6" transform="matrix(0.7073 -0.7069 0.7069 0.7073 -30.765 76.1901)" class="st0" width="127.7" height="11.3"/>
 	
-		<rect x="36.58" y="93.43" transform="matrix(0.7073 -0.7069 0.7069 0.7073 -40.6227 100.0126)" class="st1" width="127.75" height="11.27"/>
+		<rect x="36.6" y="93.4" transform="matrix(0.7073 -0.7069 0.7069 0.7073 -40.6296 100.0116)" class="st0" width="127.7" height="11.3"/>
 	
-		<rect x="94.49" y="-12.92" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -6.7055 85.7267)" class="st1" width="11.27" height="127.75"/>
+		<rect x="94.5" y="-12.9" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -6.7078 85.7232)" class="st0" width="11.3" height="127.7"/>
 	
-		<rect x="71.14" y="10.41" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -30.042 76.0502)" class="st1" width="11.27" height="127.75"/>
+		<rect x="71.1" y="10.4" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -30.0445 76.0453)" class="st0" width="11.3" height="127.7"/>
 	
-		<rect x="47.32" y="34.24" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -53.87 66.1905)" class="st1" width="11.27" height="127.75"/>
-	<polygon class="st2" points="0.47,155.53 155.53,155.53 155.53,0.47 0.47,0.47 0.47,155.53 	"/>
+		<rect x="47.3" y="34.2" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -53.8744 66.182)" class="st0" width="11.3" height="127.7"/>
 </g>
 </svg>

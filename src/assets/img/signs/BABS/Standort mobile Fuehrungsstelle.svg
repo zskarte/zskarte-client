@@ -3,18 +3,13 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{fill:none;}
+	.st0{fill:#0000FF;}
 </style>
 <g>
-	<polygon class="st0" points="58.75,0 97.25,0 97.25,156 58.75,156 58.75,0 	"/>
-	<polygon class="st0" points="60.2,1.3 94.99,1.3 94.99,153.58 60.2,153.58 60.2,1.3 	"/>
-	<rect x="73.83" y="1.46" class="st1" width="8" height="128.76"/>
+	<rect x="73.8" y="1.5" class="st0" width="8" height="128.8"/>
 	
-		<rect x="73.65" y="115.67" transform="matrix(0.7078 -0.7064 0.7064 0.7078 -73.4178 94.6053)" class="st1" width="8" height="40.77"/>
+		<rect x="73.7" y="115.7" transform="matrix(0.7078 -0.7064 0.7064 0.7078 -73.4193 94.6078)" class="st0" width="8" height="40.8"/>
 	
-		<rect x="57.26" y="132.14" transform="matrix(0.7056 -0.7086 0.7086 0.7056 -73.6071 95.1093)" class="st1" width="40.79" height="7.99"/>
-	<polygon class="st2" points="59.24,155.51 96.76,155.51 96.76,0.49 59.24,0.49 59.24,155.51 	"/>
+		<rect x="57.3" y="132.1" transform="matrix(0.7056 -0.7086 0.7086 0.7056 -73.6092 95.1031)" class="st0" width="40.8" height="8"/>
 </g>
 </svg>

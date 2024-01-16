@@ -3,19 +3,13 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{font-family:'MyriadPro-Regular';}
-	.st3{font-size:47.7134px;}
-	.st4{fill:none;}
+	.st0{fill:#0000FF;}
+	.st1{font-family:'MyriadPro-Regular';}
+	.st2{font-size:47.7134px;}
 </style>
 <g>
-	<polygon class="st0" points="0.23,0 155.77,0 155.77,156 0.23,156 0.23,0 	"/>
-	<polygon class="st0" points="3.85,2.04 149.05,2.04 149.05,147.77 3.85,147.77 3.85,2.04 	"/>
-	<path class="st1" d="M76.45,147.25c-39.76,0-72.1-32.45-72.1-72.34S36.69,2.56,76.45,2.56s72.1,32.46,72.1,72.35
-		S116.2,147.25,76.45,147.25z M76.45,12.41c-34.32,0-62.25,28.03-62.25,62.49c0,34.46,27.92,62.49,62.25,62.49
-		c34.32,0,62.25-28.04,62.25-62.49C138.69,40.45,110.77,12.41,76.45,12.41z"/>
-	<text transform="matrix(0.9963 0 0 1 55.6191 91.9771)" class="st1 st2 st3">M</text>
-	<polygon class="st4" points="0.7,155.53 155.3,155.53 155.3,0.47 0.7,0.47 0.7,155.53 	"/>
+	<path class="st0" d="M76.4,147.2c-39.8,0-72.1-32.4-72.1-72.3S36.7,2.6,76.4,2.6s72.1,32.5,72.1,72.3S116.2,147.2,76.4,147.2z
+		 M76.4,12.4c-34.3,0-62.2,28-62.2,62.5s27.9,62.5,62.2,62.5c34.3,0,62.2-28,62.2-62.5C138.7,40.5,110.8,12.4,76.4,12.4z"/>
+	<text transform="matrix(0.9963 0 0 1 55.6191 91.9771)" class="st0 st1 st2">M</text>
 </g>
 </svg>

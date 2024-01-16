@@ -3,18 +3,12 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{font-family:'MyriadPro-Regular';}
-	.st3{font-size:88.8895px;}
-	.st4{fill:none;}
+	.st0{fill:#0000FF;}
+	.st1{font-family:'MyriadPro-Regular';}
+	.st2{font-size:88.8895px;}
 </style>
 <g>
-	<polygon class="st0" points="6.93,0 149.07,0 149.07,156 6.93,156 6.93,0 	"/>
-	<polygon class="st0" points="9.18,0.85 142.02,0.85 142.02,150.63 9.18,150.63 9.18,0.85 	"/>
-	<path class="st1" d="M75.78,150.32L9.58,83.87L75.61,17.6l66.21,66.45L75.78,150.32z M23.96,83.87l51.83,52.02l51.65-51.84
-		L75.61,32.03L23.96,83.87z"/>
-	<text transform="matrix(0.9964 0 0 1 65.82 114.9371)" class="st1 st2 st3">i</text>
-	<polygon class="st4" points="7.37,155.57 148.63,155.57 148.63,0.43 7.37,0.43 7.37,155.57 	"/>
+	<path class="st0" d="M75.8,150.3L9.6,83.9l66-66.3L141.8,84L75.8,150.3z M24,83.9l51.8,52l51.7-51.8L75.6,32L24,83.9z"/>
+	<text transform="matrix(0.9964 0 0 1 65.8198 114.937)" class="st0 st1 st2">i</text>
 </g>
 </svg>

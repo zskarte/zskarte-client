@@ -3,19 +3,14 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}
-	.st2{fill:#FF9900;}
-	.st3{font-family:'MyriadPro-Regular';}
-	.st4{font-size:39.1713px;}
-	.st5{fill:none;}
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}
+	.st1{fill:#FF9900;}
+	.st2{font-family:'MyriadPro-Regular';}
+	.st3{font-size:39.1713px;}
 </style>
 <g>
-	<polygon class="st0" points="0,11.08 156,11.08 156,144.92 0,144.92 	"/>
-	<polygon class="st0" points="0.82,11.91 152.85,11.91 152.85,141.77 0.82,141.77 	"/>
-	<path class="st1" d="M152.65,141.57H1.02L76.84,12.1L152.65,141.57L152.65,141.57L152.65,141.57z M133.59,132.12L76.84,34.14
-		l-56.76,97.99H133.59L133.59,132.12L133.59,132.12z"/>
-	<text transform="matrix(1.0042 0 0 1 62.7642 117.9131)" class="st2 st3 st4">U</text>
-	<polygon class="st5" points="0.42,144.5 155.58,144.5 155.58,11.5 0.42,11.5 	"/>
+	<path class="st0" d="M152.6,141.6H1L76.8,12.1L152.6,141.6L152.6,141.6L152.6,141.6z M133.6,132.1l-56.8-98l-56.8,98L133.6,132.1
+		L133.6,132.1L133.6,132.1z"/>
+	<text transform="matrix(1.0042 0 0 1 62.7642 117.9131)" class="st1 st2 st3">U</text>
 </g>
 </svg>

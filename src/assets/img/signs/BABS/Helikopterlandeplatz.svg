@@ -3,18 +3,13 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#0000FF;}
-	.st3{fill:none;}
+	.st0{fill:#0000FF;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#0000FF;}
 </style>
 <g>
-	<polygon class="st0" points="0,23.4 156,23.4 156,132.6 0,132.6 	"/>
-	<polygon class="st0" points="2.95,25.84 148.66,25.84 148.66,123.22 2.95,123.22 	"/>
-	<path class="st1" d="M148.16,122.72H3.45V26.33h144.7L148.16,122.72L148.16,122.72z M14.76,111.41h122.09V37.65H14.76V111.41z"/>
-	<polygon class="st2" points="11.82,71.09 141.27,71.09 141.27,78.46 11.82,78.46 	"/>
-	<polygon class="st2" points="41.35,41.58 76.79,55.66 41.35,67.65 	"/>
-	<polygon class="st2" points="109.77,41.58 74.82,55.66 109.77,67.65 	"/>
-	<polygon class="st3" points="0.48,132.13 155.52,132.13 155.52,23.88 0.48,23.88 	"/>
+	<path class="st0" d="M148.2,122.7H3.5V26.3h144.7L148.2,122.7L148.2,122.7z M14.8,111.4h122.1V37.7H14.8V111.4z"/>
+	<polygon class="st1" points="11.8,71.1 141.3,71.1 141.3,78.5 11.8,78.5 	"/>
+	<polygon class="st1" points="41.3,41.6 76.8,55.7 41.3,67.7 	"/>
+	<polygon class="st1" points="109.8,41.6 74.8,55.7 109.8,67.7 	"/>
 </g>
 </svg>
