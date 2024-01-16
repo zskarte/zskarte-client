@@ -27,6 +27,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatListModule } from '@angular/material/list';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
@@ -121,6 +122,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     OverlayModule,
     MatProgressSpinnerModule,
     MatCheckboxModule,
+    MatBadgeModule,
     MatExpansionModule,
     MatSlideToggleModule,
     MatStepperModule,

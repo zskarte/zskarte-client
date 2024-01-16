@@ -24,6 +24,7 @@ interface Connection {
   user: User;
   identifier: string;
   label?: string;
+  currentLocation?: { long: number; lat: number };
 }
 
 @Injectable({

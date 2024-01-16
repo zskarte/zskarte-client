@@ -6,7 +6,7 @@
   <mat-label class="font-bold">{{ i18n.get('activeConnections') }}</mat-label>
   <mat-list-item *ngFor="let connection of connections$ | async" class="flex-container">
     <div class="flex-container">
-      <mat-icon mat-list-icon>network_wifi</mat-icon>
+      <mat-icon mat-list-icon>person</mat-icon>
       <span>{{ connection.label }}</span>
       <span *ngIf="connection.currentLocation">{{ connection.currentLocation.long }}</span>
       <span *ngIf="connection.currentLocation">{{ connection.currentLocation.lat }}</span>

@@ -35,7 +35,6 @@ import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { Signs } from './signs';
-import { SessionService } from '../session/session.service';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 import { SyncService } from '../sync/sync.service';
 
@@ -100,6 +99,8 @@ export class MapRendererComponent implements AfterViewInit {
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
   public isReadOnly = new BehaviorSubject<boolean>(false);
   public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
+  private existingCurrentLocations: VectorLayer<VectorSource<Point>> | undefined;
+  public connectionCount = new BehaviorSubject<number>(0);
 
   constructor(
     private _state: ZsMapStateService,
@@ -134,6 +135,50 @@ export class MapRendererComponent implements AfterViewInit {
       }),
     );
 
+    this._sync
+      .observeConnections()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((connections) => {
+        this.connectionCount.next(connections.length);
+        if (this.existingCurrentLocations) {
+          this._map.removeLayer(this.existingCurrentLocations);
+        }
+        const currentLocationFeatures: Feature<Point>[] = [];
+        for (const connection of connections) {
+          const currentLocation = connection.currentLocation;
+          if (!currentLocation) continue;
+
+          const coordinates = transform([currentLocation.long, currentLocation.lat], 'EPSG:4326', 'EPSG:3857');
+          const locationFlag = new Feature({
+            geometry: new Point(coordinates),
+          });
+
+          locationFlag.setStyle(
+            new Style({
+              image: new Icon({
+                anchor: [0.5, 0.5],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'fraction',
+                src: 'assets/img/online.png',
+                scale: 0.1,
+              }),
+            }),
+          );
+
+          currentLocationFeatures.push(locationFlag);
+        }
+
+        if (currentLocationFeatures.length === 0) return;
+
+        const navigationSource = new VectorSource({
+          features: currentLocationFeatures,
+        });
+        this.existingCurrentLocations = new VectorLayer({
+          source: navigationSource,
+        });
+        this.existingCurrentLocations.setZIndex(99999999999);
+        this._map.addLayer(this.existingCurrentLocations);
+      });
     combineLatest([
       this.selectedVertexPoint.asObservable(),
       this._state.observeSelectedElement().pipe(
