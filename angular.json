@@ -84,13 +84,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "zskarte-v3:build:production"
+              "buildTarget": "zskarte-v3:build:production"
             },
             "development": {
-              "browserTarget": "zskarte-v3:build:development"
+              "buildTarget": "zskarte-v3:build:development"
             },
             "local": {
-              "browserTarget": "zskarte-v3:build:local"
+              "buildTarget": "zskarte-v3:build:local"
             }
           },
           "defaultConfiguration": "local"
@@ -98,7 +98,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "zskarte-v3:build"
+            "buildTarget": "zskarte-v3:build"
           }
         },
         "test": {
