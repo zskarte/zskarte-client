@@ -12,8 +12,8 @@ import { DatePipe } from '@angular/common';
 import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../helper/protocolEntry';
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ShareDialogComponent } from '../session/share-dialog/share-dialog.component';
 import { PermissionType } from '../session/session.interfaces';
+import { ShareDialogComponent } from '../session/share-dialog/share-dialog.component';
 import { RevokeShareDialogComponent } from '../session/revoke-share-dialog/revoke-share-dialog.component';
 
 @Component({
