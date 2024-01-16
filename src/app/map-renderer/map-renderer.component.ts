@@ -99,7 +99,7 @@ export class MapRendererComponent implements AfterViewInit {
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
   public isReadOnly = new BehaviorSubject<boolean>(false);
   public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
-  private existingCurrentLocations: VectorLayer<VectorSource<Point>> | undefined;
+  private existingCurrentLocations: VectorLayer<VectorSource<Feature<Point>>> | undefined;
   public connectionCount = new BehaviorSubject<number>(0);
   public isOnline = new BehaviorSubject<boolean>(true);
 
