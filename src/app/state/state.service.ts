@@ -717,7 +717,7 @@ export class ZsMapStateService {
       this._mapInversePatches.value.push(...inversePatches);
       this._mapInversePatches.next(this._mapInversePatches.value);
 
-      // We wan't to be able to apply new map states only locally in history mode.
+      // Only publish map state changes when not in history mode
       if (!this.isHistoryMode()) {
         this._sync.publishMapStatePatches(patches);
       }
