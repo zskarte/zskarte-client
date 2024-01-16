@@ -59,6 +59,7 @@ export class ZsMapStateService {
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
+  private _currentMapCenter: BehaviorSubject<number[]> | undefined;
 
   constructor(
     public i18n: I18NService,
@@ -84,6 +85,7 @@ export class ZsMapStateService {
       mapCenter: DEFAULT_COORDINATES,
       mapZoom: DEFAULT_ZOOM,
       activeLayer: undefined,
+      showMyLocation: false,
       source: ZsMapStateSource.OPEN_STREET_MAP,
       layerOpacity: {},
       layerVisibility: {},
@@ -270,6 +272,12 @@ export class ZsMapStateService {
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public updateShowCurrentLocation(show: boolean) {
+    this.updateDisplayState((draft) => {
+      draft.showMyLocation = show;
+    });
   }
 
   public updatePositionFlag(positionFlag: IPositionFlag) {
@@ -553,6 +561,29 @@ export class ZsMapStateService {
       feature.zIndex = currentZIndex + 1;
       draft.features.sort((a, b) => b.zIndex - a.zIndex);
     });
+  }
+
+  public ObserveShowCurrentLocation(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => {
+        return o?.showMyLocation;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public ObserveCurrentMapCenter(): Observable<number[]> {
+    if (!this._currentMapCenter) {
+      this._currentMapCenter = new BehaviorSubject<number[]>(DEFAULT_COORDINATES);
+    }
+    return this._currentMapCenter.asObservable();
+  }
+
+  public UpdateCurrentMapCenter(coordinates: number[]) {
+    if (!this._currentMapCenter) {
+      this._currentMapCenter = new BehaviorSubject<number[]>(DEFAULT_COORDINATES);
+    }
+    this._currentMapCenter.next(coordinates);
   }
 
   public sortFeatureDown(index: number) {

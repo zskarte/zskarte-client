@@ -19,7 +19,7 @@ type Snapshots = StrapiApiResponseList<Snapshot[]>;
 @Component({
   selector: 'app-sidebar-history',
   templateUrl: './sidebar-history.component.html',
-  styleUrl: './sidebar-history.component.scss',
+  styleUrls: ['./sidebar-history.component.scss'],
 })
 export class SidebarHistoryComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
