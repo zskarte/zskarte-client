@@ -2,8 +2,6 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostList
 import { Draw, Select, Translate, defaults, Modify } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
-import OlTileLayer from 'ol/layer/Tile';
-import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
 import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
@@ -38,6 +36,7 @@ import { Signs } from './signs';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import { OlTileLayer, OlTileLayerType } from './utils';
 
 @Component({
   selector: 'app-map-renderer',
@@ -82,7 +81,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _allLayers: VectorLayer<VectorSource>[] = [];
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
-  private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
+  private _featureLayerCache: Map<string, OlTileLayerType> = new Map();
   private _modifyCache = new Collection<Feature>([]);
   private _currentSketch: FeatureLike | undefined;
   private _rotating = false;
@@ -100,7 +99,7 @@ export class MapRendererComponent implements AfterViewInit {
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
   public isReadOnly = new BehaviorSubject<boolean>(false);
   public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
-  private existingCurrentLocations: VectorLayer<VectorSource<Point>> | undefined;
+  private existingCurrentLocations: VectorLayer<VectorSource<Feature<Point>>> | undefined;
   public connectionCount = new BehaviorSubject<number>(0);
   public isOnline = new BehaviorSubject<boolean>(true);
 
@@ -564,6 +563,7 @@ export class MapRendererComponent implements AfterViewInit {
       .observeMapSource()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((source) => {
+        // @ts-expect-error "we know the type is okay"
         this._mapLayer.setSource(ZsMapSources.get(source));
       });
 
@@ -657,6 +657,7 @@ export class MapRendererComponent implements AfterViewInit {
               feature.zIndex,
             );
             this._map.addLayer(layer);
+            // @ts-expect-error "we know the type is correct"
             this._featureLayerCache.set(feature.serverLayerName, layer);
 
             // observe feature changes
@@ -693,6 +694,7 @@ export class MapRendererComponent implements AfterViewInit {
    */
   initDrawHole() {
     this._drawHole = new DrawHole({
+      // @ts-expect-error this is the correct type
       layers: this._allLayers,
       type: 'Polygon',
     });
