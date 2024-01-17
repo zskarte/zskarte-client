@@ -9,6 +9,8 @@
 </style>
 <g>
 	<path class="st0" d="M120.7,148.8H33.9V16.2h86.8C120.7,16.2,120.7,148.8,120.7,148.8z M44.3,138.5h66.1V26.6H44.3V138.5z"/>
-	<text transform="matrix(0.9969 0 0 1 67.5684 115.7129)" class="st0 st1 st2">i</text>
+	<g class="st1">
+		<path class="st0" d="M71.1,61.7V50.2h12.3v11.5H71.1z M71.1,114.8V68h12.3v46.8H71.1z"/>
+	</g>
 </g>
 </svg>
