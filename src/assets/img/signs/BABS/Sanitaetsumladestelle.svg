@@ -1,15 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="none" d="M 858,565 L 259,565 259,520 858,520 858,565 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 858,565 L 259,565 259,520 858,520 858,565 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 220,37 L 896,37 896,1069 220,1069 220,37 Z M 300,1029 L 259,989 856,989 817,1029 817,77 856,117 259,117 300,77 300,1029 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 532,77 L 532,1028 487,1028 487,77 532,77 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 532,77 L 532,1028 487,1028 487,77 532,77 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 629,77 L 629,1028 584,1028 584,77 629,77 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 629,77 L 629,1028 584,1028 584,77 629,77 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#0000FF;}
+</style>
+<g>
+	<rect x="33.6" y="70" class="st0" width="83.2" height="6.3"/>
+	<path class="st0" d="M122.2,146.3H28V2.9h94.2L122.2,146.3L122.2,146.3z M39.2,135.2H111V14.1H39.2V135.2z"/>
+	<rect x="65.2" y="8.5" class="st0" width="6.3" height="132.1"/>
+	<rect x="78.7" y="8.5" class="st0" width="6.3" height="132.1"/>
+</g>
 </svg>
