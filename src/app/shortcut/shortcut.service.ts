@@ -2,16 +2,21 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { getOS, OS } from '../helper/os';
-import { ZsMapDrawElementStateType } from '../state/interfaces';
+import {ZsMapDrawElementState, ZsMapDrawElementStateType} from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 import { IShortcut } from './shortcut.interfaces';
+import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
+import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShortcutService {
+  private _selectedElement: ZsMapBaseDrawElement | undefined = undefined;
   private _selectedFeatureId: string | undefined = undefined;
+  private _selectedLayer: ZsMapBaseLayer | undefined = undefined;
   private _copiedFeatureId: string | undefined = undefined;
+  private _copyElement: ZsMapBaseDrawElement | undefined = undefined;
   private _symbols: { [key: string]: string } = {
     command: '\u2318',
     // ⌘
@@ -35,12 +40,17 @@ export class ShortcutService {
   constructor(private _state: ZsMapStateService) {
     this._keydownObserver = new Observable((observer) => {
       window.addEventListener('keydown', (event) => {
+        event.preventDefault();
         observer.next(event);
       });
     });
 
-    this._state.observeSelectedFeature().subscribe((id) => {
-      this._selectedFeatureId = id;
+    this._state.observeSelectedElement().subscribe((element) => {
+      this._selectedElement = element;
+    });
+
+    this._state.observeActiveLayer().subscribe((layer) => {
+      this._selectedLayer = layer;
     });
   }
 
@@ -77,30 +87,18 @@ export class ShortcutService {
     });
 
     // currently not implemented since it is not clear how to handle this without a proper UI state
-    // this._listen({ shortcut: 'mod+c' }).subscribe(() => {
-    //   this._copiedFeatureId = undefined;
-    //   if (this._selectedFeatureId) {
-    //     console.warn('todo', 'ctrl+c', this._selectedFeatureId);
-    //     this._copiedFeatureId = this._selectedFeatureId;
-    //   }
-    // });
+    this._listen({ shortcut: 'mod+c' }).subscribe(() => {
+      this._copyElement = this._selectedElement;
+    });
 
-    // this._listen({ shortcut: 'mod+x' }).subscribe(() => {
-    //   console.warn('todo', 'ctrl+x');
-    // });
-
-    // this._listen({ shortcut: 'mod+v' }).subscribe(() => {
-    //   if (this._copiedFeatureId) {
-    //     console.warn('todo', 'ctrl+v', this._copiedFeatureId);
-    //     this._copiedFeatureId = undefined;
-    //   }
-    // });
+    this._listen({ shortcut: 'mod+v' }).subscribe(() => {
+      if (this._copyElement?.elementState) {
+        this._state.addDrawElement(this._copyElement.elementState);
+      }
+    });
   }
 
-  private _listen({ shortcut, preventDefault }: IShortcut): Observable<KeyboardEvent> {
-    if (preventDefault === undefined) {
-      preventDefault = true;
-    }
+  private _listen({ shortcut }: IShortcut): Observable<KeyboardEvent> {
     const keys = (shortcut?.split('+') || []).map((key) => key.trim().toLowerCase());
 
     const shiftKey = keys.includes('shift');
@@ -138,13 +136,7 @@ export class ShortcutService {
         // use 'code' instead of 'key' to prevent 'Dead' keys on MacOS
         const keyCode = event.code.toLowerCase().replace('key', '').replace('digit', '');
 
-        if (key === keyCode) {
-          if (preventDefault) {
-            event.preventDefault();
-          }
-          return true;
-        }
-        return false;
+        return key === keyCode;
       }),
     );
   }
