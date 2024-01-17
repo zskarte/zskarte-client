@@ -640,7 +640,7 @@ export class DrawStyle {
           anchor: [0.5, 0.5],
           anchorXUnits: 'fraction',
           anchorYUnits: 'fraction',
-          scale: scaledSize ? scaledSize : scale * 2.5 * (signature.iconSize || 1),
+          scale: scaledSize ? scaledSize : scale * 2 * (signature.iconSize || 1),
           rotation: signature.rotation !== undefined ? (signature.rotation * Math.PI) / 180 : 0,
           // rotationWithView: false,
           src: imageFromMemory ? undefined : this.getImageUrl(signature.src),
