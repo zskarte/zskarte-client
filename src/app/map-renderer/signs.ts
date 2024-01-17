@@ -25,7 +25,7 @@ export class Signs {
     {
       id: 3,
       kat: 'action',
-      type: 'Point',
+      type: 'LineString',
       color: '#0000FF',
       src: 'BABS/Absperrung Verkehrswege.svg',
       de: 'Absperrung Verkehrswege',
@@ -223,7 +223,7 @@ export class Signs {
     {
       id: 22,
       kat: 'damage',
-      type: 'Point',
+      type: 'Polygon',
       color: '#FF0000',
       src: 'BABS/Brand einzelnes Gebaeude Flamme.svg',
       de: 'Brand einzelnes Gebäude Flamme',
@@ -240,6 +240,7 @@ export class Signs {
       en: 'Brand',
       fr: 'Incendie',
     },
+    /*
     {
       id: 24,
       kat: 'damage',
@@ -263,6 +264,7 @@ export class Signs {
       example: 'Branduebergriffsgefahr - Beispiel.svg',
       style: 'dash',
     },
+    */
     {
       id: 26,
       kat: 'damage',
@@ -403,7 +405,7 @@ export class Signs {
     {
       id: 39,
       kat: 'damage',
-      type: 'Polygon',
+      type: 'Point',
       color: '#FF0000',
       src: 'BABS/Eingesperrte - Abgeschnittene.svg',
       de: 'Eingesperrte - Abgeschnittene',
@@ -510,6 +512,7 @@ export class Signs {
       en: 'Explosion',
       fr: 'Explosion',
     },
+    /*
     {
       id: 50,
       kat: 'damage',
@@ -521,6 +524,7 @@ export class Signs {
       fr: 'Foyer d’explosion',
       example: 'Explosionsherd - Beispiel.svg',
     },
+    */
     {
       id: 52,
       kat: 'incident',
@@ -643,7 +647,7 @@ export class Signs {
     },
     {
       id: 64,
-      kat: 'action',
+      kat: 'place',
       type: 'Point',
       color: '#0000FF',
       src: 'BABS/Informationszentrum.svg',
@@ -773,7 +777,7 @@ export class Signs {
     },
     {
       id: 77,
-      kat: 'action',
+      kat: 'place',
       type: 'Point',
       color: '#0000FF',
       src: 'BABS/Kontrollzentrum.svg',
@@ -1054,7 +1058,7 @@ export class Signs {
     },
     {
       id: 106,
-      kat: 'fks',
+      kat: 'action',
       type: 'Point',
       color: '#0000FF',
       src: 'BABS/Tankloeschfahrzeug.svg',
@@ -1254,7 +1258,7 @@ export class Signs {
     },
     {
       id: 126,
-      kat: 'fks',
+      kat: 'action',
       type: 'Point',
       color: '#0000FF',
       src: 'BABS/Wasserwerfer.svg',
@@ -1292,13 +1296,14 @@ export class Signs {
     {
       id: 129,
       kat: 'action',
-      type: 'Point',
+      type: 'Polygon',
       color: '#0000FF',
       src: 'BSM/Absperrung mit Ueberwachung.svg',
       de: 'Absperrung mit Überwachung',
       en: 'Absperrung mit Überwachung',
       fr: 'Barrière avec surveillance ',
     },
+    /*
     {
       id: 130,
       kat: 'damage',
@@ -1309,16 +1314,18 @@ export class Signs {
       en: 'Brand einzelnes Gebäude - Beispiel',
       fr: 'Incendie bâtiment unique - exemple',
     },
+    */
     {
       id: 131,
       kat: 'damage',
-      type: 'Point',
+      type: 'Polygon',
       color: '#FF0000',
       src: 'BABS/Brand einzelnes Gebaeude - Signatur.svg',
-      de: 'Brand einzelnes Gebäude - Signatur',
-      en: 'Brand einzelnes Gebäude - Signatur',
-      fr: 'Incendie bâtiment unique - signature',
+      de: 'Brand einzelnes Gebäude',
+      en: 'Brand einzelnes Gebäude',
+      fr: 'Incendie bâtiment unique',
     },
+    /*
     {
       id: 132,
       kat: 'damage',
@@ -1329,16 +1336,18 @@ export class Signs {
       en: 'Brand mehrerer Gebäude - Beispiel',
       fr: 'Incendie dans plusieurs bâtiments - exemple',
     },
+    */
     {
       id: 133,
       kat: 'damage',
-      type: 'Point',
+      type: 'Polygon',
       color: '#FF0000',
       src: 'BABS/Brand mehrerer Gebaeude - Signatur.svg',
-      de: 'Brand mehrerer Gebäude - Signatur',
-      en: 'Brand mehrerer Gebäude - Signatur',
-      fr: 'Incendie dans plusieurs immeubles - signature',
+      de: 'Brand mehrerer Gebäude',
+      en: 'Brand mehrerer Gebäude',
+      fr: 'Incendie dans plusieurs immeubles',
     },
+    /*
     {
       id: 134,
       kat: 'damage',
@@ -1369,6 +1378,7 @@ export class Signs {
       en: 'Explosionsherd - Beispiel',
       fr: 'Poêle à explosion - exemple',
     },
+    */
     {
       id: 137,
       kat: 'formation',
@@ -1399,6 +1409,7 @@ export class Signs {
       en: 'Komm Ausfall Tel - Festnetz',
       fr: 'Échec de la comm. Tel - ligne fixe',
     },
+    /* 
     {
       id: 140,
       kat: 'fks',
@@ -1449,6 +1460,7 @@ export class Signs {
       en: 'Markierung Wasser',
       fr: "Marquage de l'eau ",
     },
+    */
     {
       id: 145,
       kat: 'place',
@@ -1459,6 +1471,7 @@ export class Signs {
       en: 'Obdachlosensammelstelle',
       fr: 'Point de rassemblement sans abri ',
     },
+    /*
     {
       id: 146,
       kat: 'damage',
@@ -1469,6 +1482,7 @@ export class Signs {
       en: 'Personenbergungsübersicht - Beispiel',
       fr: "Vue d'ensemble de sauvetage - exemple",
     },
+    */
     {
       id: 147,
       kat: 'damage',
@@ -1492,7 +1506,7 @@ export class Signs {
     {
       id: 149,
       kat: 'damage',
-      type: 'Point',
+      type: 'Polygon',
       color: '#FF0000',
       src: 'BABS/Schadengebiet - Schadenraum.svg',
       de: 'Schadengebiet, Schadenraum',
@@ -1522,13 +1536,14 @@ export class Signs {
     {
       id: 152,
       kat: 'damage',
-      type: 'Point',
+      type: 'Polygon',
       color: '#FF0000',
       src: 'BSM/Stromausfall.svg',
       de: 'Stromausfall',
       en: 'Stromausfall',
       fr: 'Panne électrique',
     },
+    /*
     {
       id: 153,
       kat: 'damage',
@@ -1539,15 +1554,16 @@ export class Signs {
       en: 'Trümmerbereich - Beispiel',
       fr: 'Zone de débris - exemple',
     },
+    */
     {
       id: 154,
       kat: 'damage',
-      type: 'Point',
+      type: 'Polygon',
       color: '#FF0000',
       src: 'BABS/Truemmerbereich - Signatur.svg',
-      de: 'Trümmerbereich - Signatur',
-      en: 'Trümmerbereich - Signatur',
-      fr: 'Zone de débris - signature',
+      de: 'Trümmerbereich',
+      en: 'Trümmerbereich',
+      fr: 'Zone de débris',
     },
     {
       id: 155,
