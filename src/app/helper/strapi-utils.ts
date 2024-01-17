@@ -5,6 +5,18 @@ interface ImageResponsiveSource {
   srcSet: string;
 }
 
+export type StrapiApiResponseList<T> = {
+  data: T[];
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+};
+
 export const getResponsiveImageSource = (asset: IZsStrapiAsset) => {
   if (!asset) return undefined;
   const responsiveImageSource: ImageResponsiveSource = { src: asset.url, srcSet: '' };

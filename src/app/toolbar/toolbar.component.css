@@ -4,9 +4,18 @@ mat-toolbar {
   flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5em;
+  gap: 2em;
   padding: 0.5em;
   height: 66px;
+}
+
+app-geocoder {
+  max-width: 480px;
+  flex-grow: 2;
+}
+
+app-geocoder div {
+  width: 100%;
 }
 
 @media print {
@@ -29,7 +38,7 @@ mat-toolbar {
 }
 
 @media (max-width: 730px) {
-  app-clock  {
+  app-clock {
     display: none;
   }
 }

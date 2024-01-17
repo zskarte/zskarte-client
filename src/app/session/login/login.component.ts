@@ -11,6 +11,7 @@ import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmat
 import { I18NService } from '../../state/i18n.service';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -22,12 +23,15 @@ export class LoginComponent {
   public password = '';
   public organizations = new BehaviorSubject<IZso[]>([]);
   public filteredOrganizations = new BehaviorSubject<IZso[]>([]);
+  public isLoginWithCodeEnabled = false;
+  public joinCode = '';
 
   constructor(
     public session: SessionService,
     public i18n: I18NService,
     private _api: ApiService,
     private _dialog: MatDialog,
+    private router: Router,
   ) {}
 
   async ngOnInit() {
@@ -87,7 +91,12 @@ export class LoginComponent {
   }
 
   public async login(): Promise<void> {
-    await this.session.login({ identifier: this.selectedOrganization?.identifier || '', password: this.password });
+    if (this.isLoginWithCodeEnabled) {
+      const joinLink = `share/${this.joinCode}`;
+      await this.router.navigateByUrl(joinLink);
+    } else {
+      await this.session.login({ identifier: this.selectedOrganization?.identifier ?? '', password: this.password });
+    }
   }
 
   public guestLogin(): void {

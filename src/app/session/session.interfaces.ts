@@ -6,11 +6,17 @@ export enum PermissionType {
   ALL = 'all',
 }
 
+export enum AccessTokenType {
+  LONG = 'long',
+  SHORT = 'short',
+}
+
 export interface IZsMapSession {
   id: string;
   permission?: PermissionType;
   operationId?: number;
   operationName?: string;
+  label?: string;
   operationDescription?: string;
   organizationLogo?: string;
   organizationId?: number;

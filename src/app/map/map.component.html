@@ -1,11 +1,23 @@
 <div class="content">
-  <div style="z-index: 10; position: relative">
+  <div style="z-index: 10; position: relative" class="mat-elevation-z5">
     <app-toolbar></app-toolbar>
   </div>
   <mat-sidenav-container style="flex: 1">
     <mat-sidenav class="sidenav" position="end" mode="side" #sidenav [opened]="(sidebarContext$ | async) !== null">
-      <app-sidebar [hidden]="(sidebarContext$ | async) === sidebarContext.Filters"></app-sidebar>
-      <app-sidebar-filters [hidden]="(sidebarContext$ | async) === sidebarContext.Layers"></app-sidebar-filters>
+      @switch (sidebarContext$ | async) {
+        @case (sidebarContext.Filters) {
+          <app-sidebar-filters></app-sidebar-filters>
+        }
+        @case (sidebarContext.Layers) {
+          <app-sidebar></app-sidebar>
+        }
+        @case (sidebarContext.History) {
+          <app-sidebar-history></app-sidebar-history>
+        }
+        @case (sidebarContext.Connections) {
+          <app-sidebar-connections></app-sidebar-connections>
+        }
+      }
     </mat-sidenav>
     <mat-sidenav-content>
       <div class="map">

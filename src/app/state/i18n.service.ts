@@ -13,6 +13,11 @@ export class I18NService {
   constructor(private _session: SessionService) {}
 
   private static TRANSLATIONS = {
+    local: {
+      de: 'Lokal',
+      end: 'Local',
+      fr: 'Local',
+    },
     de: {
       de: 'Deutsch',
       en: 'German',
@@ -47,6 +52,26 @@ export class I18NService {
       de: 'Name',
       en: 'Name',
       fr: 'Nom',
+    },
+    youAreOffline: {
+      de: 'Sie sind offline',
+      en: 'You are offline',
+      fr: 'Vous êtes hors ligne',
+    },
+    myName: {
+      de: 'Mein Name',
+      en: 'My name',
+      fr: 'Mon nom',
+    },
+    shareLocation: {
+      de: 'Standort teilen',
+      en: 'Share location',
+      fr: 'Partager la position',
+    },
+    online: {
+      de: 'Online',
+      en: 'Online',
+      fr: 'En ligne',
     },
     distance: {
       de: 'Distanz',
@@ -848,6 +873,11 @@ export class I18NService {
       en: 'Redo',
       fr: 'Rétablir',
     },
+    connections: {
+      de: 'Verbindungen',
+      en: 'Connections',
+      fr: 'Connexions',
+    },
     generalFilters: {
       de: 'Globale Filter',
       en: 'Global filters',
@@ -983,15 +1013,30 @@ export class I18NService {
       en: 'Continue as guest',
       fr: 'Connexion en tant que visiteur',
     },
+    codeLogin: {
+      de: 'Login mit Code',
+      en: 'Login with code',
+      fr: 'Connexion avec code',
+    },
     addSignatureManually: {
       de: 'Bitte fügen Sie die Signatur manuell ein',
       en: 'Please add the signature manually',
       fr: 'Veuillez ajouter la signature manuellement',
     },
+    share: {
+      de: 'Freigeben',
+      en: 'Share',
+      fr: 'Partager',
+    },
     copyShareLink: {
       de: 'Freigabe-Link kopieren',
       en: 'Copy share link',
       fr: 'Copier le lien de partage',
+    },
+    showShareQrCode: {
+      de: 'QR-Code anzeigen',
+      en: 'Show qr code',
+      fr: 'Copier le qr code de partage',
     },
     logout: {
       de: 'Logout',
@@ -1179,6 +1224,21 @@ export class I18NService {
       en: 'Report number',
       fr: 'Numéro de rapport',
     },
+    snapshotTimestamp: {
+      de: 'Sicherungszeitpunkt',
+      en: 'Backup time',
+      fr: 'Date de sauvegarde',
+    },
+    noSnapshots: {
+      de: 'Keine Sicherungen gefunden',
+      en: 'No backups found',
+      fr: 'Aucune sauvegarde trouvée',
+    },
+    toastSnapshotApplied: {
+      de: 'Sicherung angewendet',
+      en: 'Backup applied',
+      fr: 'Sauvegarde appliqué',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {
@@ -1209,7 +1269,7 @@ export class I18NService {
         }
       }
     }
-    throw new Error('Was not able to find an entry in translation table for key ' + key);
+    throw new Error(`Was not able to find an entry in translation table for key ${key}`);
   }
   public has(key: string): boolean {
     const element = I18NService.TRANSLATIONS[key];

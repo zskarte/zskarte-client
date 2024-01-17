@@ -60,6 +60,7 @@ export class ZsMapStateService {
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _splitMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
+  private _currentMapCenter: BehaviorSubject<number[]> | undefined;
 
   constructor(
     public i18n: I18NService,
@@ -85,6 +86,7 @@ export class ZsMapStateService {
       mapCenter: DEFAULT_COORDINATES,
       mapZoom: DEFAULT_ZOOM,
       activeLayer: undefined,
+      showMyLocation: false,
       source: ZsMapStateSource.OPEN_STREET_MAP,
       layerOpacity: {},
       layerVisibility: {},
@@ -209,8 +211,13 @@ export class ZsMapStateService {
     return this._map.asObservable();
   }
 
-  public toggleDisplayMode(): void {
+  public async toggleDisplayMode() {
+    // Make sure to get the latest mapState when the historyMode is toggled
+    // This prevents old states from the history getting applied to the state
+    await this.refreshMapState();
     this.updateDisplayState((draft) => {
+      // Reset sidebarcontext on historymode change
+      draft.sidebarContext = null;
       if (draft.displayMode == ZsMapDisplayMode.HISTORY) {
         draft.displayMode = ZsMapDisplayMode.DRAW;
         this._snackBar.open(this.i18n.get('toastDrawing'), 'OK', {
@@ -266,6 +273,12 @@ export class ZsMapStateService {
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public updateShowCurrentLocation(show: boolean) {
+    this.updateDisplayState((draft) => {
+      draft.showMyLocation = show;
+    });
   }
 
   public updatePositionFlag(positionFlag: IPositionFlag) {
@@ -551,6 +564,29 @@ export class ZsMapStateService {
     });
   }
 
+  public ObserveShowCurrentLocation(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => {
+        return o?.showMyLocation;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public ObserveCurrentMapCenter(): Observable<number[]> {
+    if (!this._currentMapCenter) {
+      this._currentMapCenter = new BehaviorSubject<number[]>(DEFAULT_COORDINATES);
+    }
+    return this._currentMapCenter.asObservable();
+  }
+
+  public UpdateCurrentMapCenter(coordinates: number[]) {
+    if (!this._currentMapCenter) {
+      this._currentMapCenter = new BehaviorSubject<number[]>(DEFAULT_COORDINATES);
+    }
+    this._currentMapCenter.next(coordinates);
+  }
+
   public sortFeatureDown(index: number) {
     this.updateDisplayState((draft) => {
       const feature = draft.features[index];
@@ -761,7 +797,11 @@ export class ZsMapStateService {
       this._mapInversePatches.value.push(...inversePatches);
       this._mapInversePatches.next(this._mapInversePatches.value);
       this._undoStackPointer.next(0);
-      this._sync.publishMapStatePatches(patches);
+
+      // Only publish map state changes when not in history mode
+      if (!this.isHistoryMode()) {
+        this._sync.publishMapStatePatches(patches);
+      }
     });
     this._map.next(newState);
   }
@@ -895,7 +935,9 @@ export class ZsMapStateService {
 
   public async refreshMapState(): Promise<void> {
     if (this._session.getOperationId()) {
-      await this._sync.sendCachedMapStatePatches();
+      if (!this.isHistoryMode()) {
+        await this._sync.sendCachedMapStatePatches();
+      }
       const sha256 = async (str: string): Promise<string> => {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
         return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
