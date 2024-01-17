@@ -65,7 +65,6 @@ export class ZsMapStateService {
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
   private _currentMapCenter: BehaviorSubject<number[]> | undefined;
 
-
   constructor(
     public i18n: I18NService,
     private drawDialog: MatDialog,

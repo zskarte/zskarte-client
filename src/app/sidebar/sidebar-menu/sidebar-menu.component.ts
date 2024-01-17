@@ -14,11 +14,10 @@ import { ProtocolTableComponent } from '../../protocol-table/protocol-table.comp
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ShareDialogComponent } from '../../session/share-dialog/share-dialog.component';
 
-
 @Component({
   selector: 'app-sidebar-menu',
   templateUrl: './sidebar-menu.component.html',
-  styleUrl: './sidebar-menu.component.scss'
+  styleUrl: './sidebar-menu.component.scss',
 })
 export class SidebarMenuComponent implements OnDestroy {
   @ViewChild(MatMenuTrigger) menu!: MatMenuTrigger;

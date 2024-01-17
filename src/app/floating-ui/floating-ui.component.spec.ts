@@ -8,10 +8,9 @@ describe('FloatingUiComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FloatingUiComponent]
-    })
-    .compileComponents();
-    
+      imports: [FloatingUiComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(FloatingUiComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

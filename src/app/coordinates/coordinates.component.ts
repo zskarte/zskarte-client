@@ -5,7 +5,6 @@ import { getCenter } from 'ol/extent';
 import { Coordinate } from 'ol/coordinate';
 import { availableProjections, mercatorProjection } from '../helper/projections';
 import { transform } from 'ol/proj';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-coordinates',
