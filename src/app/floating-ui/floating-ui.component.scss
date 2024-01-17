@@ -4,10 +4,20 @@ mat-sidenav-container {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 100;
+  z-index: 10;
   background: none;
   pointer-events: none;
-  padding: 1.25em;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+  height: calc(100% - 2.5em);
+  width: 100%;
+  margin: 1.25em 0 1.25em 1.25em;
+  pointer-events: none;
 }
 
 mat-sidenav-content {
@@ -18,7 +28,7 @@ mat-sidenav-content {
 }
 
 mat-sidenav {
-  background: white;  
+  background: white;
   padding: 1em;
   width: 30em;
   pointer-events: auto;
@@ -29,7 +39,8 @@ mat-sidenav {
   flex-direction: column;
   align-items: end;
   justify-content: space-between;
-  height: 100%;
+  height: calc(100% - 2.5em);
+  margin: 1.25em 1.25em 1.25em 0;
 }
 
 .vertical-stack {
@@ -46,6 +57,7 @@ mat-sidenav {
   align-items: center;
   justify-content: space-between;
   gap: 1em;
+  width: 100%;
 }
 
 button {
@@ -55,8 +67,42 @@ button {
 
 app-fab-menu {
   pointer-events: auto;
+  margin-top: 1.25em;
 }
 
 app-coordinates {
   pointer-events: auto;
+  margin-right: 1.25em;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+  height: calc(100% - 2.5em);
+  width: 100%;
+  margin: 1.25em 0 1.25em 1.25em;
+  pointer-events: none;
+}
+
+@media (max-width: 650px) {
+  .main {
+    align-items: start;
+  }
+
+  app-coordinates {
+    margin-right: 0;
+    margin-bottom: 3em;
+  }
+
+  app-geocoder {
+    width: 200px;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar-open {
+    display: none;
+  }
 }

@@ -19,8 +19,14 @@
     }
   </mat-sidenav>
   <mat-sidenav-content>
-    <app-credits />
-    <app-geocoder />
+      <div class="main noprint">
+        <div class="horizontal-stack">
+          <app-credits [ngClass]="{'sidebar-open' : (sidebarContext$ | async) !== null}" />
+          <app-geocoder [ngClass]="{'sidebar-open' : (sidebarContext$ | async) !== null}" />
+          <span></span>
+        </div>
+        <app-coordinates [ngClass]="{'sidebar-open' : (sidebarContext$ | async) !== null}" />
+      </div>
     <div class="action-buttons noprint">
       <div class="vertical-stack">
         <button
@@ -89,10 +95,7 @@
           <mat-icon>close</mat-icon>
         </button>
       </div>
-      <div class="horizontal-stack">
-        <app-coordinates />
-        <app-fab-menu *ngIf="!(state.observeIsReadOnly() | async)" [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
-      </div>
+      <app-fab-menu *ngIf="!(state.observeIsReadOnly() | async)" [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
