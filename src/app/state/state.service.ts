@@ -752,7 +752,7 @@ export class ZsMapStateService {
 
     this._sync.publishMapStatePatches(lastPatch);
 
-    this._undoStackPointer.next(this._undoStackPointer.value + 1);
+    this._undoStackPointer.next(newUndoStackPointer);
   }
 
   public redoMapStateChange() {
@@ -772,7 +772,7 @@ export class ZsMapStateService {
 
     this._sync.publishMapStatePatches(lastPatch);
 
-    this._undoStackPointer.next(this._undoStackPointer.value - 1);
+    this._undoStackPointer.next(newUndoStackPointer);
   }
 
   public observeHistory() {
