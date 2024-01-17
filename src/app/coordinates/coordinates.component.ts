@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { ZsMapStateService } from '../state/state.service';
-import { Feature } from 'ol';
-import { getCenter } from 'ol/extent';
 import { Coordinate } from 'ol/coordinate';
 import { availableProjections, mercatorProjection } from '../helper/projections';
 import { transform } from 'ol/proj';
