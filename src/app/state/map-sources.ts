@@ -1,14 +1,14 @@
 import { ZsMapStateSource } from './interfaces';
 import OlTileXYZ from 'ol/source/XYZ';
 import { PMTilesVectorSource } from 'ol-pmtiles';
-import { TileImage } from 'ol/source';
-import OlTileLayer from 'ol/layer/Tile';
+import OlTileLayer from '../map-renderer/utils';
 import VectorTile from 'ol/layer/VectorTile';
 import { Layer } from 'ol/layer';
-import { applyStyle } from 'ol-mapbox-style';
+import { stylefunction } from 'ol-mapbox-style';
 
 export class ZsMapSources {
-  static getOlTileLayer(source: TileImage) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static getOlTileLayer(source: any) {
     return new OlTileLayer({
       zIndex: 0,
       source,
@@ -47,7 +47,11 @@ export class ZsMapSources {
           style: null,
         });
 
-        applyStyle(layer, '/assets/map-style.json');
+        fetch('/assets/map-style.json')
+          .then((res) => res.text())
+          .then((res) => {
+            layer.setStyle(stylefunction(layer, res, 'protomaps'));
+          });
 
         return layer;
       }
