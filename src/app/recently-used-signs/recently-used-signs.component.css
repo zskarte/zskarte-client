@@ -1,7 +1,6 @@
 .wrapper {
   display: flex;
   align-items: center;
-  margin: 1em;
   flex-wrap: wrap;
 }
 
@@ -19,5 +18,5 @@
 }
 
 .container {
-  margin: 20px 0;
+  margin: 1em 0;
 }
