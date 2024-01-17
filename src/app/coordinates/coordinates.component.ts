@@ -29,16 +29,11 @@ export class CoordinatesComponent {
     return '';
   }
 
-  transformToProjection(coordinates: Coordinate, projection_index: number) {
+  static transformToProjection(coordinates: Coordinate, projection_index: number) {
     const projection = availableProjections[projection_index].projection;
     if (projection && mercatorProjection && coordinates.every((c) => !isNaN(c))) {
       return transform(coordinates, mercatorProjection, projection);
     }
     return undefined;
-  }
-
-  getFeatureCoordinates(feature: Feature | null | undefined): number[] {
-    const center = getCenter(feature?.getGeometry()?.getExtent() ?? []);
-    return this.transformToProjection(center, 0) ?? [];
   }
 }
