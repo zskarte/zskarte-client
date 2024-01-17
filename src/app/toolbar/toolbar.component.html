@@ -2,12 +2,11 @@
   <app-credits />
   <app-geocoder />
   <div class="grouped">
-    <app-clock />
-    <button mat-icon-button [matMenuTriggerFor]="mainMenu">
+    <!-- <button mat-icon-button [matMenuTriggerFor]="mainMenu">
       <mat-icon>menu</mat-icon>
-    </button>
+    </button> -->
   </div>
-  <mat-menu #mainMenu="matMenu" class="noprint">
+  <!-- <mat-menu #mainMenu="matMenu" class="noprint">
     <ng-container *ngIf="session.observeHasWritePermission() | async">
       <button mat-menu-item (click)="toggleHistory()" title="ALT+H">
         <mat-icon
@@ -57,8 +56,8 @@
         {{ i18n.get('logout') }}
       </button>
     </ng-container>
-  </mat-menu>
-  <mat-menu #languages="matMenu">
+  </mat-menu> -->
+  <!-- <mat-menu #languages="matMenu">
     <button mat-menu-item *ngFor="let locale of locales" (click)="setLocale(locale)" [ngClass]="{ active: locale === session.getLocale() }">
       {{ i18n.get(locale) }}
     </button>
@@ -83,4 +82,5 @@
       {{ i18n.get('showShareQrCode') }}
     </button>
   </mat-menu>
+-->
 </mat-toolbar>

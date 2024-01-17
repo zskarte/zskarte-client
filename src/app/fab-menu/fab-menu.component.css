@@ -1,9 +1,4 @@
-.fab-menu {
-  position: absolute;
-  right: 20px;
-  bottom: 45px;
-  z-index: 50;
-}
+
 
 @media print {
   .fab-menu {

@@ -1,0 +1,63 @@
+mat-drawer-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: none;
+  pointer-events: none;
+  padding: 1.25em;
+}
+
+mat-drawer-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: start;
+}
+
+mat-drawer {
+  background: white;  
+  padding: 1em;
+  width: 30em;
+  // border-radius: 1em !important;
+  // margin: 1em;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.vertical-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.horizontal-stack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+button {
+  background-color: white;
+  pointer-events: auto;
+}
+
+app-fab-menu {
+  pointer-events: auto;
+}
+
+app-coordinates {
+  pointer-events: auto;
+}

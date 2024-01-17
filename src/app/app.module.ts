@@ -38,7 +38,6 @@ import { HelpComponent } from './help/help.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { GeocoderComponent } from './geocoder/geocoder.component';
 import { ImportDialogComponent } from './import-dialog/import-dialog.component';
-import { ClockComponent } from './clock/clock.component';
 import { FabMenuComponent } from './fab-menu/fab-menu.component';
 import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
@@ -69,6 +68,8 @@ import { ShareDialogComponent } from './session/share-dialog/share-dialog.compon
 import { TextDividerComponent } from './text-divider/text-divider.component';
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { FloatingUIComponent } from './floating-ui/floating-ui.component';
+import { CoordinatesComponent } from './coordinates/coordinates.component';
 
 registerLocaleData(localeCH);
 
@@ -93,7 +94,6 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     ConfirmationDialogComponent,
     GeocoderComponent,
     ImportDialogComponent,
-    ClockComponent,
     // sidebar
     SidebarComponent,
     SidebarFiltersComponent,
@@ -116,6 +116,8 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     ShareComponent,
     ShareDialogComponent,
     TextDividerComponent,
+    FloatingUIComponent,
+    CoordinatesComponent,
   ],
   imports: [
     BrowserModule,

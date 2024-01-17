@@ -37,6 +37,7 @@ import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { Feature } from 'ol';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
+import { Coordinate } from 'ol/coordinate';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +51,8 @@ export class ZsMapStateService {
   private _displayPatches = new BehaviorSubject<Patch[]>([]);
   private _displayInversePatches = new BehaviorSubject<Patch[]>([]);
 
+  private _cursor = new BehaviorSubject<Coordinate>([0, 0]);
+
   private _layerCache: Record<string, ZsMapBaseLayer> = {};
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _elementToDraw = new BehaviorSubject<ZsMapElementToDraw | undefined>(undefined);
@@ -60,6 +63,7 @@ export class ZsMapStateService {
   private _splitMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
   private _currentMapCenter: BehaviorSubject<number[]> | undefined;
+
 
   constructor(
     public i18n: I18NService,
@@ -904,6 +908,14 @@ export class ZsMapStateService {
         }
       }
     }
+  }
+
+  public getCoordinates() {
+    return this._cursor.asObservable();
+  }
+
+  public setCoordinates(coordinate: Coordinate) {
+    this._cursor.next(coordinate);
   }
 
   observeIsReadOnly(): Observable<boolean> {
