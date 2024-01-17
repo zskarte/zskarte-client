@@ -6,7 +6,7 @@
 	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}
 	.st1{enable-background:new    ;}
 	.st2{fill:#FF9900;}
-	.st3{font-family:'MyriadPro-Regular';}
+	.st3{font-family:'Arial'; font-weight: 600;}
 	.st4{font-size:39.293px;}
 	.st5{letter-spacing:5;}
 </style>
