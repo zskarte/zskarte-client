@@ -1469,7 +1469,7 @@ export class Signs {
       src: 'BSM/Obdachlosensammelstelle.svg',
       de: 'Obdachlosensammelstelle',
       en: 'Obdachlosensammelstelle',
-      fr: 'Point de rassemblement sans abri ',
+      fr: 'Point de rassemblement sans abri',
     },
     /*
     {
@@ -1489,9 +1489,9 @@ export class Signs {
       type: 'Point',
       color: '#FF0000',
       src: 'BABS/Personenbergungsuebersicht - Leerraster.svg',
-      de: 'Personenbergungsübersicht - Leerraster',
-      en: 'Personenbergungsübersicht - Leerraster',
-      fr: "Vue d'ensemble de sauvetage - grille vide",
+      de: 'Personenbergungsübersicht',
+      en: 'Personenbergungsübersicht',
+      fr: "Vue d'ensemble de sauvetage",
     },
     {
       id: 148,

@@ -1,4 +1,11 @@
 <form class="container">
+
+  <div class="noSignature">
+    <h4 aria-level="2">{{ i18n.get('noSignature') }}</h4>
+  </div>
+
+  <app-recently-used-signs [dialog]="this" (selectSign)="select($event)"> </app-recently-used-signs>
+
   <div class="filter">
     <mat-form-field class="flexGrow">
       <input name="filter" matInput [(ngModel)]="filter" (ngModelChange)="updateAvailableSigns()" placeholder="{{ i18n.get('search') }}"/>
@@ -14,12 +21,6 @@
       </mat-select>
     </mat-form-field>
   </div>
-
-  <div class="noSignature">
-    <h4 aria-level="2">{{ i18n.get('noSignature') }}</h4>
-  </div>
-
-  <app-recently-used-signs [dialog]="this" (selectSign)="select($event)"> </app-recently-used-signs>
   
   <div class="overflow-auto">
     <table mat-table [dataSource]="filteredSigns">
