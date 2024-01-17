@@ -7,6 +7,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 
 @Component({
   selector: 'app-floating-ui',
@@ -21,6 +22,9 @@ export class FloatingUIComponent {
   public connectionCount = new BehaviorSubject<number>(0);
   public isOnline = new BehaviorSubject<boolean>(true);
   public isReadOnly = new BehaviorSubject<boolean>(false);
+  private _deviceTrackingLayer!: VectorLayer<VectorSource>;
+  activeLayer$: Observable<ZsMapBaseLayer | undefined>;
+
 
   constructor(
     public state: ZsMapStateService,
@@ -45,6 +49,7 @@ export class FloatingUIComponent {
         this.connectionCount.next(connections.length);
       });
 
+    this.activeLayer$ = state.observeActiveLayer();
   }
 
   zoomIn() {

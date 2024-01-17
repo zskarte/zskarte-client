@@ -1,6 +1,21 @@
-<mat-drawer-container>
-  <mat-drawer mode="side" position="end" [opened]="(sidebarContext$ | async) !== null" class="mat-elevation-z3"> </mat-drawer>
-  <mat-drawer-content>
+<mat-sidenav-container>
+  <mat-sidenav class="mat-elevation-z3" position="end" mode="side" #sidenav [opened]="(sidebarContext$ | async) !== null">
+    @switch (sidebarContext$ | async) {
+      @case (sidebarContext.Filters) {
+        <app-sidebar-filters></app-sidebar-filters>
+      }
+      @case (sidebarContext.Layers) {
+        <app-sidebar></app-sidebar>
+      }
+      @case (sidebarContext.History) {
+        <app-sidebar-history></app-sidebar-history>
+      }
+      @case (sidebarContext.Connections) {
+        <app-sidebar-connections></app-sidebar-connections>
+      }
+    }
+  </mat-sidenav>
+  <mat-sidenav-content>
     <app-credits />
     <app-geocoder />
     <div class="action-buttons noprint">
@@ -39,7 +54,6 @@
         >
           <mat-icon>filter_alt</mat-icon>
         </button>
-
         <button
           class="mat-elevation-z3"
           mat-icon-button
@@ -51,6 +65,8 @@
           <mat-icon>history</mat-icon>
         </button>
         <button
+          class="mat-elevation-z3"
+          mat-icon-button
           mat-icon-button
           *ngIf="(sidebarContext$ | async) !== null"
           (click)="setSidebarContext(null)"
@@ -62,8 +78,8 @@
       </div>
       <div class="horizontal-stack">
         <app-coordinates />
-        <app-fab-menu />
+        <app-fab-menu *ngIf="!(state.observeIsReadOnly() | async)" [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
       </div>
     </div>
-  </mat-drawer-content>
-</mat-drawer-container>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,4 +1,4 @@
-mat-drawer-container {
+mat-sidenav-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -10,14 +10,14 @@ mat-drawer-container {
   padding: 1.25em;
 }
 
-mat-drawer-content {
+mat-sidenav-content {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: start;
 }
 
-mat-drawer {
+mat-sidenav {
   background: white;  
   padding: 1em;
   width: 30em;

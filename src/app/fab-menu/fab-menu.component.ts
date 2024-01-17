@@ -21,6 +21,7 @@ export class FabMenuComponent {
   ) {}
 
   openDrawDialog(): void {
+    console.log(this.layer)
     this.layer?.draw(ZsMapDrawElementStateType.SYMBOL);
     this.closeBackdrop();
   }
