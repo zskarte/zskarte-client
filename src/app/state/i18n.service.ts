@@ -863,6 +863,16 @@ export class I18NService {
       en: 'Current location',
       fr: 'Emplacement actuel',
     },
+    undo: {
+      de: 'Rückgängig',
+      en: 'Undo',
+      fr: 'Annuler',
+    },
+    redo: {
+      de: 'Wiederherstellen',
+      en: 'Redo',
+      fr: 'Rétablir',
+    },
     connections: {
       de: 'Verbindungen',
       en: 'Connections',
