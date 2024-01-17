@@ -33,7 +33,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MapLegendDisplayComponent } from './sidebar/map-legend-display/map-legend-display.component';
-import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HelpComponent } from './help/help.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { GeocoderComponent } from './geocoder/geocoder.component';
@@ -70,6 +69,7 @@ import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-histo
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FloatingUIComponent } from './floating-ui/floating-ui.component';
 import { CoordinatesComponent } from './coordinates/coordinates.component';
+import { SidebarMenuComponent } from './sidebar/sidebar-menu/sidebar-menu.component';
 
 registerLocaleData(localeCH);
 
@@ -89,7 +89,6 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
   declarations: [
     AppComponent,
     MapRendererComponent,
-    ToolbarComponent,
     HelpComponent,
     ConfirmationDialogComponent,
     GeocoderComponent,
@@ -118,6 +117,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     TextDividerComponent,
     FloatingUIComponent,
     CoordinatesComponent,
+    SidebarMenuComponent,
   ],
   imports: [
     BrowserModule,

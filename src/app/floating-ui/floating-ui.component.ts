@@ -25,7 +25,6 @@ export class FloatingUIComponent {
   private _deviceTrackingLayer!: VectorLayer<VectorSource>;
   activeLayer$: Observable<ZsMapBaseLayer | undefined>;
 
-
   constructor(
     public state: ZsMapStateService,
     public i18n: I18NService,
@@ -36,11 +35,11 @@ export class FloatingUIComponent {
     this.state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
 
     this._session
-    .observeIsOnline()
-    .pipe(takeUntil(this._ngUnsubscribe))
-    .subscribe((isOnline) => {
-      this.isOnline.next(isOnline);
-    });
+      .observeIsOnline()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((isOnline) => {
+        this.isOnline.next(isOnline);
+      });
 
     this._sync
       .observeConnections()
@@ -53,16 +52,13 @@ export class FloatingUIComponent {
   }
 
   zoomIn() {
-    console.log('zoomIn');
+    this.state.updateMapZoom(1);
   }
 
   zoomOut() {
-    console.log('zoomOut');
+    this.state.updateMapZoom(-1);
   }
-
   setSidebarContext(context: SidebarContext | null) {
     this.state.toggleSidebarContext(context);
   }
-
-  
 }

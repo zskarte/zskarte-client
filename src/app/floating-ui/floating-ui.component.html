@@ -13,6 +13,9 @@
       @case (sidebarContext.Connections) {
         <app-sidebar-connections></app-sidebar-connections>
       }
+      @case (sidebarContext.Menu) {
+        <app-sidebar-menu></app-sidebar-menu>
+      }
     }
   </mat-sidenav>
   <mat-sidenav-content>
@@ -21,7 +24,17 @@
     <div class="action-buttons noprint">
       <div class="vertical-stack">
         <button
+          class="mat-elevation-z3"
           mat-icon-button
+          [color]="(sidebarContext$ | async) === sidebarContext.Menu ? 'primary' : 'basic'"
+          (click)="setSidebarContext(sidebarContext.Menu)"
+          [attr.aria-label]="i18n.get('docMapMenuTitle')"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="mat-elevation-z3"
           [color]="(sidebarContext$ | async) === sidebarContext.Connections ? 'primary' : 'basic'"
           (click)="setSidebarContext(sidebarContext.Connections)"
           [attr.aria-label]="i18n.get('connections')"

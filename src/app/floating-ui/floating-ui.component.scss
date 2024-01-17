@@ -21,8 +21,7 @@ mat-sidenav {
   background: white;  
   padding: 1em;
   width: 30em;
-  // border-radius: 1em !important;
-  // margin: 1em;
+  pointer-events: auto;
 }
 
 .action-buttons {

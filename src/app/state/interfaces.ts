@@ -151,6 +151,7 @@ export enum SidebarContext {
   Filters,
   Connections,
   History,
+  Menu
 }
 
 export interface ZsMapElementToDraw {
