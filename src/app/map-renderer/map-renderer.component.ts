@@ -36,6 +36,7 @@ import { Signs } from './signs';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import { Layer } from 'ol/layer';
 import { OlTileLayer, OlTileLayerType } from './utils';
 
 @Component({
@@ -67,7 +68,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _view!: OlView;
   private _geolocation!: OlGeolocation;
   private _modify!: Modify;
-  private _mapLayer = new OlTileLayer({
+  private _mapLayer: Layer = new OlTileLayer({
     zIndex: 0,
   });
   private _navigationLayer!: VectorLayer<VectorSource>;
@@ -563,8 +564,9 @@ export class MapRendererComponent implements AfterViewInit {
       .observeMapSource()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((source) => {
-        // @ts-expect-error "we know the type is okay"
-        this._mapLayer.setSource(ZsMapSources.get(source));
+        this._map.removeLayer(this._mapLayer);
+        this._mapLayer = ZsMapSources.get(source);
+        this._map.addLayer(this._mapLayer);
       });
 
     this._state
