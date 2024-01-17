@@ -1,3 +1,14 @@
+<div #mapElement id="map" class="map"></div>
+<ng-container *ngIf="mousePosition | async as mousePosition">
+  <div
+    class="tooltip noprint"
+    *ngIf="currentSketchSize | async as sketchSize"
+    [style.left.px]="mousePosition[0]"
+    [style.top.px]="mousePosition[1]"
+    [innerHTML]="sketchSize"
+  ></div>
+</ng-container>
+
 <button mat-mini-fab class="edit-button" color="warn" #delete>
   <i class="material-icons">delete_forever</i>
 </button>
@@ -15,12 +26,3 @@
   <mat-icon>close</mat-icon>
 </button>
 
-<ng-container *ngIf="mousePosition | async as mousePosition">
-  <div
-    class="tooltip noprint"
-    *ngIf="currentSketchSize | async as sketchSize"
-    [style.left.px]="mousePosition[0]"
-    [style.top.px]="mousePosition[1]"
-    [innerHTML]="sketchSize"
-  ></div>
-</ng-container>
