@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(255,0,0)" stroke="rgb(255,0,0)" d="M 118,1087 L 707,327 753,363 164,1124 118,1087 Z M 597,278 L 819,229 827,457 597,278 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FF0000;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FF0000;}
+</style>
+<rect x="-8.1" y="92" transform="matrix(0.612 -0.7909 0.7909 0.612 -52.7543 84.3475)" class="st0" width="135.4" height="8"/>
+<polygon class="st1" points="80.4,36.5 110.8,29.8 111.9,60.9 "/>
 </svg>

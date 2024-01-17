@@ -1,22 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(255,0,0)" stroke="rgb(255,0,0)" d="M 23,340 L 130,242 147,260 40,359 Z"/>
-  <path fill="rgb(255,0,0)" stroke="rgb(255,0,0)" d="M 25,552 L 364,240 382,258 43,570 Z"/>
-  <path fill="rgb(255,0,0)" stroke="none" d="M 25,755 L 591,238 608,256 43,774 25,755 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 25,755 L 591,238 608,256 43,774 25,755 Z"/>
-  <path fill="rgb(255,0,0)" stroke="none" d="M 117,876 L 816,238 833,256 135,895 117,876 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 117,876 L 816,238 833,256 135,895 117,876 Z"/>
-  <path fill="rgb(255,0,0)" stroke="none" d="M 352,869 L 1043,238 1059,256 369,888 352,869 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 352,869 L 1043,238 1059,256 369,888 352,869 Z"/>
-  <path fill="rgb(255,0,0)" stroke="none" d="M 1011,878 L 1101,796 1118,815 1028,896 1011,878 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 1011,878 L 1101,796 1118,815 1028,896 1011,878 Z"/>
-  <path fill="rgb(255,0,0)" stroke="none" d="M 587,878 L 1101,385 1118,403 604,896 587,878 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 587,878 L 1101,385 1118,403 604,896 587,878 Z"/>
-  <path fill="rgb(255,0,0)" stroke="none" d="M 786,885 L 1108,591 1126,609 804,903 786,885 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(255,0,0)" d="M 786,885 L 1108,591 1126,609 804,903 786,885 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FF0000;}
+</style>
+<g>
+	
+		<rect x="-1.5" y="37.9" transform="matrix(0.7344 -0.6787 0.6787 0.7344 -24.5716 16.4492)" class="st0" width="20.5" height="3.5"/>
+	
+		<rect x="-7.1" y="52.7" transform="matrix(0.7344 -0.6787 0.6787 0.7344 -30.1956 31.8053)" class="st0" width="65.3" height="3.5"/>
+	
+		<rect x="-12.7" y="67" transform="matrix(0.7377 -0.6751 0.6751 0.7377 -35.5456 46.1072)" class="st0" width="108.5" height="3.6"/>
+	
+		<rect x="-3" y="75.6" transform="matrix(0.7377 -0.6751 0.6751 0.7377 -35.4654 63.4794)" class="st0" width="133.9" height="3.6"/>
+	
+		<rect x="30.4" y="75.1" transform="matrix(0.7377 -0.6751 0.6751 0.7377 -26.5604 85.3746)" class="st0" width="132.4" height="3.6"/>
+	
+		<rect x="138.8" y="115.3" transform="matrix(0.7404 -0.6722 0.6722 0.7404 -40.4068 129.4491)" class="st0" width="17.1" height="3.6"/>
+	
+		<rect x="66.9" y="86.1" transform="matrix(0.7212 -0.6927 0.6927 0.7212 -28.1322 105.7518)" class="st0" width="100.9" height="3.5"/>
+	
+		<rect x="101.1" y="101.2" transform="matrix(0.7377 -0.6751 0.6751 0.7377 -34.8952 116.1221)" class="st0" width="61.8" height="3.6"/>
+</g>
 </svg>

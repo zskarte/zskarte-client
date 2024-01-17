@@ -24,15 +24,25 @@ export class FloatingUIComponent {
   public isReadOnly = new BehaviorSubject<boolean>(false);
   private _deviceTrackingLayer!: VectorLayer<VectorSource>;
   activeLayer$: Observable<ZsMapBaseLayer | undefined>;
+  public canUndo = new BehaviorSubject<boolean>(false);
+  public canRedo = new BehaviorSubject<boolean>(false);
 
   constructor(
-    public state: ZsMapStateService,
     public i18n: I18NService,
+    public _state: ZsMapStateService,
     private _sync: SyncService,
     private _session: SessionService,
   ) {
-    this.sidebarContext$ = state.observeSidebarContext();
-    this.state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
+    this.sidebarContext$ = _state.observeSidebarContext();
+    this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
+
+    this._state
+      .observeHistory()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(({ canUndo, canRedo }) => {
+        this.canUndo.next(canUndo);
+        this.canRedo.next(canRedo);
+      });
 
     this._session
       .observeIsOnline()
@@ -48,17 +58,25 @@ export class FloatingUIComponent {
         this.connectionCount.next(connections.length);
       });
 
-    this.activeLayer$ = state.observeActiveLayer();
+    this.activeLayer$ = _state.observeActiveLayer();
   }
 
   zoomIn() {
-    this.state.updateMapZoom(1);
+    this._state.updateMapZoom(1);
   }
 
   zoomOut() {
-    this.state.updateMapZoom(-1);
+    this._state.updateMapZoom(-1);
   }
   setSidebarContext(context: SidebarContext | null) {
-    this.state.toggleSidebarContext(context);
+    this._state.toggleSidebarContext(context);
+  }
+
+  undo() {
+    this._state.undoMapStateChange();
+  }
+
+  redo() {
+    this._state.redoMapStateChange();
   }
 }

@@ -1,20 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="DrawingGroup_1">
-   <g>
-   <path fill="rgb(255,153,0)" stroke="none" d="M 1123,1045 C 756,1045 390,1045 23,1045 206,730 389,416 573,101 756,416 940,730 1123,1045 Z M 985,977 C 848,739 710,500 573,262 436,500 299,739 162,977 436,977 711,977 985,977 Z"/>
-    <rect fill="none" stroke="none" x="22" y="100" width="1103" height="947"/>
-   </g>
-   <g>
-   <path fill="rgb(255,153,0)" stroke="none" d="M 465,873 C 465,805 465,737 465,668 515,668 565,668 615,668 615,680 615,691 615,703 578,703 542,703 505,703 505,718 505,733 505,748 539,748 573,748 607,748 607,760 607,771 607,783 573,783 539,783 505,783 505,801 505,820 505,839 543,839 581,839 619,839 619,850 619,862 619,873 L 465,873 Z"/>
-    <rect fill="none" stroke="none" x="464" y="668" width="156" height="206"/>
-   </g>
-   <g>
-   <path fill="rgb(255,153,0)" stroke="none" d="M 652,873 C 652,805 652,737 652,668 665,668 678,668 691,668 691,737 691,805 691,873 L 652,873 Z"/>
-    <rect fill="none" stroke="none" x="652" y="668" width="41" height="206"/>
-   </g>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}
+	.st1{enable-background:new    ;}
+	.st2{fill:#FF9900;}
+	.st3{font-family:'Arial'; font-weight: 600;}
+	.st4{font-size:39.293px;}
+	.st5{letter-spacing:5;}
+</style>
+<g>
+	<path class="st0" d="M152.6,141.8H1.4L77,11.9L152.6,141.8L152.6,141.8L152.6,141.8z M133.6,132.3L77,34l-56.6,98.3L133.6,132.3
+		L133.6,132.3L133.6,132.3z"/>
+	<g class="st1">
+		<text transform="matrix(0.9995 0 0 1 59.0962 118.085)" class="st2 st3 st4 st5">E</text>
+	</g>
+	<g class="st1">
+		<text transform="matrix(0.9995 0 0 1 85.209 118.085)" class="st2 st3 st4">l</text>
+	</g>
+</g>
 </svg>

@@ -19,14 +19,14 @@
     }
   </mat-sidenav>
   <mat-sidenav-content>
-      <div class="main noprint">
-        <div class="horizontal-stack">
-          <app-credits [ngClass]="{'sidebar-open' : (sidebarContext$ | async) !== null}" />
-          <app-geocoder [ngClass]="{'sidebar-open' : (sidebarContext$ | async) !== null}" />
-          <span></span>
-        </div>
-        <app-coordinates [ngClass]="{'sidebar-open' : (sidebarContext$ | async) !== null}" />
+    <div class="main noprint">
+      <div class="horizontal-stack">
+        <app-credits [ngClass]="{ 'sidebar-open': (sidebarContext$ | async) !== null }" />
+        <app-geocoder [ngClass]="{ 'sidebar-open': (sidebarContext$ | async) !== null }" />
+        <span></span>
       </div>
+      <app-coordinates [ngClass]="{ 'sidebar-open': (sidebarContext$ | async) !== null }" />
+    </div>
     <div class="action-buttons noprint">
       <div class="vertical-stack">
         <button
@@ -83,6 +83,13 @@
         >
           <mat-icon>history</mat-icon>
         </button>
+
+        <button mat-icon-button [disabled]="!(canUndo | async)" (click)="undo()" [attr.aria-label]="i18n.get('undo')">
+          <mat-icon>undo</mat-icon>
+        </button>
+        <button mat-icon-button [disabled]="!(canRedo | async)" (click)="redo()" [attr.aria-label]="i18n.get('redo')">
+          <mat-icon>redo</mat-icon>
+        </button>
         <button
           class="mat-elevation-z3"
           mat-icon-button
@@ -95,7 +102,7 @@
           <mat-icon>close</mat-icon>
         </button>
       </div>
-      <app-fab-menu *ngIf="!(state.observeIsReadOnly() | async)" [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
+      <app-fab-menu *ngIf="!(_state.observeIsReadOnly() | async)" [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

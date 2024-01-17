@@ -102,6 +102,8 @@ export class MapRendererComponent implements AfterViewInit {
   private existingCurrentLocations: VectorLayer<VectorSource<Feature<Point>>> | undefined;
   public connectionCount = new BehaviorSubject<number>(0);
   public isOnline = new BehaviorSubject<boolean>(true);
+  public canUndo = new BehaviorSubject<boolean>(false);
+  public canRedo = new BehaviorSubject<boolean>(false);
 
   constructor(
     private _state: ZsMapStateService,
@@ -256,6 +258,14 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
+
+    this._state
+      .observeHistory()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(({ canUndo, canRedo }) => {
+        this.canUndo.next(canUndo);
+        this.canRedo.next(canRedo);
+      });
   }
 
   public ngOnDestroy(): void {
@@ -990,5 +1000,13 @@ export class MapRendererComponent implements AfterViewInit {
   hidePositionFlag() {
     this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
     this.toggleFlagButtons(false);
+  }
+
+  undo() {
+    this._state.undoMapStateChange();
+  }
+
+  redo() {
+    this._state.redoMapStateChange();
   }
 }
