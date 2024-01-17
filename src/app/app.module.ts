@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule, isDevMode } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -70,6 +70,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { FloatingUIComponent } from './floating-ui/floating-ui.component';
 import { CoordinatesComponent } from './coordinates/coordinates.component';
 import { SidebarMenuComponent } from './sidebar/sidebar-menu/sidebar-menu.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 registerLocaleData(localeCH);
 
@@ -154,6 +155,12 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     MatFormFieldModule,
     MatSortModule,
     MatPaginatorModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-CH' },
