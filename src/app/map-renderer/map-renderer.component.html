@@ -39,18 +39,10 @@
   >
     <mat-icon>close</mat-icon>
   </button>
-  <button
-  mat-icon-button
-  [disabled]="!(canUndo | async)"
-  (click)="undo()"
-  [attr.aria-label]="i18n.get('undo')">
+  <button mat-icon-button [disabled]="!(canUndo | async)" (click)="undo()" [attr.aria-label]="i18n.get('undo')">
     <mat-icon>undo</mat-icon>
   </button>
-  <button
-    mat-icon-button
-    [disabled]="!(canRedo | async)"
-    (click)="redo()"
-    [attr.aria-label]="i18n.get('redo')">
+  <button mat-icon-button [disabled]="!(canRedo | async)" (click)="redo()" [attr.aria-label]="i18n.get('redo')">
     <mat-icon>redo</mat-icon>
   </button>
 </div>
