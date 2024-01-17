@@ -701,46 +701,51 @@ export class ZsMapStateService {
   }
 
   public undoMapStateChange() {
-    const undoStackPointer = this._undoStackPointer.value + 1;
-
-    if (this._mapInversePatches.value.length - undoStackPointer < 0) {
-      console.log('Undo not possible');
+    if (this._mapInversePatches.value.length - this._undoStackPointer.value === 0) {
       return;
     }
 
+    const newUndoStackPointer = this._undoStackPointer.value + 1;
+
     const lastPatch = this._mapInversePatches.value.slice(
-      this._mapInversePatches.value.length - undoStackPointer,
-      this._mapInversePatches.value.length - undoStackPointer + 1,
+      this._mapInversePatches.value.length - newUndoStackPointer,
+      this._mapInversePatches.value.length - this._undoStackPointer.value,
     );
     const newState = applyPatches<IZsMapState>(this._map.value, lastPatch);
     this._map.next(newState);
 
-    this._undoStackPointer.next(undoStackPointer);
+    this._sync.publishMapStatePatches(lastPatch);
 
-    const newPatches = this._mapPatches.value.slice(0, this._mapPatches.value.length - undoStackPointer);
-    this._sync.publishMapStatePatches(newPatches);
+    this._undoStackPointer.next(this._undoStackPointer.value + 1);
   }
 
   public redoMapStateChange() {
-    const undoStackPointer = this._undoStackPointer.value - 1;
-
-    if (undoStackPointer === 0) {
-      console.log('Redo not possible');
+    if (this._undoStackPointer.value === 0) {
       return;
     }
 
+    const newUndoStackPointer = this._undoStackPointer.value - 1;
+
     const lastPatch = this._mapPatches.value.slice(
-      this._mapInversePatches.value.length - undoStackPointer,
-      this._mapInversePatches.value.length - undoStackPointer + 1,
+      this._mapInversePatches.value.length - this._undoStackPointer.value,
+      this._mapInversePatches.value.length - newUndoStackPointer,
     );
 
     const newState = applyPatches<IZsMapState>(this._map.value, lastPatch);
     this._map.next(newState);
 
-    this._undoStackPointer.next(undoStackPointer);
+    this._sync.publishMapStatePatches(lastPatch);
 
-    const newPatches = this._mapPatches.value.slice(0, this._mapPatches.value.length - undoStackPointer);
-    this._sync.publishMapStatePatches(newPatches);
+    this._undoStackPointer.next(this._undoStackPointer.value - 1);
+  }
+
+  public observeHistory() {
+    return this._undoStackPointer.pipe(
+      map((x) => ({
+        canUndo: this._mapInversePatches.value.length - x > 0,
+        canRedo: x > 0,
+      })),
+    );
   }
 
   public updateMapState(fn: (draft: IZsMapState) => void, preventPatches = false) {

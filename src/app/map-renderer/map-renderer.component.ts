@@ -99,6 +99,8 @@ export class MapRendererComponent implements AfterViewInit {
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
   public isReadOnly = new BehaviorSubject<boolean>(false);
   public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
+  public canUndo = new BehaviorSubject<boolean>(false);
+  public canRedo = new BehaviorSubject<boolean>(false);
 
   constructor(
     private _state: ZsMapStateService,
@@ -161,6 +163,11 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
+
+    this._state.observeHistory().subscribe(({ canUndo, canRedo }) => {
+      this.canUndo.next(canUndo);
+      this.canRedo.next(canRedo);
+    });
   }
 
   public ngOnDestroy(): void {
@@ -911,5 +918,13 @@ export class MapRendererComponent implements AfterViewInit {
   hidePositionFlag() {
     this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
     this.toggleFlagButtons(false);
+  }
+
+  undo() {
+    this._state.undoMapStateChange();
+  }
+
+  redo() {
+    this._state.redoMapStateChange();
   }
 }
