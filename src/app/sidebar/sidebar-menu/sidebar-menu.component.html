@@ -1,9 +1,6 @@
 <ng-container>
-<button mat-menu-item (click)="toggleHistory()" title="ALT+H">
-    <mat-icon
-      aria-hidden="false"
-      [attr.aria-label]="i18n.get('exportSession')"
-      *ngIf="!(zsMapStateService.observeIsHistoryMode() | async)"
+  <button mat-menu-item (click)="toggleHistory()" title="ALT+H">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(zsMapStateService.observeIsHistoryMode() | async)"
       >history</mat-icon
     >
     <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="zsMapStateService.observeIsHistoryMode() | async"
@@ -49,29 +46,29 @@
 </ng-container>
 
 <mat-menu #languageOptions="matMenu">
-<button mat-menu-item *ngFor="let locale of locales" (click)="setLocale(locale)" [ngClass]="{ active: locale === session.getLocale() }">
-  {{ i18n.get(locale) }}
-</button>
+  <button mat-menu-item *ngFor="let locale of locales" (click)="setLocale(locale)" [ngClass]="{ active: locale === session.getLocale() }">
+    {{ i18n.get(locale) }}
+  </button>
 </mat-menu>
 
 <mat-menu #protocolOptions="matMenu">
-<button mat-menu-item class="tools-menu-item" (click)="protocolTable()">
-  <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolTable')">table_chart</mat-icon>
-  {{ i18n.get('protocolTable') }}
-</button>
-<button mat-menu-item class="tools-menu-item" (click)="protocolExcelExport()">
-  <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolSaveAsExcel')">save</mat-icon>
-  {{ i18n.get('protocolSaveAsExcel') }}
-</button>
+  <button mat-menu-item class="tools-menu-item" (click)="protocolTable()">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolTable')">table_chart</mat-icon>
+    {{ i18n.get('protocolTable') }}
+  </button>
+  <button mat-menu-item class="tools-menu-item" (click)="protocolExcelExport()">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('protocolSaveAsExcel')">save</mat-icon>
+    {{ i18n.get('protocolSaveAsExcel') }}
+  </button>
 </mat-menu>
 
 <mat-menu #shareOptions="matMenu">
-<button mat-menu-item (click)="copyShareLink()">
-  <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('copyShareLink')">share</mat-icon>
-  {{ i18n.get('copyShareLink') }}
-</button>
-<button mat-menu-item (click)="generateShareQrCode()">
-  <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('showShareQrCode')">qr_code</mat-icon>
-  {{ i18n.get('showShareQrCode') }}
-</button>
+  <button mat-menu-item (click)="copyShareLink()">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('copyShareLink')">share</mat-icon>
+    {{ i18n.get('copyShareLink') }}
+  </button>
+  <button mat-menu-item (click)="generateShareQrCode()">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('showShareQrCode')">qr_code</mat-icon>
+    {{ i18n.get('showShareQrCode') }}
+  </button>
 </mat-menu>
