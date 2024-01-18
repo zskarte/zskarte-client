@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="noSignature">
+    <h4 aria-level="2">{{ i18n.get('noSignature') }}</h4>
+  </div>
+  <div class="no-symbol-buttons">
+    <button mat-raised-button color="primary" (click)="addText()">
+      <mat-icon>font_download</mat-icon>
+      {{ i18n.get('text') }}
+    </button>
+    <button mat-raised-button color="primary" (click)="addLine()">
+      <mat-icon>show_chart</mat-icon>
+      {{ i18n.get('line') }}
+    </button>
+    <button mat-raised-button color="primary" (click)="addPolygon()">
+      <mat-icon>widgets</mat-icon>
+      {{ i18n.get('polygon') }}
+    </button>
+    <button mat-raised-button color="primary" (click)="startFreehand()">
+      <mat-icon>gesture</mat-icon>
+      {{ i18n.get('freehand') }}
+    </button>
+  </div>
+</div>
+
+<app-select-sign-dialog (signSelected)="signSelected($event)"></app-select-sign-dialog>

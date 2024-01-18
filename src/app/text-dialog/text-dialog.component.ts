@@ -1,9 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
 import { I18NService } from '../state/i18n.service';
-import { ZsMapDrawElementStateType } from '../state/interfaces';
 
 @Component({
   selector: 'app-text-dialog',
@@ -15,7 +14,7 @@ export class TextDialogComponent {
   text = '';
 
   constructor(
-    public dialogRef: MatDialogRef<DrawingDialogComponent>,
+    public dialogRef: MatDialogRef<SelectSignDialog>,
     public i18n: I18NService,
   ) {}
 
@@ -24,7 +23,6 @@ export class TextDialogComponent {
   }
 
   submit(): void {
-    this.layer?.draw(ZsMapDrawElementStateType.TEXT);
     this.dialogRef.close(this.text);
   }
 }
