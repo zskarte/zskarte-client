@@ -3,17 +3,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 
-import { DrawingDialogComponent } from './drawing-dialog.component';
+import { SelectSignDialog } from './select-sign-dialog.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('DrawingDialogComponent', () => {
-  let component: DrawingDialogComponent;
-  let fixture: ComponentFixture<DrawingDialogComponent>;
+  let component: SelectSignDialog;
+  let fixture: ComponentFixture<SelectSignDialog>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [MatDialogModule, HttpClientTestingModule],
-      declarations: [DrawingDialogComponent],
+      declarations: [SelectSignDialog],
       providers: [
         {
           provide: MatDialogRef,
@@ -29,7 +29,7 @@ describe('DrawingDialogComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DrawingDialogComponent);
+    fixture = TestBed.createComponent(SelectSignDialog);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

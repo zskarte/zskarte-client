@@ -6,7 +6,12 @@ export enum ZsMapStateSource {
   GEO_ADMIN_SWISS_IMAGE = 'geoAdminSwissImage',
   GEO_ADMIN_PIXEL = 'geoAdminPixel',
   GEO_ADMIN_PIXEL_BW = 'geoAdminPixelBW',
+  LOCAL = 'local',
 }
+
+export const zsMapStateSourceToDownloadUrl = {
+  [ZsMapStateSource.LOCAL]: 'https://zskarte.blob.core.windows.net/etienne/ch.swisstopo.pmtiles',
+};
 
 export interface IZsMapSaveFileState {
   map: IZsMapState;
@@ -158,4 +163,21 @@ export interface ZsMapElementToDraw {
   layer: string;
   symbolId?: number;
   text?: string;
+}
+
+export type ZsMapDrawElementParams = IZsMapBaseDrawElementParams | IZsMapSymbolDrawElementParams | IZsMapTextDrawElementParams;
+
+interface IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType;
+  layer: string;
+}
+
+export interface IZsMapSymbolDrawElementParams extends IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType.SYMBOL;
+  symbolId: number;
+}
+
+export interface IZsMapTextDrawElementParams extends IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType.TEXT;
+  text: string;
 }

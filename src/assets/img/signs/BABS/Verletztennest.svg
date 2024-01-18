@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 209,28 L 909,28 909,1084 209,1084 209,28 Z M 291,1043 L 250,1001 868,1001 827,1043 827,69 868,110 250,110 291,69 291,1043 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 577,73 L 577,1048 531,1048 531,73 577,73 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 577,73 L 577,1048 531,1048 531,73 577,73 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 861,581 L 264,581 264,535 861,535 861,581 Z"/>
-  <path stroke-width="1" fill="none" stroke="rgb(0,0,255)" d="M 861,581 L 264,581 264,535 861,535 861,581 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#0000FF;}
+</style>
+<g>
+	<path class="st0" d="M129.8,156H26.2V0h103.5V156z M38.4,143.8h79.1V12.2H38.4V143.8z"/>
+	<rect x="73.8" y="6.6" class="st0" width="6.9" height="144"/>
+	<rect x="34.4" y="74.8" class="st0" width="88.1" height="6.9"/>
+</g>
 </svg>

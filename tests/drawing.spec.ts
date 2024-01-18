@@ -3,12 +3,12 @@ import { login } from './global-setup';
 
 async function clickOnMap(page: Page, position: { x: number; y: number }) {
   await page.waitForTimeout(100);
-  await page.locator('#map canvas').click({ position });
+  await page.locator('#map canvas').last().click({ position });
 }
 
 async function dblclickOnMap(page: Page, position: { x: number; y: number }) {
   await page.waitForTimeout(100);
-  await page.locator('#map canvas').dblclick({ position });
+  await page.locator('#map canvas').last().dblclick({ position });
 }
 
 test.beforeEach(async ({ page }) => {
@@ -19,7 +19,6 @@ test.beforeEach(async ({ page }) => {
 
 test('add symbol', async ({ page }) => {
   await page.getByRole('button', { name: 'Add' }).click();
-  await page.getByRole('button', { name: 'Signatur' }).click();
   await page.getByRole('cell', { name: 'ABC Dekontaminationsstelle' }).click();
   await clickOnMap(page, { x: 659, y: 250 });
   await expect(page.locator('app-selected-feature > mat-card')).toBeVisible();

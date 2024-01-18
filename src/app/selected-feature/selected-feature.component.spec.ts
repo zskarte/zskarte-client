@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 
 import { SelectedFeatureComponent } from './selected-feature.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -15,7 +15,7 @@ describe('SelectedFeatureComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [MatDialogModule, HttpClientTestingModule],
-      declarations: [SelectedFeatureComponent, DrawingDialogComponent, ConfirmationDialogComponent, DetailImageViewComponent],
+      declarations: [SelectedFeatureComponent, SelectSignDialog, ConfirmationDialogComponent, DetailImageViewComponent],
       schemas: [NO_ERRORS_SCHEMA],
     });
   });

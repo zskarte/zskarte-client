@@ -1,9 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { Draw, Select, Translate, defaults, Modify } from 'ol/interaction';
+import { defaults, Draw, Modify, Select, Translate } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
-import OlTileLayer from 'ol/layer/Tile';
-import OlTileWMTS from 'ol/source/WMTS';
 import DrawHole from 'ol-ext/interaction/DrawHole';
 import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
@@ -19,7 +17,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
-import { Fill, Icon, Stroke, Style, Circle } from 'ol/style';
+import { Circle, Fill, Icon, Stroke, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
@@ -38,6 +36,8 @@ import { Signs } from './signs';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
+import { Layer } from 'ol/layer';
+import { OlTileLayer, OlTileLayerType } from './utils';
 
 @Component({
   selector: 'app-map-renderer',
@@ -68,7 +68,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _view!: OlView;
   private _geolocation!: OlGeolocation;
   private _modify!: Modify;
-  private _mapLayer = new OlTileLayer({
+  private _mapLayer: Layer = new OlTileLayer({
     zIndex: 0,
   });
   private _navigationLayer!: VectorLayer<VectorSource>;
@@ -82,7 +82,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _allLayers: VectorLayer<VectorSource>[] = [];
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
-  private _featureLayerCache: Map<string, OlTileLayer<OlTileWMTS>> = new Map();
+  private _featureLayerCache: Map<string, OlTileLayerType> = new Map();
   private _modifyCache = new Collection<Feature>([]);
   private _currentSketch: FeatureLike | undefined;
   private _rotating = false;
@@ -100,9 +100,11 @@ export class MapRendererComponent implements AfterViewInit {
   public coordinates = new BehaviorSubject<number[]>([0, 0]);
   public isReadOnly = new BehaviorSubject<boolean>(false);
   public selectedVertexPoint = new BehaviorSubject<number[] | null>(null);
-  private existingCurrentLocations: VectorLayer<VectorSource<Point>> | undefined;
+  private existingCurrentLocations: VectorLayer<VectorSource<Feature<Point>>> | undefined;
   public connectionCount = new BehaviorSubject<number>(0);
   public isOnline = new BehaviorSubject<boolean>(true);
+  public canUndo = new BehaviorSubject<boolean>(false);
+  public canRedo = new BehaviorSubject<boolean>(false);
 
   constructor(
     private _state: ZsMapStateService,
@@ -261,6 +263,14 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
+
+    this._state
+      .observeHistory()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(({ canUndo, canRedo }) => {
+        this.canUndo.next(canUndo);
+        this.canRedo.next(canRedo);
+      });
   }
 
   public ngOnDestroy(): void {
@@ -567,8 +577,10 @@ export class MapRendererComponent implements AfterViewInit {
     this._state
       .observeMapSource()
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((source) => {
-        this._mapLayer.setSource(ZsMapSources.get(source));
+      .subscribe(async (source) => {
+        this._map.removeLayer(this._mapLayer);
+        this._mapLayer = await ZsMapSources.get(source);
+        this._map.addLayer(this._mapLayer);
       });
 
     this._state
@@ -661,6 +673,7 @@ export class MapRendererComponent implements AfterViewInit {
               feature.zIndex,
             );
             this._map.addLayer(layer);
+            // @ts-expect-error "we know the type is correct"
             this._featureLayerCache.set(feature.serverLayerName, layer);
 
             // observe feature changes
@@ -697,6 +710,7 @@ export class MapRendererComponent implements AfterViewInit {
    */
   initDrawHole() {
     this._drawHole = new DrawHole({
+      // @ts-expect-error this is the correct type
       layers: this._allLayers,
       type: 'Polygon',
     });
@@ -991,5 +1005,13 @@ export class MapRendererComponent implements AfterViewInit {
   hidePositionFlag() {
     this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
     this.toggleFlagButtons(false);
+  }
+
+  undo() {
+    this._state.undoMapStateChange();
+  }
+
+  redo() {
+    this._state.redoMapStateChange();
   }
 }

@@ -23,9 +23,15 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/manifest.webmanifest"
+            ],
             "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.scss", "./node_modules/ol/ol.css"],
-            "scripts": []
+            "scripts": [],
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "production": {
@@ -78,13 +84,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "zskarte-v3:build:production"
+              "buildTarget": "zskarte-v3:build:production"
             },
             "development": {
-              "browserTarget": "zskarte-v3:build:development"
+              "buildTarget": "zskarte-v3:build:development"
             },
             "local": {
-              "browserTarget": "zskarte-v3:build:local"
+              "buildTarget": "zskarte-v3:build:local"
             }
           },
           "defaultConfiguration": "local"
@@ -92,7 +98,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "zskarte-v3:build"
+            "buildTarget": "zskarte-v3:build"
           }
         },
         "test": {
@@ -103,7 +109,11 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/manifest.webmanifest"
+            ],
             "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.scss", "./node_modules/ol/ol.css"],
             "scripts": []
           }

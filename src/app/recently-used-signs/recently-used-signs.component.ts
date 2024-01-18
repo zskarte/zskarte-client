@@ -4,7 +4,7 @@ import { ZsMapStateService } from '../state/state.service';
 import { Sign } from '../core/entity/sign';
 import { DrawStyle } from '../map-renderer/draw-style';
 import { ZsMapDrawElementState } from 'src/app/state/interfaces';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -43,7 +43,7 @@ export class RecentlyUsedSignsComponent implements OnInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  @Input() dialog!: DrawingDialogComponent;
+  @Input() dialog!: SelectSignDialog;
   @Output() selectSign: EventEmitter<Sign> = new EventEmitter<Sign>();
 
   private signsSource: Sign[] = [];

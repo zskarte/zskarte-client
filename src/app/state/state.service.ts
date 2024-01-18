@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, merge, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
   IZsMapDisplayState,
   IZsMapState,
+  IZsMapSymbolDrawElementParams,
+  IZsMapTextDrawElementParams,
   SidebarContext,
   ZsMapDisplayMode,
+  ZsMapDrawElementParams,
   ZsMapDrawElementState,
   ZsMapDrawElementStateType,
   ZsMapElementToDraw,
@@ -24,7 +27,7 @@ import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 import { GeoFeature } from '../core/entity/geoFeature';
 import { MatDialog } from '@angular/material/dialog';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
@@ -45,6 +48,7 @@ export class ZsMapStateService {
   private _map = new BehaviorSubject<IZsMapState>(produce<IZsMapState>(this._getDefaultMapState(), (draft) => draft));
   private _mapPatches = new BehaviorSubject<Patch[]>([]);
   private _mapInversePatches = new BehaviorSubject<Patch[]>([]);
+  private _undoStackPointer = new BehaviorSubject<number>(0);
 
   private _display = new BehaviorSubject<IZsMapDisplayState>(produce<IZsMapDisplayState>(this._getDefaultDisplayState(), (draft) => draft));
   private _displayPatches = new BehaviorSubject<Patch[]>([]);
@@ -63,8 +67,7 @@ export class ZsMapStateService {
 
   constructor(
     public i18n: I18NService,
-    private drawDialog: MatDialog,
-    private textDialog: MatDialog,
+    private dialog: MatDialog,
     private _sync: SyncService,
     private _session: SessionService,
     private _snackBar: MatSnackBar,
@@ -125,7 +128,7 @@ export class ZsMapStateService {
   public drawSignatureAtCoordinate(coordinates: number[]) {
     const layer = this._display.value.activeLayer;
     if (layer) {
-      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
+      const dialogRef = this.dialog.open(SelectSignDialog);
       dialogRef.afterClosed().subscribe((result: Sign) => {
         if (result) {
           if (result.type === 'Point') {
@@ -147,28 +150,28 @@ export class ZsMapStateService {
   }
 
   // drawing
-  public drawElement(type: ZsMapDrawElementStateType, layer: string): void {
-    if (type === ZsMapDrawElementStateType.SYMBOL) {
-      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
-
-      dialogRef.afterClosed().subscribe((result: Sign) => {
-        if (result) {
-          this._elementToDraw.next({ type, layer, symbolId: result.id });
+  public async drawElement(params: ZsMapDrawElementParams): Promise<void> {
+    // skipcq: JS-0047
+    switch (params.type) {
+      case ZsMapDrawElementStateType.SYMBOL:
+        if (!(params as IZsMapSymbolDrawElementParams).symbolId) {
+          const dialogRef = this.dialog.open(SelectSignDialog);
+          const result: Sign = await lastValueFrom(dialogRef.afterClosed());
+          (params as IZsMapSymbolDrawElementParams).symbolId = result.id as number;
         }
-      });
-    } else if (type === ZsMapDrawElementStateType.TEXT) {
-      const dialogRef = this.textDialog.open(TextDialogComponent, {
-        maxWidth: '80vw',
-        maxHeight: '70vh',
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this._elementToDraw.next({ type, layer, text: result });
+        break;
+      case ZsMapDrawElementStateType.TEXT:
+        if (!(params as IZsMapTextDrawElementParams).text) {
+          const dialogRef = this.dialog.open(TextDialogComponent, {
+            maxWidth: '80vw',
+            maxHeight: '70vh',
+          });
+          const result: string = await lastValueFrom(dialogRef.afterClosed());
+          (params as IZsMapTextDrawElementParams).text = result;
         }
-      });
-    } else {
-      this._elementToDraw.next({ type, layer });
+        break;
     }
+    this._elementToDraw.next(params);
   }
 
   public cancelDrawing(): void {
@@ -741,6 +744,62 @@ export class ZsMapStateService {
     );
   }
 
+  public undoMapStateChange() {
+    if (this.isHistoryMode()) {
+      return;
+    }
+
+    if (this._mapInversePatches.value.length - this._undoStackPointer.value === 0) {
+      return;
+    }
+
+    const newUndoStackPointer = this._undoStackPointer.value + 1;
+
+    const lastPatch = this._mapInversePatches.value.slice(
+      this._mapInversePatches.value.length - newUndoStackPointer,
+      this._mapInversePatches.value.length - this._undoStackPointer.value,
+    );
+    const newState = applyPatches<IZsMapState>(this._map.value, lastPatch);
+    this._map.next(newState);
+
+    this._sync.publishMapStatePatches(lastPatch);
+
+    this._undoStackPointer.next(newUndoStackPointer);
+  }
+
+  public redoMapStateChange() {
+    if (this.isHistoryMode()) {
+      return;
+    }
+
+    if (this._undoStackPointer.value === 0) {
+      return;
+    }
+
+    const newUndoStackPointer = this._undoStackPointer.value - 1;
+
+    const lastPatch = this._mapPatches.value.slice(
+      this._mapInversePatches.value.length - this._undoStackPointer.value,
+      this._mapInversePatches.value.length - newUndoStackPointer,
+    );
+
+    const newState = applyPatches<IZsMapState>(this._map.value, lastPatch);
+    this._map.next(newState);
+
+    this._sync.publishMapStatePatches(lastPatch);
+
+    this._undoStackPointer.next(newUndoStackPointer);
+  }
+
+  public observeHistory() {
+    return this._undoStackPointer.pipe(
+      map((x) => ({
+        canUndo: this._mapInversePatches.value.length - x > 0,
+        canRedo: x > 0,
+      })),
+    );
+  }
+
   public updateMapState(fn: (draft: IZsMapState) => void, preventPatches = false) {
     if (!preventPatches && !this._session.hasWritePermission()) {
       return;
@@ -753,6 +812,7 @@ export class ZsMapStateService {
       this._mapPatches.next(this._mapPatches.value);
       this._mapInversePatches.value.push(...inversePatches);
       this._mapInversePatches.next(this._mapInversePatches.value);
+      this._undoStackPointer.next(0);
 
       // Only publish map state changes when not in history mode
       if (!this.isHistoryMode()) {

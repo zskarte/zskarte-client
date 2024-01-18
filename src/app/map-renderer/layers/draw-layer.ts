@@ -10,8 +10,8 @@ export class ZsMapDrawLayer extends ZsMapBaseLayer {
     super(_id, _state);
   }
 
-  draw(type: ZsMapDrawElementStateType): void {
+  draw(type: ZsMapDrawElementStateType, options: { symbolId?: number; text?: string }): void {
     this._state.cancelDrawing();
-    this._state.drawElement(type, this._id);
+    this._state.drawElement({ type, layer: this._id, ...options });
   }
 }
