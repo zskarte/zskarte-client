@@ -43,7 +43,7 @@ export class ZsMapSources {
         const blobMeta = await db.blobMeta.where('map').equals(source).first();
         let mapUrl: string = zsMapStateSourceToDownloadUrl[source];
         let mapStyle: string | undefined = blobMeta?.mapStyle;
-        if (blobMeta && blobMeta.blobStorageId) {
+        if (blobMeta?.blobStorageId) {
           if (blobMeta.objectUrl) {
             URL.revokeObjectURL(blobMeta.objectUrl);
             blobMeta.objectUrl = undefined;

@@ -133,7 +133,7 @@ export class SidebarComponent {
       await db.blobMeta.put(localMapMeta);
     }
     let localMap: Blob | undefined = undefined;
-    if (localMapMeta && localMapMeta.blobStorageId) {
+    if (localMapMeta?.blobStorageId) {
       localMap = await db.blobs.get(localMapMeta.blobStorageId);
     }
     if (!localMap) {
