@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { HttpClient } from '@angular/common/http';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from 'src/app/state/interfaces';
 import { GeoadminService } from 'src/app/core/geoadmin.service';
@@ -11,6 +9,7 @@ import { combineLatest, lastValueFrom, map, Observable, share, startWith } from 
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
 import { db, LocalMapState } from '../../db/db';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-sidebar',
@@ -47,10 +46,9 @@ export class SidebarComponent {
 
   constructor(
     public mapState: ZsMapStateService,
-    private geoAdminService: GeoadminService,
+    geoAdminService: GeoadminService,
     public i18n: I18NService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar,
     private http: HttpClient,
   ) {
     const allFeatures$ = geoAdminService.getFeatures().pipe(
@@ -90,9 +88,8 @@ export class SidebarComponent {
       .observeMapSource()
       .pipe(
         map((currentMapSource) => {
-          this.mapSources.map((mapSource) => {
+          this.mapSources.forEach((mapSource) => {
             mapSource.selected = currentMapSource === mapSource.key;
-            return mapSource;
           });
         }),
       )

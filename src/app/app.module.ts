@@ -67,6 +67,7 @@ import { ShareComponent } from './session/share/share.component';
 import { SidebarConnectionsComponent } from './sidebar/sidebar-connections/sidebar-connections.component';
 import { ShareDialogComponent } from './session/share-dialog/share-dialog.component';
 import { TextDividerComponent } from './text-divider/text-divider.component';
+import { RevokeShareDialogComponent } from './session/revoke-share-dialog/revoke-share-dialog.component';
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -109,6 +110,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     SelectedFeatureComponent,
     DetailImageViewComponent,
     EditCoordinatesComponent,
+    RevokeShareDialogComponent,
     LoginComponent,
     MapComponent,
     OperationsComponent,
@@ -174,4 +176,4 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {} //skipcq: JS-0327
