@@ -70,6 +70,7 @@ import { TextDividerComponent } from './text-divider/text-divider.component';
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 registerLocaleData(localeCH);
 
@@ -153,6 +154,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     MatFormFieldModule,
     MatSortModule,
     MatPaginatorModule,
+    MatProgressBarModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable

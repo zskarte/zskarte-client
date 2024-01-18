@@ -25,6 +25,21 @@
             {{ layer.translation }}
           </mat-radio-button>
         </mat-radio-group>
+        @if (isDownloadableMap(layer.key)) {
+          <div>
+            @switch (mapDownloadStates[layer.key]) {
+              @case ('loading') {
+                <mat-progress-bar color="primary" mode="indeterminate" />
+              }
+              @case ('downloaded') {
+                <button (click)="removeLocalMap(layer.key)" mat-list-item>Remove</button>
+              }
+              @default {
+                <button (click)="downloadMap(layer.key)" mat-list-item>Download</button>
+              }
+            }
+          </div>
+        }
       </mat-action-list>
     </div>
   </mat-expansion-panel>
