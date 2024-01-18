@@ -30,7 +30,6 @@ body {
   }
 }
 
-
 /********** Levin's Material Style changes ***********/
 
 .mat-mdc-menu-content {
@@ -47,7 +46,7 @@ body {
 .mat-mdc-list-item-interactive:focus,
 .mat-expansion-panel,
 .mat-mdc-menu-item:hover,
-.mat-mdc-menu-item:focus{
+.mat-mdc-menu-item:focus {
   border-radius: 2rem !important;
 }
 
@@ -61,7 +60,9 @@ mat-card {
   border-radius: 1rem !important;
 }
 
-.mdc-button, .mat-mdc-button, .mat-mdc-button-base {
+.mdc-button,
+.mat-mdc-button,
+.mat-mdc-button-base {
   border-radius: 2rem !important;
 }
 
@@ -70,10 +71,11 @@ mat-card {
   overflow: hidden;
 }
 
-.mat-mdc-dialog-surface, .mdc-dialog__surface {
+.mat-mdc-dialog-surface,
+.mdc-dialog__surface {
   padding: 1rem;
 }
 
-.mdc-dialog, .mdc-dialog__scrim {
+.mdc-dialog,
+.mdc-dialog__scrim {
 }
-

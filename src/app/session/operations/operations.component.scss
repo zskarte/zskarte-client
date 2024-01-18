@@ -48,7 +48,9 @@
     padding: 1rem 0;
   }
 
-  .operations-header, .operations-actions, .card-overflow{
+  .operations-header,
+  .operations-actions,
+  .card-overflow {
     padding: 0rem;
   }
 
@@ -66,7 +68,7 @@
     max-height: 400px;
     overflow: auto;
   }
-  
+
   .operation-list-item {
     display: flex;
     align-items: center;
