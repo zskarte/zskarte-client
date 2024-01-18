@@ -3,12 +3,12 @@ import { login } from './global-setup';
 
 async function clickOnMap(page: Page, position: { x: number; y: number }) {
   await page.waitForTimeout(100);
-  await page.locator('#map canvas').click({ position });
+  await page.locator('#map canvas').last().click({ position });
 }
 
 async function dblclickOnMap(page: Page, position: { x: number; y: number }) {
   await page.waitForTimeout(100);
-  await page.locator('#map canvas').dblclick({ position });
+  await page.locator('#map canvas').last().dblclick({ position });
 }
 
 test.beforeEach(async ({ page }) => {

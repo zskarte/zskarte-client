@@ -72,6 +72,11 @@ export class ApiService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public get$<RESPONSE = any>(subUrl: string, options?: IApiRequestOptions): Observable<RESPONSE> {
+    return this._http.get<RESPONSE>(`${this._apiUrl}${subUrl}`, { headers: this._getDefaultHeaders(options) });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async get<RESPONSE = any>(subUrl: string, options?: IApiRequestOptions): Promise<ApiResponse<RESPONSE>> {
     return await this._retry(this._http.get<RESPONSE>(`${this._apiUrl}${subUrl}`, { headers: this._getDefaultHeaders(options) }));
   }

@@ -1,17 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="DrawingGroup_1">
-   <g>
-   <path fill="rgb(0,0,255)" stroke="none" d="M 245,68 C 469,68 692,68 916,68 916,409 916,751 916,1092 692,1092 469,1092 245,1092 245,751 245,409 245,68 Z M 325,1052 C 311,1039 298,1025 285,1012 482,1012 679,1012 876,1012 862,1025 849,1039 835,1052 835,737 835,423 835,108 849,121 862,135 876,148 679,148 482,148 285,148 298,135 311,121 325,108 325,423 325,737 325,1052 Z"/>
-   <path fill="none" stroke="rgb(0,0,255)" id="Drawing_1_0" d="M 245,68 C 469,68 692,68 916,68 916,409 916,751 916,1092 692,1092 469,1092 245,1092 245,751 245,409 245,68 Z"/>
-   <path fill="none" stroke="rgb(0,0,255)" id="Drawing_1_1" d="M 325,1052 C 311,1039 298,1025 285,1012 482,1012 679,1012 876,1012 862,1025 849,1039 835,1052 835,737 835,423 835,108 849,121 862,135 876,148 679,148 482,148 285,148 298,135 311,121 325,108 325,423 325,737 325,1052 Z"/>
-   </g>
-   <g>
-   <path fill="rgb(0,0,255)" stroke="none" d="M 548,429 C 548,400 548,370 548,341 574,341 600,341 625,341 625,370 625,400 625,429 L 548,429 Z M 548,839 C 548,719 548,598 548,478 574,478 600,478 625,478 625,598 625,719 625,839 L 548,839 Z"/>
-    <rect fill="none" stroke="none" x="547" y="340" width="80" height="500"/>
-   </g>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#0000FF;}
+	.st1{font-family:'Arial'; font-weight: 600;}
+	.st2{font-size:90.2033px;}
+</style>
+<g>
+	<path class="st0" d="M120.7,148.8H33.9V16.2h86.8C120.7,16.2,120.7,148.8,120.7,148.8z M44.3,138.5h66.1V26.6H44.3V138.5z"/>
+	<g class="st1">
+		<path class="st0" d="M71.1,61.7V50.2h12.3v11.5H71.1z M71.1,114.8V68h12.3v46.8H71.1z"/>
+	</g>
+</g>
 </svg>

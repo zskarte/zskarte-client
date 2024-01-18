@@ -7,7 +7,7 @@ import { I18NService } from 'src/app/state/i18n.service';
 @Component({
   selector: 'app-share-dialog',
   templateUrl: './share-dialog.component.html',
-  styleUrl: './share-dialog.component.scss',
+  styleUrls: ['./share-dialog.component.scss'],
 })
 export class ShareDialogComponent {
   public qrCodeDataUrl!: Promise<string>;
