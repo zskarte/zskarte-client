@@ -124,7 +124,7 @@ export class SidebarComponent {
     if (!localMapMeta) {
       localMapMeta = {
         url: downloadUrl,
-        map: map,
+        map,
         mapStatus: this.mapToDownloadedObservable[map],
         blobStorageId: undefined,
         objectUrl: undefined,
