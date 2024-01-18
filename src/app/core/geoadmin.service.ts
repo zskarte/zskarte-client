@@ -93,7 +93,7 @@ export class GeoadminService {
     return new OlTileLayer({
       source: new OlTileWMTS({
         projection: swissProjection,
-        url: 'https://wmts10.geo.admin.ch/1.0.0/{Layer}/default/' + timestamp + '/2056/{TileMatrix}/{TileCol}/{TileRow}.' + extension,
+        url: 'https://wmts.geo.admin.ch/1.0.0/{Layer}/default/' + timestamp + '/2056/{TileMatrix}/{TileCol}/{TileRow}.' + extension,
         tileGrid: new OlTileGridWMTS({
           origin: [swissProjection.getExtent()[0], swissProjection.getExtent()[3]],
           resolutions: swissProjection.resolutions,
