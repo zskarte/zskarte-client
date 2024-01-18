@@ -10,6 +10,11 @@ export enum AccessTokenType {
   LONG = 'long',
   SHORT = 'short',
 }
+export interface IZsAccess {
+  id: string;
+  accessToken: string;
+  type: PermissionType;
+}
 
 export interface IZsMapSession {
   id: string;

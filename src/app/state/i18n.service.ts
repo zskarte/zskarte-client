@@ -988,14 +988,34 @@ export class I18NService {
       en: 'Share',
       fr: 'Partager',
     },
-    copyShareLink: {
-      de: 'Freigabe-Link kopieren',
-      en: 'Copy share link',
+    createdAt: {
+      de: 'Erstelldatum',
+      en: 'Created at',
+      fr: 'Date de création',
+    },
+    expiresOn: {
+      de: 'Ablaufdatum',
+      en: 'Expires on',
+      fr: 'Date dexpiration',
+    },
+    read: {
+      de: 'Lesen',
+      en: 'Read',
+      fr: 'Lire',
+    },
+    write: {
+      de: 'Schreiben',
+      en: 'Write',
+      fr: 'Ecrire',
+    },
+    generateMultiUseShareLink: {
+      de: 'Mehrfach-Link generieren',
+      en: 'Generate share link',
       fr: 'Copier le lien de partage',
     },
-    showShareQrCode: {
-      de: 'QR-Code anzeigen',
-      en: 'Show qr code',
+    generateSingleUseShareLink: {
+      de: 'Einweg-Link generieren',
+      en: 'Generate one way link',
       fr: 'Copier le qr code de partage',
     },
     rewokeAccess: {

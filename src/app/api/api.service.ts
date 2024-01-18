@@ -85,4 +85,9 @@ export class ApiService {
     }
     return { ...defaults, ...(options?.headers || {}) };
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async delete<RESPONSE = any>(subUrl: string, options?: IApiRequestOptions): Promise<ApiResponse<RESPONSE>> {
+    return await this._retry(this._http.delete<RESPONSE>(`${this._apiUrl}${subUrl}`, { headers: this._getDefaultHeaders(options) }));
+  }
 }

@@ -11,8 +11,7 @@ import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-el
 import { DatePipe } from '@angular/common';
 import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../helper/protocolEntry';
 import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { PermissionType } from '../session/session.interfaces';
+import { AccessTokenType, PermissionType } from '../session/session.interfaces';
 import { ShareDialogComponent } from '../session/share-dialog/share-dialog.component';
 import { RevokeShareDialogComponent } from '../session/revoke-share-dialog/revoke-share-dialog.component';
 
@@ -37,7 +36,6 @@ export class ToolbarComponent implements OnDestroy {
     public zsMapStateService: ZsMapStateService,
     public session: SessionService,
     private datePipe: DatePipe,
-    private _snackBar: MatSnackBar,
     private _dialog: MatDialog,
   ) {
     if (this.isInitialLaunch()) {
@@ -112,14 +110,11 @@ export class ToolbarComponent implements OnDestroy {
     this.session.setOperation(undefined);
   }
 
-  async copyShareLink(readOnly: boolean = true): Promise<void> {
-    const url = await this.session.generateShareUrl(readOnly ? PermissionType.READ : PermissionType.WRITE);
-    await navigator.clipboard.writeText(url);
-    this._snackBar.open(this.i18n.get('copiedToClipboard'), this.i18n.get('ok'), { duration: 2000 });
-  }
-
-  async generateShareQrCode(readOnly: boolean = true): Promise<void> {
-    const joinCode = await this.session.generateShareQrCode(readOnly ? PermissionType.READ : PermissionType.WRITE);
+  async generateShareLink(readOnly: boolean, isOneWayLink: boolean) {
+    const joinCode = await this.session.generateShareLink(
+      readOnly ? PermissionType.READ : PermissionType.WRITE,
+      isOneWayLink ? AccessTokenType.SHORT : AccessTokenType.LONG,
+    );
     this._dialog.open(ShareDialogComponent, {
       data: joinCode,
     });

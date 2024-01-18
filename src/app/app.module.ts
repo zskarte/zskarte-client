@@ -65,6 +65,7 @@ import { ApiService } from './api/api.service';
 import { ShareComponent } from './session/share/share.component';
 import { ShareDialogComponent } from './session/share-dialog/share-dialog.component';
 import { TextDividerComponent } from './text-divider/text-divider.component';
+import { RevokeShareDialogComponent } from './session/revoke-share-dialog/revoke-share-dialog.component';
 
 registerLocaleData(localeCH);
 
@@ -101,6 +102,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     SelectedFeatureComponent,
     DetailImageViewComponent,
     EditCoordinatesComponent,
+    RevokeShareDialogComponent,
     LoginComponent,
     MapComponent,
     OperationsComponent,

@@ -8,10 +8,8 @@ describe('RevokeShareDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RevokeShareDialogComponent]
-    })
-    .compileComponents();
-    
+      imports: [RevokeShareDialogComponent],
+    }).compileComponents();
     fixture = TestBed.createComponent(RevokeShareDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
