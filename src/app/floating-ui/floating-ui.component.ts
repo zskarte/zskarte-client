@@ -69,6 +69,7 @@ export class FloatingUIComponent {
     this.activeLayer$ = _state.observeActiveLayer();
   }
 
+  // skipcq:  JS-0105
   isInitialLaunch(): boolean {
     const currentOnboardingVersion = localStorage.getItem('onboardingVersion');
     if (currentOnboardingVersion !== FloatingUIComponent.ONBOARDING_VERSION) {
