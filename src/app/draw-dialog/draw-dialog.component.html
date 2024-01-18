@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="no-symbol-buttons">
+    <button mat-raised-button color="primary" (click)="addText()" aria-label="Text">
+      <mat-icon>font_download</mat-icon>
+      {{ i18n.get('text') }}
+    </button>
+    <button mat-raised-button color="primary" (click)="addLine()" aria-label="Linie">
+      <mat-icon>show_chart</mat-icon>
+      {{ i18n.get('line') }}
+    </button>
+    <button mat-raised-button color="primary" (click)="addPolygon()" aria-label="Polygon">
+      <mat-icon>widgets</mat-icon>
+      {{ i18n.get('polygon') }}
+    </button>
+    <button mat-raised-button color="primary" (click)="startFreehand()" aria-label="Freihand">
+      <mat-icon>gesture</mat-icon>
+      {{ i18n.get('freehand') }}
+    </button>
+  </div>
+</div>
+
+<app-select-sign-dialog (signSelected)="signSelected($event)"></app-select-sign-dialog>

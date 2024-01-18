@@ -1,7 +1,6 @@
 import { APP_INITIALIZER, LOCALE_ID, NgModule, isDevMode } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppComponent } from './app.component';
 import { MapRendererComponent } from './map-renderer/map-renderer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -39,8 +38,7 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
 import { GeocoderComponent } from './geocoder/geocoder.component';
 import { ImportDialogComponent } from './import-dialog/import-dialog.component';
 import { ClockComponent } from './clock/clock.component';
-import { FabMenuComponent } from './fab-menu/fab-menu.component';
-import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from './select-sign-dialog/select-sign-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
 import { CreditsComponent } from './credits/credits.component';
 import { SelectedFeatureComponent } from './selected-feature/selected-feature.component';
@@ -70,6 +68,7 @@ import { TextDividerComponent } from './text-divider/text-divider.component';
 import { RevokeShareDialogComponent } from './session/revoke-share-dialog/revoke-share-dialog.component';
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
@@ -103,8 +102,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     SidebarConnectionsComponent,
     SidebarHistoryComponent,
     MapLegendDisplayComponent,
-    FabMenuComponent,
-    DrawingDialogComponent,
+    SelectSignDialog,
     TextDialogComponent,
     CreditsComponent,
     SelectedFeatureComponent,
@@ -120,6 +118,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     ShareComponent,
     ShareDialogComponent,
     TextDividerComponent,
+    DrawDialogComponent,
   ],
   imports: [
     BrowserModule,

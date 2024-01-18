@@ -1269,6 +1269,11 @@ export class I18NService {
       en: 'Backup applied',
       fr: 'Sauvegarde appliqué',
     },
+    noSignature: {
+      de: 'Ohne Signatur',
+      en: 'Without signature',
+      fr: 'Sans signature',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

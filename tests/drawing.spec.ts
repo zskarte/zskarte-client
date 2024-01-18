@@ -19,7 +19,6 @@ test.beforeEach(async ({ page }) => {
 
 test('add symbol', async ({ page }) => {
   await page.getByRole('button', { name: 'Add' }).click();
-  await page.getByRole('button', { name: 'Signatur' }).click();
   await page.getByRole('cell', { name: 'ABC Dekontaminationsstelle' }).click();
   await clickOnMap(page, { x: 659, y: 250 });
   await expect(page.locator('app-selected-feature > mat-card')).toBeVisible();

@@ -1,20 +1,30 @@
 <form class="container">
-  <div class="filter">
-    <mat-form-field class="flexGrow"
-      ><input name="filter" matInput [(ngModel)]="filter" (ngModelChange)="updateAvailableSigns()" placeholder="{{ i18n.get('search') }}"
-    /></mat-form-field>
-    <mat-form-field class="flexGrow">
-      <mat-label>{{ i18n.get('filterByCategory') }}</mat-label>
-      <mat-select [(value)]="selected" (selectionChange)="updateAvailableSigns()">
-        <mat-option>{{ i18n.get('allCategories') }}</mat-option>
-        <mat-option *ngFor="let category of signCategories" value="{{ category.name }}">
-          <span class="categoryDot" [ngStyle]="{ 'background-color': category.color }"></span>
-          {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <div class="header">
+    <app-recently-used-signs [dialog]="this" (selectSign)="select($event)"> </app-recently-used-signs>
+
+    <div class="filter">
+      <mat-form-field class="flexGrow">
+        <input
+          name="filter"
+          matInput
+          [(ngModel)]="filter"
+          (ngModelChange)="updateAvailableSigns()"
+          placeholder="{{ i18n.get('search') }}"
+        />
+      </mat-form-field>
+      <mat-form-field class="flexGrow">
+        <mat-label>{{ i18n.get('filterByCategory') }}</mat-label>
+        <mat-select [(value)]="selected" (selectionChange)="updateAvailableSigns()">
+          <mat-option>{{ i18n.get('allCategories') }}</mat-option>
+          <mat-option *ngFor="let category of signCategories" value="{{ category.name }}">
+            <span class="categoryDot" [ngStyle]="{ 'background-color': category.color }"></span>
+            {{ i18n.get('sign' + capitalizeFirstLetter(category.name)) }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
-  <app-recently-used-signs [dialog]="this" (selectSign)="select($event)"> </app-recently-used-signs>
+
   <div class="overflow-auto">
     <table mat-table [dataSource]="filteredSigns">
       <ng-container matColumnDef="symbol">

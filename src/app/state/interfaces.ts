@@ -163,3 +163,20 @@ export interface ZsMapElementToDraw {
   symbolId?: number;
   text?: string;
 }
+
+export type ZsMapDrawElementParams = IZsMapBaseDrawElementParams | IZsMapSymbolDrawElementParams | IZsMapTextDrawElementParams;
+
+interface IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType;
+  layer: string;
+}
+
+export interface IZsMapSymbolDrawElementParams extends IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType.SYMBOL;
+  symbolId: number;
+}
+
+export interface IZsMapTextDrawElementParams extends IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType.TEXT;
+  text: string;
+}
