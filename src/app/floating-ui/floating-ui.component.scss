@@ -60,12 +60,12 @@ button {
 
 app-fab-menu {
   pointer-events: auto;
-  margin-top: 1.25em;
+  margin-top: 1.25rem;
 }
 
 app-coordinates {
   pointer-events: auto;
-  margin-right: 1.25em;
+  margin-right: 1.25rem;
 }
 
 .main {
@@ -73,9 +73,9 @@ app-coordinates {
   flex-direction: column;
   align-items: end;
   justify-content: space-between;
-  height: calc(100% - 2.5em);
+  height: calc(100% - 2.5rem);
   width: 100%;
-  margin: 1.25em 0 1.25em 1.25em;
+  margin: 1.25em 0 1.25em 1.25rem;
   pointer-events: none;
 }
 
@@ -86,7 +86,7 @@ app-coordinates {
 
   app-coordinates {
     margin-right: 0;
-    margin-bottom: 3em;
+    margin-bottom: 3rem;
   }
 
   app-geocoder {

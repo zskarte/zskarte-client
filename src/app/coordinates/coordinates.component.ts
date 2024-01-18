@@ -11,8 +11,8 @@ import { transform } from 'ol/proj';
 })
 export class CoordinatesComponent {
   coordinates: string[] = [];
-  constructor(public state: ZsMapStateService) {
-    this.state.getCoordinates().subscribe((coordinates) => {
+  constructor(private _state: ZsMapStateService) {
+    this._state.getCoordinates().subscribe((coordinates) => {
       const lv95 = this.coordinatesToString(coordinates, '1.2-2');
       const gps = this.coordinatesToString(coordinates, '1.5-5');
       this.coordinates = [lv95, gps];
@@ -27,8 +27,8 @@ export class CoordinatesComponent {
     return '';
   }
 
-  static transformToProjection(coordinates: Coordinate, projection_index: number) {
-    const projection = availableProjections[projection_index].projection;
+  static transformToProjection(coordinates: Coordinate, projectionIndex: number) {
+    const projection = availableProjections[projectionIndex].projection;
     if (projection && mercatorProjection && coordinates.every((c) => !isNaN(c))) {
       return transform(coordinates, mercatorProjection, projection);
     }
