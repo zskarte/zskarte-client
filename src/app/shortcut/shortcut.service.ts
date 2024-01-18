@@ -37,7 +37,6 @@ export class ShortcutService {
   constructor(private _state: ZsMapStateService) {
     this._keydownObserver = new Observable((observer) => {
       window.addEventListener('keydown', (event) => {
-        event.preventDefault();
         observer.next(event);
       });
     });
@@ -99,7 +98,7 @@ export class ShortcutService {
     });
   }
 
-  private _listen({ shortcut }: IShortcut): Observable<KeyboardEvent> {
+  private _listen({ shortcut, preventDefault = true }: IShortcut): Observable<KeyboardEvent> {
     const keys = (shortcut?.split('+') || []).map((key) => key.trim().toLowerCase());
 
     const shiftKey = keys.includes('shift');
@@ -137,7 +136,13 @@ export class ShortcutService {
         // use 'code' instead of 'key' to prevent 'Dead' keys on MacOS
         const keyCode = event.code.toLowerCase().replace('key', '').replace('digit', '');
 
-        return key === keyCode;
+        if (key === keyCode) {
+          if (preventDefault) {
+            event.preventDefault();
+          }
+          return true;
+        }
+        return false;
       }),
     );
   }
