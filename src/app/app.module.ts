@@ -70,7 +70,7 @@ import { TextDividerComponent } from './text-divider/text-divider.component';
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import {MatProgressBarModule} from "@angular/material/progress-bar";
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 registerLocaleData(localeCH);
 
