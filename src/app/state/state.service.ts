@@ -624,6 +624,7 @@ export class ZsMapStateService {
       const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
       defineDefaultValuesForSignature(sign);
       const drawElement: ZsMapDrawElementState = {
+        ...element,
         color: sign.color,
         protected: sign.protected,
         iconSize: sign.iconSize,
@@ -640,7 +641,6 @@ export class ZsMapStateService {
         fontSize: sign.fontSize,
         id: uuidv4(),
         nameShow: true,
-        ...element,
         createdAt: Date.now(),
       };
 
