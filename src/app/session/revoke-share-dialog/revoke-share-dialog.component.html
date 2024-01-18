@@ -4,8 +4,8 @@
     <td mat-cell *matCellDef="let element">{{ element.id }}</td>
   </ng-container>
   <ng-container matColumnDef="createdAt">
-    <th mat-header-cell *matHeaderCellDef>{{i18n.get('createdAt')}}</th>
-    <td mat-cell *matCellDef="let element">{{ element.createdAt | date: 'dd.mm.yyyy hh:mm'}}</td>
+    <th mat-header-cell *matHeaderCellDef>{{ i18n.get('createdAt') }}</th>
+    <td mat-cell *matCellDef="let element">{{ element.createdAt | date: 'dd.mm.yyyy hh:mm' }}</td>
   </ng-container>
   <ng-container matColumnDef="type">
     <th mat-header-cell *matHeaderCellDef>{{ i18n.get('type') }}</th>
