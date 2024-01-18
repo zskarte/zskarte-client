@@ -1,0 +1,101 @@
+mat-sidenav-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background: none;
+  pointer-events: none;
+}
+
+mat-sidenav-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: start;
+}
+
+mat-sidenav {
+  background: white;
+  padding: 1em;
+  width: 30em;
+  max-width: 75%;
+  pointer-events: auto;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+  height: calc(100% - 2.5em);
+  margin: 1.25em 1.25em 1.25em 0;
+}
+
+.vertical-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.horizontal-stack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  width: 100%;
+}
+
+.sidebar-button {
+  background-color: white;
+}
+
+button {
+  pointer-events: auto;
+}
+
+app-fab-menu {
+  pointer-events: auto;
+  margin-top: 1.25rem;
+}
+
+app-coordinates {
+  pointer-events: auto;
+  margin-right: 1.25rem;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+  height: calc(100% - 2.5rem);
+  width: 100%;
+  margin: 1.25em 0 1.25em 1.25rem;
+  pointer-events: none;
+}
+
+@media (max-width: 650px) {
+  .main {
+    align-items: start;
+  }
+
+  app-coordinates {
+    margin-right: 0;
+    margin-bottom: 3rem;
+  }
+
+  app-geocoder {
+    width: 200px;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar-open {
+    display: none;
+  }
+}

@@ -32,12 +32,10 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MapLegendDisplayComponent } from './sidebar/map-legend-display/map-legend-display.component';
-import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HelpComponent } from './help/help.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { GeocoderComponent } from './geocoder/geocoder.component';
 import { ImportDialogComponent } from './import-dialog/import-dialog.component';
-import { ClockComponent } from './clock/clock.component';
 import { SelectSignDialog } from './select-sign-dialog/select-sign-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
 import { CreditsComponent } from './credits/credits.component';
@@ -68,6 +66,9 @@ import { TextDividerComponent } from './text-divider/text-divider.component';
 import { RevokeShareDialogComponent } from './session/revoke-share-dialog/revoke-share-dialog.component';
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { FloatingUIComponent } from './floating-ui/floating-ui.component';
+import { CoordinatesComponent } from './coordinates/coordinates.component';
+import { SidebarMenuComponent } from './sidebar/sidebar-menu/sidebar-menu.component';
 import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -90,12 +91,10 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
   declarations: [
     AppComponent,
     MapRendererComponent,
-    ToolbarComponent,
     HelpComponent,
     ConfirmationDialogComponent,
     GeocoderComponent,
     ImportDialogComponent,
-    ClockComponent,
     // sidebar
     SidebarComponent,
     SidebarFiltersComponent,
@@ -118,6 +117,9 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     ShareComponent,
     ShareDialogComponent,
     TextDividerComponent,
+    FloatingUIComponent,
+    CoordinatesComponent,
+    SidebarMenuComponent,
     DrawDialogComponent,
   ],
   imports: [

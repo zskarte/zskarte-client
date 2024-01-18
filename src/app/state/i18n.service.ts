@@ -1063,7 +1063,7 @@ export class I18NService {
       en: 'Generate one way link',
       fr: 'Copier le qr code de partage',
     },
-    rewokeAccess: {
+    revokeAccess: {
       de: 'Freigabelinks verwalten',
       en: 'Revoke share link',
       fr: 'Arranger les liens de partage',
