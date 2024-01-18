@@ -62,6 +62,7 @@ export class SidebarMenuComponent implements OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
+  // skipcq:  JS-0105
   isInitialLaunch(): boolean {
     const currentOnboardingVersion = localStorage.getItem('onboardingVersion');
     if (currentOnboardingVersion !== SidebarMenuComponent.ONBOARDING_VERSION) {
