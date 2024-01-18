@@ -178,7 +178,7 @@ export class MapRendererComponent implements AfterViewInit {
       .ObserveCurrentMapCenter()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((coordinates) => {
-        if (coordinates && coordinates[0] && coordinates[1] && this._map) {
+        if (coordinates?.[0] && coordinates?.[1] && this._map) {
           this._map.getView().animate({
             center: transform(coordinates, 'EPSG:4326', 'EPSG:3857'),
             zoom: 14,
@@ -507,7 +507,7 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     const debouncedZoomSave = debounce(() => {
-      this._state.setMapZoom(this._view.getZoom() || 10);
+      this._state.setMapZoom(this._view.getZoom() ?? 10);
     }, 500);
 
     this._view.on('change:resolution', () => {
@@ -630,7 +630,7 @@ export class MapRendererComponent implements AfterViewInit {
                   }
                 }
                 cache.layer = layer;
-                const newLayer = this._state.getLayer(layer || '');
+                const newLayer = this._state.getLayer(layer ?? '');
                 newLayer?.addOlFeature(feature);
               });
           }
@@ -640,7 +640,7 @@ export class MapRendererComponent implements AfterViewInit {
         for (const element of Object.values(this._drawElementCache)) {
           if (elements.every((e) => e.getId() != element.element.getId())) {
             // New elements do not contain element from cache
-            this._state.getLayer(element.layer || '').removeOlFeature(element.element.getOlFeature());
+            this._state.getLayer(element.layer ?? '').removeOlFeature(element.element.getOlFeature());
             delete this._drawElementCache[element.element.getId()];
           }
         }
@@ -915,13 +915,13 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.resetSelectedFeature();
   }
 
-  async toggleEditButtons(show: boolean, allowRotation = false) {
+  toggleEditButtons(show: boolean, allowRotation = false) {
     this.toggleButton(show, this.removeButton?.getElement());
     this.toggleButton(allowRotation, this.rotateButton?.getElement());
     this.toggleButton(allowRotation, this.copyButton?.getElement());
   }
 
-  async toggleFlagButtons(show: boolean) {
+  toggleFlagButtons(show: boolean) {
     this.toggleButton(show, this.drawButton?.getElement());
     this.toggleButton(show, this.closeButton?.getElement());
   }

@@ -20,7 +20,6 @@ import {
 } from '../core/entity/sign';
 import { Geometry, MultiPolygon } from 'ol/geom';
 import { FeatureLike } from 'ol/Feature';
-import CircleStyle from 'ol/style/Circle';
 
 export class DrawStyle {
   static defaultScaleFactor = 0.2;
@@ -146,7 +145,7 @@ export class DrawStyle {
     if (!style) {
       style = [
         new Style({
-          image: new CircleStyle({
+          image: new Circle({
             radius: 20,
             fill: new Fill({
               color: 'rgba(255, 153, 102, 0.3)',
@@ -154,7 +153,7 @@ export class DrawStyle {
           }),
         }),
         new Style({
-          image: new CircleStyle({
+          image: new Circle({
             radius: 14,
             fill: new Fill({
               color: 'rgba(255, 165, 0, 0.7)',
@@ -736,7 +735,7 @@ export class DrawStyle {
               color: 'orange',
             }),
           }),
-          geometry: function (feature) {
+          geometry(feature) {
             feature = DrawStyle.getSubFeature(feature);
             return new MultiPoint(coordinatesFunction(feature));
           },
