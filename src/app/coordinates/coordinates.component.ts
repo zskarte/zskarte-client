@@ -19,6 +19,7 @@ export class CoordinatesComponent {
     });
   }
 
+  // skipcq:  JS-0105
   coordinatesToString(coordinates: Coordinate, format: string): string {
     const projection = availableProjections.find((p) => p.format === format);
     if (projection?.projection && mercatorProjection && coordinates.every((c) => !isNaN(c))) {
