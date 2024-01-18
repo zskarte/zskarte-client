@@ -96,6 +96,10 @@ export class ShortcutService {
     this._listen({ shortcut: 'mod+z' }).subscribe(() => {
       this._state.redoMapStateChange();
     });
+
+    this._listen({ shortcut: 'escape' }).subscribe(() => {
+      this._state.cancelDrawing();
+    });
   }
 
   private _listen({ shortcut, preventDefault = true }: IShortcut): Observable<KeyboardEvent> {
