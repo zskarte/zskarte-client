@@ -277,6 +277,7 @@ export class MapRendererComponent implements AfterViewInit {
     const select = new Select({
       hitTolerance: 10,
       style: (feature: FeatureLike, resolution: number) => {
+        // console.log(feature.get('features') is);
         if (feature.get('hidden') === true) {
           return undefined;
         }
@@ -287,7 +288,10 @@ export class MapRendererComponent implements AfterViewInit {
     select.on('select', (event) => {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
-      for (const feature of event.selected) {
+      for (let feature of event.selected) {
+        // get real feature inside cluster
+        feature = this.getFeatureInsideCluster(feature);
+
         const nextElement = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
 
         if (this._mergeMode) {
@@ -327,7 +331,8 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._modify.on('modifystart', (event) => {
-      this._currentSketch = event.features.getArray()[0];
+      debugger;
+      this._currentSketch = this.getFeatureInsideCluster(event.features.getArray()[0]);
       this.toggleEditButtons(false);
     });
 
@@ -338,7 +343,7 @@ export class MapRendererComponent implements AfterViewInit {
 
       this._currentSketch = undefined;
       // only first feature is relevant
-      const feature = e.features.getArray()[0] as Feature<SimpleGeometry>;
+      const feature = this.getFeatureInsideCluster(e.features.getArray()[0] as Feature<SimpleGeometry>);
       const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
       element.element.setCoordinates(feature.getGeometry()?.getCoordinates() ?? []);
       if (this._modify['vertexFeature_']) {
@@ -348,22 +353,18 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     // select on ol-Map layer
-    this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((feature) => {
-      if (feature && !feature.get('sig').protected && !this._modifyCache.getArray().includes(feature)) {
+    this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((cluster) => {
+      const feature = this.getFeatureInsideCluster(cluster);
+      if (feature && !feature.get('sig')?.protected && !this._modifyCache.getArray().includes(feature)) {
+        console.log(feature, cluster);
+        this._modifyCache.push(cluster as any);
         this._modifyCache.push(feature);
       }
     });
 
     const translate = new Translate({
-      features: select.getFeatures(),
-      condition: () => {
-        return (
-          select
-            .getFeatures()
-            .getArray()
-            .every((feature) => !feature?.get('sig').protected) && !this.isReadOnly.value
-        );
-      },
+      features: this._modifyCache,
+      condition: () => this._modifyCache.getArray().every((feature) => !feature?.get('sig')?.protected) && !this.isReadOnly.value,
     });
 
     translate.on('translatestart', () => {
@@ -375,9 +376,8 @@ export class MapRendererComponent implements AfterViewInit {
         return;
       }
       // only the first feature is relevant
-      const feature = e.features.getArray()[0];
+      const feature = this.getFeatureInsideCluster(e.features.getArray()[0]);
       const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
 
       if (element.element.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
@@ -514,7 +514,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     const debouncedZoomSave = debounce(() => {
       this._state.setMapZoom(this._view.getZoom() || 10);
-    }, 1000);
+    }, 500);
 
     this._view.on('change:resolution', () => {
       debouncedZoomSave();
@@ -1008,5 +1008,13 @@ export class MapRendererComponent implements AfterViewInit {
 
   redo() {
     this._state.redoMapStateChange();
+  }
+
+  private getFeatureInsideCluster(feature?: FeatureLike) {
+    const features = feature?.get('features');
+    if (features?.length === 1) {
+      return features[0];
+    }
+    return feature;
   }
 }

@@ -1,23 +1,42 @@
 import { Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
 import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature, { FeatureLike } from 'ol/Feature';
 import { DrawStyle } from '../draw-style';
+import { Cluster } from 'ol/source';
+import { Circle, Geometry, LineString, LinearRing, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon } from 'ol/geom';
+import { Fill, Stroke, Style, Text } from 'ol/style';
+import CircleStyle from 'ol/style/Circle';
+import { getCenter } from 'ol/extent';
 
 export abstract class ZsMapBaseLayer {
   protected _layer: Observable<ZsMapLayerState | undefined>;
   protected _olSource = new VectorSource();
   protected _unsubscribe = new Subject<void>();
 
-  protected _olLayer: VectorLayer<VectorSource> = new VectorLayer({
+  protected _clusterSource = new Cluster({
+    distance: 20,
     source: this._olSource,
+    geometryFunction: (feature: Feature<Geometry>) => {
+      const geom = feature.getGeometry();
+      const type = geom?.getType();
+      if (type === 'Point') {
+        return geom as Point;
+      } else {
+        return new Point(getCenter(geom?.getExtent() ?? []));
+      }
+    },
+  });
+  protected _olLayer: VectorLayer<VectorSource> = new VectorLayer({
+    source: this._clusterSource,
     style: (feature: FeatureLike, resolution: number) => {
       if (feature.get('hidden') === true) {
         return undefined;
       }
+
       return DrawStyle.styleFunction(feature, resolution);
     },
   });
@@ -54,6 +73,11 @@ export abstract class ZsMapBaseLayer {
       .subscribe((opacity) => {
         this._olLayer.setOpacity(opacity);
       });
+
+    this.observeMapZoom().subscribe((mapZoom) => {
+      // don't show clustering if zoomed in more than 14
+      this._olLayer.setSource(mapZoom > 14 ? this._olSource : this._clusterSource);
+    });
   }
 
   public getId(): string {
@@ -105,6 +129,13 @@ export abstract class ZsMapBaseLayer {
       map((o) => {
         return o?.name;
       }),
+      distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
+    );
+  }
+
+  public observeMapZoom(): Observable<number> {
+    return this._state.observeMapZoom().pipe(
       distinctUntilChanged((x, y) => x === y),
       takeUntil(this._unsubscribe),
     );
