@@ -43,7 +43,7 @@ export class SidebarComponent {
 
   layerFilter = new FormControl('');
 
-  mapToDownloadedObservable: { [key: string]: LocalMapState } = {};
+  mapDownloadStates: { [key: string]: LocalMapState } = {};
 
   constructor(
     public mapState: ZsMapStateService,
@@ -80,7 +80,7 @@ export class SidebarComponent {
     );
 
     db.blobMeta.toArray().then((downloadedMaps) => {
-      this.mapToDownloadedObservable = downloadedMaps.reduce((acc, val) => {
+      this.mapDownloadStates = downloadedMaps.reduce((acc, val) => {
         acc[val.map] = val.mapStatus;
         return acc;
       }, {});
@@ -119,14 +119,14 @@ export class SidebarComponent {
   }
 
   async downloadMap(map: ZsMapStateSource) {
-    this.mapToDownloadedObservable[map] = 'loading';
+    this.mapDownloadStates[map] = 'loading';
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
     let localMapMeta = await db.blobMeta.get(downloadUrl);
     if (!localMapMeta) {
       localMapMeta = {
         url: downloadUrl,
         map,
-        mapStatus: this.mapToDownloadedObservable[map],
+        mapStatus: this.mapDownloadStates[map],
         blobStorageId: undefined,
         objectUrl: undefined,
         mapStyle: undefined,
@@ -148,7 +148,7 @@ export class SidebarComponent {
         localMapMeta.mapStatus = 'missing';
       }
     }
-    this.mapToDownloadedObservable[map] = localMapMeta.mapStatus;
+    this.mapDownloadStates[map] = localMapMeta.mapStatus;
     await db.blobMeta.put(localMapMeta);
   }
 
@@ -164,6 +164,6 @@ export class SidebarComponent {
     if (objectUrl) {
       URL.revokeObjectURL(objectUrl);
     }
-    this.mapToDownloadedObservable[map] = 'missing';
+    this.mapDownloadStates[map] = 'missing';
   }
 }

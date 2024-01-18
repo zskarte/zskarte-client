@@ -27,7 +27,7 @@
         </mat-radio-group>
         @if (isDownloadableMap(layer.key)) {
           <div>
-            @switch (mapToDownloadedObservable[layer.key]) {
+            @switch (mapDownloadStates[layer.key]) {
               @case ('loading') {
                 <mat-progress-bar color="primary" mode="indeterminate" />
               }
