@@ -120,7 +120,7 @@ export class ToolbarComponent implements OnDestroy {
     });
   }
 
-  async showRevokeShareDialog(): Promise<void> {
+  showRevokeShareDialog() {
     this._dialog.open(RevokeShareDialogComponent);
   }
 }

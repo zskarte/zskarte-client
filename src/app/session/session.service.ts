@@ -320,7 +320,7 @@ export class SessionService {
     const response = await this._api.post<{ accessToken: string }>('/api/accesses/auth/token/generate', {
       type: permission,
       operationId: this.getOperationId(),
-      tokenType: tokenType,
+      tokenType,
     });
     if (!response.result?.accessToken) {
       throw new Error('Unable to generate share url');
