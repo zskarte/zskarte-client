@@ -1239,6 +1239,11 @@ export class I18NService {
       en: 'Backup applied',
       fr: 'Sauvegarde appliqué',
     },
+    headCount: {
+      de: 'Betroffene Personen',
+      en: 'Affected Persons',
+      fr: 'Persones affecté',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

@@ -314,7 +314,7 @@ export class DrawStyle {
     const scale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
     const vectorStyles = this.getVectorStyles(feature, resolution, signature, selected, scale, editMode);
     const iconStyles = this.getIconStyle(feature, resolution, signature, selected, scale);
-    const styles: any[] = [];
+    const styles: Style[] = [];
 
     if (iconStyles) {
       iconStyles.forEach((i) => styles.push(i));
@@ -569,6 +569,41 @@ export class DrawStyle {
       }
 
       if (showIcon) {
+        const iconStyle = new Style({
+          image: new Circle({
+            radius: 10,
+            stroke: new Stroke({
+              color: '#fff',
+            }),
+            fill: new Fill({
+              color: '#000',
+            }),
+          }),
+          geometry: function (feature) {
+            return new Point((feature.getGeometry() as any).getCoordinates()[0]);
+          },
+        });
+        const labelStyle = new Style({
+          text: new Text({
+            text: 'Test',
+            font: '12px Calibri,sans-serif',
+            overflow: true,
+            fill: new Fill({
+              color: '#000',
+            }),
+            stroke: new Stroke({
+              color: '#fff',
+              width: 3,
+            }),
+          }),
+          geometry: function (feature) {
+            return new Point((feature.getGeometry() as any).getCoordinates()[0]);
+          },
+        });
+
+        iconStyles.push(iconStyle);
+        iconStyles.push(labelStyle);
+        
         // Draw a dashed line to the icon
         iconStyles.push(
           new Style({
@@ -692,6 +727,7 @@ export class DrawStyle {
               }),
             );
           }
+          console.log(iconStyles);
         }
       }
     }

@@ -17,7 +17,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
-import { Circle, Fill, Icon, Stroke, Style } from 'ol/style';
+import { Circle, Fill, Icon, Stroke, Style, Text } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
@@ -618,6 +618,7 @@ export class MapRendererComponent implements AfterViewInit {
       .observeDrawElements()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((elements) => {
+        console.log(elements);
         for (const element of elements) {
           if (!this._drawElementCache[element.getId()]) {
             this._drawElementCache[element.getId()] = {
