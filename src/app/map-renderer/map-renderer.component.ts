@@ -288,9 +288,9 @@ export class MapRendererComponent implements AfterViewInit {
     select.on('select', (event) => {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
-      for (let feature of event.selected) {
+      for (const cluster of event.selected) {
         // get real feature inside cluster
-        feature = this.getFeatureInsideCluster(feature);
+        const feature = this.getFeatureInsideCluster(cluster);
 
         const nextElement = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
 
@@ -298,6 +298,14 @@ export class MapRendererComponent implements AfterViewInit {
           const selectedElement = this._drawElementCache[this.selectedFeature.getValue()?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
           this._state.mergePolygons(selectedElement.element, nextElement.element);
         } else {
+          if (feature && !feature.get('sig')?.protected) {
+            this._modifyCache.push(feature);
+
+            // Only add the cluster to the modify cache if we are in clustering mode
+            if (feature !== cluster) {
+              this._modifyCache.push(cluster);
+            }
+          }
           this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
           // reset selectedVertexPoint, since we selected a whole feature.
           this.selectedVertexPoint.next(null);
@@ -331,7 +339,6 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._modify.on('modifystart', (event) => {
-      debugger;
       this._currentSketch = this.getFeatureInsideCluster(event.features.getArray()[0]);
       this.toggleEditButtons(false);
     });
@@ -352,19 +359,9 @@ export class MapRendererComponent implements AfterViewInit {
       }
     });
 
-    // select on ol-Map layer
-    this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((cluster) => {
-      const feature = this.getFeatureInsideCluster(cluster);
-      if (feature && !feature.get('sig')?.protected && !this._modifyCache.getArray().includes(feature)) {
-        console.log(feature, cluster);
-        this._modifyCache.push(cluster as any);
-        this._modifyCache.push(feature);
-      }
-    });
-
     const translate = new Translate({
       features: this._modifyCache,
-      condition: () => this._modifyCache.getArray().every((feature) => !feature?.get('sig')?.protected) && !this.isReadOnly.value,
+      condition: () => this.areFeaturesModifiable(),
     });
 
     translate.on('translatestart', () => {
@@ -944,7 +941,20 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   areFeaturesModifiable() {
-    return this._modifyCache.getArray().every((feature) => feature?.get('sig') && !feature.get('sig').protected);
+    return (
+      !this.isReadOnly.value &&
+      this._modifyCache.getArray().every((clusterOrFeature) => {
+        const feature = this.getFeatureInsideCluster(clusterOrFeature);
+
+        // If the feature has a ZS Element ID, ensure it's not protected
+        // Else it's a cluster, ensure it's a cluster with a single feature
+        if (clusterOrFeature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)) {
+          return feature.get('sig') && !feature.get('sig').protected;
+        } else {
+          return (clusterOrFeature.get('features')?.length ?? 0) <= 1;
+        }
+      })
+    );
   }
 
   zoomIn() {
@@ -1010,9 +1020,17 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.redoMapStateChange();
   }
 
+  /**
+   * If handed a cluster, returns the first feature inside the cluster
+   * Else returns the feature itself
+   */
   private getFeatureInsideCluster(feature?: FeatureLike) {
+    if (feature?.get(ZsMapOLFeatureProps.IS_DRAW_ELEMENT)) {
+      return feature;
+    }
+
     const features = feature?.get('features');
-    if (features?.length === 1) {
+    if (features?.length > 0) {
       return features[0];
     }
     return feature;
