@@ -71,9 +71,8 @@ export class SidebarComponent {
       .observeMapSource()
       .pipe(
         map((currentMapSource) => {
-          this.mapSources.map((mapSource) => {
-            mapSource.selected = currentMapSource === mapSource.key ? true : false;
-            return mapSource;
+          this.mapSources.forEach((mapSource) => {
+            mapSource.selected = currentMapSource === mapSource.key;
           });
         }),
       )

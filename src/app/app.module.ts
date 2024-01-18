@@ -174,4 +174,4 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {} //skipcq: JS-0327
