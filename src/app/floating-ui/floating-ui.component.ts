@@ -8,7 +8,7 @@ import { SessionService } from '../session/session.service';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { DrawDialogComponent } from '../draw-dialog/draw-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import {HelpComponent} from "../help/help.component";
+import { HelpComponent } from '../help/help.component';
 
 @Component({
   selector: 'app-floating-ui',
