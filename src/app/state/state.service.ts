@@ -180,10 +180,6 @@ export class ZsMapStateService {
     return this._elementToDraw.asObservable();
   }
 
-  public setElementToDraw(elementToDraw: ZsMapElementToDraw) {
-    this._elementToDraw.next(elementToDraw);
-  }
-
   public setMapState(newState?: IZsMapState): void {
     const cached = Object.keys(this._layerCache);
     for (const c of cached) {
