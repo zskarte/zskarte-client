@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { HttpClient } from '@angular/common/http';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { ZsMapStateSource } from 'src/app/state/interfaces';
 import { GeoadminService } from 'src/app/core/geoadmin.service';
@@ -39,11 +37,9 @@ export class SidebarComponent {
 
   constructor(
     public mapState: ZsMapStateService,
-    private geoAdminService: GeoadminService,
+    geoAdminService: GeoadminService,
     public i18n: I18NService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private http: HttpClient,
   ) {
     const allFeatures$ = geoAdminService.getFeatures().pipe(
       share(),

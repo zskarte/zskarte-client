@@ -278,6 +278,11 @@ export class I18NService {
       fr: 'Importer',
       en: 'Import',
     },
+    rewokeShareLinkFailedMessage: {
+      de: 'Fehler beim löschen des Links.',
+      fr: 'Erreur lors de la suppression du lien.',
+      en: 'Error while deleting the link.',
+    },
     drawLayer: {
       de: 'Zeichnungsebene',
       fr: 'Couche de dessin',

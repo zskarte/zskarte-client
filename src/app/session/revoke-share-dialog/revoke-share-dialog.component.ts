@@ -3,6 +3,7 @@ import { I18NService } from 'src/app/state/i18n.service';
 import { IZsAccess } from '../session.interfaces';
 import { ApiService } from 'src/app/api/api.service';
 import { SessionService } from '../session.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-revoke-share-dialog',
@@ -17,6 +18,7 @@ export class RevokeShareDialogComponent {
     public i18n: I18NService,
     private _api: ApiService,
     private session: SessionService,
+    private _snackBar: MatSnackBar,
   ) {}
 
   async ngOnInit() {
@@ -29,7 +31,9 @@ export class RevokeShareDialogComponent {
 
   async revokeShareLink(id: string) {
     const { error, result } = await this._api.delete<IZsAccess>('/api/accesses/' + id);
-    if (error || !result) return;
+    if (error || !result) {
+      this._snackBar.open(this.i18n.get('rewokeShareLinkFailedMessage'), this.i18n.get('ok'), { duration: 2000 });
+    }
     this.shareLinks = this.shareLinks.filter((l) => l.id !== id);
   }
 }
