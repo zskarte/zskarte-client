@@ -23,8 +23,6 @@ import { RevokeShareDialogComponent } from '../../session/revoke-share-dialog/re
 export class SidebarMenuComponent implements OnDestroy {
   @ViewChild(MatMenuTrigger) menu!: MatMenuTrigger;
 
-  static ONBOARDING_VERSION = '1.0';
-
   locales: Locale[] = LOCALES;
   protocolEntries: ProtocolEntry[] = [];
   private _ngUnsubscribe = new Subject<void>();
@@ -38,12 +36,6 @@ export class SidebarMenuComponent implements OnDestroy {
     private datePipe: DatePipe,
     private _dialog: MatDialog,
   ) {
-    if (this.isInitialLaunch()) {
-      this.dialog.open(HelpComponent, {
-        data: true,
-      });
-    }
-
     this.zsMapStateService
       .observeDrawElements()
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -60,15 +52,6 @@ export class SidebarMenuComponent implements OnDestroy {
   ngOnDestroy(): void {
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
-  }
-
-  isInitialLaunch(): boolean {
-    const currentOnboardingVersion = localStorage.getItem('onboardingVersion');
-    if (currentOnboardingVersion !== SidebarMenuComponent.ONBOARDING_VERSION) {
-      localStorage.setItem('onboardingVersion', SidebarMenuComponent.ONBOARDING_VERSION);
-      return true;
-    }
-    return false;
   }
 
   toggleHistory(): void {

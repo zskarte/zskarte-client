@@ -8,6 +8,7 @@ import { SessionService } from '../session/session.service';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { DrawDialogComponent } from '../draw-dialog/draw-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import {HelpComponent} from "../help/help.component";
 
 @Component({
   selector: 'app-floating-ui',
@@ -15,6 +16,8 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrl: './floating-ui.component.scss',
 })
 export class FloatingUIComponent {
+  static ONBOARDING_VERSION = '1.0';
+
   sidebarContext = SidebarContext;
   sidebarContext$: Observable<SidebarContext | null>;
   private _ngUnsubscribe = new Subject<void>();
@@ -32,6 +35,12 @@ export class FloatingUIComponent {
     private _session: SessionService,
     private _dialog: MatDialog,
   ) {
+    if (this.isInitialLaunch()) {
+      this._dialog.open(HelpComponent, {
+        data: true,
+      });
+    }
+
     this.sidebarContext$ = this._state.observeSidebarContext();
     this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
 
@@ -58,6 +67,15 @@ export class FloatingUIComponent {
       });
 
     this.activeLayer$ = _state.observeActiveLayer();
+  }
+
+  isInitialLaunch(): boolean {
+    const currentOnboardingVersion = localStorage.getItem('onboardingVersion');
+    if (currentOnboardingVersion !== FloatingUIComponent.ONBOARDING_VERSION) {
+      localStorage.setItem('onboardingVersion', FloatingUIComponent.ONBOARDING_VERSION);
+      return true;
+    }
+    return false;
   }
 
   zoomIn() {
