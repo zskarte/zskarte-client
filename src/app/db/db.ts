@@ -11,25 +11,29 @@ export type LocalMapMeta = {
   objectUrl: string | undefined;
   map: ZsMapStateSource;
   mapStyle: string | undefined;
-  blobStorageId: number | undefined;
+};
+
+export type LocalMapBlob = {
+  url: string;
+  data: Blob;
 };
 
 export class AppDB extends Dexie {
   sessions!: Table<IZsMapSession, string>;
   displayStates!: Table<IZsMapDisplayState, string>;
   patchSyncQueue!: Table<Patch, number>;
-  blobMeta!: Table<LocalMapMeta, string>;
-  blobs!: Table<Blob, number>;
+  localMapMeta!: Table<LocalMapMeta, string>;
+  localMapBlobs!: Table<LocalMapBlob, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
 
-    this.version(4).stores({
+    this.version(5).stores({
       sessions: 'id',
       displayStates: 'id',
       patchSyncQueue: '++id',
-      blobMeta: 'url,objectUrl,map',
-      blobs: '++id',
+      localMapMeta: 'url,objectUrl,map',
+      localMapBlobs: 'url',
     });
   }
 }
