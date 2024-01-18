@@ -40,10 +40,10 @@ export class ZsMapSources {
           }),
         );
       case ZsMapStateSource.LOCAL: {
-        const blobMeta = await db.blobMeta.where('map').equals(source).first();
+        const blobMeta = await db.localMapMeta.where('map').equals(source).first();
         let mapUrl: string = zsMapStateSourceToDownloadUrl[source];
         let mapStyle: string | undefined = blobMeta?.mapStyle;
-        if (blobMeta?.blobStorageId) {
+        if (blobMeta) {
           if (blobMeta.objectUrl) {
             // There is no way to check if an object url is a valid reference
             // without making a request.
@@ -53,18 +53,18 @@ export class ZsMapSources {
             URL.revokeObjectURL(blobMeta.objectUrl);
             blobMeta.objectUrl = undefined;
           }
-          const blob = await db.blobs.get(blobMeta.blobStorageId);
+          const blob = await db.localMapBlobs.get(blobMeta.url);
           if (blob) {
-            mapUrl = URL.createObjectURL(blob);
+            mapUrl = URL.createObjectURL(blob.data);
             blobMeta.objectUrl = mapUrl;
           }
-          await db.blobMeta.put(blobMeta);
+          await db.localMapMeta.put(blobMeta);
         }
         if (!mapStyle) {
           mapStyle = await fetch('/assets/map-style.json').then((res) => res.text());
           if (blobMeta) {
             blobMeta.mapStyle = mapStyle;
-            await db.blobMeta.put(blobMeta);
+            await db.localMapMeta.put(blobMeta);
           }
         }
         const layer = new VectorTile({

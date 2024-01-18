@@ -77,7 +77,7 @@ export class SidebarComponent {
       ),
     );
 
-    db.blobMeta.toArray().then((downloadedMaps) => {
+    db.localMapMeta.toArray().then((downloadedMaps) => {
       this.mapDownloadStates = downloadedMaps.reduce((acc, val) => {
         acc[val.map] = val.mapStatus;
         return acc;
@@ -118,29 +118,29 @@ export class SidebarComponent {
   async downloadMap(map: ZsMapStateSource) {
     this.mapDownloadStates[map] = 'loading';
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    let localMapMeta = await db.blobMeta.get(downloadUrl);
+    let localMapMeta = await db.localMapMeta.get(downloadUrl);
     if (!localMapMeta) {
       localMapMeta = {
         url: downloadUrl,
         map,
         mapStatus: this.mapDownloadStates[map],
-        blobStorageId: undefined,
         objectUrl: undefined,
         mapStyle: undefined,
       };
-      await db.blobMeta.put(localMapMeta);
+      await db.localMapMeta.put(localMapMeta);
     }
-    let localMap: Blob | undefined;
-    if (localMapMeta?.blobStorageId) {
-      localMap = await db.blobs.get(localMapMeta.blobStorageId);
-    }
-    if (!localMap) {
+    let localMapBlob = await db.localMapBlobs.get(localMapMeta.url);
+    if (!localMapBlob) {
       try {
         const [localMap, mapStyle] = await Promise.all([
           lastValueFrom(this.http.get(downloadUrl, { responseType: 'blob' })),
           fetch('/assets/map-style.json').then((res) => res.text()),
         ]);
-        localMapMeta.blobStorageId = await db.blobs.add(localMap as Blob);
+        localMapBlob = {
+          url: localMapMeta.url,
+          data: localMap,
+        };
+        await db.localMapBlobs.add(localMapBlob);
         localMapMeta.mapStyle = mapStyle;
         localMapMeta.objectUrl = undefined;
         localMapMeta.mapStatus = 'downloaded';
@@ -149,18 +149,16 @@ export class SidebarComponent {
       }
     }
     this.mapDownloadStates[map] = localMapMeta.mapStatus;
-    await db.blobMeta.put(localMapMeta);
+    await db.localMapMeta.put(localMapMeta);
   }
 
   async removeLocalMap(map: ZsMapStateSource): Promise<void> {
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    const blobMeta = await db.blobMeta.get(downloadUrl);
+    const blobMeta = await db.localMapMeta.get(downloadUrl);
     if (!blobMeta) return;
     const objectUrl = blobMeta.objectUrl;
-    if (blobMeta.blobStorageId) {
-      await db.blobs.delete(blobMeta.blobStorageId);
-    }
-    await db.blobMeta.delete(downloadUrl);
+    await db.localMapBlobs.delete(downloadUrl);
+    await db.localMapMeta.delete(downloadUrl);
     if (objectUrl) {
       URL.revokeObjectURL(objectUrl);
     }
