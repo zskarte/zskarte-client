@@ -27,7 +27,7 @@ export class SidebarComponent {
       key,
       translation: this.i18n.get(key),
       selected: false,
-      downloadable: SidebarComponent.isDownloadableMap(key),
+      downloadable: this.isDownloadableMap(key),
     }))
     .sort((a, b) => a.translation.localeCompare(b.translation));
   filteredAvailableFeatures$: Observable<GeoFeature[]>;
@@ -113,7 +113,7 @@ export class SidebarComponent {
     this.mapState.addFeature(feature);
   }
 
-  static isDownloadableMap(map: ZsMapStateSource) {
+  isDownloadableMap(map: ZsMapStateSource) {
     return map in zsMapStateSourceToDownloadUrl;
   }
 
