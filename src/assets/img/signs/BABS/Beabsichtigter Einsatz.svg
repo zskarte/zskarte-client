@@ -1,13 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 31,545 L 153,545 153,585 31,585 31,545 Z M 194,545 L 316,545 316,585 194,585 194,545 Z M 357,545 L 481,545 481,585 357,585 357,545 Z M 521,545 L 644,545 644,585 521,585 521,545 Z M 685,545 L 807,545 807,585 685,585 685,545 Z M 848,545 L 885,545 885,585 848,585 848,545 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 983,488 L 1110,565 983,642 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 981,483 L 1114,565 981,646 981,483 Z M 985,642 L 982,640 1109,563 1109,567 982,489 985,488 985,642 Z"/>
-  <path fill="rgb(0,0,255)" stroke="none" d="M 853,488 L 981,565 853,642 Z"/>
-  <path fill="rgb(0,0,255)" stroke="rgb(0,0,255)" d="M 852,483 L 985,565 852,646 852,483 Z M 856,642 L 853,640 979,563 979,567 853,489 856,488 856,642 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#0000FF;stroke:#0000FF;stroke-width:0.1357;stroke-miterlimit:10;}
+</style>
+<rect x="26.1" y="70.3" class="st0" width="16.6" height="5.4"/>
+<rect x="4" y="70.3" class="st0" width="16.6" height="5.4"/>
+<rect x="48.3" y="70.3" class="st0" width="16.8" height="5.4"/>
+<rect x="92.8" y="70.3" class="st0" width="16.6" height="5.4"/>
+<rect x="70.5" y="70.3" class="st0" width="16.7" height="5.4"/>
+<polygon class="st0" points="151,73.1 133,61.9 133,72.7 115.4,61.9 115.4,70.3 114.9,70.3 114.9,75.8 115.4,75.8 115.4,84 
+	133,73.4 133,84 "/>
 </svg>

@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { getOS, OS } from '../helper/os';
-import {ZsMapDrawElementState, ZsMapDrawElementStateType} from '../state/interfaces';
+import { ZsMapDrawElementStateType } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 import { IShortcut } from './shortcut.interfaces';
-import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 
 @Injectable({
@@ -14,8 +13,6 @@ import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-el
 export class ShortcutService {
   private _selectedElement: ZsMapBaseDrawElement | undefined = undefined;
   private _selectedFeatureId: string | undefined = undefined;
-  private _selectedLayer: ZsMapBaseLayer | undefined = undefined;
-  private _copiedFeatureId: string | undefined = undefined;
   private _copyElement: ZsMapBaseDrawElement | undefined = undefined;
   private _symbols: { [key: string]: string } = {
     command: '\u2318',
@@ -47,10 +44,6 @@ export class ShortcutService {
 
     this._state.observeSelectedElement().subscribe((element) => {
       this._selectedElement = element;
-    });
-
-    this._state.observeActiveLayer().subscribe((layer) => {
-      this._selectedLayer = layer;
     });
   }
 
@@ -95,6 +88,14 @@ export class ShortcutService {
       if (this._copyElement?.elementState) {
         this._state.addDrawElement(this._copyElement.elementState);
       }
+    });
+
+    this._listen({ shortcut: 'mod+y' }).subscribe(() => {
+      this._state.undoMapStateChange();
+    });
+
+    this._listen({ shortcut: 'mod+z' }).subscribe(() => {
+      this._state.redoMapStateChange();
     });
   }
 
