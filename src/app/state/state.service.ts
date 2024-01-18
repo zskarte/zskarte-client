@@ -158,7 +158,6 @@ export class ZsMapStateService {
           const result: Sign = await lastValueFrom(dialogRef.afterClosed());
           (params as IZsMapSymbolDrawElementParams).symbolId = result.id as number;
         }
-        this._elementToDraw.next(params);
         break;
       case ZsMapDrawElementStateType.TEXT:
         if (!(params as IZsMapTextDrawElementParams).text) {
@@ -170,10 +169,8 @@ export class ZsMapStateService {
           (params as IZsMapTextDrawElementParams).text = result;
         }
         break;
-      default:
-        this._elementToDraw.next(params);
-        break;
     }
+    this._elementToDraw.next(params);
   }
 
   public cancelDrawing(): void {
