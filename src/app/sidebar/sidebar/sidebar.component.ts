@@ -139,9 +139,12 @@ export class SidebarComponent {
     }
     if (!localMap) {
       try {
-        localMap = await lastValueFrom(this.http.get(downloadUrl, { responseType: 'blob' }));
+        const [localMap, mapStyle] = await Promise.all([
+          lastValueFrom(this.http.get(downloadUrl, { responseType: 'blob' })),
+          fetch('/assets/map-style.json').then((res) => res.text()),
+        ]);
         localMapMeta.blobStorageId = await db.blobs.add(localMap);
-        localMapMeta.mapStyle = await fetch('/assets/map-style.json').then((res) => res.text());
+        localMapMeta.mapStyle = mapStyle;
         localMapMeta.objectUrl = undefined;
         localMapMeta.mapStatus = 'downloaded';
       } catch (e) {
