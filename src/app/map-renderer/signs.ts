@@ -1037,12 +1037,6 @@ export class Signs {
       de: 'Teilzerstörung',
       en: 'Teilzerstörung',
       fr: 'Destruction partielle',
-      fillStyle: {
-        name: 'cross',
-        size: 2,
-        spacing: 8,
-      },
-      fillOpacity: 0.8,
     },
     {
       id: 108,
