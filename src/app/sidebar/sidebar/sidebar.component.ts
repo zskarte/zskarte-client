@@ -113,6 +113,7 @@ export class SidebarComponent {
     this.mapState.addFeature(feature);
   }
 
+  // skipcq: JS-0105
   isDownloadableMap(map: ZsMapStateSource) {
     return map in zsMapStateSourceToDownloadUrl;
   }
