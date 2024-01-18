@@ -1,3 +1,6 @@
+@use '@angular/material' as mat;
+@include mat.core();
+
 /* You can add global styles to this file, and also import other style files */
 html,
 body {
@@ -26,3 +29,51 @@ body {
     display: none;
   }
 }
+
+
+/********** Levin's Material Style changes ***********/
+
+.mat-mdc-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mat-mdc-list-item:hover,
+.mat-mdc-list-item:focus,
+.mdc-list-item:hover,
+.mdc-list-item:focus,
+.mat-mdc-list-item-interactive:hover,
+.mat-mdc-list-item-interactive:focus,
+.mat-expansion-panel,
+.mat-mdc-menu-item:hover,
+.mat-mdc-menu-item:focus{
+  border-radius: 2rem !important;
+}
+
+.mat-mdc-menu-panel {
+  border-radius: 1rem !important;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.5rem;
+}
+
+mat-card {
+  border-radius: 1rem !important;
+}
+
+.mdc-button, .mat-mdc-button, .mat-mdc-button-base {
+  border-radius: 2rem !important;
+}
+
+.mdc-dialog__container {
+  border-radius: 1rem !important;
+  overflow: hidden;
+}
+
+.mat-mdc-dialog-surface, .mdc-dialog__surface {
+  padding: 1rem;
+}
+
+.mdc-dialog, .mdc-dialog__scrim {
+}
+

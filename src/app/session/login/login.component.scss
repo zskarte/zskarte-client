@@ -21,7 +21,7 @@
   align-items: center;
   justify-content: center;
   width: 80%;
-  max-width: 400px;
+  max-width: 600px;
 
   .full-width {
     width: 100%;
@@ -53,3 +53,8 @@
 .mat-form-field-suffix {
   cursor: pointer;
 }
+
+mat-card:first-child {
+  padding: 1rem;
+}
+

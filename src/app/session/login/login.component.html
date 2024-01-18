@@ -6,7 +6,7 @@
     </mat-card-header>
 
     <mat-card-content>
-      <mat-form-field class="full-width" appearance="fill" *ngIf="!isLoginWithCodeEnabled">
+      <mat-form-field class="full-width" appearance="outline" *ngIf="!isLoginWithCodeEnabled">
         <mat-label>ZSO</mat-label>
         <input
           matInput
@@ -32,18 +32,20 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <mat-form-field class="full-width" appearance="fill" *ngIf="!isLoginWithCodeEnabled">
+      <mat-form-field class="full-width" appearance="outline" *ngIf="!isLoginWithCodeEnabled">
         <mat-label>Passwort</mat-label>
         <input matInput type="password" placeholder="Passwort eingeben" [(ngModel)]="password" name="password" />
       </mat-form-field>
       <mat-error *ngIf="session.getAuthError() && !isLoginWithCodeEnabled">{{
         session.getAuthError()?.error?.error?.message || session.getAuthError()?.statusText || session.getAuthError()?.message
       }}</mat-error>
-
-      <mat-form-field class="full-width" appearance="fill" *ngIf="isLoginWithCodeEnabled">
+      
+      <!-- Login with code dialog-->
+      <mat-form-field class="full-width" appearance="outline" *ngIf="isLoginWithCodeEnabled">
         <mat-label>Login-Code</mat-label>
         <input matInput type="text" placeholder="Login-Code eingeben" [(ngModel)]="joinCode" name="joinCode" />
       </mat-form-field>
+      
       <stack [spacing]="5">
         <button class="login-button" mat-raised-button color="primary" (click)="login()">Login</button>
         <button
