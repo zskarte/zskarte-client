@@ -45,6 +45,11 @@ export class ZsMapSources {
         let mapStyle: string | undefined = blobMeta?.mapStyle;
         if (blobMeta?.blobStorageId) {
           if (blobMeta.objectUrl) {
+            // There is no way to check if an object url is a valid reference
+            // without making a request.
+            // Because revoking and creating a new one is pretty fast,
+            // we revoke and create a new url every time.
+            // This prevents memory leaks and makes the laptops not crash :)
             URL.revokeObjectURL(blobMeta.objectUrl);
             blobMeta.objectUrl = undefined;
           }
