@@ -47,6 +47,24 @@
   </button>
   <button
     mat-icon-button
+    *ngIf="!(isReadOnly | async)"
+    [disabled]="!(canUndo | async)"
+    (click)="undo()"
+    [attr.aria-label]="i18n.get('undo')"
+  >
+    <mat-icon>undo</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    *ngIf="!(isReadOnly | async)"
+    [disabled]="!(canRedo | async)"
+    (click)="redo()"
+    [attr.aria-label]="i18n.get('redo')"
+  >
+    <mat-icon>redo</mat-icon>
+  </button>
+  <button
+    mat-icon-button
     *ngIf="(sidebarContext | async) !== null"
     (click)="setSidebarContext(null)"
     color="accent"

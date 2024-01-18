@@ -48,6 +48,7 @@ export class ZsMapStateService {
   private _map = new BehaviorSubject<IZsMapState>(produce<IZsMapState>(this._getDefaultMapState(), (draft) => draft));
   private _mapPatches = new BehaviorSubject<Patch[]>([]);
   private _mapInversePatches = new BehaviorSubject<Patch[]>([]);
+  private _undoStackPointer = new BehaviorSubject<number>(0);
 
   private _display = new BehaviorSubject<IZsMapDisplayState>(produce<IZsMapDisplayState>(this._getDefaultDisplayState(), (draft) => draft));
   private _displayPatches = new BehaviorSubject<Patch[]>([]);
@@ -739,6 +740,62 @@ export class ZsMapStateService {
     );
   }
 
+  public undoMapStateChange() {
+    if (this.isHistoryMode()) {
+      return;
+    }
+
+    if (this._mapInversePatches.value.length - this._undoStackPointer.value === 0) {
+      return;
+    }
+
+    const newUndoStackPointer = this._undoStackPointer.value + 1;
+
+    const lastPatch = this._mapInversePatches.value.slice(
+      this._mapInversePatches.value.length - newUndoStackPointer,
+      this._mapInversePatches.value.length - this._undoStackPointer.value,
+    );
+    const newState = applyPatches<IZsMapState>(this._map.value, lastPatch);
+    this._map.next(newState);
+
+    this._sync.publishMapStatePatches(lastPatch);
+
+    this._undoStackPointer.next(newUndoStackPointer);
+  }
+
+  public redoMapStateChange() {
+    if (this.isHistoryMode()) {
+      return;
+    }
+
+    if (this._undoStackPointer.value === 0) {
+      return;
+    }
+
+    const newUndoStackPointer = this._undoStackPointer.value - 1;
+
+    const lastPatch = this._mapPatches.value.slice(
+      this._mapInversePatches.value.length - this._undoStackPointer.value,
+      this._mapInversePatches.value.length - newUndoStackPointer,
+    );
+
+    const newState = applyPatches<IZsMapState>(this._map.value, lastPatch);
+    this._map.next(newState);
+
+    this._sync.publishMapStatePatches(lastPatch);
+
+    this._undoStackPointer.next(newUndoStackPointer);
+  }
+
+  public observeHistory() {
+    return this._undoStackPointer.pipe(
+      map((x) => ({
+        canUndo: this._mapInversePatches.value.length - x > 0,
+        canRedo: x > 0,
+      })),
+    );
+  }
+
   public updateMapState(fn: (draft: IZsMapState) => void, preventPatches = false) {
     if (!preventPatches && !this._session.hasWritePermission()) {
       return;
@@ -751,6 +808,7 @@ export class ZsMapStateService {
       this._mapPatches.next(this._mapPatches.value);
       this._mapInversePatches.value.push(...inversePatches);
       this._mapInversePatches.next(this._mapInversePatches.value);
+      this._undoStackPointer.next(0);
 
       // Only publish map state changes when not in history mode
       if (!this.isHistoryMode()) {

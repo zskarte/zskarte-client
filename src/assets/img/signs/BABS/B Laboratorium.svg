@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{font-family:'MyriadPro-Regular';}
-	.st3{font-size:81.7994px;}
-	.st4{fill:none;}
+	.st0{fill:#0000FF;}
+	.st1{font-family:'Arial'; font-weight: 600;}
+	.st2{font-size:81.7994px;}
 </style>
 <g>
-	<polygon class="st0" points="0,36.43 154.61,36.43 154.61,143.11 0,143.11 	"/>
-	<polygon class="st0" points="2.45,12.89 156,12.89 156,136.32 2.45,136.32 	"/>
-	<path class="st1" d="M150.6,134.86H6.39V41.3h144.2L150.6,134.86L150.6,134.86z M17.66,123.59h121.67V52.56H17.66V123.59z"/>
-	
-		<rect x="12.02" y="84.84" transform="matrix(1 -6.608159e-03 6.608159e-03 1 -0.58 0.5217)" class="st1" width="133.26" height="6.37"/>
-	<rect x="75.55" y="45.95" class="st1" width="6.37" height="82.21"/>
-	<text transform="matrix(1.0015 0 0 1 58.1055 117.0117)" class="st1 st2 st3">B</text>
-	<polygon class="st4" points="0.47,142.64 154.15,142.64 154.15,36.9 0.47,36.9 	"/>
+	<path class="st0" d="M150.6,134.9H6.4V41.3h144.2L150.6,134.9L150.6,134.9z M17.7,123.6h121.7v-71H17.7V123.6z"/>
+	<rect x="12" y="84.8" transform="matrix(1 -6.608014e-03 6.608014e-03 1 -0.58 0.5217)" class="st0" width="133.3" height="6.4"/>
+	<rect x="75.6" y="46" class="st0" width="6.4" height="82.2"/>
+	<text transform="matrix(1.0015 0 0 1 58.1055 117.0117)" class="st0 st1 st2">B</text>
 </g>
 </svg>

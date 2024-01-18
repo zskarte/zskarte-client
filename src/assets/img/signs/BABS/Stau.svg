@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#FF0000;}
-	.st2{font-family:'MyriadPro-Regular';}
-	.st3{font-size:42.2294px;}
-	.st4{letter-spacing:7.01;}
-	.st5{letter-spacing:1;}
-	.st6{letter-spacing:3;}
-	.st7{font-size:84.0979px;}
-	.st8{fill:none;}
+	.st0{fill:#FF0000;}
+	.st1{font-family:'Arial'; font-weight: 600;}
+	.st2{font-size:48.9324px;}
+	.st3{letter-spacing:7.8;}
+	.st4{letter-spacing:1;}
+	.st5{letter-spacing:2.9;}
+	.st6{font-size:83.9787px;}
 </style>
 <g>
-	<polygon class="st0" points="-6.08,0 162.08,0 162.08,156 -6.08,156 -6.08,0 	"/>
-	<polygon class="st0" points="-3.82,1.48 157.36,1.48 157.36,150.91 -3.82,150.91 -3.82,1.48 	"/>
-	<path class="st1" d="M141.85,142.97H11.32V8.34h130.53V142.97z M16.73,137.55h119.71V13.75H16.73V137.55z"/>
-	<text transform="matrix(0.999 0 0 1 21.6726 55.3291)"><tspan x="0" y="0" class="st1 st2 st3 st4">S</tspan><tspan x="28.12" y="0" class="st1 st2 st3 st5">T</tspan><tspan x="50.46" y="0" class="st1 st2 st3 st6">A</tspan><tspan x="79.69" y="0" class="st1 st2 st3">U</tspan></text>
-	<text transform="matrix(0.999 0 0 1 62.8054 128.2627)" class="st1 st2 st7">!</text>
-	<polygon class="st8" points="-5.65,155.57 161.65,155.57 161.65,0.43 -5.65,0.43 -5.65,155.57 	"/>
+	<path class="st0" d="M156,156H0V0h156V156z M6.5,149.7h143.1V6.3H6.5V149.7z"/>
+	<text transform="matrix(1.0304 0 0 1 12.373 54.4482)" class="st0 st1 st2 st3">S</text>
+	<text transform="matrix(1.0304 0 0 1 45.9463 54.4482)" class="st0 st1 st2 st4">T</text>
+	<text transform="matrix(1.0304 0 0 1 72.6191 54.4482)" class="st0 st1 st2 st5">A</text>
+	<text transform="matrix(1.0304 0 0 1 107.5176 54.4482)" class="st0 st1 st2">U</text>
+	<text transform="matrix(1.1956 0 0 1 61.5322 135.0049)" class="st0 st1 st6">!</text>
 </g>
 </svg>

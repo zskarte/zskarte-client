@@ -95,6 +95,14 @@ export class ShortcutService {
     //     this._copiedFeatureId = undefined;
     //   }
     // });
+
+    this._listen({ shortcut: 'mod+y' }).subscribe(() => {
+      this._state.undoMapStateChange();
+    });
+
+    this._listen({ shortcut: 'mod+z' }).subscribe(() => {
+      this._state.redoMapStateChange();
+    });
   }
 
   private _listen({ shortcut, preventDefault }: IShortcut): Observable<KeyboardEvent> {

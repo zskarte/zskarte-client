@@ -55,6 +55,9 @@ const config: PlaywrightTestConfig = {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        launchOptions: {
+          args: ['--use-gl=egl'],
+        },
       },
     },
 

@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{fill:none;}
+	.st0{fill:#0000FF;}
 </style>
 <g>
-	<polygon class="st0" points="23.38,0 132.62,0 132.62,156 23.38,156 23.38,0 	"/>
-	<polygon class="st0" points="26.28,2.4 123.21,2.4 123.21,148.18 26.28,148.18 26.28,2.4 	"/>
-	<path class="st1" d="M122.73,147.68H26.77V2.89h95.96V147.68z M38.09,136.36h73.3V14.22h-73.3V136.36z"/>
-	
-		<rect x="71" y="8.55" transform="matrix(1 -6.601618e-03 6.601618e-03 1 -0.4965 0.4947)" class="st1" width="7.39" height="133.79"/>
-	<polygon class="st2" points="23.85,155.52 132.15,155.52 132.15,0.48 23.85,0.48 23.85,155.52 	"/>
+	<path class="st0" d="M122.7,147.7h-96V2.9h96C122.7,2.9,122.7,147.7,122.7,147.7z M38.1,136.4h73.3V14.2H38.1
+		C38.1,14.2,38.1,136.4,38.1,136.4z"/>
+	<rect x="71" y="8.6" transform="matrix(1 -6.601474e-03 6.601474e-03 1 -0.4964 0.4948)" class="st0" width="7.4" height="133.8"/>
 </g>
 </svg>

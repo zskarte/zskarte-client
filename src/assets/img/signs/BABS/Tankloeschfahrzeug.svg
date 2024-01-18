@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{enable-background:new    ;}
-	.st3{font-family:'MyriadPro-Regular';}
-	.st4{font-size:28.6274px;}
-	.st5{letter-spacing:3;}
-	.st6{fill:none;}
+	.st0{fill:#0000FF;}
+	.st1{enable-background:new    ;}
+	.st2{font-family:'Arial'; font-weight: 600;}
+	.st3{font-size:28.6274px;}
+	.st4{letter-spacing:2;}
 </style>
 <g>
-	<polygon class="st0" points="0,36.78 156,36.78 156,119.22 0,119.22 	"/>
-	<polygon class="st0" points="0.26,37.13 154.4,37.13 154.4,117.78 0.26,117.78 	"/>
-	<path class="st1" d="M154.33,117.71h-154v-80.5h153.99L154.33,117.71L154.33,117.71z M6.96,111.07H147.7V43.83H6.96V111.07z"/>
-	<path class="st1" d="M100.06,115.16V40.99l48.54,37.08L100.06,115.16z M106.69,54.4v47.36l30.99-23.68L106.69,54.4z"/>
-	<g class="st2">
-		<text transform="matrix(0.9996 0 0 1 28.2568 87.2158)" class="st1 st3 st4 st5">T</text>
+	<path class="st0" d="M154.3,117.7H0.3V37.2h154L154.3,117.7L154.3,117.7z M7,111.1h140.7V43.8H7V111.1z"/>
+	<path class="st0" d="M100.1,115.2V41l48.5,37.1L100.1,115.2z M106.7,54.4v47.4l31-23.7L106.7,54.4z"/>
+	<g class="st1">
+		<text transform="matrix(0.9996 0 0 1 28.2563 87.2158)" class="st0 st2 st3 st4">T</text>
 	</g>
-	<g class="st2">
-		<text transform="matrix(0.9996 0 0 1 45.7139 87.2158)" class="st1 st3 st4 st5">L</text>
+	<g class="st1">
+		<text transform="matrix(0.9996 0 0 1 45.7139 87.2158)" class="st0 st2 st3 st4">L</text>
 	</g>
-	<g class="st2">
-		<text transform="matrix(0.9996 0 0 1 63.166 87.2158)" class="st1 st3 st4">F</text>
+	<g class="st1">
+		<text transform="matrix(0.9996 0 0 1 63.166 87.2158)" class="st0 st2 st3">F</text>
 	</g>
-	<polygon class="st6" points="0.26,118.96 155.74,118.96 155.74,37.04 0.26,37.04 	"/>
 </g>
 </svg>

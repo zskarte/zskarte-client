@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#FF0000;}
-	.st2{enable-background:new    ;}
-	.st3{font-family:'MyriadPro-Regular';}
-	.st4{font-size:39.6345px;}
-	.st5{fill:none;}
+	.st0{fill:#FF0000;}
 </style>
-<polygon class="st0" points="1.3,34.12 156,34.12 156,132.7 1.3,132.7 "/>
-<polygon class="st0" points="2.72,35.62 154.58,35.62 154.58,131.21 2.72,131.21 "/>
-<rect x="69.03" y="81.86" transform="matrix(0.685 -0.7285 0.7285 0.685 -35.9966 83.5716)" class="st1" width="19.25" height="3.12"/>
-<rect x="47.99" y="81.85" transform="matrix(0.6848 -0.7287 0.7287 0.6848 -35.994 83.6053)" class="st1" width="61.33" height="3.12"/>
-<rect x="27.74" y="81.86" transform="matrix(0.6878 -0.7259 0.7259 0.6878 -35.9956 83.1352)" class="st1" width="101.82" height="3.12"/>
-<rect x="15.82" y="81.86" transform="matrix(0.6878 -0.7259 0.7259 0.6878 -35.9956 83.1352)" class="st1" width="125.66" height="3.12"/>
-<rect x="16.53" y="81.85" transform="matrix(0.6878 -0.7259 0.7259 0.6878 -35.9933 83.136)" class="st1" width="124.25" height="3.12"/>
-<rect x="70.64" y="81.86" transform="matrix(0.6919 -0.722 0.722 0.6919 -35.9921 82.4867)" class="st1" width="16.03" height="3.12"/>
-<rect x="31.18" y="81.86" transform="matrix(0.6714 -0.7411 0.7411 0.6714 -35.9731 85.6989)" class="st1" width="94.94" height="3.12"/>
-<rect x="49.66" y="81.85" transform="matrix(0.6878 -0.7259 0.7259 0.6878 -35.9933 83.136)" class="st1" width="57.99" height="3.12"/>
-<path d="M147.03,130.84H10.27V35.98h136.76V130.84z M13.98,127.13h129.34V39.69H13.98V127.13z"/>
-<g class="st2">
-	<text transform="matrix(0.9981 0 0 1 67.8926 95.0449)" class="st3 st4">1</text>
+<g>
+	
+		<rect x="-1.7" y="32.6" transform="matrix(0.6843 -0.7292 0.7292 0.6843 -22.1108 17.6065)" class="st0" width="21.9" height="3.5"/>
+	<rect x="-8.9" y="49.9" transform="matrix(0.6845 -0.729 0.729 0.6845 -29.4378 35.247)" class="st0" width="69.8" height="3.5"/>
+	
+		<rect x="-16" y="66.2" transform="matrix(0.6876 -0.7261 0.7261 0.6876 -36.2039 51.6807)" class="st0" width="115.8" height="3.5"/>
+	<rect x="-7.2" y="76" transform="matrix(0.6876 -0.7261 0.7261 0.6876 -36.3748 70.9794)" class="st0" width="143" height="3.5"/>
+	
+		<rect x="26.3" y="75.4" transform="matrix(0.6876 -0.7261 0.7261 0.6876 -25.7357 94.4878)" class="st0" width="141.3" height="3.5"/>
+	
+		<rect x="138.2" y="121.4" transform="matrix(0.6893 -0.7245 0.7245 0.6893 -43.4371 145.0032)" class="st0" width="18.2" height="3.5"/>
+	<rect x="63.4" y="88" transform="matrix(0.671 -0.7415 0.7415 0.671 -27.9443 116.5592)" class="st0" width="108" height="3.5"/>
+	<rect x="99" y="105.4" transform="matrix(0.6885 -0.7253 0.7253 0.6885 -36.5514 129.1203)" class="st0" width="66" height="3.5"/>
+	<path d="M155.6,131.7H0V23.8h155.6V131.7z M4.2,127.5h147.2V28H4.2V127.5z"/>
+	<path d="M27.2,115.4h-4V90.2c-1,0.9-2.2,1.8-3.8,2.7c-1.5,0.9-2.9,1.6-4.2,2v-3.8c2.2-1,4.2-2.3,5.8-3.8c1.7-1.5,2.8-2.9,3.5-4.3
+		h2.6V115.4z"/>
+	<path d="M37.4,106.9l4-0.5c0.5,2.2,1.2,3.9,2.3,4.9c1.1,1,2.4,1.5,4,1.5c1.9,0,3.4-0.6,4.7-1.9c1.3-1.3,1.9-2.9,1.9-4.8
+		c0-1.8-0.6-3.3-1.8-4.5c-1.2-1.2-2.7-1.8-4.5-1.8c-0.7,0-1.7,0.1-2.8,0.4l0.4-3.5c0.3,0,0.5,0,0.6,0c1.7,0,3.2-0.4,4.6-1.3
+		c1.4-0.9,2-2.2,2-4.1c0-1.5-0.5-2.7-1.5-3.6c-1-1-2.3-1.4-3.8-1.4c-1.5,0-2.8,0.5-3.9,1.5c-1,1-1.7,2.4-2,4.4l-4-0.7
+		c0.5-2.7,1.6-4.7,3.3-6.2s3.9-2.2,6.4-2.2c1.8,0,3.4,0.4,4.9,1.1c1.5,0.8,2.6,1.8,3.4,3.1c0.8,1.3,1.2,2.7,1.2,4.2
+		c0,1.4-0.4,2.7-1.1,3.8c-0.7,1.1-1.9,2.1-3.3,2.7c1.9,0.4,3.4,1.4,4.4,2.7c1.1,1.4,1.6,3.1,1.6,5.2c0,2.8-1,5.2-3.1,7.2
+		c-2.1,2-4.7,2.9-7.8,2.9c-2.8,0-5.2-0.8-7.1-2.5C38.7,111.8,37.7,109.6,37.4,106.9z"/>
 </g>
-<g class="st2">
-	<text transform="matrix(0.9981 0 0 1 68.5059 95.0449)" class="st3 st4">3</text>
-</g>
-<polygon class="st5" points="1.6,132.4 155.7,132.4 155.7,34.42 1.6,34.42 "/>
 </svg>

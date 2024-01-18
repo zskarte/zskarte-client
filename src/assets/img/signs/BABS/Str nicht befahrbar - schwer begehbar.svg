@@ -1,37 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#FF0000;}
-	.st2{fill:none;}
+	.st0{fill:#FF0000;}
 </style>
 <g>
-	<polygon class="st0" points="0,53.35 156,53.35 156,102.65 0,102.65 	"/>
-	<polygon class="st0" points="2.35,55.61 150.88,58.2 150.18,98.44 1.65,95.85 	"/>
+	<rect x="22.3" y="55" transform="matrix(0.7247 -0.6891 0.6891 0.7247 -44.5011 37.0783)" class="st0" width="3.8" height="38.5"/>
 	
-		<rect x="22.25" y="54.99" transform="matrix(0.7247 -0.6891 0.6891 0.7247 -44.4959 37.0767)" class="st1" width="3.79" height="38.47"/>
+		<rect x="15.4" y="61.6" transform="matrix(0.7247 -0.6891 0.6891 0.7247 -50.9242 34.1792)" class="st0" width="3.8" height="38.5"/>
+	<rect x="5" y="78.9" transform="matrix(0.7214 -0.6925 0.6925 0.7214 -49.2049 39.2538)" class="st0" width="38.5" height="3.8"/>
 	
-		<rect x="15.41" y="61.58" transform="matrix(0.7247 -0.6891 0.6891 0.7247 -50.9197 34.176)" class="st1" width="3.79" height="38.47"/>
+		<rect x="-1.9" y="71.8" transform="matrix(0.7214 -0.6925 0.6925 0.7214 -46.1992 32.4938)" class="st0" width="38.5" height="3.8"/>
 	
-		<rect x="4.95" y="78.89" transform="matrix(0.7214 -0.6925 0.6925 0.7214 -49.2054 39.2524)" class="st1" width="38.47" height="3.79"/>
+		<rect x="48.1" y="62.1" transform="matrix(0.2691 -0.9631 0.9631 0.2691 -43.615 108.9863)" class="st0" width="3.8" height="42.3"/>
 	
-		<rect x="-1.95" y="71.77" transform="matrix(0.7214 -0.6925 0.6925 0.7214 -46.1961 32.4948)" class="st1" width="38.47" height="3.79"/>
+		<rect x="64.9" y="78.5" transform="matrix(0.7005 -0.7136 0.7136 0.7005 -33.9836 79.8821)" class="st0" width="26.6" height="3.8"/>
 	
-		<rect x="48.1" y="62.05" transform="matrix(0.2691 -0.9631 0.9631 0.2691 -43.6089 108.9835)" class="st1" width="3.79" height="42.35"/>
+		<rect x="102.7" y="55" transform="matrix(0.1247 -0.9922 0.9922 0.1247 18.5836 168.1303)" class="st0" width="3.8" height="37.1"/>
+	<rect x="133.4" y="54" transform="matrix(0.7247 -0.6891 0.6891 0.7247 -13.2146 113.41)" class="st0" width="3.8" height="38.5"/>
 	
-		<rect x="64.9" y="78.54" transform="matrix(0.7005 -0.7136 0.7136 0.7005 -33.9854 79.8831)" class="st1" width="26.58" height="3.79"/>
+		<rect x="126.3" y="60.9" transform="matrix(0.7247 -0.6891 0.6891 0.7247 -19.9155 110.3801)" class="st0" width="3.8" height="38.5"/>
 	
-		<rect x="102.69" y="54.97" transform="matrix(0.1247 -0.9922 0.9922 0.1247 18.5804 168.1319)" class="st1" width="3.79" height="37.13"/>
+		<rect x="116.1" y="78.2" transform="matrix(0.7213 -0.6926 0.6926 0.7213 -17.7641 116.0584)" class="st0" width="38.5" height="3.8"/>
 	
-		<rect x="133.42" y="54.01" transform="matrix(0.7247 -0.6891 0.6891 0.7247 -13.2182 113.4071)" class="st1" width="3.79" height="38.47"/>
-	
-		<rect x="126.28" y="60.88" transform="matrix(0.7247 -0.6891 0.6891 0.7247 -19.9202 110.379)" class="st1" width="3.79" height="38.47"/>
-	
-		<rect x="116.1" y="78.21" transform="matrix(0.7213 -0.6926 0.6926 0.7213 -17.7629 116.0566)" class="st1" width="38.47" height="3.79"/>
-	
-		<rect x="108.91" y="71.08" transform="matrix(0.7213 -0.6926 0.6926 0.7213 -14.8315 109.0924)" class="st1" width="38.47" height="3.79"/>
-	<polygon class="st2" points="0.15,99.88 155.06,102.58 155.87,56.23 0.95,53.53 	"/>
+		<rect x="108.9" y="71.1" transform="matrix(0.7213 -0.6926 0.6926 0.7213 -14.8323 109.0901)" class="st0" width="38.5" height="3.8"/>
 </g>
 </svg>

@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{font-family:'MyriadPro-Regular';}
-	.st3{font-size:90.2033px;}
-	.st4{fill:none;}
+	.st0{fill:#0000FF;}
+	.st1{font-family:'Arial'; font-weight: 600;}
+	.st2{font-size:90.2033px;}
 </style>
 <g>
-	<polygon class="st0" points="26.85,9.38 126.48,9.38 126.48,156 26.85,156 26.85,9.38 	"/>
-	<polygon class="st0" points="13.25,0 142.75,0 142.75,149.29 13.25,149.29 13.25,0 	"/>
-	<path class="st1" d="M120.73,148.84H33.92V16.24h86.81V148.84z M44.29,138.46h66.06V26.61H44.29V138.46z"/>
-	<text transform="matrix(0.9969 0 0 1 67.5684 115.7129)" class="st1 st2 st3">i</text>
-	<polygon class="st4" points="27.28,155.57 126.04,155.57 126.04,9.82 27.28,9.82 27.28,155.57 	"/>
+	<path class="st0" d="M120.7,148.8H33.9V16.2h86.8C120.7,16.2,120.7,148.8,120.7,148.8z M44.3,138.5h66.1V26.6H44.3V138.5z"/>
+	<g class="st1">
+		<path class="st0" d="M71.1,61.7V50.2h12.3v11.5H71.1z M71.1,114.8V68h12.3v46.8H71.1z"/>
+	</g>
 </g>
 </svg>

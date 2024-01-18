@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#0000FF;stroke:#0000FF;stroke-width:0.1402;stroke-miterlimit:10;}
 </style>
-<g>
-	<g id="MasterSlide_1_Standard">
-		<g id="Drawing_1">
-			<path class="st0" d="M0,74.29h23.83v7.43H0V74.29z M31.82,74.29h23.83v7.43H31.82V74.29z M63.63,74.29H87.6v7.43H63.63V74.29z
-				 M95.45,74.29h23.97v7.43H95.45V74.29z M127.27,74.29h20.88v7.43h-20.88V74.29z"/>
-		</g>
-	</g>
-</g>
+<path class="st0" d="M0,74.3h23.8v7.4H0V74.3z M31.8,74.3h23.8v7.4H31.8V74.3z M63.6,74.3h24v7.4h-24V74.3z M95.4,74.3h24v7.4h-24
+	V74.3z M127.3,74.3h20.9v7.4h-20.9V74.3z"/>
 </svg>

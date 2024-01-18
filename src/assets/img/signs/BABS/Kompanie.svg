@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
-	.st2{fill:none;}
+	.st0{fill:#0000FF;}
 </style>
 <g>
-	<polygon class="st0" points="24.65,0 131.35,0 131.35,156 24.65,156 24.65,0 	"/>
-	<polygon class="st0" points="25.48,1.12 128.31,1.12 128.31,152.97 25.48,152.97 25.48,1.12 	"/>
-	<path class="st1" d="M76.9,152.82c-28.28,0-51.28-22.94-51.28-51.13c0-28.19,23-51.13,51.28-51.13s51.28,22.94,51.28,51.13
-		C128.18,129.88,105.17,152.82,76.9,152.82z M76.9,63.03c-21.4,0-38.81,17.34-38.81,38.66c0,21.31,17.41,38.65,38.81,38.65
-		c21.4,0,38.81-17.34,38.81-38.65C115.7,80.38,98.3,63.03,76.9,63.03z"/>
+	<path class="st0" d="M76.9,152.8c-28.3,0-51.3-22.9-51.3-51.1s23-51.1,51.3-51.1s51.3,22.9,51.3,51.1S105.2,152.8,76.9,152.8z
+		 M76.9,63c-21.4,0-38.8,17.3-38.8,38.7c0,21.3,17.4,38.6,38.8,38.6s38.8-17.3,38.8-38.7C115.7,80.4,98.3,63,76.9,63z"/>
 	
-		<rect x="47.97" y="23.78" transform="matrix(4.161676e-03 -1 1 4.161676e-03 46.3167 103.317)" class="st1" width="54.12" height="9.24"/>
-	<rect x="50.9" y="22.55" class="st1" width="48.45" height="9.24"/>
-	<polygon class="st2" points="25.33,155.32 130.68,155.32 130.68,0.68 25.33,0.68 25.33,155.32 	"/>
+		<rect x="48" y="23.8" transform="matrix(4.161640e-03 -1 1 4.161640e-03 46.3118 103.3153)" class="st0" width="54.1" height="9.2"/>
+	<rect x="50.9" y="22.5" class="st0" width="48.5" height="9.2"/>
 </g>
 </svg>

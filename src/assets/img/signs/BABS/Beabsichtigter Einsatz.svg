@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#0000FF;stroke:#0000FF;stroke-width:0.1357;stroke-miterlimit:10;}
-	.st1{fill:#0000FF;}
 </style>
-<g id="MasterSlide_1_Standard">
-	<g id="Drawing_1">
-		<path class="st0" d="M4.01,70.35h16.56v5.43H4.01V70.35z M26.13,70.35h16.56v5.43H26.13V70.35z M48.26,70.35h16.83v5.43H48.26
-			V70.35z M70.51,70.35h16.69v5.43H70.51V70.35z M92.77,70.35h16.56v5.43H92.77V70.35z M114.9,70.35h5.02v5.43h-5.02V70.35z"/>
-		<path class="st1" d="M133.22,62.61l17.24,10.45l-17.24,10.45V62.61z"/>
-		<path class="st0" d="M132.95,61.93L151,73.06l-18.05,10.99V61.93z M133.49,83.51l-0.41-0.27l17.24-10.45v0.54l-17.24-10.59
-			l0.41-0.14V83.51z"/>
-		<path class="st1" d="M115.58,62.61l17.37,10.45l-17.37,10.45V62.61z"/>
-		<path class="st0" d="M115.44,61.93l18.05,11.13l-18.05,10.99V61.93z M115.98,83.51l-0.41-0.27l17.1-10.45v0.54l-17.1-10.59
-			l0.41-0.14V83.51z"/>
-	</g>
-</g>
+<rect x="26.1" y="70.3" class="st0" width="16.6" height="5.4"/>
+<rect x="4" y="70.3" class="st0" width="16.6" height="5.4"/>
+<rect x="48.3" y="70.3" class="st0" width="16.8" height="5.4"/>
+<rect x="92.8" y="70.3" class="st0" width="16.6" height="5.4"/>
+<rect x="70.5" y="70.3" class="st0" width="16.7" height="5.4"/>
+<polygon class="st0" points="151,73.1 133,61.9 133,72.7 115.4,61.9 115.4,70.3 114.9,70.3 114.9,75.8 115.4,75.8 115.4,84 
+	133,73.4 133,84 "/>
 </svg>

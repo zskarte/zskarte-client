@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 156 156" style="enable-background:new 0 0 156 156;" xml:space="preserve">
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st1{fill:#0000FF;}
+	.st0{fill:#0000FF;}
 </style>
-<g>
-	<polygon class="st0" points="58.82,0 97.18,0 97.18,156 58.82,156 58.82,0 	"/>
-	<rect x="53.96" y="17.53" transform="matrix(0.64 -0.7683 0.7683 0.64 11.3073 67.8949)" class="st1" width="48.3" height="8.69"/>
-	
-		<rect x="73.77" y="110.25" transform="matrix(0.7682 -0.6402 0.6402 0.7682 -67.9372 81.1657)" class="st1" width="8.7" height="48.3"/>
-	<rect x="59.33" y="37.59" class="st1" width="8.7" height="80.88"/>
-</g>
+<rect x="54" y="17.5" transform="matrix(0.64 -0.7683 0.7683 0.64 11.301 67.888)" class="st0" width="48.3" height="8.7"/>
+<rect x="73.8" y="110.2" transform="matrix(0.7682 -0.6402 0.6402 0.7682 -67.9358 81.1642)" class="st0" width="8.7" height="48.3"/>
+<rect x="59.3" y="37.6" class="st0" width="8.7" height="80.9"/>
 </svg>
