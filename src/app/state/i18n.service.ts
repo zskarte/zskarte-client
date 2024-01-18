@@ -1279,6 +1279,16 @@ export class I18NService {
       en: 'Back',
       fr: 'Retour',
     },
+    newScenario: {
+      de: 'Neues Ereigniss',
+      en: 'New Scenario',
+      fr: 'Nouvel Événement',
+    },
+    importScenario: {
+      de: 'Ereigniss importieren',
+      en: 'Import Scenario',
+      fr: 'Importer événement',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {
