@@ -240,31 +240,6 @@ export class Signs {
       en: 'Brand',
       fr: 'Incendie',
     },
-    /*
-    {
-      id: 24,
-      kat: 'damage',
-      type: 'LineString',
-      color: '#FF0000',
-      src: 'BABS/Branduebergriff erfolgt - Signatur.svg',
-      de: 'Brandübergriff erfolgt',
-      en: 'Brandübergriff erfolgt',
-      fr: 'Extension du feu',
-      example: 'Branduebergriff erfolgt - Beispiel.svg',
-    },
-    {
-      id: 25,
-      kat: 'damage',
-      type: 'LineString',
-      color: '#FF0000',
-      src: 'BABS/Branduebergriffsgefahr - Signatur.svg',
-      de: 'Brandübergriffsgefahr',
-      en: 'Brandübergriffsgefahr',
-      fr: "Danger d'extension",
-      example: 'Branduebergriffsgefahr - Beispiel.svg',
-      style: 'dash',
-    },
-    */
     {
       id: 26,
       kat: 'damage',
@@ -512,19 +487,6 @@ export class Signs {
       en: 'Explosion',
       fr: 'Explosion',
     },
-    /*
-    {
-      id: 50,
-      kat: 'damage',
-      type: 'Polygon',
-      color: '#FF0000',
-      src: 'BABS/Explosionsherd - Signatur.svg',
-      de: 'Explosionsherd',
-      en: 'Explosionsherd',
-      fr: 'Foyer d’explosion',
-      example: 'Explosionsherd - Beispiel.svg',
-    },
-    */
     {
       id: 52,
       kat: 'incident',
@@ -1303,18 +1265,6 @@ export class Signs {
       en: 'Absperrung mit Überwachung',
       fr: 'Barrière avec surveillance ',
     },
-    /*
-    {
-      id: 130,
-      kat: 'damage',
-      type: 'Point',
-      color: '#FF0000',
-      src: 'BABS/Brand einzelnes Gebaeude - Beispiel.svg',
-      de: 'Brand einzelnes Gebäude - Beispiel',
-      en: 'Brand einzelnes Gebäude - Beispiel',
-      fr: 'Incendie bâtiment unique - exemple',
-    },
-    */
     {
       id: 131,
       kat: 'damage',
@@ -1325,18 +1275,6 @@ export class Signs {
       en: 'Brand einzelnes Gebäude',
       fr: 'Incendie bâtiment unique',
     },
-    /*
-    {
-      id: 132,
-      kat: 'damage',
-      type: 'Point',
-      color: '#FF0000',
-      src: 'BABS/Brand mehrerer Gebaeude - Beispiel.svg',
-      de: 'Brand mehrerer Gebäude - Beispiel',
-      en: 'Brand mehrerer Gebäude - Beispiel',
-      fr: 'Incendie dans plusieurs bâtiments - exemple',
-    },
-    */
     {
       id: 133,
       kat: 'damage',
@@ -1347,38 +1285,6 @@ export class Signs {
       en: 'Brand mehrerer Gebäude',
       fr: 'Incendie dans plusieurs immeubles',
     },
-    /*
-    {
-      id: 134,
-      kat: 'damage',
-      type: 'Point',
-      color: '#FF0000',
-      src: 'BABS/Branduebergriff erfolgt - Beispiel.svg',
-      de: 'Brandübergriff erfolgt - Beispiel',
-      en: 'Brandübergriff erfolgt - Beispiel',
-      fr: 'Une attaque de feu a lieu - exemple',
-    },
-    {
-      id: 135,
-      kat: 'damage',
-      type: 'Point',
-      color: '#FF0000',
-      src: 'BABS/Branduebergriffsgefahr - Beispiel.svg',
-      de: 'Brandübergriffsgefahr - Beispiel',
-      en: 'Brandübergriffsgefahr - Beispiel',
-      fr: 'Attaque de feu - exemple',
-    },
-    {
-      id: 136,
-      kat: 'damage',
-      type: 'Point',
-      color: '#FF0000',
-      src: 'BABS/Explosionsherd - Beispiel.svg',
-      de: 'Explosionsherd - Beispiel',
-      en: 'Explosionsherd - Beispiel',
-      fr: 'Poêle à explosion - exemple',
-    },
-    */
     {
       id: 137,
       kat: 'formation',
@@ -1409,58 +1315,6 @@ export class Signs {
       en: 'Komm Ausfall Tel - Festnetz',
       fr: 'Échec de la comm. Tel - ligne fixe',
     },
-    /* 
-    {
-      id: 140,
-      kat: 'fks',
-      type: 'Point',
-      color: '#000000',
-      src: 'BSM/Markierung Feuer.svg',
-      de: 'Markierung Feuer',
-      en: 'Markierung Feuer',
-      fr: 'Marquer le feu',
-    },
-    {
-      id: 141,
-      kat: 'fks',
-      type: 'Point',
-      color: '#000000',
-      src: 'BSM/Markierung Gefaehrliche Stoffe.svg',
-      de: 'Markierung Gefährliche Stoffe',
-      en: 'Markierung Gefährliche Stoffe',
-      fr: 'Marquage des substances dangereuses',
-    },
-    {
-      id: 142,
-      kat: 'fks',
-      type: 'Point',
-      color: '#000000',
-      src: 'BSM/Markierung Rettungen.svg',
-      de: 'Markierung Rettungen',
-      en: 'Markierung Rettungen',
-      fr: 'Marquage des sauvetages',
-    },
-    {
-      id: 143,
-      kat: 'fks',
-      type: 'Point',
-      color: '#000000',
-      src: 'BSM/Markierung Unfall.svg',
-      de: 'Markierung Unfall',
-      en: 'Markierung Unfall',
-      fr: "Marque d'accident ",
-    },
-    {
-      id: 144,
-      kat: 'fks',
-      type: 'Point',
-      color: '#000000',
-      src: 'BSM/Markierung Wasser.svg',
-      de: 'Markierung Wasser',
-      en: 'Markierung Wasser',
-      fr: "Marquage de l'eau ",
-    },
-    */
     {
       id: 145,
       kat: 'place',
@@ -1471,18 +1325,6 @@ export class Signs {
       en: 'Obdachlosensammelstelle',
       fr: 'Point de rassemblement sans abri',
     },
-    /*
-    {
-      id: 146,
-      kat: 'damage',
-      type: 'Point',
-      color: '#FF0000',
-      src: 'BABS/Personenbergungsuebersicht - Beispiel.svg',
-      de: 'Personenbergungsübersicht - Beispiel',
-      en: 'Personenbergungsübersicht - Beispiel',
-      fr: "Vue d'ensemble de sauvetage - exemple",
-    },
-    */
     {
       id: 147,
       kat: 'damage',
@@ -1513,16 +1355,6 @@ export class Signs {
       en: 'Schadengebiet, Schadenraum',
       fr: 'Zone de dégâts',
     },
-    // {
-    //   id: 150,
-    //   kat: 'damage',
-    //   type: 'Point',
-    //   color: '#FF0000',
-    //   src: 'BSM/Schadengebiet, Schadenraum.svg',
-    //   de: 'Schadengebiet, Schadenraum',
-    //   en: 'Schadengebiet, Schadenraum',
-    //   fr: 'Zone de dégâts',
-    // },
     {
       id: 151,
       kat: 'place',
@@ -1543,18 +1375,6 @@ export class Signs {
       en: 'Stromausfall',
       fr: 'Panne électrique',
     },
-    /*
-    {
-      id: 153,
-      kat: 'damage',
-      type: 'Point',
-      color: '#FF0000',
-      src: 'BABS/Truemmerbereich - Beispiel.svg',
-      de: 'Trümmerbereich - Beispiel',
-      en: 'Trümmerbereich - Beispiel',
-      fr: 'Zone de débris - exemple',
-    },
-    */
     {
       id: 154,
       kat: 'damage',

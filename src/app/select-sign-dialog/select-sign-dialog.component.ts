@@ -20,7 +20,7 @@ export class SelectSignDialog implements OnInit {
   signCategories = Array.from(signCategories.values());
 
   capitalizeFirstLetter = capitalizeFirstLetter;
-  @Output() signSelected = new EventEmitter<Sign>();
+  @Output() readonly signSelected = new EventEmitter<Sign>();
 
   constructor(
     public dialogRef: MatDialogRef<SelectSignDialog>,
@@ -47,6 +47,7 @@ export class SelectSignDialog implements OnInit {
     );
   }
 
+  // skipcq: JS-0105
   getImageUrl(file: string) {
     if (file) {
       return DrawStyle.getImageUrl(file);
@@ -68,6 +69,7 @@ export class SelectSignDialog implements OnInit {
     }
   }
 
+  // skipcq: JS-0105
   getIconFromType(type: string) {
     switch (type) {
       case 'Polygon':
