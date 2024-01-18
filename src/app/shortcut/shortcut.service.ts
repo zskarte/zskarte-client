@@ -78,7 +78,6 @@ export class ShortcutService {
       layer?.draw(ZsMapDrawElementStateType.SYMBOL);
     });
 
-    // currently not implemented since it is not clear how to handle this without a proper UI state
     this._listen({ shortcut: 'mod+c' }).subscribe(() => {
       this._copyElement = this._selectedElement;
     });
