@@ -9,6 +9,7 @@ import { combineLatest, lastValueFrom, map, Observable, share, startWith } from 
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
 import { db, LocalMapState } from '../../db/db';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-sidebar',
@@ -48,6 +49,7 @@ export class SidebarComponent {
     geoAdminService: GeoadminService,
     public i18n: I18NService,
     public dialog: MatDialog,
+    private http: HttpClient,
   ) {
     const allFeatures$ = geoAdminService.getFeatures().pipe(
       share(),
@@ -138,7 +140,7 @@ export class SidebarComponent {
           lastValueFrom(this.http.get(downloadUrl, { responseType: 'blob' })),
           fetch('/assets/map-style.json').then((res) => res.text()),
         ]);
-        localMapMeta.blobStorageId = await db.blobs.add(localMap);
+        localMapMeta.blobStorageId = await db.blobs.add(localMap as Blob);
         localMapMeta.mapStyle = mapStyle;
         localMapMeta.objectUrl = undefined;
         localMapMeta.mapStatus = 'downloaded';
