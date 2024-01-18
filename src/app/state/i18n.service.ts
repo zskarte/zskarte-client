@@ -1274,6 +1274,11 @@ export class I18NService {
       en: 'Without signature',
       fr: 'Sans signature',
     },
+    back: {
+      de: 'Zurück',
+      en: 'Back',
+      fr: 'Retour',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

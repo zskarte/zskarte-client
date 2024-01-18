@@ -39,15 +39,24 @@
       <mat-error *ngIf="session.getAuthError() && !isLoginWithCodeEnabled">{{
         session.getAuthError()?.error?.error?.message || session.getAuthError()?.statusText || session.getAuthError()?.message
       }}</mat-error>
-      
+
       <!-- Login with code dialog-->
       <mat-form-field class="full-width" appearance="outline" *ngIf="isLoginWithCodeEnabled">
         <mat-label>Login-Code</mat-label>
         <input matInput type="text" placeholder="Login-Code eingeben" [(ngModel)]="joinCode" name="joinCode" />
       </mat-form-field>
-      
+
       <stack [spacing]="5">
         <button class="login-button" mat-raised-button color="primary" (click)="login()">Login</button>
+        <button
+          class="login-button"
+          *ngIf="isLoginWithCodeEnabled"
+          mat-raised-button
+          color="secondary"
+          (click)="isLoginWithCodeEnabled = !isLoginWithCodeEnabled"
+        >
+          {{ i18n.get('back') }}
+        </button>
         <button
           class="alternative-login-button"
           *ngIf="!isLoginWithCodeEnabled"
