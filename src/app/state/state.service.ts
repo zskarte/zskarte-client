@@ -151,6 +151,7 @@ export class ZsMapStateService {
 
   // drawing
   public async drawElement(params: ZsMapDrawElementParams): Promise<void> {
+    // skipcq: JS-0047
     switch (params.type) {
       case ZsMapDrawElementStateType.SYMBOL:
         if (!(params as IZsMapSymbolDrawElementParams).symbolId) {
