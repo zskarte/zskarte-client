@@ -199,7 +199,7 @@ export abstract class ZsMapBaseLayer {
     });
   }
 
-  public abstract draw(type: ZsMapDrawElementStateType): void;
+  public abstract draw(type: ZsMapDrawElementStateType, options?: { symbolId?: number; text?: string }): void;
 
   public unsubscribe(): void {
     this._unsubscribe.next();

@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, merge, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
   IPositionFlag,
   IZsMapDisplayState,
   IZsMapState,
+  IZsMapSymbolDrawElementParams,
+  IZsMapTextDrawElementParams,
   SidebarContext,
   ZsMapDisplayMode,
+  ZsMapDrawElementParams,
   ZsMapDrawElementState,
   ZsMapDrawElementStateType,
   ZsMapElementToDraw,
@@ -24,7 +27,7 @@ import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual } from '../helper/array';
 import { GeoFeature } from '../core/entity/geoFeature';
 import { MatDialog } from '@angular/material/dialog';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
 import { TextDialogComponent } from '../text-dialog/text-dialog.component';
 import { Signs } from '../map-renderer/signs';
@@ -64,8 +67,7 @@ export class ZsMapStateService {
 
   constructor(
     public i18n: I18NService,
-    private drawDialog: MatDialog,
-    private textDialog: MatDialog,
+    private dialog: MatDialog,
     private _sync: SyncService,
     private _session: SessionService,
     private _snackBar: MatSnackBar,
@@ -126,7 +128,7 @@ export class ZsMapStateService {
   public drawSignatureAtCoordinate(coordinates: number[]) {
     const layer = this._display.value.activeLayer;
     if (layer) {
-      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
+      const dialogRef = this.dialog.open(SelectSignDialog);
       dialogRef.afterClosed().subscribe((result: Sign) => {
         if (result) {
           if (result.type === 'Point') {
@@ -148,28 +150,28 @@ export class ZsMapStateService {
   }
 
   // drawing
-  public drawElement(type: ZsMapDrawElementStateType, layer: string): void {
-    if (type === ZsMapDrawElementStateType.SYMBOL) {
-      const dialogRef = this.drawDialog.open(DrawingDialogComponent);
-
-      dialogRef.afterClosed().subscribe((result: Sign) => {
-        if (result) {
-          this._elementToDraw.next({ type, layer, symbolId: result.id });
+  public async drawElement(params: ZsMapDrawElementParams): Promise<void> {
+    // skipcq: JS-0047
+    switch (params.type) {
+      case ZsMapDrawElementStateType.SYMBOL:
+        if (!(params as IZsMapSymbolDrawElementParams).symbolId) {
+          const dialogRef = this.dialog.open(SelectSignDialog);
+          const result: Sign = await lastValueFrom(dialogRef.afterClosed());
+          (params as IZsMapSymbolDrawElementParams).symbolId = result.id as number;
         }
-      });
-    } else if (type === ZsMapDrawElementStateType.TEXT) {
-      const dialogRef = this.textDialog.open(TextDialogComponent, {
-        maxWidth: '80vw',
-        maxHeight: '70vh',
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this._elementToDraw.next({ type, layer, text: result });
+        break;
+      case ZsMapDrawElementStateType.TEXT:
+        if (!(params as IZsMapTextDrawElementParams).text) {
+          const dialogRef = this.dialog.open(TextDialogComponent, {
+            maxWidth: '80vw',
+            maxHeight: '70vh',
+          });
+          const result: string = await lastValueFrom(dialogRef.afterClosed());
+          (params as IZsMapTextDrawElementParams).text = result;
         }
-      });
-    } else {
-      this._elementToDraw.next({ type, layer });
+        break;
     }
+    this._elementToDraw.next(params);
   }
 
   public cancelDrawing(): void {
@@ -737,6 +739,10 @@ export class ZsMapStateService {
   }
 
   public undoMapStateChange() {
+    if (this.isHistoryMode()) {
+      return;
+    }
+
     if (this._mapInversePatches.value.length - this._undoStackPointer.value === 0) {
       return;
     }
@@ -756,6 +762,10 @@ export class ZsMapStateService {
   }
 
   public redoMapStateChange() {
+    if (this.isHistoryMode()) {
+      return;
+    }
+
     if (this._undoStackPointer.value === 0) {
       return;
     }

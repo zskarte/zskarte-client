@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { Draw, Select, Translate, defaults, Modify } from 'ol/interaction';
+import { defaults, Draw, Modify, Select, Translate } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import DrawHole from 'ol-ext/interaction/DrawHole';
@@ -17,7 +17,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
-import { Fill, Icon, Stroke, Style, Circle } from 'ol/style';
+import { Circle, Fill, Icon, Stroke, Style } from 'ol/style';
 import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
@@ -573,9 +573,9 @@ export class MapRendererComponent implements AfterViewInit {
     this._state
       .observeMapSource()
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((source) => {
+      .subscribe(async (source) => {
         this._map.removeLayer(this._mapLayer);
-        this._mapLayer = ZsMapSources.get(source);
+        this._mapLayer = await ZsMapSources.get(source);
         this._map.addLayer(this._mapLayer);
       });
 

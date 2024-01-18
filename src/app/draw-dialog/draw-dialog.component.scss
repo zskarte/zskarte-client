@@ -1,0 +1,12 @@
+.container {
+  padding: 1rem;
+
+  .no-symbol-buttons {
+    display: flex;
+    flex-direction: row;
+
+    button {
+      margin-right: 1rem;
+    }
+  }
+}

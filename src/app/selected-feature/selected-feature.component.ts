@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
@@ -17,7 +17,7 @@ import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { ZsMapDrawElementState, ZsMapDrawElementStateType } from '../state/interfaces';
 import { EditCoordinatesComponent } from '../edit-coordinates/edit-coordinates.component';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 
 @Component({
   selector: 'app-selected-feature',
@@ -211,7 +211,7 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   chooseSymbol(drawElement: ZsMapDrawElementState) {
-    const dialogRef = this.dialog.open(DrawingDialogComponent);
+    const dialogRef = this.dialog.open(SelectSignDialog);
     dialogRef.afterClosed().subscribe((result: Sign) => {
       if (result) {
         this.updateProperty(drawElement, 'symbolId', result.id);

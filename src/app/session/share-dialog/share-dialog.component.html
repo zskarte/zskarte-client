@@ -1,4 +1,4 @@
-<div>
-  <img *ngIf="qrCodeDataUrl | async" [src]="qrCodeDataUrl | async" alt="QR Code" />
-  <span *ngIf="qrCodeDataUrl | async">{{ joinCode }}</span>
+<div *ngIf="qrCodeDataUrl | async; let qrCode">
+  <img *ngIf="qrCode" [src]="qrCode" alt="QR Code" />
+  <span *ngIf="qrCode && showJoinCode">{{ joinCode }}</span>
 </div>
