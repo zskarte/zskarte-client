@@ -277,7 +277,6 @@ export class MapRendererComponent implements AfterViewInit {
     const select = new Select({
       hitTolerance: 10,
       style: (feature: FeatureLike, resolution: number) => {
-        // console.log(feature.get('features') is);
         if (feature.get('hidden') === true) {
           return undefined;
         }
@@ -289,9 +288,7 @@ export class MapRendererComponent implements AfterViewInit {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
       for (const cluster of event.selected) {
-        // get real feature inside cluster
         const feature = this.getFeatureInsideCluster(cluster);
-
         const nextElement = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
 
         if (this._mergeMode) {
@@ -375,7 +372,7 @@ export class MapRendererComponent implements AfterViewInit {
       // only the first feature is relevant
       const feature = this.getFeatureInsideCluster(e.features.getArray()[0]);
       const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
-      element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+      element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as number[]);
 
       if (element.element.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
         // Hack to ensure, the buttons show up at the correct location immediately
@@ -881,7 +878,7 @@ export class MapRendererComponent implements AfterViewInit {
             const coordinateGroup = coordinates[i];
             if (indexOfPointInCoordinateGroup(coordinateGroup, this.selectedVertexPoint.getValue() ?? []) != -1) {
               return {
-                feature: feature,
+                feature,
                 coordinateGroupIndex: i,
                 otherCoordinationGroupCount: coordinates.length - 1,
                 minimalAmountOfPoints: coordinateGroup.length <= 4,
@@ -891,14 +888,14 @@ export class MapRendererComponent implements AfterViewInit {
           return null;
         case 'LineString':
           return {
-            feature: feature,
+            feature,
             coordinateGroupIndex: null,
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: coordinates.length <= 2,
           };
         case 'Point':
           return {
-            feature: feature,
+            feature,
             coordinateGroupIndex: null,
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: true,
@@ -946,9 +943,9 @@ export class MapRendererComponent implements AfterViewInit {
       this._modifyCache.getArray().every((clusterOrFeature) => {
         const feature = this.getFeatureInsideCluster(clusterOrFeature);
 
-        // If the feature has a ZS Element ID, ensure it's not protected
+        // If the feature is a ZS DrawElement, ensure it's not protected
         // Else it's a cluster, ensure it's a cluster with a single feature
-        if (clusterOrFeature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)) {
+        if (clusterOrFeature.get(ZsMapOLFeatureProps.IS_DRAW_ELEMENT)) {
           return feature.get('sig') && !feature.get('sig').protected;
         } else {
           return (clusterOrFeature.get('features')?.length ?? 0) <= 1;

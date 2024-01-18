@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, map, takeUntil, tap } from 'rxjs/operators';
+import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import VectorLayer from 'ol/layer/Vector';
@@ -7,9 +7,7 @@ import VectorSource from 'ol/source/Vector';
 import Feature, { FeatureLike } from 'ol/Feature';
 import { DrawStyle } from '../draw-style';
 import { Cluster } from 'ol/source';
-import { Circle, Geometry, LineString, LinearRing, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon } from 'ol/geom';
-import { Fill, Stroke, Style, Text } from 'ol/style';
-import CircleStyle from 'ol/style/Circle';
+import { Geometry, Point } from 'ol/geom';
 import { getCenter } from 'ol/extent';
 
 export abstract class ZsMapBaseLayer {

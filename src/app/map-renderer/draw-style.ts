@@ -6,12 +6,10 @@ import FillPattern from 'ol-ext/style/FillPattern';
 import Icon from 'ol/style/Icon';
 import Text from 'ol/style/Text';
 import Point from 'ol/geom/Point';
-import Polygon from 'ol/geom/Polygon';
 import MultiPoint from 'ol/geom/MultiPoint';
 import LineString from 'ol/geom/LineString';
 import Circle from 'ol/style/Circle';
 import { Md5 } from 'ts-md5';
-import ConvexHull from 'ol-ext/geom/ConvexHull';
 import {
   defineDefaultValuesForSignature,
   FillStyle,
@@ -31,7 +29,6 @@ export class DrawStyle {
 
   private static symbolStyleCache = {};
   private static vectorStyleCache = {};
-  private static imageCache = {};
   private static colorFill = {};
   private static clusterStyleCache = {};
 
@@ -269,7 +266,6 @@ export class DrawStyle {
     DrawStyle.symbolStyleCache = {};
     DrawStyle.vectorStyleCache = {};
     DrawStyle.colorFill = {};
-    DrawStyle.imageCache = {};
     DrawStyle.clusterStyleCache = {};
   }
 
@@ -338,15 +334,6 @@ export class DrawStyle {
         reportNumber: signature.reportNumber,
       }),
     ).toString();
-  }
-
-  private static getAnchorCoordinate(feature: FeatureLike) {
-    feature = DrawStyle.getSubFeature(feature);
-    switch (feature.getGeometry()?.getType()) {
-      case 'Point':
-        return (feature.getGeometry() as Point)?.getCoordinates();
-    }
-    return undefined;
   }
 
   public static getIconCoordinates(feature: FeatureLike, resolution: number) {
