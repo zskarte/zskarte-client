@@ -1,7 +1,6 @@
 import { APP_INITIALIZER, LOCALE_ID, NgModule, isDevMode } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppComponent } from './app.component';
 import { MapRendererComponent } from './map-renderer/map-renderer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -37,8 +36,7 @@ import { HelpComponent } from './help/help.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { GeocoderComponent } from './geocoder/geocoder.component';
 import { ImportDialogComponent } from './import-dialog/import-dialog.component';
-import { FabMenuComponent } from './fab-menu/fab-menu.component';
-import { DrawingDialogComponent } from './drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from './select-sign-dialog/select-sign-dialog.component';
 import { TextDialogComponent } from './text-dialog/text-dialog.component';
 import { CreditsComponent } from './credits/credits.component';
 import { SelectedFeatureComponent } from './selected-feature/selected-feature.component';
@@ -65,12 +63,15 @@ import { ShareComponent } from './session/share/share.component';
 import { SidebarConnectionsComponent } from './sidebar/sidebar-connections/sidebar-connections.component';
 import { ShareDialogComponent } from './session/share-dialog/share-dialog.component';
 import { TextDividerComponent } from './text-divider/text-divider.component';
+import { RevokeShareDialogComponent } from './session/revoke-share-dialog/revoke-share-dialog.component';
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FloatingUIComponent } from './floating-ui/floating-ui.component';
 import { CoordinatesComponent } from './coordinates/coordinates.component';
 import { SidebarMenuComponent } from './sidebar/sidebar-menu/sidebar-menu.component';
+import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 registerLocaleData(localeCH);
 
@@ -100,13 +101,13 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     SidebarConnectionsComponent,
     SidebarHistoryComponent,
     MapLegendDisplayComponent,
-    FabMenuComponent,
-    DrawingDialogComponent,
+    SelectSignDialog,
     TextDialogComponent,
     CreditsComponent,
     SelectedFeatureComponent,
     DetailImageViewComponent,
     EditCoordinatesComponent,
+    RevokeShareDialogComponent,
     LoginComponent,
     MapComponent,
     OperationsComponent,
@@ -119,6 +120,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     FloatingUIComponent,
     CoordinatesComponent,
     SidebarMenuComponent,
+    DrawDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -155,6 +157,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     MatFormFieldModule,
     MatSortModule,
     MatPaginatorModule,
+    MatProgressBarModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable
@@ -174,4 +177,4 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {} //skipcq: JS-0327

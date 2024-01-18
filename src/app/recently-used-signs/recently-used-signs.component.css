@@ -1,23 +1,24 @@
 .wrapper {
   display: flex;
   align-items: center;
-  margin: 1em;
   flex-wrap: wrap;
-}
-
-.wrapper img {
-  max-height: 33px;
-  max-width: 33px;
+  padding: 0;
+  margin: 0;
+  gap: 1rem;
 }
 
 .wrapper button {
   align-items: center;
-  min-width: unset;
-  line-height: unset;
-  padding: 5px;
-  margin: 0 10px 0 10px;
+  min-width: 2rem;
+  width: 2rem;
+  max-height: 2rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-.container {
-  margin: 20px 0;
+.wrapper img {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  margin: 0;
 }

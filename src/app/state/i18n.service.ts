@@ -278,6 +278,11 @@ export class I18NService {
       fr: 'Importer',
       en: 'Import',
     },
+    rewokeShareLinkFailedMessage: {
+      de: 'Fehler beim löschen des Links.',
+      fr: 'Erreur lors de la suppression du lien.',
+      en: 'Error while deleting the link.',
+    },
     drawLayer: {
       de: 'Zeichnungsebene',
       fr: 'Couche de dessin',
@@ -1028,15 +1033,40 @@ export class I18NService {
       en: 'Share',
       fr: 'Partager',
     },
-    copyShareLink: {
-      de: 'Freigabe-Link kopieren',
-      en: 'Copy share link',
+    createdAt: {
+      de: 'Erstelldatum',
+      en: 'Created at',
+      fr: 'Date de création',
+    },
+    expiresOn: {
+      de: 'Ablaufdatum',
+      en: 'Expires on',
+      fr: 'Date dexpiration',
+    },
+    read: {
+      de: 'Lesen',
+      en: 'Read',
+      fr: 'Lire',
+    },
+    write: {
+      de: 'Schreiben',
+      en: 'Write',
+      fr: 'Ecrire',
+    },
+    generateMultiUseShareLink: {
+      de: 'Mehrfach-Link generieren',
+      en: 'Generate share link',
       fr: 'Copier le lien de partage',
     },
-    showShareQrCode: {
-      de: 'QR-Code anzeigen',
-      en: 'Show qr code',
+    generateSingleUseShareLink: {
+      de: 'Einweg-Link generieren',
+      en: 'Generate one way link',
       fr: 'Copier le qr code de partage',
+    },
+    rewokeAccess: {
+      de: 'Freigabelinks verwalten',
+      en: 'Revoke share link',
+      fr: 'Arranger les liens de partage',
     },
     logout: {
       de: 'Logout',
@@ -1238,6 +1268,11 @@ export class I18NService {
       de: 'Sicherung angewendet',
       en: 'Backup applied',
       fr: 'Sauvegarde appliqué',
+    },
+    noSignature: {
+      de: 'Ohne Signatur',
+      en: 'Without signature',
+      fr: 'Sans signature',
     },
   };
 

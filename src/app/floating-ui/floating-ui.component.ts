@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable, Subject, takeUntil } from 'rxjs';
 import { SidebarContext } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 import { I18NService } from '../state/i18n.service';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
+import { DrawDialogComponent } from '../draw-dialog/draw-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-floating-ui',
@@ -17,12 +17,10 @@ import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 export class FloatingUIComponent {
   sidebarContext = SidebarContext;
   sidebarContext$: Observable<SidebarContext | null>;
-  public isDevicePositionFlagVisible = false;
   private _ngUnsubscribe = new Subject<void>();
   public connectionCount = new BehaviorSubject<number>(0);
   public isOnline = new BehaviorSubject<boolean>(true);
   public isReadOnly = new BehaviorSubject<boolean>(false);
-  private _deviceTrackingLayer!: VectorLayer<VectorSource>;
   activeLayer$: Observable<ZsMapBaseLayer | undefined>;
   public canUndo = new BehaviorSubject<boolean>(false);
   public canRedo = new BehaviorSubject<boolean>(false);
@@ -32,8 +30,9 @@ export class FloatingUIComponent {
     public _state: ZsMapStateService,
     private _sync: SyncService,
     private _session: SessionService,
+    private _dialog: MatDialog,
   ) {
-    this.sidebarContext$ = _state.observeSidebarContext();
+    this.sidebarContext$ = this._state.observeSidebarContext();
     this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
 
     this._state
@@ -78,5 +77,11 @@ export class FloatingUIComponent {
 
   redo() {
     this._state.redoMapStateChange();
+  }
+
+  public async openDrawDialog(): Promise<void> {
+    const layer = await firstValueFrom(this._state.observeActiveLayer());
+    const ref = this._dialog.open(DrawDialogComponent);
+    ref.componentRef?.instance.setLayer(layer);
   }
 }

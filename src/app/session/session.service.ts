@@ -313,30 +313,14 @@ export class SessionService {
     return { ...token, expired: token.exp < Date.now() / 1000 };
   }
 
-  public async generateShareUrl(permission: PermissionType = PermissionType.READ): Promise<string> {
+  public async generateShareLink(permission: PermissionType, tokenType: AccessTokenType) {
     if (!this.getOperationId()) {
       throw new Error('OperationId is not defined');
     }
     const response = await this._api.post<{ accessToken: string }>('/api/accesses/auth/token/generate', {
       type: permission,
       operationId: this.getOperationId(),
-      tokenType: AccessTokenType.LONG,
-    });
-    if (!response.result?.accessToken) {
-      throw new Error('Unable to generate share url');
-    }
-    const url = `${window.location.origin}/share/${response.result.accessToken}`;
-    return url;
-  }
-
-  public async generateShareQrCode(permission: PermissionType = PermissionType.READ): Promise<string> {
-    if (!this.getOperationId()) {
-      throw new Error('OperationId is not defined');
-    }
-    const response = await this._api.post<{ accessToken: string }>('/api/accesses/auth/token/generate', {
-      type: permission,
-      operationId: this.getOperationId(),
-      tokenType: AccessTokenType.SHORT,
+      tokenType,
     });
     if (!response.result?.accessToken) {
       throw new Error('Unable to generate share url');

@@ -1,5 +1,5 @@
 <div *ngIf="signs.length > 0">
-  <p style="margin: 0 20px;">{{ i18n.get('recentlyUsedSigns') }}</p>
+  <h4 aria-level="2">{{ i18n.get('recentlyUsedSigns') }}</h4>
   <div class="wrapper">
     <button mat-button color="primary" *ngFor="let sign of signs" [title]="i18n.getLabelForSign(sign)" (click)="doSelectSign(sign)">
       <img [src]="getImageUrl(sign.src)" />

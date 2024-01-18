@@ -63,12 +63,24 @@
 </mat-menu>
 
 <mat-menu #shareOptions="matMenu">
-  <button mat-menu-item (click)="copyShareLink()">
-    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('copyShareLink')">share</mat-icon>
-    {{ i18n.get('copyShareLink') }}
+  <button mat-menu-item (click)="generateShareLink(false, false)">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('generateMultiUseShareLink')">share</mat-icon>
+    {{ i18n.get('generateMultiUseShareLink') }}
   </button>
-  <button mat-menu-item (click)="generateShareQrCode()">
-    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('showShareQrCode')">qr_code</mat-icon>
-    {{ i18n.get('showShareQrCode') }}
+  <button mat-menu-item (click)="generateShareLink(true, false)">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('generateMultiUseShareLink')">share</mat-icon>
+    {{ i18n.get('generateMultiUseShareLink') }} (readonly)
+  </button>
+  <button mat-menu-item (click)="generateShareLink(false, true)">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('generateSingleUseShareLink')">qr_code</mat-icon>
+    {{ i18n.get('generateSingleUseShareLink') }}
+  </button>
+  <button mat-menu-item (click)="generateShareLink(true, true)">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('generateSingleUseShareLink')">qr_code</mat-icon>
+    {{ i18n.get('generateSingleUseShareLink') }} (readonly)
+  </button>
+  <button mat-menu-item (click)="showRevokeShareDialog()">
+    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('rewokeAccess')">locked</mat-icon>
+    {{ i18n.get('rewokeAccess') }}
   </button>
 </mat-menu>
