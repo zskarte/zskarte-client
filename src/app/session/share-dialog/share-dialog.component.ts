@@ -23,6 +23,7 @@ export class ShareDialogComponent {
   ) {
     this.qrCodeDataUrl = this.generateQrCodeDataUrl();
     this.copyJoinLink();
+    // Only show join code if access has an user friendly join code (six digits long).
     this.showJoinCode = joinCode.length === 6;
   }
 
