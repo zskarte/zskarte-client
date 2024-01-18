@@ -1274,6 +1274,21 @@ export class I18NService {
       en: 'Without signature',
       fr: 'Sans signature',
     },
+    back: {
+      de: 'Zurück',
+      en: 'Back',
+      fr: 'Retour',
+    },
+    newScenario: {
+      de: 'Neues Ereigniss',
+      en: 'New Scenario',
+      fr: 'Nouvel Événement',
+    },
+    importScenario: {
+      de: 'Ereigniss importieren',
+      en: 'Import Scenario',
+      fr: 'Importer événement',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {
