@@ -9,6 +9,10 @@ export enum ZsMapStateSource {
   LOCAL = 'local',
 }
 
+export const zsMapStateSourceToDownloadUrl = {
+  [ZsMapStateSource.LOCAL]: 'https://zskarte.blob.core.windows.net/etienne/ch.swisstopo.pmtiles',
+};
+
 export interface IZsMapSaveFileState {
   map: IZsMapState;
   display: IZsMapDisplayState;

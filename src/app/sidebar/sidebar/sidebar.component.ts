@@ -4,12 +4,13 @@ import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-disp
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
 import { ZsMapStateService } from 'src/app/state/state.service';
-import { ZsMapStateSource } from 'src/app/state/interfaces';
+import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from 'src/app/state/interfaces';
 import { GeoadminService } from 'src/app/core/geoadmin.service';
 import { GeoFeature } from '../../core/entity/geoFeature';
-import { map, Observable, share, combineLatest, startWith } from 'rxjs';
+import { combineLatest, lastValueFrom, map, Observable, share, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
+import { db, LocalMapState } from '../../db/db';
 
 @Component({
   selector: 'app-sidebar',
@@ -22,7 +23,12 @@ export class SidebarComponent {
   favoriteLayersOpenState = false;
   availableLayersOpenState = false;
   mapSources = Object.values(ZsMapStateSource)
-    .map((key) => ({ key, translation: this.i18n.get(key), selected: false }))
+    .map((key) => ({
+      key,
+      translation: this.i18n.get(key),
+      selected: false,
+      downloadable: this.isDownloadableMap(key),
+    }))
     .sort((a, b) => a.translation.localeCompare(b.translation));
   filteredAvailableFeatures$: Observable<GeoFeature[]>;
   favouriteFeatures$: Observable<GeoFeature[]>;
@@ -36,6 +42,8 @@ export class SidebarComponent {
   ];
 
   layerFilter = new FormControl('');
+
+  mapToDownloadedObservable: { [key: string]: LocalMapState } = {};
 
   constructor(
     public mapState: ZsMapStateService,
@@ -71,12 +79,19 @@ export class SidebarComponent {
       ),
     );
 
+    db.blobMeta.toArray().then((downloadedMaps) => {
+      this.mapToDownloadedObservable = downloadedMaps.reduce((acc, val) => {
+        acc[val.map] = val.mapStatus;
+        return acc;
+      }, {});
+    });
+
     mapState
       .observeMapSource()
       .pipe(
         map((currentMapSource) => {
           this.mapSources.map((mapSource) => {
-            mapSource.selected = currentMapSource === mapSource.key ? true : false;
+            mapSource.selected = currentMapSource === mapSource.key;
             return mapSource;
           });
         }),
@@ -96,5 +111,58 @@ export class SidebarComponent {
 
   selectFeature(feature: GeoFeature) {
     this.mapState.addFeature(feature);
+  }
+
+  isDownloadableMap(map: ZsMapStateSource) {
+    return map in zsMapStateSourceToDownloadUrl;
+  }
+
+  async downloadMap(map: ZsMapStateSource) {
+    this.mapToDownloadedObservable[map] = 'loading';
+    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
+    let localMapMeta = await db.blobMeta.get(downloadUrl);
+    if (!localMapMeta) {
+      localMapMeta = {
+        url: downloadUrl,
+        map: map,
+        mapStatus: this.mapToDownloadedObservable[map],
+        blobStorageId: undefined,
+        objectUrl: undefined,
+        mapStyle: undefined,
+      };
+      await db.blobMeta.put(localMapMeta);
+    }
+    let localMap: Blob | undefined = undefined;
+    if (localMapMeta && localMapMeta.blobStorageId) {
+      localMap = await db.blobs.get(localMapMeta.blobStorageId);
+    }
+    if (!localMap) {
+      try {
+        localMap = await lastValueFrom(this.http.get(downloadUrl, { responseType: 'blob' }));
+        localMapMeta.blobStorageId = await db.blobs.add(localMap);
+        localMapMeta.mapStyle = await fetch('/assets/map-style.json').then((res) => res.text());
+        localMapMeta.objectUrl = undefined;
+        localMapMeta.mapStatus = 'downloaded';
+      } catch (e) {
+        localMapMeta.mapStatus = 'missing';
+      }
+    }
+    this.mapToDownloadedObservable[map] = localMapMeta.mapStatus;
+    await db.blobMeta.put(localMapMeta);
+  }
+
+  async removeLocalMap(map: ZsMapStateSource): Promise<void> {
+    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
+    const blobMeta = await db.blobMeta.get(downloadUrl);
+    if (!blobMeta) return;
+    const objectUrl = blobMeta.objectUrl;
+    if (blobMeta.blobStorageId) {
+      await db.blobs.delete(blobMeta.blobStorageId);
+    }
+    await db.blobMeta.delete(downloadUrl);
+    if (objectUrl) {
+      URL.revokeObjectURL(objectUrl);
+    }
+    this.mapToDownloadedObservable[map] = 'missing';
   }
 }

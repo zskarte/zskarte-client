@@ -1,10 +1,11 @@
-import { ZsMapStateSource } from './interfaces';
+import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from './interfaces';
 import OlTileXYZ from 'ol/source/XYZ';
 import { PMTilesVectorSource } from 'ol-pmtiles';
 import OlTileLayer from '../map-renderer/utils';
 import VectorTile from 'ol/layer/VectorTile';
 import { Layer } from 'ol/layer';
 import { stylefunction } from 'ol-mapbox-style';
+import { db } from '../db/db';
 
 export class ZsMapSources {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +16,7 @@ export class ZsMapSources {
     });
   }
 
-  static get(source: ZsMapStateSource): Layer {
+  static async get(source: ZsMapStateSource): Promise<Layer> {
     switch (source) {
       case ZsMapStateSource.GEO_ADMIN_SWISS_IMAGE:
         return ZsMapSources.getOlTileLayer(
@@ -39,19 +40,37 @@ export class ZsMapSources {
           }),
         );
       case ZsMapStateSource.LOCAL: {
+        const blobMeta = await db.blobMeta.where('map').equals(source).first();
+        let mapUrl: string = zsMapStateSourceToDownloadUrl[source];
+        let mapStyle: string | undefined = blobMeta?.mapStyle;
+        if (blobMeta && blobMeta.blobStorageId) {
+          if (blobMeta.objectUrl) {
+            URL.revokeObjectURL(blobMeta.objectUrl);
+            blobMeta.objectUrl = undefined;
+          }
+          const blob = await db.blobs.get(blobMeta.blobStorageId);
+          if (blob) {
+            mapUrl = URL.createObjectURL(blob);
+            blobMeta.objectUrl = mapUrl;
+          }
+          await db.blobMeta.put(blobMeta);
+        }
+        if (!mapStyle) {
+          mapStyle = await fetch('/assets/map-style.json').then((res) => res.text());
+          if (blobMeta) {
+            blobMeta.mapStyle = mapStyle;
+            await db.blobMeta.put(blobMeta);
+          }
+        }
         const layer = new VectorTile({
           declutter: true,
           source: new PMTilesVectorSource({
-            url: 'https://zskarte.blob.core.windows.net/etienne/ch.swisstopo.pmtiles',
+            url: mapUrl,
           }),
           style: null,
         });
 
-        fetch('/assets/map-style.json')
-          .then((res) => res.text())
-          .then((res) => {
-            layer.setStyle(stylefunction(layer, res, 'protomaps'));
-          });
+        layer.setStyle(stylefunction(layer, mapStyle, 'protomaps'));
 
         return layer;
       }
