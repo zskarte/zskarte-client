@@ -62,6 +62,13 @@ mat-slider {
   margin-bottom: 1em;
 }
 
+.label-gray {
+  color: #787878;
+  gap: 5px;
+  display: flex;
+  justify-content: center;
+}
+
 .label-light {
   text-align: center;
   margin-bottom: 1em;

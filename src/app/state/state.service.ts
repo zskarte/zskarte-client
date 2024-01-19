@@ -381,6 +381,10 @@ export class ZsMapStateService {
     return this._display.value.activeLayer ? this._layerCache[this._display.value.activeLayer] : undefined;
   }
 
+  public getShowCurrentLocation(): boolean {
+    return this._display.value.showMyLocation;
+  }
+
   public observeActiveLayer(): Observable<ZsMapBaseLayer | undefined> {
     return this._display.pipe(
       map((o) => {
@@ -419,7 +423,30 @@ export class ZsMapStateService {
     );
   }
 
-  public mergePolygons(elementA: ZsMapBaseDrawElement, elementB: ZsMapBaseDrawElement) {
+  public addDrawLayer(): void {
+    this._addLayer({ type: ZsMapLayerStateType.DRAW });
+  }
+
+  private _addLayer(layer: ZsMapLayerState): void {
+    layer.id = uuidv4();
+    if (!layer.name) {
+      const layerCount = (this._map.value.layers?.length ?? 0) + 1;
+      layer.name = `Layer  ${layerCount}`;
+    }
+    this.updateMapState((draft) => {
+      if (!draft.layers) {
+        draft.layers = [];
+      }
+      draft.layers.push(layer);
+    });
+    this.updateDisplayState((draft) => {
+      draft.layerVisibility[layer.id as string] = true;
+      draft.activeLayer = layer.id;
+      draft.layerOrder.push(layer.id as string);
+    });
+  }
+
+  public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
     const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
     const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
     if (featureA.getGeometry()?.getType() === 'Polygon' && featureB.getGeometry()?.getType() == 'Polygon') {
@@ -579,6 +606,7 @@ export class ZsMapStateService {
     const activeLayerState = this.getActiveLayerState();
     if (activeLayerState?.type === ZsMapLayerStateType.DRAW) {
       const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
+      if (!sign.createdBy) sign.createdBy = this._session.getLabel();
       defineDefaultValuesForSignature(sign);
       const drawElement: ZsMapDrawElementState = {
         ...element,
@@ -586,6 +614,7 @@ export class ZsMapStateService {
         protected: sign.protected,
         iconSize: sign.iconSize,
         hideIcon: sign.hideIcon,
+        createdBy: sign.createdBy,
         iconOffset: sign.iconOffset,
         flipIcon: sign.flipIcon,
         rotation: sign.rotation,

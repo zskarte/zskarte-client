@@ -21,6 +21,7 @@ export interface Sign {
   en?: string;
   text?: string;
   label?: string;
+  createdBy?: string;
   labelShow?: boolean;
   fontSize?: number;
   style?: string;

@@ -152,6 +152,10 @@ export class MapRendererComponent implements AfterViewInit {
         this.isDevicePositionFlagVisible = show;
         if (!this._deviceTrackingLayer) return;
 
+        if (!show) {
+          this._sync.publishCurrentLocation(undefined);
+        }
+
         // only track if the position flag is visible
         this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
         this._geolocation.setTracking(this.isDevicePositionFlagVisible);

@@ -52,11 +52,6 @@ export class SidebarConnectionsComponent implements OnDestroy {
     this.labelEdit$?.next(!this.labelEdit$.value);
     if (this.labelEdit$.value) return;
     this.session.setLabel(this.label$.value);
-    if (!this.showCurrentLocation$.value) return;
-    setTimeout(() => {
-      this.state.updateShowCurrentLocation(false);
-      this.state.updateShowCurrentLocation(true);
-    }, 1000);
   }
 
   public centerMap(location: { long: number; lat: number }): void {

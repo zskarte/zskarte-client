@@ -112,6 +112,7 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   protected?: boolean;
   color?: string;
   name?: string;
+  createdBy?: string;
   nameShow?: boolean;
   iconOpacity?: number;
   description?: string;
