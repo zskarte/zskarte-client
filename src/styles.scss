@@ -79,3 +79,14 @@ mat-card {
 .mdc-dialog,
 .mdc-dialog__scrim {
 }
+
+mat-accordion mat-expansion-panel {
+  .mat-expansion-panel-content {
+    height: 0;
+  }
+  &.mat-expanded {
+    .mat-expansion-panel-content {
+      height: auto;
+    }
+  }
+}

@@ -124,7 +124,6 @@ export const signCategories: SignCategory[] = [
   { name: 'formation', color: '#0000FF' },
   { name: 'action', color: '#0000FF' },
   { name: 'damage', color: '#FF0000' },
-  { name: 'incident', color: '#FF0000' },
   { name: 'danger', color: '#FF9100' },
   { name: 'effect', color: '#FFF333' },
 ];
