@@ -24,25 +24,26 @@ export const availableProjections: Array<ZsKarteProjection> = [
     format: '1.2-2',
     projection: swissProjection,
     // see: https://www.swisstopo.admin.ch/de/wissen-fakten/geodaesie-vermessung/bezugsrahmen/lokal/lv95.html > E / N
-    translate: function (coords?: number[]): string {
+    translate(coords?: number[]): string {
       const numberFormatOptions = {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       };
-      return (
-        'LV95' +
-        (coords != null && coords.length == 2
-          ? ' E' + coords[0].toLocaleString('de-CH', numberFormatOptions) + ' / N' + coords[1].toLocaleString('de-CH', numberFormatOptions)
-          : '')
-      );
+      if (!coords || coords.length !== 2) return '';
+      const longitude = coords[0].toLocaleString('de-CH', numberFormatOptions);
+      const latitude = coords[1].toLocaleString('de-CH', numberFormatOptions);
+      return `LV95 E${longitude} / N${latitude}`;
     },
   },
   {
     format: '1.5-5',
     projection: coordinatesProjection,
     // see: https://de.wikipedia.org/wiki/Geographische_Koordinaten > LAT(N) should be 1st and LONG(E) 2nd
-    translate: function (coords: number[]) {
-      return 'GPS' + (coords != null && coords.length == 2 ? ' N' + coords[1].toFixed(5) + '°, E' + coords[0].toFixed(5) + '°' : '');
+    translate(coords: number[]) {
+      if (!coords || coords.length !== 2) return 'GPS';
+      const latitude = coords[1].toFixed(5);
+      const longitude = coords[0].toFixed(5);
+      return `GPS N${latitude}°, E${longitude}°`;
     },
   },
 ];
@@ -64,7 +65,7 @@ function getSwissProjection() {
       4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5, 2, 1.5, 1,
       0.5, 0.25, 0.1,
     ];
-    const matrixIds = [];
+    const matrixIds: number[] = [];
     for (let i = 0; i < RESOLUTIONS.length; i++) {
       matrixIds.push(i);
     }

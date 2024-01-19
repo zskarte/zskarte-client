@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: url('/assets/img/login-bg.webp') no-repeat center center fixed;
+  background: url('/assets/img/login-bg-blurred.webp') no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -21,7 +21,11 @@
   align-items: center;
   justify-content: center;
   width: 80%;
-  max-width: 400px;
+  max-width: 500px;
+
+  mat-card {
+    width: 100%;
+  }
 
   .full-width {
     width: 100%;
@@ -30,14 +34,10 @@
   .login-button {
     width: 100%;
   }
-}
 
-.guest-login {
-  margin-top: 8px;
-}
-
-.guest-login-button:not(:disabled) {
-  color: white;
+  .alternative-login-button {
+    width: 100%;
+  }
 }
 
 .login-logo {
@@ -56,4 +56,8 @@
 
 .mat-form-field-suffix {
   cursor: pointer;
+}
+
+mat-card:first-child {
+  padding: 1rem;
 }

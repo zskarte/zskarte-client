@@ -8,8 +8,8 @@ import { ZsMapTextDrawElement } from '../map-renderer/elements/text-draw-element
 import { ZsMapDrawElementStateType, ZsMapElementToDraw } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 
-export class DrawElementHelper {
-  public static createDrawHandlerForType(element: ZsMapElementToDraw, state: ZsMapStateService): Draw {
+export const DrawElementHelper = {
+  createDrawHandlerForType(element: ZsMapElementToDraw, state: ZsMapStateService): Draw {
     switch (element.type) {
       case ZsMapDrawElementStateType.TEXT:
         return ZsMapTextDrawElement.getOlDrawHandler(state, element);
@@ -21,27 +21,30 @@ export class DrawElementHelper {
         return ZsMapSymbolDrawElement.getOlDrawHandler(state, element);
       case ZsMapDrawElementStateType.FREEHAND:
         return ZsMapFreehandDrawElement.getOlDrawHandler(state, element);
+      default:
+        throw new Error(`Could not create draw handler for type ${element.type}`);
     }
-    throw new Error(`Could not create draw handler for type ${element.type}`);
-  }
+  },
 
-  public static createInstance(id: string, state: ZsMapStateService): ZsMapBaseDrawElement {
+  createInstance(id: string, state: ZsMapStateService): ZsMapBaseDrawElement {
     const element = state.getDrawElementState(id);
-    if (element && element.type && element.id) {
-      switch (element?.type) {
-        case ZsMapDrawElementStateType.TEXT:
-          return new ZsMapTextDrawElement(element.id, state);
-        case ZsMapDrawElementStateType.POLYGON:
-          return new ZsMapPolygonDrawElement(element.id, state);
-        case ZsMapDrawElementStateType.LINE:
-          return new ZsMapLineDrawElement(element.id, state);
-        case ZsMapDrawElementStateType.SYMBOL:
-          return new ZsMapSymbolDrawElement(element.id, state);
-        case ZsMapDrawElementStateType.FREEHAND:
-          return new ZsMapFreehandDrawElement(element.id, state);
-      }
+    if (!element?.type || !element.id) {
+      throw new Error(`Element type or id undefined: ${JSON.stringify(element)}`);
     }
 
-    throw new Error(`Could not create instance handler for draw element ${JSON.stringify(element)}`);
-  }
-}
+    switch (element?.type) {
+      case ZsMapDrawElementStateType.TEXT:
+        return new ZsMapTextDrawElement(element.id, state);
+      case ZsMapDrawElementStateType.POLYGON:
+        return new ZsMapPolygonDrawElement(element.id, state);
+      case ZsMapDrawElementStateType.LINE:
+        return new ZsMapLineDrawElement(element.id, state);
+      case ZsMapDrawElementStateType.SYMBOL:
+        return new ZsMapSymbolDrawElement(element.id, state);
+      case ZsMapDrawElementStateType.FREEHAND:
+        return new ZsMapFreehandDrawElement(element.id, state);
+      default:
+        throw new Error(`Could not create instance handler for draw element ${JSON.stringify(element)}`);
+    }
+  },
+};

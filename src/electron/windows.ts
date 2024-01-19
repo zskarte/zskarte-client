@@ -10,9 +10,9 @@ export class AppWindowHandler {
 
   public static async loadUrl(window: BrowserWindow): Promise<void> {
     if (ArgsHandler.serve) {
-      window.loadURL('http://localhost:4300');
+      await window.loadURL('http://localhost:4300');
     } else {
-      window.loadURL('file://' + path.resolve(__dirname, '../../../bbit-app/index.html'));
+      await window.loadURL(`file://${path.resolve(__dirname, '../../../bbit-app/index.html')}`);
     }
   }
 

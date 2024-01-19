@@ -1,0 +1,29 @@
+<table class="margin-2" *ngIf="shareLinks.length > 0" mat-table [dataSource]="shareLinks" class="mat-elevation-z8 protocol-table">
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>Id</th>
+    <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+  </ng-container>
+  <ng-container matColumnDef="createdAt">
+    <th mat-header-cell *matHeaderCellDef>{{ i18n.get('createdAt') }}</th>
+    <td mat-cell *matCellDef="let element">{{ element.createdAt | date: 'dd.mm.yyyy hh:mm' }}</td>
+  </ng-container>
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef>{{ i18n.get('type') }}</th>
+    <td mat-cell *matCellDef="let element">{{ i18n.get(element.type === 'read' ? 'read' : 'write') }}</td>
+  </ng-container>
+  <ng-container matColumnDef="expiresOn">
+    <th mat-header-cell *matHeaderCellDef>{{ i18n.get('expiresOn') }}</th>
+    <td mat-cell *matCellDef="let element">{{ element.expiresOn | date }}</td>
+  </ng-container>
+  <ng-component matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-raised-button (click)="revokeShareLink(element.id)">{{ i18n.get('delete') }}</button>
+    </td>
+  </ng-component>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<div class="margin-2" *ngIf="shareLinks.length === 0">Es sind keine Links für diese Operation vorhanden.</div>

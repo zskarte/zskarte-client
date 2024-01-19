@@ -1,4 +1,3 @@
-import { Coordinate } from 'ol/coordinate';
 import { FeatureLike } from 'ol/Feature';
 import { LineString, MultiPolygon, Point, Polygon } from 'ol/geom';
 
@@ -21,6 +20,7 @@ export interface Sign {
   en?: string;
   text?: string;
   label?: string;
+  createdBy?: string;
   labelShow?: boolean;
   fontSize?: number;
   style?: string;
@@ -44,20 +44,7 @@ export interface Sign {
   origSrc?: string;
   createdAt?: Date;
   reportNumber?: number;
-}
-
-export function isMoreOptimalIconCoordinate(
-  coordinateToTest: Coordinate | Coordinate[],
-  currentCoordinate: Coordinate | Coordinate[] | undefined | null,
-) {
-  if (currentCoordinate === undefined || currentCoordinate === null) {
-    return true;
-  } else if (coordinateToTest[1] > currentCoordinate[1]) {
-    return true;
-  } else if (coordinateToTest[1] === currentCoordinate[1]) {
-    return coordinateToTest[0] < currentCoordinate[0];
-  }
-  return false;
+  affectedPersons?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,63 +57,36 @@ export function getFirstCoordinate(feature: FeatureLike): any {
       return (feature?.getGeometry() as LineString)?.getCoordinates()[0];
     case 'Point':
       return (feature?.getGeometry() as Point)?.getCoordinates();
+    default:
+      return [];
   }
-  return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getLastCoordinate(feature: FeatureLike): any {
   switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
-    case 'MultiPolygon':
+    case 'MultiPolygon': {
       const pCoordinates = (feature?.getGeometry() as Polygon)?.getCoordinates();
       return pCoordinates[pCoordinates.length - 2][0]; // -2 because the last coordinates are the same as the first
-    case 'LineString':
+    }
+    case 'LineString': {
       const lCoordinates = (feature?.getGeometry() as LineString)?.getCoordinates();
       return lCoordinates[lCoordinates.length - 1];
+    }
     case 'Point':
       return (feature?.getGeometry() as Point)?.getCoordinates();
+    default:
+      return [];
   }
-
-  return [];
-}
-
-export function getMostTopCoordinate(feature: FeatureLike) {
-  let symbolAnchorCoordinate = null;
-  switch (feature?.getGeometry()?.getType()) {
-    case 'Polygon':
-    case 'MultiPolygon':
-      for (const coordinateGroup of (feature.getGeometry() as Polygon).getCoordinates()) {
-        for (const coordinate of coordinateGroup) {
-          if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
-            symbolAnchorCoordinate = coordinate;
-          }
-        }
-      }
-      break;
-    case 'LineString':
-      for (const coordinate of (feature.getGeometry() as LineString).getCoordinates()) {
-        if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
-          symbolAnchorCoordinate = coordinate;
-        }
-      }
-      break;
-    case 'Point':
-      symbolAnchorCoordinate = (feature.getGeometry() as Point).getCoordinates();
-      break;
-  }
-  return symbolAnchorCoordinate;
 }
 
 export const signCategories: SignCategory[] = [
   { name: 'place', color: '#0000FF' },
   { name: 'formation', color: '#0000FF' },
-  { name: 'vehicles', color: '#0000FF' },
   { name: 'action', color: '#0000FF' },
   { name: 'damage', color: '#FF0000' },
-  { name: 'incident', color: '#FF0000' },
   { name: 'danger', color: '#FF9100' },
-  { name: 'fks', color: '#948B68' },
   { name: 'effect', color: '#FFF333' },
 ];
 
@@ -138,28 +98,6 @@ export interface SignCategory {
 export function getColorForCategory(category: string): string {
   const foundCategory = signCategories.find((c) => c.name === category);
   return foundCategory ? foundCategory.color : '#535353';
-}
-
-export function defineDefaultValuesForSignature(signature: Sign) {
-  signature.style = signature.style || signatureDefaultValues.style;
-  signature.size = signature.size || signatureDefaultValues.size;
-  signature.color = signature.color || signatureDefaultValues.color(signature.kat);
-  signature.fillOpacity = signature.fillOpacity || signatureDefaultValues.fillOpacity;
-  signature.strokeWidth = signature.strokeWidth || signatureDefaultValues.strokeWidth;
-  signature.fontSize = signature.fontSize || signatureDefaultValues.fontSize;
-  signature.fillStyle = signature.fillStyle || signatureDefaultValues.fillStyle;
-  signature.fillStyle.angle = signature.fillStyle.angle || signatureDefaultValues.fillStyleAngle;
-  signature.fillStyle.size = signature.fillStyle.size || signatureDefaultValues.fillStyleSize;
-  signature.fillStyle.spacing = signature.fillStyle.spacing || signatureDefaultValues.fillStyleSpacing;
-  signature.iconOffset = signature.iconOffset || signatureDefaultValues.iconOffset;
-  signature.protected = signature.protected || signatureDefaultValues.protected;
-  signature.labelShow = signature.labelShow || signatureDefaultValues.labelShow;
-  signature.arrow = signature.arrow || signatureDefaultValues.arrow;
-  signature.iconSize = signature.iconSize || signatureDefaultValues.iconSize;
-  signature.iconOpacity = signature.iconOpacity || signatureDefaultValues.iconOpacity;
-  signature.rotation = signature.rotation || signatureDefaultValues.rotation;
-  signature.images = signature.images || signatureDefaultValues.images;
-  signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
 }
 
 export const signatureDefaultValues: SignatureDefaultValues = {
@@ -191,7 +129,31 @@ export const signatureDefaultValues: SignatureDefaultValues = {
   images: [],
   flipIcon: false,
   hideIcon: false,
+  affectedPersons: undefined,
 };
+
+export function defineDefaultValuesForSignature(signature: Sign) {
+  signature.style = signature.style || signatureDefaultValues.style;
+  signature.size = signature.size || signatureDefaultValues.size;
+  signature.color = signature.color || signatureDefaultValues.color(signature.kat);
+  signature.fillOpacity = signature.fillOpacity || signatureDefaultValues.fillOpacity;
+  signature.strokeWidth = signature.strokeWidth || signatureDefaultValues.strokeWidth;
+  signature.fontSize = signature.fontSize || signatureDefaultValues.fontSize;
+  signature.fillStyle = signature.fillStyle || signatureDefaultValues.fillStyle;
+  signature.fillStyle.angle = signature.fillStyle.angle || signatureDefaultValues.fillStyleAngle;
+  signature.fillStyle.size = signature.fillStyle.size || signatureDefaultValues.fillStyleSize;
+  signature.fillStyle.spacing = signature.fillStyle.spacing || signatureDefaultValues.fillStyleSpacing;
+  signature.iconOffset = signature.iconOffset || signatureDefaultValues.iconOffset;
+  signature.protected = signature.protected || signatureDefaultValues.protected;
+  signature.labelShow = signature.labelShow || signatureDefaultValues.labelShow;
+  signature.arrow = signature.arrow || signatureDefaultValues.arrow;
+  signature.iconSize = signature.iconSize || signatureDefaultValues.iconSize;
+  signature.iconOpacity = signature.iconOpacity || signatureDefaultValues.iconOpacity;
+  signature.rotation = signature.rotation || signatureDefaultValues.rotation;
+  signature.images = signature.images || signatureDefaultValues.images;
+  signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
+  signature.affectedPersons = signature.affectedPersons || signatureDefaultValues.affectedPersons;
+}
 
 export interface SignatureDefaultValues {
   style: string;
@@ -214,4 +176,5 @@ export interface SignatureDefaultValues {
   images: string[];
   flipIcon: boolean;
   hideIcon: boolean;
+  affectedPersons: number | undefined;
 }

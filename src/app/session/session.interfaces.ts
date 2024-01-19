@@ -1,4 +1,5 @@
 import { Locale } from '../state/i18n.service';
+import { IZsMapOperation, IZsMapOrganization } from './operations/operation.interfaces';
 
 export enum PermissionType {
   READ = 'read',
@@ -6,14 +7,23 @@ export enum PermissionType {
   ALL = 'all',
 }
 
+export enum AccessTokenType {
+  LONG = 'long',
+  SHORT = 'short',
+}
+export interface IZsAccess {
+  id: string;
+  accessToken: string;
+  type: PermissionType;
+}
+
 export interface IZsMapSession {
   id: string;
   permission?: PermissionType;
-  operationId?: number;
-  operationName?: string;
-  operationDescription?: string;
+  operation?: IZsMapOperation;
+  organization?: IZsMapOrganization;
   organizationLogo?: string;
-  organizationId?: number;
+  label?: string;
   jwt?: string;
   locale: Locale;
   defaultLatitude?: number;

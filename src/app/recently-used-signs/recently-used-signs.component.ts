@@ -1,10 +1,10 @@
-import { Component, Input, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { I18NService } from '../state/i18n.service';
 import { ZsMapStateService } from '../state/state.service';
 import { Sign } from '../core/entity/sign';
 import { DrawStyle } from '../map-renderer/draw-style';
 import { ZsMapDrawElementState } from 'src/app/state/interfaces';
-import { DrawingDialogComponent } from '../drawing-dialog/drawing-dialog.component';
+import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -14,7 +14,10 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class RecentlyUsedSignsComponent implements OnInit, OnDestroy {
   private _ngUnsubscribe = new Subject<void>();
-  constructor(public i18n: I18NService, private sharedState: ZsMapStateService) {}
+  constructor(
+    public i18n: I18NService,
+    private sharedState: ZsMapStateService,
+  ) {}
 
   ngOnInit() {
     this.sharedState
@@ -40,8 +43,8 @@ export class RecentlyUsedSignsComponent implements OnInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  @Input() dialog!: DrawingDialogComponent;
-  @Output() selectSign: EventEmitter<Sign> = new EventEmitter<Sign>();
+  @Input() dialog!: SelectSignDialog;
+  @Output() readonly selectSign: EventEmitter<Sign> = new EventEmitter<Sign>();
 
   private signsSource: Sign[] = [];
 
@@ -53,6 +56,7 @@ export class RecentlyUsedSignsComponent implements OnInit, OnDestroy {
     this.selectSign.emit(sign);
   }
 
+  // skipcq: JS-0105
   getImageUrl(file: string) {
     if (file) {
       return DrawStyle.getImageUrl(file);

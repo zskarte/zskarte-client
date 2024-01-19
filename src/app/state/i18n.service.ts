@@ -13,6 +13,11 @@ export class I18NService {
   constructor(private _session: SessionService) {}
 
   private static TRANSLATIONS = {
+    local: {
+      de: 'Lokal',
+      end: 'Local',
+      fr: 'Local',
+    },
     de: {
       de: 'Deutsch',
       en: 'German',
@@ -38,10 +43,35 @@ export class I18NService {
       en: 'Symbol',
       fr: 'Symbole',
     },
+    or: {
+      de: 'oder',
+      en: 'or',
+      fr: 'ou',
+    },
     name: {
       de: 'Name',
       en: 'Name',
       fr: 'Nom',
+    },
+    youAreOffline: {
+      de: 'Sie sind offline',
+      en: 'You are offline',
+      fr: 'Vous êtes hors ligne',
+    },
+    myName: {
+      de: 'Mein Name',
+      en: 'My name',
+      fr: 'Mon nom',
+    },
+    shareLocation: {
+      de: 'Standort teilen',
+      en: 'Share location',
+      fr: 'Partager la position',
+    },
+    online: {
+      de: 'Online',
+      en: 'Online',
+      fr: 'En ligne',
     },
     distance: {
       de: 'Distanz',
@@ -243,10 +273,20 @@ export class I18NService {
       fr: 'Charger à partir du fichier',
       en: 'Load from file',
     },
+    createdBy: {
+      de: 'Erstellt von',
+      en: 'Created by',
+      fr: 'Créé par',
+    },
     import: {
       de: 'Importieren',
       fr: 'Importer',
       en: 'Import',
+    },
+    rewokeShareLinkFailedMessage: {
+      de: 'Fehler beim löschen des Links.',
+      fr: 'Erreur lors de la suppression du lien.',
+      en: 'Error while deleting the link.',
     },
     drawLayer: {
       de: 'Zeichnungsebene',
@@ -778,11 +818,6 @@ export class I18NService {
       en: 'Formations',
       fr: 'Formations',
     },
-    signVehicles: {
-      de: 'Fahrzeuge',
-      en: 'Vehicles',
-      fr: 'Véhicules',
-    },
     signEffect: {
       de: 'Auswirkungen',
       en: 'Effects',
@@ -810,8 +845,8 @@ export class I18NService {
     },
     navigateOperations: {
       de: 'Zurück zu Operationen',
-      en: 'Retour aux opérations',
-      fr: 'Back to Operations',
+      en: 'Back to Operations',
+      fr: 'Retour aux opérations',
     },
     expand: {
       de: 'Ansicht wechseln',
@@ -837,6 +872,21 @@ export class I18NService {
       de: 'Aktuelle position',
       en: 'Current location',
       fr: 'Emplacement actuel',
+    },
+    undo: {
+      de: 'Rückgängig',
+      en: 'Undo',
+      fr: 'Annuler',
+    },
+    redo: {
+      de: 'Wiederherstellen',
+      en: 'Redo',
+      fr: 'Rétablir',
+    },
+    connections: {
+      de: 'Verbindungen',
+      en: 'Connections',
+      fr: 'Connexions',
     },
     generalFilters: {
       de: 'Globale Filter',
@@ -969,19 +1019,59 @@ export class I18NService {
       fr: 'Les données saisies sont effacées chaque soir à 00:00. Les données ne sont plus disponibles après ce processus.',
     },
     guestLogin: {
-      de: 'Login als Gast',
-      en: 'Login as guest',
+      de: 'Als Gast fortfahren',
+      en: 'Continue as guest',
       fr: 'Connexion en tant que visiteur',
+    },
+    codeLogin: {
+      de: 'Login mit Code',
+      en: 'Login with code',
+      fr: 'Connexion avec code',
     },
     addSignatureManually: {
       de: 'Bitte fügen Sie die Signatur manuell ein',
       en: 'Please add the signature manually',
       fr: 'Veuillez ajouter la signature manuellement',
     },
-    copyShareLink: {
-      de: 'Freigabe-Link kopieren',
-      en: 'Copy share link',
+    share: {
+      de: 'Freigeben',
+      en: 'Share',
+      fr: 'Partager',
+    },
+    createdAt: {
+      de: 'Erstelldatum',
+      en: 'Created at',
+      fr: 'Date de création',
+    },
+    expiresOn: {
+      de: 'Ablaufdatum',
+      en: 'Expires on',
+      fr: 'Date dexpiration',
+    },
+    read: {
+      de: 'Lesen',
+      en: 'Read',
+      fr: 'Lire',
+    },
+    write: {
+      de: 'Schreiben',
+      en: 'Write',
+      fr: 'Ecrire',
+    },
+    generateMultiUseShareLink: {
+      de: 'Mehrfach-Link generieren',
+      en: 'Generate share link',
       fr: 'Copier le lien de partage',
+    },
+    generateSingleUseShareLink: {
+      de: 'Einweg-Link generieren',
+      en: 'Generate one way link',
+      fr: 'Copier le qr code de partage',
+    },
+    revokeAccess: {
+      de: 'Freigabelinks verwalten',
+      en: 'Revoke share link',
+      fr: 'Arranger les liens de partage',
     },
     logout: {
       de: 'Logout',
@@ -1013,9 +1103,9 @@ export class I18NService {
     },
 
     docCreateOrLoad: {
-      de: `<p> Auf diesem Bildschirm können Sie <strong>bereits erstellte Ereignisse bearbeiten</strong> oder <strong>neue Ereignisse erstellen</strong>. Die Ereignisse und deren Lagekarten werden <strong>in Echtzeit unter allen Benutzern synchronisiert</strong>.</p>`,
-      fr: `<p> Sur cet écran, vous pouvez <strong>modifier des événements déjà créés</strong> ou <strong>créer de nouveaux événements</strong>. Les événements et leurs cartes de localisation sont <strong>synchronisés en temps réel avec tous les utilisateurs</strong>.</p>`,
-      en: `<p> On this screen you can <strong>edit already created events</strong> or <strong>create new events</strong>. The events and their location maps are <strong>synchronized in real-time among all users</strong>.</p>`,
+      de: '<p> Auf diesem Bildschirm können Sie <strong>bereits erstellte Ereignisse bearbeiten</strong> oder <strong>neue Ereignisse erstellen</strong>. Die Ereignisse und deren Lagekarten werden <strong>in Echtzeit unter allen Benutzern synchronisiert</strong>.</p>',
+      fr: '<p> Sur cet écran, vous pouvez <strong>modifier des événements déjà créés</strong> ou <strong>créer de nouveaux événements</strong>. Les événements et leurs cartes de localisation sont <strong>synchronisés en temps réel avec tous les utilisateurs</strong>.</p>',
+      en: '<p> On this screen you can <strong>edit already created events</strong> or <strong>create new events</strong>. The events and their location maps are <strong>synchronized in real-time among all users</strong>.</p>',
     },
     docMainViewTitle: {
       de: 'Kartenansicht',
@@ -1029,9 +1119,9 @@ export class I18NService {
       fr: 'Menu de la carte',
     },
     docMapMenu: {
-      de: `Die Funktionen des Kartenmenüs sind von oben nach unten:<ul><li>Umschalten zwischen History- / Lese-Modus und Zeichnungsmodus</li><li>Sprache auswählen</li><li>Karte Drucken</li><li>Protokoll der auf der Karte dargestellten Zeichnungen anzeigen oder exportieren</li><li>Hilfefunktion öffnen</li><li>Ausloggen oder Ereignis wechseln</li></ul>`,
-      fr: `Les fonctions du menu de la carte sont de haut en bas:<ul><li>Basculer entre le mode Histoire / Lecture et le mode de dessin</li><li>Sélectionner la langue</li><li>Imprimer la carte</li><li>Afficher ou exporter le journal des dessins affichés sur la carte</li><li>Ouvrir l'aide</li><li>Se déconnecter ou changer d'événement</li></ul>`,
-      en: `The functions of the map menu are from top to bottom:<ul><li>Switch between History / Read-Only mode and Drawing mode</li><li>Select language</li><li>Print map</li><li>Show or export log of drawings displayed on the map</li><li>Open help</li><li>Log out or change event</li></ul>`,
+      de: 'Die Funktionen des Kartenmenüs sind von oben nach unten:<ul><li>Umschalten zwischen History- / Lese-Modus und Zeichnungsmodus</li><li>Sprache auswählen</li><li>Karte Drucken</li><li>Protokoll der auf der Karte dargestellten Zeichnungen anzeigen oder exportieren</li><li>Hilfefunktion öffnen</li><li>Ausloggen oder Ereignis wechseln</li></ul>',
+      fr: "Les fonctions du menu de la carte sont de haut en bas:<ul><li>Basculer entre le mode Histoire / Lecture et le mode de dessin</li><li>Sélectionner la langue</li><li>Imprimer la carte</li><li>Afficher ou exporter le journal des dessins affichés sur la carte</li><li>Ouvrir l'aide</li><li>Se déconnecter ou changer d'événement</li></ul>",
+      en: 'The functions of the map menu are from top to bottom:<ul><li>Switch between History / Read-Only mode and Drawing mode</li><li>Select language</li><li>Print map</li><li>Show or export log of drawings displayed on the map</li><li>Open help</li><li>Log out or change event</li></ul>',
     },
     docMainView: {
       de: `<p>Die <strong>Lagekarte</strong> stellt die <strong>Hauptansicht</strong> der ZS Karten App dar. Wichtige Informationen und Funktionen sind hier zugänglich:
@@ -1064,15 +1154,15 @@ export class I18NService {
     },
 
     docSearch: {
-      de: `<p>Die <strong>Suche</strong> kann dazu verwendet werden, <strong>Adressen und andere Orte</strong> zu finden und mittels Selektion den entsprechenden Ort auf der Karte mit einem <strong>Standortmarker</strong> hervorzuheben.</p>`,
-      fr: `<p>La <strong>recherche</strong> peut être utilisée pour trouver des <strong>adresses et d'autres lieux</strong> et pour mettre en évidence le lieu correspondant sur la carte à l'aide d'un <strong>marqueur de position</strong> en le sélectionnant.</p>`,
-      en: `<p>The <strong>search</strong> can be used to find <strong>addresses and other places</strong> and to highlight the corresponding place on the map using a <strong>location marker</strong> by selecting it.</p>`,
+      de: '<p>Die <strong>Suche</strong> kann dazu verwendet werden, <strong>Adressen und andere Orte</strong> zu finden und mittels Selektion den entsprechenden Ort auf der Karte mit einem <strong>Standortmarker</strong> hervorzuheben.</p>',
+      fr: "<p>La <strong>recherche</strong> peut être utilisée pour trouver des <strong>adresses et d'autres lieux</strong> et pour mettre en évidence le lieu correspondant sur la carte à l'aide d'un <strong>marqueur de position</strong> en le sélectionnant.</p>",
+      en: '<p>The <strong>search</strong> can be used to find <strong>addresses and other places</strong> and to highlight the corresponding place on the map using a <strong>location marker</strong> by selecting it.</p>',
     },
 
     docMarker: {
-      de: `<p>Ein Klick auf den Standortmarker zeigt die beiden Symbole, das <strong>X-Symbol</strong> entfernt den Standortmarker von der Karte. Mit dem <strong>Sternsymbol</strong> wird der Zeichnungsdialog geöffnet und es kann an dem markierten Ort eine Signatur eingefügt werden.</p>`,
-      fr: `<p>Un clic sur le marqueur de position affiche les deux icônes, l'icône <strong>X</strong> supprime le marqueur de position de la carte. Avec l'icône <strong>étoile</strong>, la boîte de dialogue de dessin s'ouvre et vous pouvez insérer une signature à l'endroit marqué.</p>`,
-      en: `<p>A click on the location marker displays the two icons, the <strong>X icon</strong> removes the location marker from the map. With the <strong>star icon</strong>, the drawing dialog opens and you can insert a signature at the marked location.</p>`,
+      de: '<p>Ein Klick auf den Standortmarker zeigt die beiden Symbole, das <strong>X-Symbol</strong> entfernt den Standortmarker von der Karte. Mit dem <strong>Sternsymbol</strong> wird der Zeichnungsdialog geöffnet und es kann an dem markierten Ort eine Signatur eingefügt werden.</p>',
+      fr: "<p>Un clic sur le marqueur de position affiche les deux icônes, l'icône <strong>X</strong> supprime le marqueur de position de la carte. Avec l'icône <strong>étoile</strong>, la boîte de dialogue de dessin s'ouvre et vous pouvez insérer une signature à l'endroit marqué.</p>",
+      en: '<p>A click on the location marker displays the two icons, the <strong>X icon</strong> removes the location marker from the map. With the <strong>star icon</strong>, the drawing dialog opens and you can insert a signature at the marked location.</p>',
     },
 
     docDraw: {
@@ -1110,9 +1200,9 @@ export class I18NService {
       fr: 'Séléction de symbole',
     },
     docSymbolSelection: {
-      de: `<p>In dieser Ansicht können <strong>Signaturen</strong> ausgewählt werden. Nutzen Sie die <strong>Such- und Filterfunktion</strong> um Symbole einfacher zu finden. <strong>Kürzlich verwendete Signaturen</strong> werden hier angezeigt. Die dritte Spalte der Tabelle enthält Icons, die den <strong>Typen der Signatur</strong> darstellen. Es gibt: normale Signaturen (Stern), Polygone (vier Qudrate) und Linien (gezackte Linie).</p>`,
-      fr: `<p>Dans cette vue, vous pouvez sélectionner des <strong>symboles</strong>. Utilisez la <strong>fonction de recherche et de filtrage</strong> pour trouver des symboles plus facilement. Les <strong>derniers symboles utilisés</strong> sont affichés ici. La troisième colonne du tableau contient des icônes qui représentent le <strong>type de symbole</strong>. Il y a: symboles normaux (étoile), polygones (quatre carrés) et lignes (ligne ondulée).</p>`,
-      en: `<p>In this view, you can select <strong>symbols</strong>. Use the <strong>search and filter function</strong> to find symbols more easily. <strong>Recently used symbols</strong> are displayed here. The third column of the table contains icons that represent the <strong>type of symbol</strong>. There are: normal symbols (star), polygons (four squares) and lines (wavy line).</p>`,
+      de: '<p>In dieser Ansicht können <strong>Signaturen</strong> ausgewählt werden. Nutzen Sie die <strong>Such- und Filterfunktion</strong> um Symbole einfacher zu finden. <strong>Kürzlich verwendete Signaturen</strong> werden hier angezeigt. Die dritte Spalte der Tabelle enthält Icons, die den <strong>Typen der Signatur</strong> darstellen. Es gibt: normale Signaturen (Stern), Polygone (vier Qudrate) und Linien (gezackte Linie).</p>',
+      fr: '<p>Dans cette vue, vous pouvez sélectionner des <strong>symboles</strong>. Utilisez la <strong>fonction de recherche et de filtrage</strong> pour trouver des symboles plus facilement. Les <strong>derniers symboles utilisés</strong> sont affichés ici. La troisième colonne du tableau contient des icônes qui représentent le <strong>type de symbole</strong>. Il y a: symboles normaux (étoile), polygones (quatre carrés) et lignes (ligne ondulée).</p>',
+      en: '<p>In this view, you can select <strong>symbols</strong>. Use the <strong>search and filter function</strong> to find symbols more easily. <strong>Recently used symbols</strong> are displayed here. The third column of the table contains icons that represent the <strong>type of symbol</strong>. There are: normal symbols (star), polygons (four squares) and lines (wavy line).</p>',
     },
     docSelectionTitle: {
       de: 'Detailansicht der Zeichnung',
@@ -1120,9 +1210,9 @@ export class I18NService {
       fr: 'Vue détaillée du dessin',
     },
     docSelection: {
-      de: `<p>Die Detailansicht öffnet sich, wenn ein gezeichnetes Element auf der Karte ausgewählt wird. Die Funktionen sind in verschiedene Untergruppen gruppiert. Von oben nach unten sind das:</p><p><strong>Name der Zeichnung ändern</strong></p><p><strong>Farbauswahlmodus ändern (Aktivierung ermöglicht stufenlose Farbauswahl)</strong></p><p><strong>Farbe der Zeichnung ändern</strong></p><p><strong>Zeichnung auf Karte fixieren (Zeichnung kann nicht mehr bewegt werden)</strong></p><p><strong>Namen der Zeichnung auf Karte anzeigen</strong></p><p><strong>Beschreibung:</strong><ul><li>Beschreibung hinzufügen. Die Beschreibung dient zur Dokumentation und ist auf der Karte nicht sichtbar, erscheint jedoch im Export.</li></ul></p><p><strong>Signatur:</strong><ul><li>Signatur hinzufügen/ersetzen</li><li>Signatur auf Karte verstecken</li><li>Größe der Signatur auf Karte ändern</li><li>Versatz der Signatur auf Karte ändern (Diese Funktion kann hilfreich sein, wenn sich mehrere Signaturen am gleichen Ort befinden)</li><li>Signatur rotieren</li><li>Deckkraft der Signatur ändern</li></ul></p><p><strong>Linie:</strong><ul><li>Linientyp definieren</li><li>Liniendicke definieren</li><li>Linie mit Pfeil versehen</li></ul></p><p><strong>Funktionen:</strong><ul><li>In den Vordergrund</li><li>In den Hintergrund</li><li>Zeichnung an Koordinaten verschieben</li></ul></p><p><strong>Kopie der Zeichnung anfertigen.</strong> Diese Funktion ist nur für Signaturen verfügbar. Die Signatur kann anschließend auf der Karte eingefügt werden.</p><p><strong>Signatur löschen</strong></p><p>Bitte beachten Sie, dass je nach Kontext bestimmte Funktionen nicht verfügbar sind.</p>`,
-      fr: `<p>La vue détaillée s'ouvre lorsque vous sélectionnez un élément dessiné sur la carte. Les fonctions sont regroupées en différentes sous-groupes. De haut en bas, ce sont:</p><p><strong>Changer le nom du dessin</strong></p><p><strong>Changer le mode de sélection de la couleur (l'activation permet une sélection de couleur continue)</strong></p><p><strong>Changer la couleur du dessin</strong></p><p><strong>Fixer le dessin sur la carte (le dessin ne peut plus être déplacé)</strong></p><p><strong>Afficher le nom du dessin sur la carte</strong></p><p><strong>Description:</strong><ul><li>Ajouter une description. La description sert à la documentation et n'est pas visible sur la carte, mais apparaît dans l'export.</li></ul></p><p><strong>Symbole:</strong><ul><li>Ajouter / remplacer le symbole</li><li>Masquer le symbole sur la carte</li><li>Modifier la taille du symbole sur la carte</li><li>Modifier le décalage du symbole sur la carte (Cette fonction peut être utile si plusieurs symboles se trouvent au même endroit)</li><li>Faire pivoter le symbole</li><li>Modifier l'opacité du symbole</li></ul></p><p><strong>Ligne:</strong><ul><li>Définir le type de ligne</li><li>Définir l'épaisseur de la ligne</li><li>Marquer la ligne avec une flèche</li></ul></p><p><strong>Fonctions:</strong><ul><li>Mettre au premier plan</li><li>Mettre au dernier plan</li><li>Déplacer le dessin aux coordonnées</li></ul></p><p><strong>Copier le dessin.</strong> Cette fonction est uniquement disponible pour les symboles. Le symbole peut ensuite être inséré sur la carte.</p><p><strong>Supprimer le symbole</strong></p><p>Veuillez noter que certaines fonctions ne sont pas disponibles dans certains contextes.</p>`,
-      en: `<p>The detailed view opens when a drawn element on the map is selected. The functions are grouped in different subgroups. From top to bottom, these are:</p><p><strong>Change the name of the drawing</strong></p><p><strong>Change the color selection mode (activation allows for continuous color selection)</strong></p><p><strong>Change the color of the drawing</strong></p><p><strong>Fix the drawing on the map (the drawing can no longer be moved)</strong></p><p><strong>Show the name of the drawing on the map</strong></p><p><strong>Description:</strong><ul><li>Add a description. The description serves for documentation and is not visible on the map, but appears in the export.</li></ul></p><p><strong>Symbol:</strong><ul><li>Add / replace the symbol</li><li>Hide the symbol on the map</li><li>Change the size of the symbol on the map</li><li>Change the offset of the symbol on the map (This function can be useful if several symbols are located at the same place)</li><li>Rotate the symbol</li><li>Change the opacity of the symbol</li></ul></p><p><strong>Line:</strong><ul><li>Define the line type</li><li>Define the line thickness</li><li>Mark the line with an arrow</li></ul></p><p><strong>Functions:</strong><ul><li>Bring to the front</li><li>Bring to the back</li><li>Move the drawing to the coordinates</li></ul></p><p><strong>Copy the drawing.</strong> This function is only available for symbols. The symbol can then be inserted on the map.</p><p><strong>Delete the symbol</strong></p><p>Please note that certain functions are not available in certain contexts.</p>`,
+      de: '<p>Die Detailansicht öffnet sich, wenn ein gezeichnetes Element auf der Karte ausgewählt wird. Die Funktionen sind in verschiedene Untergruppen gruppiert. Von oben nach unten sind das:</p><p><strong>Name der Zeichnung ändern</strong></p><p><strong>Farbauswahlmodus ändern (Aktivierung ermöglicht stufenlose Farbauswahl)</strong></p><p><strong>Farbe der Zeichnung ändern</strong></p><p><strong>Zeichnung auf Karte fixieren (Zeichnung kann nicht mehr bewegt werden)</strong></p><p><strong>Namen der Zeichnung auf Karte anzeigen</strong></p><p><strong>Beschreibung:</strong><ul><li>Beschreibung hinzufügen. Die Beschreibung dient zur Dokumentation und ist auf der Karte nicht sichtbar, erscheint jedoch im Export.</li></ul></p><p><strong>Signatur:</strong><ul><li>Signatur hinzufügen/ersetzen</li><li>Signatur auf Karte verstecken</li><li>Größe der Signatur auf Karte ändern</li><li>Versatz der Signatur auf Karte ändern (Diese Funktion kann hilfreich sein, wenn sich mehrere Signaturen am gleichen Ort befinden)</li><li>Signatur rotieren</li><li>Deckkraft der Signatur ändern</li></ul></p><p><strong>Linie:</strong><ul><li>Linientyp definieren</li><li>Liniendicke definieren</li><li>Linie mit Pfeil versehen</li></ul></p><p><strong>Funktionen:</strong><ul><li>In den Vordergrund</li><li>In den Hintergrund</li><li>Zeichnung an Koordinaten verschieben</li></ul></p><p><strong>Kopie der Zeichnung anfertigen.</strong> Diese Funktion ist nur für Signaturen verfügbar. Die Signatur kann anschließend auf der Karte eingefügt werden.</p><p><strong>Signatur löschen</strong></p><p>Bitte beachten Sie, dass je nach Kontext bestimmte Funktionen nicht verfügbar sind.</p>',
+      fr: "<p>La vue détaillée s'ouvre lorsque vous sélectionnez un élément dessiné sur la carte. Les fonctions sont regroupées en différentes sous-groupes. De haut en bas, ce sont:</p><p><strong>Changer le nom du dessin</strong></p><p><strong>Changer le mode de sélection de la couleur (l'activation permet une sélection de couleur continue)</strong></p><p><strong>Changer la couleur du dessin</strong></p><p><strong>Fixer le dessin sur la carte (le dessin ne peut plus être déplacé)</strong></p><p><strong>Afficher le nom du dessin sur la carte</strong></p><p><strong>Description:</strong><ul><li>Ajouter une description. La description sert à la documentation et n'est pas visible sur la carte, mais apparaît dans l'export.</li></ul></p><p><strong>Symbole:</strong><ul><li>Ajouter / remplacer le symbole</li><li>Masquer le symbole sur la carte</li><li>Modifier la taille du symbole sur la carte</li><li>Modifier le décalage du symbole sur la carte (Cette fonction peut être utile si plusieurs symboles se trouvent au même endroit)</li><li>Faire pivoter le symbole</li><li>Modifier l'opacité du symbole</li></ul></p><p><strong>Ligne:</strong><ul><li>Définir le type de ligne</li><li>Définir l'épaisseur de la ligne</li><li>Marquer la ligne avec une flèche</li></ul></p><p><strong>Fonctions:</strong><ul><li>Mettre au premier plan</li><li>Mettre au dernier plan</li><li>Déplacer le dessin aux coordonnées</li></ul></p><p><strong>Copier le dessin.</strong> Cette fonction est uniquement disponible pour les symboles. Le symbole peut ensuite être inséré sur la carte.</p><p><strong>Supprimer le symbole</strong></p><p>Veuillez noter que certaines fonctions ne sont pas disponibles dans certains contextes.</p>",
+      en: '<p>The detailed view opens when a drawn element on the map is selected. The functions are grouped in different subgroups. From top to bottom, these are:</p><p><strong>Change the name of the drawing</strong></p><p><strong>Change the color selection mode (activation allows for continuous color selection)</strong></p><p><strong>Change the color of the drawing</strong></p><p><strong>Fix the drawing on the map (the drawing can no longer be moved)</strong></p><p><strong>Show the name of the drawing on the map</strong></p><p><strong>Description:</strong><ul><li>Add a description. The description serves for documentation and is not visible on the map, but appears in the export.</li></ul></p><p><strong>Symbol:</strong><ul><li>Add / replace the symbol</li><li>Hide the symbol on the map</li><li>Change the size of the symbol on the map</li><li>Change the offset of the symbol on the map (This function can be useful if several symbols are located at the same place)</li><li>Rotate the symbol</li><li>Change the opacity of the symbol</li></ul></p><p><strong>Line:</strong><ul><li>Define the line type</li><li>Define the line thickness</li><li>Mark the line with an arrow</li></ul></p><p><strong>Functions:</strong><ul><li>Bring to the front</li><li>Bring to the back</li><li>Move the drawing to the coordinates</li></ul></p><p><strong>Copy the drawing.</strong> This function is only available for symbols. The symbol can then be inserted on the map.</p><p><strong>Delete the symbol</strong></p><p>Please note that certain functions are not available in certain contexts.</p>',
     },
     docMapFunctionsTitle: {
       de: 'Kartenfunktionen',
@@ -1130,9 +1220,9 @@ export class I18NService {
       en: 'Map functions',
     },
     docMapFunctions: {
-      de: `Die Kartenfunktionen von oben nach unten sind: <ul><li>Hineinzoomen</li><li>Herauszoomen</li><li>Ebenen: Hier kann die Art der Karte verändert werden und es können weitere Ebenen überlagert und ein- und ausgeblendet werden.</li><li>Filter: Hier können Zeichnungen entsprechend Kategorie oder Typ ein- und ausgeblendet werden.</li><li>Ortungsfunktion: Ihr Standort wird auf der Karte angezeigt und die Karte wird auf diesen Standort zentriert.</li></ul>`,
-      fr: `Les fonctions de la carte de haut en bas sont: <ul><li>Zoom avant</li><li>Zoom arrière</li><li>Niveaux: Ici, vous pouvez changer le type de carte et superposer et afficher ou masquer des niveaux supplémentaires.</li><li>Filtres: Ici, vous pouvez afficher ou masquer les dessins en fonction de la catégorie ou du type.</li><li>Fonction de localisation: Votre emplacement est affiché sur la carte et la carte est centrée sur cet emplacement.</li></ul>`,
-      en: `The map functions from top to bottom are: <ul><li>Zoom in</li><li>Zoom out</li><li>Layers: Here you can change the map type and overlay and show or hide additional layers.</li><li>Filters: Here you can show or hide drawings according to category or type.</li><li>Location function: Your location is displayed on the map and the map is centered on this location.</li></ul>`,
+      de: 'Die Kartenfunktionen von oben nach unten sind: <ul><li>Hineinzoomen</li><li>Herauszoomen</li><li>Ebenen: Hier kann die Art der Karte verändert werden und es können weitere Ebenen überlagert und ein- und ausgeblendet werden.</li><li>Filter: Hier können Zeichnungen entsprechend Kategorie oder Typ ein- und ausgeblendet werden.</li><li>Ortungsfunktion: Ihr Standort wird auf der Karte angezeigt und die Karte wird auf diesen Standort zentriert.</li></ul>',
+      fr: 'Les fonctions de la carte de haut en bas sont: <ul><li>Zoom avant</li><li>Zoom arrière</li><li>Niveaux: Ici, vous pouvez changer le type de carte et superposer et afficher ou masquer des niveaux supplémentaires.</li><li>Filtres: Ici, vous pouvez afficher ou masquer les dessins en fonction de la catégorie ou du type.</li><li>Fonction de localisation: Votre emplacement est affiché sur la carte et la carte est centrée sur cet emplacement.</li></ul>',
+      en: 'The map functions from top to bottom are: <ul><li>Zoom in</li><li>Zoom out</li><li>Layers: Here you can change the map type and overlay and show or hide additional layers.</li><li>Filters: Here you can show or hide drawings according to category or type.</li><li>Location function: Your location is displayed on the map and the map is centered on this location.</li></ul>',
     },
     docQuickFunctionsTitle: {
       de: 'Schnellfunktionen',
@@ -1140,9 +1230,9 @@ export class I18NService {
       en: 'Quick functions',
     },
     docQuickFunctions: {
-      de: `Klicken Sie auf eine <strong>Zeichnung</strong> auf der Karte, um die <strong>Schnellfunktionen</strong> anzuzeigen. Diese beinhalten: <ul><li>Zeichnung oder Ankerpunkt löschen</li><li>Zeichnung <strong>kopieren</strong>: Klicken Sie erneut auf die Karte, um die <strong>Kopie</strong> der Zeichnung einzufügen</li><li>Signatur <strong>rotieren</strong></li></ul>`,
-      fr: `Cliquez sur un <strong>dessin</strong> sur la carte pour afficher les <strong>fonctions rapides</strong>. Cela comprend: <ul><li>Supprimer le dessin ou le point d'ancrage</li><li>Copier le dessin: Cliquez à nouveau sur la carte pour insérer la <strong>copie</strong> du dessin</li><li>Rotation de la signature</li></ul>`,
-      en: `Click on a <strong>drawing</strong> on the map to display the <strong>quick functions</strong>. This includes: <ul><li>Delete the drawing or anchor point</li><li>Copy the drawing: Click again on the map to insert the <strong>copy</strong> of the drawing</li><li>Rotate the signature</li></ul>`,
+      de: 'Klicken Sie auf eine <strong>Zeichnung</strong> auf der Karte, um die <strong>Schnellfunktionen</strong> anzuzeigen. Diese beinhalten: <ul><li>Zeichnung oder Ankerpunkt löschen</li><li>Zeichnung <strong>kopieren</strong>: Klicken Sie erneut auf die Karte, um die <strong>Kopie</strong> der Zeichnung einzufügen</li><li>Signatur <strong>rotieren</strong></li></ul>',
+      fr: "Cliquez sur un <strong>dessin</strong> sur la carte pour afficher les <strong>fonctions rapides</strong>. Cela comprend: <ul><li>Supprimer le dessin ou le point d'ancrage</li><li>Copier le dessin: Cliquez à nouveau sur la carte pour insérer la <strong>copie</strong> du dessin</li><li>Rotation de la signature</li></ul>",
+      en: 'Click on a <strong>drawing</strong> on the map to display the <strong>quick functions</strong>. This includes: <ul><li>Delete the drawing or anchor point</li><li>Copy the drawing: Click again on the map to insert the <strong>copy</strong> of the drawing</li><li>Rotate the signature</li></ul>',
     },
     openStreetMap: {
       de: 'OpenStreetMap',
@@ -1168,6 +1258,61 @@ export class I18NService {
       de: 'Meldenummer',
       en: 'Report number',
       fr: 'Numéro de rapport',
+    },
+    snapshotTimestamp: {
+      de: 'Sicherungszeitpunkt',
+      en: 'Backup time',
+      fr: 'Date de sauvegarde',
+    },
+    noSnapshots: {
+      de: 'Keine Sicherungen gefunden',
+      en: 'No backups found',
+      fr: 'Aucune sauvegarde trouvée',
+    },
+    toastSnapshotApplied: {
+      de: 'Sicherung angewendet',
+      en: 'Backup applied',
+      fr: 'Sauvegarde appliqué',
+    },
+    noSignature: {
+      de: 'Ohne Signatur',
+      en: 'Without signature',
+      fr: 'Sans signature',
+    },
+    back: {
+      de: 'Zurück',
+      en: 'Back',
+      fr: 'Retour',
+    },
+    newScenario: {
+      de: 'Neues Ereigniss',
+      en: 'New Scenario',
+      fr: 'Nouvel Événement',
+    },
+    importScenario: {
+      de: 'Ereigniss importieren',
+      en: 'Import Scenario',
+      fr: 'Importer événement',
+    },
+    featureClustering: {
+      de: 'Symbole Gruppieren',
+      en: 'Sign clustering',
+      fr: 'Regroupement de formes',
+    },
+    edit: {
+      de: 'Bearbeiten',
+      en: 'Edit',
+      fr: 'Modifier',
+    },
+    eventState: {
+      de: 'Situationslage',
+      en: 'Event state',
+      fr: 'Sutiation',
+    },
+    affectedPersons: {
+      de: 'Betroffene Personen',
+      en: 'Affected Persons',
+      fr: 'Persones affectés',
     },
   };
 
@@ -1199,7 +1344,7 @@ export class I18NService {
         }
       }
     }
-    throw new Error('Was not able to find an entry in translation table for key ' + key);
+    throw new Error(`Was not able to find an entry in translation table for key ${key}`);
   }
   public has(key: string): boolean {
     const element = I18NService.TRANSLATIONS[key];

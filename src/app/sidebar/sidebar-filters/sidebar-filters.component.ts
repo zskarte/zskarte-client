@@ -2,7 +2,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs/internal/Observable';
-import { ZsMapDrawElementState } from 'src/app/state/interfaces';
 import { combineLatest, Subject } from 'rxjs';
 import { I18NService } from 'src/app/state/i18n.service';
 import capitalizeFirstLetter from 'src/app/helper/capitalizeFirstLetter';
@@ -23,15 +22,20 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   hiddenSymbols$: Observable<number[]>;
   hiddenFeatureTypes$: Observable<string[]>;
   hiddenCategories$: Observable<string[]>;
+  enableClustering$: Observable<boolean>;
   filtersOpenState = false;
   filtersGeneralOpenState = false;
   capitalizeFirstLetter = capitalizeFirstLetter;
   private _ngUnsubscribe = new Subject<void>();
 
-  constructor(public i18n: I18NService, private mapState: ZsMapStateService) {
+  constructor(
+    public i18n: I18NService,
+    private mapState: ZsMapStateService,
+  ) {
     this.hiddenSymbols$ = this.mapState.observeHiddenSymbols().pipe(takeUntil(this._ngUnsubscribe));
     this.hiddenFeatureTypes$ = this.mapState.observeHiddenFeatureTypes().pipe(takeUntil(this._ngUnsubscribe));
     this.hiddenCategories$ = this.mapState.observeHiddenCategories().pipe(takeUntil(this._ngUnsubscribe));
+    this.enableClustering$ = this.mapState.observeEnableClustering().pipe(takeUntil(this._ngUnsubscribe));
   }
 
   ngOnInit(): void {
@@ -53,7 +57,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   }
 
   updateFilterSymbolsAndFeatureTypes(
-    elements: ZsMapBaseDrawElement<ZsMapDrawElementState>[],
+    elements: ZsMapBaseDrawElement[],
     hiddenSymbols: number[],
     hiddenFeatureTypes: string[],
     hiddenCategories: string[],
@@ -80,7 +84,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
           symbols[sig.src] = {
             label: this.i18n.getLabelForSign(sig),
             origSrc: sig.src,
-            src: dataUrl ? dataUrl : 'assets/img/signs/' + sig.src,
+            src: dataUrl ? dataUrl : `assets/img/signs/${sig.src}`,
             kat: sig.kat,
             id: sig.id,
           };
@@ -137,5 +141,9 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     if (category.name !== '' && category.name !== undefined) {
       this.mapState.toggleCategory(category.name);
     }
+  }
+
+  public toggleClustering() {
+    this.mapState.toggleClustering();
   }
 }

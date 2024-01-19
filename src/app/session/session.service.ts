@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, retry, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { db } from '../db/db';
-import { IAuthResult, IZsMapSession, PermissionType } from './session.interfaces';
+import { AccessTokenType, IAuthResult, IZsMapSession, PermissionType } from './session.interfaces';
 import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
-import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
@@ -12,6 +11,7 @@ import { IZsMapOperation, IZsMapOrganization } from './operations/operation.inte
 import { transform } from 'ol/proj';
 import { coordinatesProjection, mercatorProjection } from '../helper/projections';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from './default-map-values';
+import { decodeJWT } from '../helper/jwt';
 
 @Injectable({
   providedIn: 'root',
@@ -23,22 +23,25 @@ export class SessionService {
   private _authError = new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
   private _isOnline = new BehaviorSubject<boolean>(true);
 
-  constructor(private _router: Router, private _api: ApiService) {
+  constructor(
+    private _router: Router,
+    private _api: ApiService,
+  ) {
     this._session.pipe(skip(1)).subscribe(async (session) => {
       this._clearOperation.next();
-      if (session && session.jwt) {
+      if (session?.jwt) {
         await db.sessions.put(session);
-        if (session.operationId) {
+        if (session.operation?.id) {
           await this._state?.refreshMapState();
-          const displayState = await db.displayStates.get({ id: session.operationId });
+          const displayState = await db.displayStates.get({ id: session.operation?.id });
           this._state.setDisplayState(displayState);
 
           this._state
             .observeDisplayState()
             .pipe(skip(1), takeUntil(this._clearOperation))
             .subscribe(async (displayState) => {
-              if (this._session.value?.operationId) {
-                db.displayStates.put({ ...displayState, id: this._session.value.operationId });
+              if (this._session.value?.operation?.id) {
+                await db.displayStates.put({ ...displayState, id: this._session.value.operation?.id });
               }
             });
 
@@ -66,24 +69,22 @@ export class SessionService {
     this._isOnline
       .asObservable()
       .pipe(skip(1), distinctUntilChanged())
-      .subscribe(async (isOnline) => {
-        if (isOnline) {
-          of([])
-            .pipe(
-              switchMap(async () => {
-                await this.refreshToken();
-              }),
-              retry({ count: 5, delay: 1000 }),
-              takeUntil(this._isOnline.asObservable().pipe(filter((isOnline) => !isOnline))),
-            )
-            .subscribe({
-              complete: () => {
-                // feature: show notification that connection was restored
-              },
-            });
-        } else {
-          // feature: show notification that connection was lost
-        }
+      .subscribe((isOnline) => {
+        // feature: show notification that connection was lost
+        if (!isOnline) return;
+        of([])
+          .pipe(
+            switchMap(async () => {
+              await this.refreshToken();
+            }),
+            retry({ count: 5, delay: 1000 }),
+            takeUntil(this._isOnline.asObservable().pipe(filter((isOnline) => !isOnline))),
+          )
+          .subscribe({
+            complete: () => {
+              // feature: show notification that connection was restored
+            },
+          });
       });
   }
 
@@ -92,7 +93,23 @@ export class SessionService {
   }
 
   public getOrganizationId(): number | undefined {
-    return this._session.value?.organizationId;
+    return this._session.value?.organization?.id;
+  }
+
+  public getLabel(): string | undefined {
+    return this._session.value?.label;
+  }
+
+  public observeLabel(): Observable<string | undefined> {
+    return this._session.pipe(map((session) => session?.label));
+  }
+
+  public setLabel(label: string): void {
+    const currentSession = this._session.value;
+    if (currentSession) {
+      currentSession.label = label;
+      this._session.next(currentSession);
+    }
   }
 
   public getAuthError(): HttpErrorResponse | undefined {
@@ -100,43 +117,45 @@ export class SessionService {
   }
 
   public observeOrganizationId(): Observable<number | undefined> {
-    return this._session.pipe(map((session) => session?.organizationId));
+    return this._session.pipe(map((session) => session?.organization?.id));
   }
 
   public setOperation(operation?: IZsMapOperation): void {
     if (this._session?.value) {
-      this._session.value.operationId = operation?.id;
-      this._session.value.operationName = operation?.name;
-      this._session.value.operationDescription = operation?.description;
+      this._session.value.operation = operation;
     }
     this._session.next(this._session.value);
   }
 
   public observeOperationId(): Observable<number | undefined> {
-    return this._session.pipe(map((session) => session?.operationId));
+    return this._session.pipe(map((session) => session?.operation?.id));
+  }
+
+  public getOperation(): IZsMapOperation | undefined {
+    return this._session?.value?.operation;
   }
 
   public getOperationId(): number | undefined {
-    return this._session?.value?.operationId;
+    return this._session?.value?.operation?.id;
   }
 
   public getOperationName(): string | undefined {
-    return this._session?.value?.operationName;
+    return this._session?.value?.operation?.name;
   }
 
-  public getOperationDescription(): string | undefined {
-    return this._session?.value?.operationDescription;
+  public getOperationEventStates(): number[] | undefined {
+    return this._session?.value?.operation?.eventStates;
   }
 
   public getLogo(): string | undefined {
     return this._session?.value?.organizationLogo;
   }
 
+  // skipcq: JS-0105
   public async getSavedSession(): Promise<IZsMapSession | undefined> {
     const sessions = await db.sessions.toArray();
     if (sessions.length === 1) {
-      const session: IZsMapSession = sessions[0];
-      return session;
+      return sessions[0];
     }
     if (sessions.length > 1) {
       await db.sessions.clear();
@@ -147,7 +166,8 @@ export class SessionService {
   public async loadSavedSession(): Promise<void> {
     const session = await this.getSavedSession();
     if (session?.jwt) {
-      return await this.updateJWT(session?.jwt);
+      await this.updateJWT(session?.jwt);
+      return;
     }
     this._session.next(undefined);
   }
@@ -156,14 +176,14 @@ export class SessionService {
     const { result, error: authError } = await this._api.post<IAuthResult>('/api/auth/local', params);
     this._authError.next(authError);
     if (authError || !result) {
-      this._router.navigateByUrl('/login');
+      await this._router.navigateByUrl('/login');
       return;
     }
     await this.updateJWT(result.jwt);
   }
 
   public async updateJWT(jwt: string) {
-    const decoded = this._decodeJWT(jwt);
+    const decoded = decodeJWT(jwt);
     if (decoded.expired) {
       await this.logout();
       return;
@@ -194,31 +214,24 @@ export class SessionService {
 
     newSession.permission = decoded.permission || PermissionType.ALL;
 
+    newSession.label = newSession.label || meResult.organization?.name || meResult.organization?.id.toString();
+
     // update organization values
     newSession.jwt = jwt;
     newSession.organizationLogo = meResult.organization?.logo?.url;
-    newSession.organizationId = meResult.organization?.id;
+    newSession.organization = meResult.organization;
 
     // update operation values
-    const operationId = decoded.operationId || currentSession?.operationId;
+    const operationId = decoded.operationId || currentSession?.operation?.id;
     if (operationId) {
-      const { result: operation } = await this._api.get<IZsMapOperation>('/api/operations/' + operationId, { token: jwt });
+      const { result: operation } = await this._api.get<IZsMapOperation>(`/api/operations/${operationId}`, { token: jwt });
       if (operation) {
-        newSession.operationId = operation?.id;
-        newSession.operationName = operation?.name;
-        newSession.operationDescription = operation?.description;
+        newSession.operation = operation;
       }
     }
 
-    if (decoded.operationId) {
-      newSession.operationId = decoded.operationId;
-    }
-
     if (meResult.organization) {
-      newSession.organizationId = meResult.organization.id;
-      newSession.defaultLatitude = meResult.organization.mapLatitude;
-      newSession.defaultLongitude = meResult.organization.mapLongitude;
-      newSession.defaultZoomLevel = meResult.organization.mapZoomLevel;
+      newSession.organization = meResult.organization;
     }
 
     this._session.next(newSession);
@@ -226,13 +239,14 @@ export class SessionService {
 
   public async logout(): Promise<void> {
     this._session.next(undefined);
-    this._router.navigateByUrl('/login');
+    await this._router.navigateByUrl('/login');
   }
 
   public async refreshToken(): Promise<void> {
     const currentToken = this._session.value?.jwt;
     if (!currentToken) {
-      return await this.logout();
+      await this.logout();
+      return;
     }
 
     const { result, error: authError } = await this._api.get<IAuthResult>('/api/accesses/auth/refresh', {
@@ -240,12 +254,11 @@ export class SessionService {
     });
 
     if (authError || !result?.jwt) {
-      return await this.logout();
+      await this.logout();
+      return;
     }
 
     await this.updateJWT(result.jwt);
-
-    return;
   }
 
   public getToken(): string | undefined {
@@ -258,7 +271,7 @@ export class SessionService {
         if (!session?.jwt) {
           return false;
         }
-        if (this._decodeJWT(session.jwt).expired) {
+        if (decodeJWT(session.jwt).expired) {
           this.logout();
           return false;
         }
@@ -287,24 +300,19 @@ export class SessionService {
     return this._isOnline.value;
   }
 
-  private _decodeJWT(jwt: string): { expired: boolean; operationId: number; permission: PermissionType } {
-    const token = jwtDecode<{ exp: number; operationId: number; permission: PermissionType }>(jwt);
-    return { ...token, expired: token.exp < Date.now() / 1000 };
-  }
-
-  public async generateShareUrl(permission: PermissionType = PermissionType.READ): Promise<string> {
+  public async generateShareLink(permission: PermissionType, tokenType: AccessTokenType) {
     if (!this.getOperationId()) {
       throw new Error('OperationId is not defined');
     }
     const response = await this._api.post<{ accessToken: string }>('/api/accesses/auth/token/generate', {
       type: permission,
       operationId: this.getOperationId(),
+      tokenType,
     });
     if (!response.result?.accessToken) {
       throw new Error('Unable to generate share url');
     }
-    const url = `${window.location.origin}/share/${response.result.accessToken}`;
-    return url;
+    return response.result.accessToken;
   }
 
   public observeHasWritePermission(): Observable<boolean> {

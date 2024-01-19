@@ -8,7 +8,6 @@ import VectorSource from 'ol/source/Vector';
 import { Options } from 'ol/interaction/Draw';
 import { Geometry } from 'ol/geom';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
-import { IZsMapDrawElementUi } from './draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
 import { areCoordinatesEqual } from '../../../helper/coordinates';
@@ -18,7 +17,10 @@ import { Signs } from '../../signs';
 export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsMapDrawElementState> extends ZsMapBaseElement<T> {
   public elementState?: T;
 
-  constructor(protected override _id: string, protected override _state: ZsMapStateService) {
+  constructor(
+    protected override _id: string,
+    protected override _state: ZsMapStateService,
+  ) {
     super(_id, _state);
     this._olFeature.set(ZsMapOLFeatureProps.IS_DRAW_ELEMENT, true);
     this._olFeature.set(ZsMapOLFeatureProps.DRAW_ELEMENT_ID, _id);
@@ -31,6 +33,10 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       takeUntil(this._unsubscribe),
     );
     this._element.pipe(takeUntil(this._unsubscribe)).subscribe((element) => {
+      if (!element) {
+        this.unsubscribe();
+        return;
+      }
       this._setSignatureState(element);
     });
   }
@@ -46,6 +52,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       label: state.name,
       labelShow: state.nameShow,
       color: state.color,
+      createdBy: state.createdBy,
       protected: state.protected,
       iconSize: state.iconSize,
       hideIcon: state.hideIcon,
@@ -62,6 +69,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       text: state['text'],
       zindex: state.zindex,
       reportNumber: state.reportNumber,
+      affectedPersons: state.affectedPersons,
     });
   }
 
@@ -116,18 +124,6 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     );
   }
 
-  public setLayer(layer: string): void {
-    this._state.updateMapState((draft) => {
-      if (draft?.drawElements?.[this._id]) {
-        draft.drawElements[this._id].layer = layer;
-      }
-    });
-  }
-
-  public getUi(): IZsMapDrawElementUi | undefined {
-    return undefined;
-  }
-
   // static handlers for drawing
   public static getOlDrawHandler(state: ZsMapStateService, element: ZsMapElementToDraw): Draw {
     const draw = new Draw(
@@ -142,7 +138,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     return draw;
   }
   protected static _getOlDrawType(symbolId?: number): Type {
-    throw new Error('static fn _getOlDrawType is not implemented ' + symbolId);
+    throw new Error(`static fn _getOlDrawType is not implemented ${symbolId}`);
   }
   protected static _enhanceOlDrawOptions(options: Options) {
     return options;

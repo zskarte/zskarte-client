@@ -1,4 +1,6 @@
+// noinspection JSUnusedGlobalSymbols
+
 export const environment = {
-  production: false,
+  production: true,
   apiUrl: 'https://api-dev.zskarte.ch',
 };

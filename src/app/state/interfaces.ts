@@ -6,12 +6,12 @@ export enum ZsMapStateSource {
   GEO_ADMIN_SWISS_IMAGE = 'geoAdminSwissImage',
   GEO_ADMIN_PIXEL = 'geoAdminPixel',
   GEO_ADMIN_PIXEL_BW = 'geoAdminPixelBW',
+  LOCAL = 'local',
 }
 
-export interface IZsMapSaveFileState {
-  map: IZsMapState;
-  display: IZsMapDisplayState;
-}
+export const zsMapStateSourceToDownloadUrl = {
+  [ZsMapStateSource.LOCAL]: 'https://zskarte.blob.core.windows.net/etienne/ch.swisstopo.pmtiles',
+};
 
 export interface IZsMapState {
   version: number;
@@ -21,6 +21,10 @@ export interface IZsMapState {
   drawElements?: ZsMapDrawElementState[];
   center: [number, number];
 }
+
+export const getDefaultIZsMapState = (): IZsMapState => {
+  return {} as IZsMapState;
+};
 
 export interface IPositionFlag {
   coordinates: number[];
@@ -39,6 +43,7 @@ export interface IZsMapDisplayState {
   mapOpacity: number;
   mapCenter: number[];
   mapZoom: number;
+  showMyLocation: boolean;
   activeLayer: string | undefined;
   layerVisibility: Record<string, boolean>;
   layerOpacity: Record<string, number>;
@@ -47,11 +52,11 @@ export interface IZsMapDisplayState {
   elementOpacity: Record<string, number>;
   elementVisibility: Record<string, boolean>;
   features: GeoFeature[];
-  sidebarContext: SidebarContext | null;
   positionFlag: IPositionFlag;
   hiddenSymbols: number[];
   hiddenFeatureTypes: string[];
   hiddenCategories: string[];
+  enableClustering: boolean;
 }
 
 export type ZsMapLayerState = IZsMapDrawLayerState | IZsMapGeoDataLayerState;
@@ -102,6 +107,7 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   protected?: boolean;
   color?: string;
   name?: string;
+  createdBy?: string;
   nameShow?: boolean;
   iconOpacity?: number;
   description?: string;
@@ -120,6 +126,7 @@ export interface IZsMapBaseDrawElementState extends IZsMapBaseElementState {
   images?: string[];
   zindex?: number;
   reportNumber?: number;
+  affectedPersons?: number;
 }
 
 export interface ZsMapTextDrawElementState extends IZsMapBaseDrawElementState {
@@ -144,14 +151,26 @@ export interface ZsMapFreehandDrawElementState extends IZsMapBaseDrawElementStat
   type: ZsMapDrawElementStateType.FREEHAND;
 }
 
-export enum SidebarContext {
-  Layers,
-  Filters,
-}
-
 export interface ZsMapElementToDraw {
   type: ZsMapDrawElementStateType;
   layer: string;
   symbolId?: number;
   text?: string;
+}
+
+export type ZsMapDrawElementParams = IZsMapBaseDrawElementParams | IZsMapSymbolDrawElementParams | IZsMapTextDrawElementParams;
+
+interface IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType;
+  layer: string;
+}
+
+export interface IZsMapSymbolDrawElementParams extends IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType.SYMBOL;
+  symbolId: number;
+}
+
+export interface IZsMapTextDrawElementParams extends IZsMapBaseDrawElementParams {
+  type: ZsMapDrawElementStateType.TEXT;
+  text: string;
 }

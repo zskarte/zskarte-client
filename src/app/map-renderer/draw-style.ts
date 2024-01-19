@@ -6,12 +6,10 @@ import FillPattern from 'ol-ext/style/FillPattern';
 import Icon from 'ol/style/Icon';
 import Text from 'ol/style/Text';
 import Point from 'ol/geom/Point';
-import Polygon from 'ol/geom/Polygon';
 import MultiPoint from 'ol/geom/MultiPoint';
 import LineString from 'ol/geom/LineString';
 import Circle from 'ol/style/Circle';
 import { Md5 } from 'ts-md5';
-import ConvexHull from 'ol-ext/geom/ConvexHull';
 import {
   defineDefaultValuesForSignature,
   FillStyle,
@@ -20,8 +18,9 @@ import {
   Sign,
   signatureDefaultValues,
 } from '../core/entity/sign';
-import { MultiPolygon } from 'ol/geom';
+import { Geometry, MultiPolygon } from 'ol/geom';
 import { FeatureLike } from 'ol/Feature';
+import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 
 export class DrawStyle {
   static defaultScaleFactor = 0.2;
@@ -30,7 +29,6 @@ export class DrawStyle {
 
   private static symbolStyleCache = {};
   private static vectorStyleCache = {};
-  private static imageCache = {};
   private static colorFill = {};
   private static clusterStyleCache = {};
 
@@ -39,7 +37,7 @@ export class DrawStyle {
   filter = null;
 
   public static getImageUrl(file: string): string {
-    return 'assets/img/signs/' + file;
+    return `assets/img/signs/${file}`;
   }
 
   private static scale(resolution: number, scaleFactor: number, min = 0.1): number {
@@ -90,7 +88,7 @@ export class DrawStyle {
     if (feature.get('features')) {
       const features = feature.get('features');
       if (features.length > 1) {
-        return DrawStyle.clusterStyleFunction(feature, resolution, true);
+        return DrawStyle.clusterStyleFunction(feature, resolution);
       } else if (features.length > 0) {
         return DrawStyle.styleFunctionSelectSingleFeature(features[0], resolution, editMode);
       } else {
@@ -132,161 +130,57 @@ export class DrawStyle {
       DrawStyle.lastResolution = resolution;
       DrawStyle.clearCaches();
     }
-    return DrawStyle.clusterStyleFunction(feature, resolution, false);
+    return DrawStyle.clusterStyleFunction(feature, resolution);
   }
 
-  private static clusterStyleFunction(feature: FeatureLike, resolution: number, selected: boolean): Style[] {
-    const coordinateScale = resolution;
-    const iconSizeInCoordinates = 50 * coordinateScale;
-    const scale = 0.12;
-    const features = feature.get('features');
-    if (features.length == 0) {
+  private static clusterStyleFunction(feature: FeatureLike, resolution: number): Style[] {
+    const features = feature.get('features') as FeatureLike[];
+    const size = features.length;
+    if (size === 0) {
       return [];
-    } else if (features.length == 1) {
+    } else if (size === 1) {
       return DrawStyle.styleFunction(features[0], resolution);
-    } else {
-      const offset = 0;
-      const iconCount = {};
-      const pointCoordinates: any[] = [];
-      features.forEach((f: any) => pointCoordinates.push(f.getGeometry().getCoordinates()));
-      const hull = ConvexHull(pointCoordinates);
-      const groupedFeatures = {};
-      features.forEach((f: any) => {
-        const sigSrc = f.get('sig').src;
-        if (!groupedFeatures[sigSrc]) {
-          groupedFeatures[sigSrc] = 0;
-        }
-        groupedFeatures[sigSrc]++;
-      });
-      const groupedFeatureCount = Object.keys(groupedFeatures).length;
-      const clusterCacheHash = DrawStyle.calculateCacheHashForCluster(groupedFeatures, selected);
-      let styles = this.clusterStyleCache[clusterCacheHash];
-      if (!styles) {
-        styles = this.clusterStyleCache[clusterCacheHash] = [];
-        styles.push(
-          new Style({
-            fill: DrawStyle.getAreaFill(DrawStyle.colorFunction(selected ? '#FFFFFF' : '#e5e5e5', 0.8), 1, { name: 'filled' }),
-            stroke: new Stroke({
-              color: '#3399CC',
-              width: selected ? 2 : 1,
-            }),
-            geometry: function (feature) {
-              const gridDimensions = DrawStyle.getGridDimensions(groupedFeatureCount);
-              const bottomLeft = DrawStyle.getIconLocation(0, groupedFeatureCount, iconSizeInCoordinates);
-              const bottomRight = DrawStyle.getIconLocation(gridDimensions - 1, groupedFeatureCount, iconSizeInCoordinates);
-              const topLeft = DrawStyle.getIconLocation(
-                (DrawStyle.getNumberOfRows(groupedFeatureCount) - 1) * gridDimensions,
-                groupedFeatureCount,
-                iconSizeInCoordinates,
-              );
-              const instancesInLastRow = DrawStyle.getNumberOfInstancesInLastRow(groupedFeatureCount);
-              const topRight = DrawStyle.getIconLocation(
-                (DrawStyle.getNumberOfRows(groupedFeatureCount) - 1) * gridDimensions + instancesInLastRow - 1,
-                groupedFeatureCount,
-                iconSizeInCoordinates,
-              );
-              const coordinates = (feature.getGeometry() as any).getCoordinates();
-              const paddingFactor = 0.6;
-              return new Polygon([
-                [
-                  [
-                    coordinates[0] + bottomLeft[0] - iconSizeInCoordinates * paddingFactor + offset,
-                    coordinates[1] + bottomLeft[1] - iconSizeInCoordinates * paddingFactor + offset,
-                  ],
-                  [
-                    coordinates[0] + bottomRight[0] + iconSizeInCoordinates * paddingFactor + offset,
-                    coordinates[1] + bottomRight[1] - iconSizeInCoordinates * paddingFactor + offset,
-                  ],
-                  [
-                    coordinates[0] + topRight[0] + iconSizeInCoordinates * paddingFactor + offset,
-                    coordinates[1] + topRight[1] + iconSizeInCoordinates * paddingFactor + offset,
-                  ],
-                  [
-                    coordinates[0] + topLeft[0] - iconSizeInCoordinates * paddingFactor + offset,
-                    coordinates[1] + topLeft[1] + iconSizeInCoordinates * paddingFactor + offset,
-                  ],
-                ],
-              ]);
-            },
-            zIndex: 3 * (selected ? 10 : 1),
-          }),
-        );
-        Object.keys(groupedFeatures).forEach((src, index) => {
-          const iconLocation = DrawStyle.getIconLocation(index, groupedFeatureCount, iconSizeInCoordinates);
-          if (iconLocation) {
-            styles.push(
-              new Style({
-                text: new Text({
-                  text: groupedFeatures[src].toString(),
-                  font: 11 + 'px sans-serif',
-                  offsetX: 19,
-                  offsetY: -19,
-                  fill: DrawStyle.getColorFill('#FFFFFF'),
-                  backgroundFill: DrawStyle.getColorFill('#3399CC'),
-                  backgroundStroke: DrawStyle.createDefaultStroke(0.12, '#3399CC'),
-                  padding: [0, 0, 1, 1],
-                }),
-                zIndex: 5 * (selected ? 10 : 1),
-                geometry: function (feature) {
-                  const coordinates = (feature.getGeometry() as any).getCoordinates();
-                  return new Point([coordinates[0] + iconLocation[0] + offset, coordinates[1] + iconLocation[1] + offset]);
-                },
-              }),
-            );
-            styles.push(
-              new Style({
-                image: new Circle({
-                  radius: 20,
-                  fill: DrawStyle.getColorFill('#ffffff'),
-                  stroke: new Stroke({
-                    color: '#3399CC',
-                  }),
-                }),
-                zIndex: 10 * (selected ? 10 : 1),
-                geometry: function (feature) {
-                  const coordinates = (feature.getGeometry() as any).getCoordinates();
-                  return new Point([coordinates[0] + iconLocation[0] + offset, coordinates[1] + iconLocation[1] + offset]);
-                },
-              }),
-            );
-            const icon = src;
-            iconCount[icon] = (iconCount[icon] ? iconCount[icon] : 0) + 1;
-            let imageFromMemory;
-
-            styles.push(
-              new Style({
-                image: new Icon({
-                  anchor: [0.5, 0.5],
-                  anchorXUnits: 'fraction',
-                  anchorYUnits: 'fraction',
-                  scale: 0.25,
-                  src: imageFromMemory ? undefined : DrawStyle.getImageUrl(icon),
-                  img: imageFromMemory ? imageFromMemory : undefined,
-                  // imgSize: scaledSize ? [naturalDim, naturalDim] : undefined,
-                }),
-                zIndex: 15 * (selected ? 10 : 1),
-                geometry: function (feature) {
-                  const coordinates = (feature.getGeometry() as any).getCoordinates();
-                  return new Point([coordinates[0] + iconLocation[0] + offset, coordinates[1] + iconLocation[1] + offset]);
-                },
-              }),
-            );
-          }
-        });
-        if (selected) {
-          styles.push(
-            new Style({
-              fill: DrawStyle.getAreaFill(DrawStyle.colorFunction('#dedede', 0.6), 1, { name: 'filled' }),
-              stroke: DrawStyle.createDefaultStroke(scale, '#3399CC', true),
-              geometry: function () {
-                return new Polygon([hull]);
-              },
-            }),
-          );
-        }
-      }
-      return styles;
     }
+
+    let style = this.clusterStyleCache[features.length];
+    if (!style) {
+      const scale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
+      style = [
+        new Style({
+          image: new Circle({
+            radius: 250,
+            scale,
+            fill: new Fill({
+              color: 'rgba(255, 153, 102, 0.3)',
+            }),
+          }),
+        }),
+        new Style({
+          image: new Circle({
+            radius: 200,
+            scale,
+            fill: new Fill({
+              color: 'rgba(255, 165, 0, 0.7)',
+            }),
+          }),
+          text: new Text({
+            text: size.toString(),
+            font: `${150}px sans-serif`,
+            scale,
+            fill: new Fill({
+              color: '#fff',
+            }),
+            stroke: new Stroke({
+              color: 'rgba(0, 0, 0, 0.6)',
+              width: 30,
+            }),
+          }),
+        }),
+      ];
+      this.clusterStyleCache[size] = style;
+    }
+
+    return style;
   }
 
   public static styleFunction(feature: FeatureLike, resolution: number): Style[] {
@@ -294,13 +188,22 @@ export class DrawStyle {
       DrawStyle.lastResolution = resolution;
       DrawStyle.clearCaches();
     }
-    // The feature shall not be displayed or is errorenous. Therefore, we return an empty style.
-    const signature = feature.get('sig');
-    if (!signature) {
-      return [];
-    } else {
-      return DrawStyle.featureStyleFunction(feature, resolution, signature, false, true);
+
+    if (feature.get('features')) {
+      const features = feature.get('features');
+      if (features.length > 1) {
+        return DrawStyle.clusterStyleFunction(feature, resolution);
+      } else if (features.length > 0 && features[0].get('sig')) {
+        return DrawStyle.featureStyleFunction(features[0], resolution, features[0].get('sig'), false, true);
+      } else {
+        return [];
+      }
+    } else if (feature.get('sig')) {
+      return DrawStyle.featureStyleFunction(feature, resolution, feature.get('sig'), false, true);
     }
+
+    // The feature shall not be displayed or is errorenous. Therefore, we return an empty style.
+    return [];
   }
 
   private static featureStyleFunction(
@@ -334,17 +237,17 @@ export class DrawStyle {
           text: new Text({
             text: signature.text,
             backgroundFill: this.getColorFill('#FFFFFF'),
-            font: fontSize * 30 + 'px sans-serif',
+            font: `${fontSize * 30}px sans-serif`,
             rotation: signature.rotation !== undefined ? (signature.rotation * Math.PI) / 180 : 0,
             scale: DrawStyle.scale(resolution, DrawStyle.textScaleFactor, 0.4),
             fill: this.getColorFill(color),
             backgroundStroke: this.createDefaultStroke(scale, color),
             padding: [5, 5, 5, 5],
           }),
-          geometry: function (feature) {
+          geometry(feature) {
             return new Point((feature.getGeometry() as any).getCoordinates()[(feature.getGeometry() as any).getCoordinates().length - 1]);
           },
-          zIndex: zIndex,
+          zIndex,
         }),
       );
       styles.push(
@@ -353,10 +256,10 @@ export class DrawStyle {
             radius: scale * 50,
             fill: this.getColorFill(color),
           }),
-          geometry: function (feature) {
+          geometry(feature) {
             return new Point((feature.getGeometry() as any).getCoordinates()[0]);
           },
-          zIndex: zIndex,
+          zIndex,
         }),
       );
     }
@@ -368,15 +271,14 @@ export class DrawStyle {
     DrawStyle.symbolStyleCache = {};
     DrawStyle.vectorStyleCache = {};
     DrawStyle.colorFill = {};
-    DrawStyle.imageCache = {};
     DrawStyle.clusterStyleCache = {};
   }
 
   private static calculateCacheHashForCluster(groupedFeatures: any, selected: boolean): string {
     return Md5.hashStr(
       JSON.stringify({
-        groupedFeatures: groupedFeatures,
-        selected: selected,
+        groupedFeatures,
+        selected,
       }),
     ).toString();
   }
@@ -385,9 +287,9 @@ export class DrawStyle {
     feature = DrawStyle.getSubFeature(feature);
     return Md5.hashStr(
       JSON.stringify({
-        resolution: resolution,
+        resolution,
+        selected,
         rotation: signature.rotation,
-        selected: selected,
         label: signature.label,
         labelShow: signature.labelShow,
         signatureColor: signature.color,
@@ -398,6 +300,7 @@ export class DrawStyle {
         iconSize: signature.iconSize,
         iconOpacity: signature.iconOpacity,
         zindex: this.getZIndex(feature),
+        affectedPersons: signature.affectedPersons,
       }),
     ).toString();
   }
@@ -410,7 +313,7 @@ export class DrawStyle {
     editMode: boolean,
   ): string {
     feature = DrawStyle.getSubFeature(feature);
-    let relevantCoordinates = null;
+    let relevantCoordinates: any[] | null = null;
     if (feature?.getGeometry()?.getType() === 'LineString' && signature.arrow && signature.arrow !== 'none') {
       const coordinates = (feature?.getGeometry() as LineString)?.getCoordinates();
       relevantCoordinates = [coordinates[Math.max(0, coordinates.length - 1)], coordinates[Math.max(0, coordinates.length - 2)]];
@@ -418,12 +321,12 @@ export class DrawStyle {
 
     return Md5.hashStr(
       JSON.stringify({
+        resolution,
+        selected,
+        editMode,
         color: signature.color,
-        editMode: editMode,
-        selected: selected,
         protected: signature.protected,
         opacity: signature.fillOpacity,
-        resolution: resolution,
         lineStyle: signature.style,
         type: feature?.getGeometry()?.getType(),
         strokeWidth: signature.strokeWidth,
@@ -435,17 +338,9 @@ export class DrawStyle {
         fillStyleAngle: signature.fillStyle ? signature.fillStyle.angle : null,
         fillStyleSpacing: signature.fillStyle ? signature.fillStyle.spacing : null,
         reportNumber: signature.reportNumber,
+        id: feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID),
       }),
     ).toString();
-  }
-
-  private static getAnchorCoordinate(feature: FeatureLike) {
-    feature = DrawStyle.getSubFeature(feature);
-    switch (feature.getGeometry()?.getType()) {
-      case 'Point':
-        return (feature.getGeometry() as Point)?.getCoordinates();
-    }
-    return undefined;
   }
 
   public static getIconCoordinates(feature: FeatureLike, resolution: number) {
@@ -489,15 +384,13 @@ export class DrawStyle {
   private static getColorFill(color: string): Fill {
     let result = this.colorFill[color];
     if (!result) {
-      result = this.colorFill[color] = new Fill({
-        color: color,
-      });
+      result = this.colorFill[color] = new Fill({ color });
     }
     return result;
   }
 
   private static showIcon(signature: Sign): boolean {
-    return !signature.hideIcon && !!signature.src;
+    return !signature.hideIcon && Boolean(signature.src);
   }
 
   private static createDefaultStroke(scale: number, color: string, dashed = false, opacity = 1): Stroke {
@@ -515,7 +408,7 @@ export class DrawStyle {
 
   private static getSubFeature(feature: FeatureLike): FeatureLike {
     const subfeature = feature.get('features');
-    if (subfeature && subfeature.length == 1) {
+    if (subfeature && subfeature.length === 1) {
       return subfeature[0];
     }
     return feature;
@@ -529,18 +422,19 @@ export class DrawStyle {
     if (!iconStyles && signature.src && feature.getGeometry()) {
       iconStyles = this.symbolStyleCache[symbolCacheHash] = [];
       const showIcon = this.showIcon(signature);
-      const dashedStroke = this.createDefaultStroke(scale, signature.color || '#535353', true, signature.iconOpacity);
-      const iconRadius = scale * 250 * (signature.iconSize || 1);
+      const dashedStroke = this.createDefaultStroke(scale, signature.color ?? '#535353', true, signature.iconOpacity);
+      const iconRadius = scale * 250 * (signature.iconSize ?? 1);
+      const notificationIconRadius = iconRadius / 4;
       const highlightStroke = selected ? DrawStyle.getHighlightStroke(feature, scale) : null;
       if (showIcon && selected) {
         // Highlight the stroke to the icon
         iconStyles.push(
           new Style({
             stroke: highlightStroke ?? undefined,
-            geometry: function (feature) {
+            geometry(feature) {
               return DrawStyle.createLineToIcon(feature, resolution);
             },
-            zIndex: zIndex,
+            zIndex,
           }),
         );
 
@@ -553,7 +447,7 @@ export class DrawStyle {
           new Style({
             image: highlightCircle,
             geometry: (feature) => new Point(DrawStyle.getIconCoordinates(feature, resolution)[1]),
-            zIndex: zIndex,
+            zIndex,
           }),
         );
 
@@ -562,7 +456,7 @@ export class DrawStyle {
             new Style({
               image: highlightCircle,
               geometry: (feature) => new Point(DrawStyle.getEndIconCoordinates(feature, resolution)[1]),
-              zIndex: zIndex,
+              zIndex,
             }),
           );
         }
@@ -573,11 +467,11 @@ export class DrawStyle {
         iconStyles.push(
           new Style({
             stroke: dashedStroke,
-            opacity: signature.iconOpacity || 1,
-            geometry: function (feature: FeatureLike) {
+            opacity: signature.iconOpacity ?? 1,
+            geometry(feature: FeatureLike) {
               return DrawStyle.createLineToIcon(feature, resolution);
             },
-            zIndex: zIndex,
+            zIndex,
           } as any),
         );
 
@@ -590,12 +484,40 @@ export class DrawStyle {
         iconStyles.push(
           new Style({
             image: backgroundCircle,
-            geometry: function (feature) {
+            geometry(feature) {
               return new Point(DrawStyle.getIconCoordinates(feature, resolution)[1]);
             },
-            zIndex: zIndex,
+            zIndex,
           }),
         );
+
+        if (signature.affectedPersons) {
+          const notificationIcon = new Style({
+            image: new Circle({
+              radius: notificationIconRadius,
+              fill: this.getColorFill('#3f51b5'),
+            }),
+            text: new Text({
+              font: `${notificationIconRadius}px sans-serif`,
+              fill: new Fill({
+                color: '#fff',
+              }),
+              text: signature.affectedPersons.toString(),
+            }),
+            geometry(feature) {
+              // Calculate the coordinates of the point on the circumference in the top-right quadrant
+              const x = (Math.sqrt(2) * iconRadius * resolution) / 2;
+              const y = (Math.sqrt(2) * iconRadius * resolution) / 2;
+              const coordinates = DrawStyle.getIconCoordinates(feature, resolution)[1];
+              const point = new Point(coordinates);
+              point.translate(x, y);
+              return point;
+            },
+            zIndex,
+          });
+
+          iconStyles.push(notificationIcon);
+        }
 
         let iconLabel;
         let iconTextScale: any;
@@ -604,9 +526,9 @@ export class DrawStyle {
           iconTextScale = DrawStyle.scale(resolution, DrawStyle.textScaleFactor, 0.4);
           iconLabel = new Text({
             text: signature.label,
-            font: 20 + 'px sans-serif',
+            font: '20px sans-serif',
             scale: iconTextScale,
-            fill: this.getColorFill(signature.color || '#535353'),
+            fill: this.getColorFill(signature.color ?? '#535353'),
             backgroundFill: DrawStyle.getColorFill(`rgba(255, 255, 255, ${signature.iconOpacity})`),
             padding: [5, 5, 5, 5],
           });
@@ -614,11 +536,11 @@ export class DrawStyle {
           iconStyles.push(
             new Style({
               text: iconLabel,
-              geometry: function (feature) {
+              geometry(feature) {
                 const coordinates = DrawStyle.getIconCoordinates(feature, resolution)[1];
                 return new Point([coordinates[0], coordinates[1] - (35 / iconTextScale) * Math.max(resolution / 3, 1)]);
               },
-              zIndex: zIndex,
+              zIndex,
             }),
           );
         }
@@ -640,7 +562,7 @@ export class DrawStyle {
           anchor: [0.5, 0.5],
           anchorXUnits: 'fraction',
           anchorYUnits: 'fraction',
-          scale: scaledSize ? scaledSize : scale * 2.5 * (signature.iconSize || 1),
+          scale: scaledSize ? scaledSize : scale * 2 * (signature.iconSize ?? 1),
           rotation: signature.rotation !== undefined ? (signature.rotation * Math.PI) / 180 : 0,
           // rotationWithView: false,
           src: imageFromMemory ? undefined : this.getImageUrl(signature.src),
@@ -652,10 +574,10 @@ export class DrawStyle {
         iconStyles.push(
           new Style({
             image: icon,
-            geometry: function (feature) {
+            geometry(feature) {
               return new Point(DrawStyle.getIconCoordinates(feature, resolution)[1]);
             },
-            zIndex: zIndex,
+            zIndex,
           }),
         );
 
@@ -663,20 +585,20 @@ export class DrawStyle {
           iconStyles.push(
             new Style({
               image: backgroundCircle,
-              geometry: function (feature) {
+              geometry(feature) {
                 return new Point(DrawStyle.getEndIconCoordinates(feature, resolution)[1]);
               },
-              zIndex: zIndex,
+              zIndex,
             }),
           );
 
           iconStyles.push(
             new Style({
               image: icon,
-              geometry: function (feature) {
+              geometry(feature) {
                 return new Point(DrawStyle.getEndIconCoordinates(feature, resolution)[1]);
               },
-              zIndex: zIndex,
+              zIndex,
             }),
           );
 
@@ -684,11 +606,11 @@ export class DrawStyle {
             iconStyles.push(
               new Style({
                 text: iconLabel,
-                geometry: function (feature) {
+                geometry(feature) {
                   const coordinates = DrawStyle.getEndIconCoordinates(feature, resolution)[1];
                   return new Point([coordinates[0], coordinates[1] - 35 / iconTextScale]);
                 },
-                zIndex: zIndex,
+                zIndex,
               }),
             );
           }
@@ -704,11 +626,11 @@ export class DrawStyle {
   }
 
   private static getAreaFill(color: string, scale: number, fillStyle: FillStyle | undefined) {
-    if (fillStyle && fillStyle.name && fillStyle.name != 'filled') {
+    if (fillStyle?.name && fillStyle.name !== 'filled') {
       return new FillPattern({
+        color,
         pattern: fillStyle.name,
         ratio: 1,
-        color: color,
         offset: 0,
         scale: scale * 10,
         size: fillStyle.size,
@@ -743,6 +665,7 @@ export class DrawStyle {
       }
       vectorStyle.push(
         new Style({
+          geometry: feature.getGeometry() as Geometry,
           stroke: new Stroke({
             color: DrawStyle.colorFunction(signature.color, 1.0),
             width: this.calculateStrokeWidth(scale, signature),
@@ -750,7 +673,7 @@ export class DrawStyle {
             lineDashOffset: DrawStyle.getDashOffset(signature.style, resolution),
           }),
           fill: this.getAreaFill(DrawStyle.colorFunction(signature.color, signature.fillOpacity), scale, signature.fillStyle),
-          zIndex: zIndex,
+          zIndex,
         }),
       );
 
@@ -767,7 +690,7 @@ export class DrawStyle {
           new Style({
             geometry: new Point(lastCoordinate),
             image: new Icon({
-              src: 'assets/img/arrow_' + signature.arrow + '.svg',
+              src: `assets/img/arrow_${signature.arrow}.svg`,
               anchorXUnits: 'fraction',
               anchorYUnits: 'fraction',
               anchor: [1, 0.5],
@@ -776,7 +699,7 @@ export class DrawStyle {
               scale: scale * 0.4,
               color: DrawStyle.colorFunction(signature.color, 1.0),
             }),
-            zIndex: zIndex,
+            zIndex,
           }),
         );
       }
@@ -792,7 +715,7 @@ export class DrawStyle {
   }
 
   private static calculateStrokeWidth(scale: number, signature: Sign): number {
-    return scale * 20 * (signature.strokeWidth || 1);
+    return scale * 20 * (signature.strokeWidth ?? 1);
   }
 
   private static getHighlightStroke(feature: FeatureLike, scale: number): Stroke {
@@ -806,13 +729,17 @@ export class DrawStyle {
   private static getHighlightLineWhenSelectedStyle(feature: FeatureLike, scale: number, selected: boolean): Style | null {
     feature = DrawStyle.getSubFeature(feature);
     if (selected) {
+      // skipcq: JS-0047
       switch (feature.getGeometry()?.getType()) {
         case 'Polygon':
         case 'MultiPolygon':
         case 'LineString':
           return new Style({
+            geometry: feature.getGeometry() as Geometry,
             stroke: DrawStyle.getHighlightStroke(feature, scale),
           });
+        default:
+          return null;
       }
     }
     return null;
@@ -837,6 +764,8 @@ export class DrawStyle {
             return (feature.getGeometry() as LineString).getCoordinates();
           };
           break;
+        default:
+          coordinatesFunction = null;
       }
       if (coordinatesFunction) {
         return new Style({
@@ -846,7 +775,8 @@ export class DrawStyle {
               color: 'orange',
             }),
           }),
-          geometry: function (feature) {
+          geometry(feature) {
+            feature = DrawStyle.getSubFeature(feature);
             return new MultiPoint(coordinatesFunction(feature));
           },
           zIndex: selected ? Infinity : this.getZIndex(feature),
@@ -859,11 +789,11 @@ export class DrawStyle {
   private static colorFunction = function (signatureColor: string | undefined, alpha = 1) {
     if (signatureColor) {
       let hexAlpha = Math.floor(255 * (alpha !== undefined ? alpha : 1)).toString(16);
-      if (hexAlpha.length == 1) {
-        hexAlpha = '0' + hexAlpha;
+      if (hexAlpha.length === 1) {
+        hexAlpha = `0${hexAlpha}`;
       }
       return signatureColor + hexAlpha;
     }
-    return 'rgba(121, 153, 242, ' + (alpha !== undefined ? alpha : '1') + ')';
+    return `rgba(121, 153, 242, ${alpha !== undefined ? alpha : '1'})`;
   };
 }

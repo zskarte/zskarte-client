@@ -1,18 +1,6 @@
 <div class="content">
-  <div style="z-index: 10; position: relative">
-    <app-toolbar></app-toolbar>
+  <app-floating-ui />
+  <div class="map">
+    <app-map-renderer></app-map-renderer>
   </div>
-  <mat-sidenav-container style="flex: 1">
-    <mat-sidenav class="sidenav" position="end" mode="side" #sidenav [opened]="(sidebarContext$ | async) !== null">
-      <app-sidebar [hidden]="(sidebarContext$ | async) === sidebarContext.Filters"></app-sidebar>
-      <app-sidebar-filters [hidden]="(sidebarContext$ | async) === sidebarContext.Layers"></app-sidebar-filters>
-    </mat-sidenav>
-    <mat-sidenav-content>
-      <div class="map">
-        <app-map-renderer></app-map-renderer>
-      </div>
-      <app-selected-feature></app-selected-feature>
-      <app-fab-menu *ngIf="!(state.observeIsReadOnly() | async)" [layer]="(activeLayer$ | async) ?? undefined"></app-fab-menu>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
 </div>

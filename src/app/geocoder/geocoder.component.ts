@@ -5,8 +5,6 @@ import { ZsMapStateService } from '../state/state.service';
 import { transform } from 'ol/proj';
 import { SessionService } from '../session/session.service';
 import { Subject, takeUntil } from 'rxjs';
-import { Geometry, LineString, Point, Polygon } from 'ol/geom';
-import { FeatureLike } from 'ol/Feature';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 interface IFoundLocation {
@@ -52,51 +50,6 @@ export class GeocoderComponent implements OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  private getCoordinate(geometry: Geometry) {
-    switch (geometry.getType()) {
-      case 'Point':
-        return (geometry as Point).getCoordinates();
-      case 'LineString':
-        return (geometry as LineString).getCoordinates()[0];
-      case 'Polygon':
-        return (geometry as Polygon).getCoordinates()[0][0];
-    }
-    return null;
-  }
-
-  private mapFeatureForSearch(f: FeatureLike) {
-    const sig = f.get('sig');
-    const sign = this.i18n.getLabelForSign(sig);
-    let label = '';
-    if (sign) {
-      label += '<i>' + sign + '</i> ';
-    }
-    if (sig.label) {
-      label += sig.label;
-    }
-    const normalizedLabel = label.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    const words = this.inputText.toLowerCase().split(' ');
-    let allHits = true;
-
-    words.forEach((word) => {
-      if (!normalizedLabel.toLowerCase().includes(word.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) {
-        allHits = false;
-      }
-    });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const coordinates = this.getCoordinate((f as any).getGeometry());
-    return {
-      attrs: {
-        label: label,
-        normalizedLabel: normalizedLabel,
-        mercatorCoordinates: coordinates,
-        hit: coordinates ? allHits : false,
-        feature: f,
-      },
-      uuid: f.getId(),
-    };
-  }
-
   geoCodeLoad() {
     if (this.inputText.length > 1) {
       const originalInput = this.inputText;
@@ -112,6 +65,7 @@ export class GeocoderComponent implements OnDestroy {
     }
   }
 
+  // skipcq: JS-0105
   getLabel(selected: IFoundLocationAttrs): string {
     return selected ? selected.label.replace(/<[^>]*>/g, '') : '';
   }
@@ -133,7 +87,7 @@ export class GeocoderComponent implements OnDestroy {
         coordinates = [element.mercatorCoordinates[1], element.mercatorCoordinates[0]];
         this.zsMapStateService.updatePositionFlag({
           isVisible: true,
-          coordinates: coordinates,
+          coordinates,
         });
         if (center) {
           this.zsMapStateService.setMapCenter(coordinates);
@@ -142,7 +96,7 @@ export class GeocoderComponent implements OnDestroy {
         coordinates = transform([element.lon, element.lat], 'EPSG:4326', 'EPSG:3857');
         this.zsMapStateService.updatePositionFlag({
           isVisible: true,
-          coordinates: coordinates,
+          coordinates,
         });
 
         if (center) {
@@ -156,10 +110,5 @@ export class GeocoderComponent implements OnDestroy {
 
   goToCoordinate(center: boolean) {
     this.doGoToCoordinate(this.selected, center);
-  }
-
-  removeSelectedLocation() {
-    this.selected = null;
-    this.zsMapStateService.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
   }
 }

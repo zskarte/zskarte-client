@@ -11,7 +11,10 @@ import { OperationExportFile } from '../core/entity/operationExportFile';
 export class ImportDialogComponent {
   @ViewChild('fileInput', { static: false }) el!: ElementRef;
 
-  constructor(public dialogRef: MatDialogRef<ImportDialogComponent, OperationExportFile | null>, public i18n: I18NService) {}
+  constructor(
+    public dialogRef: MatDialogRef<ImportDialogComponent, OperationExportFile | null>,
+    public i18n: I18NService,
+  ) {}
 
   onNoClick(): void {
     this.dialogRef.close(null);
@@ -19,7 +22,7 @@ export class ImportDialogComponent {
 
   readFromFile() {
     const reader = new FileReader();
-    for (let index = 0; index < this.el.nativeElement.files.length; index++) {
+    for (const file of this.el.nativeElement.files) {
       reader.onload = () => {
         // this 'text' is the content of the file
         const text = reader.result as string;
@@ -27,7 +30,7 @@ export class ImportDialogComponent {
           this.dialogRef.close(JSON.parse(text));
         }
       };
-      reader.readAsText(this.el.nativeElement.files[index], 'UTF-8');
+      reader.readAsText(file, 'UTF-8');
     }
   }
 }

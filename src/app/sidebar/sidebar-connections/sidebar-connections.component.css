@@ -1,0 +1,64 @@
+.flex-container-connection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.connections-container {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.offline-container {
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 50px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.offline-container > .mat-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 48px;
+}
+
+mat-list mat-list-item {
+  padding: 0;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.font-semibold {
+  font-weight: 500;
+}
+.font-gray {
+  color: #8c8c8c;
+}
+
+.flex-label {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 58px;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: rgb(228, 217, 217);
+  background-image: linear-gradient(to right, rgba(228, 217, 217, 0), rgba(228, 217, 217, 0.75), rgba(228, 217, 217, 0));
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  margin-bottom: -1.25em;
+}

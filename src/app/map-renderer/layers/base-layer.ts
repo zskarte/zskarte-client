@@ -1,28 +1,48 @@
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
-import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from '../../state/interfaces';
+import { ZsMapDrawElementStateType, ZsMapLayerState } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature, { FeatureLike } from 'ol/Feature';
 import { DrawStyle } from '../draw-style';
+import { Cluster } from 'ol/source';
+import { Geometry, Point } from 'ol/geom';
+import { getCenter } from 'ol/extent';
 
 export abstract class ZsMapBaseLayer {
   protected _layer: Observable<ZsMapLayerState | undefined>;
   protected _olSource = new VectorSource();
   protected _unsubscribe = new Subject<void>();
 
-  protected _olLayer: VectorLayer<VectorSource> = new VectorLayer({
+  protected _clusterSource = new Cluster({
+    distance: 20,
     source: this._olSource,
+    geometryFunction: (feature: Feature<Geometry>) => {
+      const geom = feature.getGeometry();
+      const type = geom?.getType();
+      if (type === 'Point') {
+        return geom as Point;
+      } else {
+        return new Point(getCenter(geom?.getExtent() ?? []));
+      }
+    },
+  });
+  protected _olLayer: VectorLayer<VectorSource> = new VectorLayer({
+    source: this._clusterSource,
     style: (feature: FeatureLike, resolution: number) => {
       if (feature.get('hidden') === true) {
         return undefined;
       }
+
       return DrawStyle.styleFunction(feature, resolution);
     },
   });
 
-  constructor(protected _id: string, protected _state: ZsMapStateService) {
+  constructor(
+    protected _id: string,
+    protected _state: ZsMapStateService,
+  ) {
     this._layer = this._state.observeMapState().pipe(
       map((o) => {
         if (o?.layers && o.layers.length > 0) {
@@ -51,6 +71,12 @@ export abstract class ZsMapBaseLayer {
       .subscribe((opacity) => {
         this._olLayer.setOpacity(opacity);
       });
+
+    combineLatest([this.observeMapZoom(), this._state.observeEnableClustering()]).subscribe(([mapZoom, enableClustering]) => {
+      // don't show clustering if zoomed in more than 14
+      const shouldCluster = enableClustering && mapZoom < 14;
+      this._olLayer.setSource(shouldCluster ? this._clusterSource : this._olSource);
+    });
   }
 
   public getId(): string {
@@ -71,16 +97,6 @@ export abstract class ZsMapBaseLayer {
 
   // public getOlSource(): VectorSource;
 
-  public observeType(): Observable<ZsMapLayerStateType | undefined> {
-    return this._layer.pipe(
-      map((o) => {
-        return o?.type;
-      }),
-      distinctUntilChanged((x, y) => x === y),
-      takeUntil(this._unsubscribe),
-    );
-  }
-
   public observeOpacity(): Observable<number> {
     return this._state.observeDisplayState().pipe(
       map((o) => {
@@ -91,17 +107,18 @@ export abstract class ZsMapBaseLayer {
     );
   }
 
-  public setOpacity(opacity: number): void {
-    this._state.updateDisplayState((draft) => {
-      draft.layerOpacity[this._id] = opacity;
-    });
-  }
-
   public observeName(): Observable<string | undefined> {
     return this._layer.pipe(
       map((o) => {
         return o?.name;
       }),
+      distinctUntilChanged((x, y) => x === y),
+      takeUntil(this._unsubscribe),
+    );
+  }
+
+  public observeMapZoom(): Observable<number> {
+    return this._state.observeMapZoom().pipe(
       distinctUntilChanged((x, y) => x === y),
       takeUntil(this._unsubscribe),
     );
@@ -126,15 +143,6 @@ export abstract class ZsMapBaseLayer {
     );
   }
 
-  public observeIsActive(): Observable<boolean> {
-    return this._state.observeDisplayState().pipe(
-      map((o) => {
-        return o?.activeLayer === this._id;
-      }),
-      distinctUntilChanged((x, y) => x === y),
-    );
-  }
-
   public observePosition(): Observable<number> {
     return this._state.observeDisplayState().pipe(
       map((o) => {
@@ -145,58 +153,7 @@ export abstract class ZsMapBaseLayer {
     );
   }
 
-  public show(): void {
-    this._state.updateDisplayState((draft) => {
-      draft.layerVisibility[this._id] = true;
-    });
-  }
-
-  public hide(): void {
-    this._state.updateDisplayState((draft) => {
-      draft.layerVisibility[this._id] = false;
-    });
-  }
-
-  public moveUp(): void {
-    this._state.updateDisplayState((draft) => {
-      const index = draft.layerOrder.findIndex((o) => o === this._id);
-      draft.layerOrder.splice(index, 1);
-      draft.layerOrder.splice(index + 1, 0, this._id);
-    });
-  }
-
-  public moveDown(): void {
-    this._state.updateDisplayState((draft) => {
-      const index = draft.layerOrder.findIndex((o) => o === this._id);
-      draft.layerOrder.splice(index, 1);
-      draft.layerOrder.splice(index - 1, 0, this._id);
-    });
-  }
-
-  public remove(): void {
-    this._state.updateDisplayState((draft) => {
-      delete draft.layerVisibility[this._id];
-      delete draft.layerOpacity[this._id];
-      const index = draft.layerOrder.findIndex((o) => o === this._id);
-      if (index >= 0) {
-        draft.layerOrder.splice(index, 1);
-      }
-    });
-    this._state.updateMapState((draft) => {
-      const index = draft.layers?.findIndex((o) => o.id === this._id) || -1;
-      if (index > -1) {
-        draft.layers?.splice(index, 1);
-      }
-    });
-  }
-
-  public activate(): void {
-    this._state.updateDisplayState((draft) => {
-      draft.activeLayer = this._id;
-    });
-  }
-
-  public abstract draw(type: ZsMapDrawElementStateType): void;
+  public abstract draw(type: ZsMapDrawElementStateType, options?: { symbolId?: number; text?: string }): void;
 
   public unsubscribe(): void {
     this._unsubscribe.next();

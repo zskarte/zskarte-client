@@ -27,34 +27,36 @@ export class EditCoordinatesComponent {
   }
 
   ok(): void {
-    let parsedCoordinates;
     try {
-      parsedCoordinates = JSON.parse(this.coordinates);
+      const parsedCoordinates = JSON.parse(this.coordinates);
+      if (parsedCoordinates) {
+        let valid: boolean;
+        switch (this.geometry) {
+          case 'Point':
+            valid = this.isValidPointCoordinate(parsedCoordinates);
+            break;
+          case 'LineString':
+            valid = this.isValidLine(parsedCoordinates);
+            break;
+          case 'Polygon':
+          case 'MultiPolygon':
+            valid = this.isValidPolygon(parsedCoordinates);
+            break;
+          default:
+            valid = true;
+        }
+        if (valid) {
+          this.dialogRef.close(parsedCoordinates);
+        } else {
+          this.error = 'Invalid coordinates';
+        }
+      }
     } catch (e) {
       this.error = 'Invalid JSON payload';
     }
-    if (parsedCoordinates) {
-      let valid = true;
-      switch (this.geometry) {
-        case 'Point':
-          valid = this.isValidPointCoordinate(parsedCoordinates);
-          break;
-        case 'LineString':
-          valid = this.isValidLine(parsedCoordinates);
-          break;
-        case 'Polygon':
-        case 'MultiPolygon':
-          valid = this.isValidPolygon(parsedCoordinates);
-          break;
-      }
-      if (valid) {
-        this.dialogRef.close(parsedCoordinates);
-      } else {
-        this.error = 'Invalid coordinates';
-      }
-    }
   }
 
+  // skipcq: JS-0105
   private isValidPointCoordinate(coordinates: Coordinate | number) {
     return Array.isArray(coordinates) && coordinates.length === 2 && coordinates.filter((c) => typeof c !== 'number').length === 0;
   }
@@ -72,7 +74,7 @@ export class EditCoordinatesComponent {
           !Array.isArray(coordinateGroup) ||
           coordinateGroup.length < 3 ||
           coordinateGroup.filter((c) => !this.isValidPointCoordinate(c)).length > 0,
-      ).length == 0
+      ).length === 0
     );
   }
 }

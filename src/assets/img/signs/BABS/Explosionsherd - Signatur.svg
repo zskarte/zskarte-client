@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<svg version="1.2" width="150px" height="150px" viewBox="0 0 1160 1160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g visibility="visible" id="MasterSlide_1_Standard">
-  <g id="Drawing_1">
-  <path fill="rgb(255,20,21)" stroke="none" d="M 22,1064 L 414,903 128,550 489,765 304,173 581,585 648,104 749,637 989,147 850,760 1145,509 901,913 1085,1064 22,1064 Z M 611,917 L 428,810 537,943 397,993 889,993 807,930 866,834 744,939 806,667 721,845 659,522 624,774 497,605 611,917 Z"/>
-  </g>
- </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 156 156" width="156px" height="156px"  style="enable-background:new 0 0 156 156;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF1415;}
+</style>
+<path class="st0" d="M0.4,144.4l54-22.2L15,73.3l49.8,29.8L39.3,21.1l38.3,57l9.3-66.5l13.9,73.7L134,17.5l-19.3,84.8l40.9-34.7
+	l-33.7,56l25.4,20.8L0.4,144.4L0.4,144.4z M81.7,124.1l-25.3-14.8l14.9,18.4l-19.3,6.9h67.9l-11.3-8.6l8.1-13.3L100.2,127l8.5-37.5
+	l-11.8,24.7l-8.5-44.8l-4.8,34.9L66,81L81.7,124.1L81.7,124.1z"/>
 </svg>
