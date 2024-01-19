@@ -1,6 +1,7 @@
 {
   "/api": {
     "target": "https://api-dev.zskarte.ch",
-    "secure": false
+    "secure": false,
+    "changeOrigin": true
   }
 }

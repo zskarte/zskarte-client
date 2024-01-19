@@ -91,7 +91,7 @@
             },
             "development-local": {
               "buildTarget": "zskarte-v3:build:local",
-              "proxyConfig": "src/proxy-local.conf.json"
+              "proxyConfig": "src/proxy-dev.conf.json"
             },
             "local": {
               "buildTarget": "zskarte-v3:build:local",
