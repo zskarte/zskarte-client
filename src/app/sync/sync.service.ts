@@ -175,15 +175,12 @@ export class SyncService {
   }, 1000);
 
   public async _publishCurrentLocation(longLat: { long: number; lat: number } | undefined): Promise<void> {
-    const { error } = await this._api.post('/api/operations/mapstate/currentlocation', longLat, {
+    await this._api.post('/api/operations/mapstate/currentlocation', longLat, {
       headers: {
         operationId: String(this._session.getOperationId()),
         identifier: this._connectionId,
       },
     });
-    if (error) {
-      return;
-    }
   }
 
   public observeConnections() {
