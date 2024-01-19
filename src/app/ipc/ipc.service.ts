@@ -17,12 +17,12 @@ export class IpcService {
 
   public async saveFile(params: { data: string; fileName: string; mimeType: string; filters?: FileFilter[] }): Promise<void> {
     if (isElectron()) {
-      return await this._invoke('fs:saveFile', params);
+      await this._invoke('fs:saveFile', params);
+      return;
     }
 
     const blob = new Blob([params.data], { type: params.mimeType });
     FileSaver.saveAs(blob, params.fileName);
-    return;
   }
 
   public async openFile(params: { filters: FileFilter[] }): Promise<string> {
