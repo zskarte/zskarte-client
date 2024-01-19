@@ -20,6 +20,7 @@ import {
 } from '../core/entity/sign';
 import { Geometry, MultiPolygon } from 'ol/geom';
 import { FeatureLike } from 'ol/Feature';
+import { ZsMapOLFeatureProps } from './elements/base/ol-feature-props';
 
 export class DrawStyle {
   static defaultScaleFactor = 0.2;
@@ -331,6 +332,7 @@ export class DrawStyle {
         fillStyleAngle: signature.fillStyle ? signature.fillStyle.angle : null,
         fillStyleSpacing: signature.fillStyle ? signature.fillStyle.spacing : null,
         reportNumber: signature.reportNumber,
+        id: feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID),
       }),
     ).toString();
   }
