@@ -5,8 +5,6 @@ import { ZsMapStateService } from '../state/state.service';
 import { transform } from 'ol/proj';
 import { SessionService } from '../session/session.service';
 import { Subject, takeUntil } from 'rxjs';
-import { Geometry, LineString, Point, Polygon } from 'ol/geom';
-import { FeatureLike } from 'ol/Feature';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 interface IFoundLocation {
@@ -50,51 +48,6 @@ export class GeocoderComponent implements OnDestroy {
   ngOnDestroy(): void {
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
-  }
-
-  private getCoordinate(geometry: Geometry) {
-    switch (geometry.getType()) {
-      case 'Point':
-        return (geometry as Point).getCoordinates();
-      case 'LineString':
-        return (geometry as LineString).getCoordinates()[0];
-      case 'Polygon':
-        return (geometry as Polygon).getCoordinates()[0][0];
-    }
-    return null;
-  }
-
-  private mapFeatureForSearch(f: FeatureLike) {
-    const sig = f.get('sig');
-    const sign = this.i18n.getLabelForSign(sig);
-    let label = '';
-    if (sign) {
-      label += '<i>' + sign + '</i> ';
-    }
-    if (sig.label) {
-      label += sig.label;
-    }
-    const normalizedLabel = label.normalize('NFD').replace(/[\u0300-\u036f]/gu, '');
-    const words = this.inputText.toLowerCase().split(' ');
-    let allHits = true;
-
-    words.forEach((word) => {
-      if (!normalizedLabel.toLowerCase().includes(word.normalize('NFD').replace(/[\u0300-\u036f]/gu, ''))) {
-        allHits = false;
-      }
-    });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const coordinates = this.getCoordinate((f as any).getGeometry());
-    return {
-      attrs: {
-        label: label,
-        normalizedLabel: normalizedLabel,
-        mercatorCoordinates: coordinates,
-        hit: coordinates ? allHits : false,
-        feature: f,
-      },
-      uuid: f.getId(),
-    };
   }
 
   geoCodeLoad() {
@@ -156,10 +109,5 @@ export class GeocoderComponent implements OnDestroy {
 
   goToCoordinate(center: boolean) {
     this.doGoToCoordinate(this.selected, center);
-  }
-
-  removeSelectedLocation() {
-    this.selected = null;
-    this.zsMapStateService.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
   }
 }

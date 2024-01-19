@@ -8,7 +8,7 @@ import { IZsMapOperation } from './operation.interfaces';
 import { ZsMapLayerStateType } from '../../state/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { I18NService } from '../../state/i18n.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { DateTime } from 'luxon';
 import { IpcService } from '../../ipc/ipc.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,7 +23,7 @@ import { OperationExportFileVersion } from '../../core/entity/operationExportFil
 export class OperationsComponent implements OnDestroy {
   public operations = new BehaviorSubject<IZsMapOperation[]>([]);
   public operationToEdit = new BehaviorSubject<IZsMapOperation | undefined>(undefined);
-  public downloadData: SafeUrl | null = null;
+
   private _ngUnsubscribe = new Subject<void>();
 
   constructor(

@@ -1,6 +1,6 @@
 import { Coordinate } from 'ol/coordinate';
 import { Geometry } from 'ol/geom';
-import { getLength, getArea } from 'ol/sphere';
+import { getArea, getLength } from 'ol/sphere';
 
 export const areCoordinatesEqual = (
   c1: undefined | null | number | number[] | number[][] | Coordinate,
@@ -21,10 +21,7 @@ export const areCoordinatesEqual = (
     }
     return isArrayEqual;
   }
-  if (c1 === c2) {
-    return true;
-  }
-  return false;
+  return c1 === c2;
 };
 
 export function formatLength(line: Geometry) {

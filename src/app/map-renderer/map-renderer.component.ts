@@ -765,7 +765,7 @@ export class MapRendererComponent implements AfterViewInit {
       const coordinationGroup = await this.getCoordinationGroupOfLastPoint();
       this.toggleEditButtons(false);
       if (coordinationGroup) {
-        this.doCopySign(coordinationGroup?.feature);
+        await this.doCopySign(coordinationGroup?.feature);
       }
     });
     this.drawButton.getElement()?.addEventListener('click', () => this.toggleDrawingDialog());

@@ -27,12 +27,4 @@ export class CoordinatesComponent {
     }
     return '';
   }
-
-  static transformToProjection(coordinates: Coordinate, projectionIndex: number) {
-    const projection = availableProjections[projectionIndex].projection;
-    if (projection && mercatorProjection && coordinates.every((c) => !isNaN(c))) {
-      return transform(coordinates, mercatorProjection, projection);
-    }
-    return undefined;
-  }
 }

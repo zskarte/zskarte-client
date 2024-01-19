@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Style, { StyleLike } from 'ol/style/Style';
+import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import FillPattern from 'ol-ext/style/FillPattern';
@@ -127,17 +127,8 @@ export class DrawStyle {
     return [iconSizeInCoordinates - leftOffset * iconSizeInCoordinates, iconSizeInCoordinates - topOffset * iconSizeInCoordinates];
   }
 
-  public static clusterStyleFunctionDefault(feature: FeatureLike, resolution: number): StyleLike {
-    if (resolution !== DrawStyle.lastResolution) {
-      DrawStyle.lastResolution = resolution;
-      DrawStyle.clearCaches();
-    }
-    return DrawStyle.clusterStyleFunction(feature, resolution, false);
-  }
-
   private static clusterStyleFunction(feature: FeatureLike, resolution: number, selected: boolean): Style[] {
-    const coordinateScale = resolution;
-    const iconSizeInCoordinates = 50 * coordinateScale;
+    const iconSizeInCoordinates = 50 * resolution;
     const scale = 0.12;
     const features = feature.get('features');
     if (features.length === 0) {
@@ -437,15 +428,6 @@ export class DrawStyle {
         reportNumber: signature.reportNumber,
       }),
     ).toString();
-  }
-
-  private static getAnchorCoordinate(feature: FeatureLike) {
-    feature = DrawStyle.getSubFeature(feature);
-    switch (feature.getGeometry()?.getType()) {
-      case 'Point':
-        return (feature.getGeometry() as Point)?.getCoordinates();
-    }
-    return undefined;
   }
 
   public static getIconCoordinates(feature: FeatureLike, resolution: number) {
