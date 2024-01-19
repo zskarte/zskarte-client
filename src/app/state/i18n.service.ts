@@ -1295,8 +1295,8 @@ export class I18NService {
       fr: 'Importer événement',
     },
     featureClustering: {
-      de: 'Feature-Clustering',
-      en: 'Feature clustering',
+      de: 'Symbole Gruppieren',
+      en: 'Sign clustering',
       fr: 'Regroupement de formes',
     },
     eventState: {
