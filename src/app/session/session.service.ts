@@ -39,7 +39,7 @@ export class SessionService {
           this._state
             .observeDisplayState()
             .pipe(skip(1), takeUntil(this._clearOperation))
-            .subscribe(async (displayState) => {
+            .subscribe((displayState) => {
               if (this._session.value?.operationId) {
                 db.displayStates.put({ ...displayState, id: this._session.value.operationId });
               }
@@ -69,24 +69,22 @@ export class SessionService {
     this._isOnline
       .asObservable()
       .pipe(skip(1), distinctUntilChanged())
-      .subscribe(async (isOnline) => {
-        if (isOnline) {
-          of([])
-            .pipe(
-              switchMap(async () => {
-                await this.refreshToken();
-              }),
-              retry({ count: 5, delay: 1000 }),
-              takeUntil(this._isOnline.asObservable().pipe(filter((isOnline) => !isOnline))),
-            )
-            .subscribe({
-              complete: () => {
-                // feature: show notification that connection was restored
-              },
-            });
-        } else {
-          // feature: show notification that connection was lost
-        }
+      .subscribe((isOnline) => {
+        // feature: show notification that connection was lost
+        if (!isOnline) return;
+        of([])
+          .pipe(
+            switchMap(async () => {
+              await this.refreshToken();
+            }),
+            retry({ count: 5, delay: 1000 }),
+            takeUntil(this._isOnline.asObservable().pipe(filter((isOnline) => !isOnline))),
+          )
+          .subscribe({
+            complete: () => {
+              // feature: show notification that connection was restored
+            },
+          });
       });
   }
 
@@ -247,7 +245,7 @@ export class SessionService {
 
   public async logout(): Promise<void> {
     this._session.next(undefined);
-    this._router.navigateByUrl('/login');
+    await this._router.navigateByUrl('/login');
   }
 
   public async refreshToken(): Promise<void> {

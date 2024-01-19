@@ -255,7 +255,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     const confirm = this.dialog.open(ConfirmationDialogComponent, {
       data: this.i18n.get('removeFeatureFromMapConfirm'),
     });
-    confirm.afterClosed().subscribe(async (r) => {
+    confirm.afterClosed().subscribe((r) => {
       if (r && drawElement.id) {
         this.zsMapStateService.removeDrawElement(drawElement.id);
         this.zsMapStateService.resetSelectedFeature();

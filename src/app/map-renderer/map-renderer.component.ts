@@ -921,13 +921,13 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.resetSelectedFeature();
   }
 
-  async toggleEditButtons(show: boolean, allowRotation = false) {
+  toggleEditButtons(show: boolean, allowRotation = false) {
     this.toggleButton(show, this.removeButton?.getElement());
     this.toggleButton(allowRotation, this.rotateButton?.getElement());
     this.toggleButton(allowRotation, this.copyButton?.getElement());
   }
 
-  async toggleFlagButtons(show: boolean) {
+  toggleFlagButtons(show: boolean) {
     this.toggleButton(show, this.drawButton?.getElement());
     this.toggleButton(show, this.closeButton?.getElement());
   }
