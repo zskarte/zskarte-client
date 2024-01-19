@@ -63,6 +63,12 @@ app-fab-menu {
   margin-top: 1.25rem;
 }
 
+app-sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 app-coordinates {
   pointer-events: auto;
   margin-right: 1.25rem;

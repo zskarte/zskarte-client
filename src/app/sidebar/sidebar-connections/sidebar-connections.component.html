@@ -1,6 +1,6 @@
 <div *ngIf="isOnline | async" class="connections-container">
   <div class="flex-label">
-    <mat-form-field *ngIf="labelEdit$ | async" style="margin-bottom: -1.25em">
+    <mat-form-field appearance="outline" *ngIf="labelEdit$ | async" style="margin-bottom: -1.25em">
       <mat-label>{{ i18n.get('myName') }}</mat-label>
       <input type="text" matInput [ngModel]="session.getLabel()" (ngModelChange)="label$.next($event)" />
     </mat-form-field>
