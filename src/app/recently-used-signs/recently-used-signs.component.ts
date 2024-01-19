@@ -44,7 +44,7 @@ export class RecentlyUsedSignsComponent implements OnInit, OnDestroy {
   }
 
   @Input() dialog!: SelectSignDialog;
-  @Output() selectSign: EventEmitter<Sign> = new EventEmitter<Sign>();
+  @Output() readonly selectSign: EventEmitter<Sign> = new EventEmitter<Sign>();
 
   private signsSource: Sign[] = [];
 
