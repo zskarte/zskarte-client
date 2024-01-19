@@ -164,7 +164,8 @@ export class SessionService {
   public async loadSavedSession(): Promise<void> {
     const session = await this.getSavedSession();
     if (session?.jwt) {
-      return await this.updateJWT(session?.jwt);
+      await this.updateJWT(session?.jwt);
+      return;
     }
     this._session.next(undefined);
   }
@@ -263,8 +264,6 @@ export class SessionService {
     }
 
     await this.updateJWT(result.jwt);
-
-    return;
   }
 
   public getToken(): string | undefined {

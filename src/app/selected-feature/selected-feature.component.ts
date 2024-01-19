@@ -72,9 +72,8 @@ export class SelectedFeatureComponent implements OnDestroy {
       takeUntil(this._ngUnsubscribe),
       map((element) => {
         const sig = element?.getOlFeature()?.get('sig');
-        if (sig) {
-          return sig.id ? Signs.getSignById(sig.id) : { ...sig };
-        }
+        if (!sig) return undefined;
+        return sig.id ? Signs.getSignById(sig.id) : { ...sig };
       }),
     );
 

@@ -72,7 +72,7 @@ export class SyncService {
     }
 
     if (this._connectingPromise) {
-      return await this._connectingPromise;
+      await this._connectingPromise;
     }
 
     this._connectingPromise = new Promise<void>((resolve, reject) => {
@@ -115,7 +115,7 @@ export class SyncService {
       this._connectingPromise = undefined;
     });
 
-    return await this._connectingPromise;
+    await this._connectingPromise;
   }
 
   private _disconnect(): void {
