@@ -50,7 +50,10 @@
               />
             </mat-form-field>
 
-            <mat-form-field appearance="outline" *ngIf="(editMode | async) && personSigns.includes((selectedFeature | async)?.get('sig').id)">
+            <mat-form-field
+              appearance="outline"
+              *ngIf="(editMode | async) && personSigns.includes((selectedFeature | async)?.get('sig').id)"
+            >
               <mat-label>{{ i18n.get('affectedPersons') }}</mat-label>
               <input
                 matInput
