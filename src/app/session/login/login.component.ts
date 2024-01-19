@@ -60,10 +60,6 @@ export class LoginComponent {
     }
   }
 
-  compareFn(o1: IZso, o2: IZso) {
-    return o1 && o2 ? o1.name === o2.name : o1 === o2;
-  }
-
   filterControl = new FormControl();
 
   filterOrganizations() {
@@ -76,6 +72,7 @@ export class LoginComponent {
     this.filteredOrganizations.next(currentFiltered);
   }
 
+  // skipcq: JS-0105
   public nameProperty(zso: IZso) {
     return zso?.name;
   }

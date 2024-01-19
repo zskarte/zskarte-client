@@ -40,55 +40,13 @@ export class GeoadminService {
     }
 
     return this.http
-      .get(`https://api3.geo.admin.ch/rest/services/api/MapServer/${layerId}/legend?lang=` + this._session.getLocale(), {
+      .get(`https://api3.geo.admin.ch/rest/services/api/MapServer/${layerId}/legend?lang=${this._session.getLocale()}`, {
         responseType: 'text',
       })
       .pipe(tap((data) => (this._legendCache = data)));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  queryPolygons(layerId: string, searchField: string, searchText: string): Promise<any[]> {
-    return new Promise((resolve) =>
-      this.http
-        .get(
-          `https://api3.geo.admin.ch/rest/services/api/MapServer/find?layer=${layerId}&searchField=${searchField}&searchText=${searchText}&geometryFormat=geojson&sr=3857`,
-        )
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        .subscribe((data: any) => {
-          if (data?.results) {
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            const features: any[] = [];
-            for (const r of data.results) {
-              const geometry = r.geometry;
-              if (geometry['type'] && geometry['type'] === 'MultiPolygon') {
-                const coordinates = geometry['coordinates'];
-                const flatCoordinates: number[] = [];
-                for (const polygon of coordinates) {
-                  for (const polygonCoordinates of polygon) {
-                    flatCoordinates.push(polygonCoordinates);
-                  }
-                }
-                const feature = {
-                  type: 'Feature',
-                  geometry: { type: 'Polygon', coordinates: flatCoordinates },
-                  properties: {
-                    sig: {
-                      type: 'Polygon',
-                      src: null,
-                      label: r.properties.label,
-                    },
-                    zindex: 0,
-                  },
-                };
-                features.push(feature);
-              }
-            }
-            resolve(features);
-          }
-        }),
-    );
-  }
-
+  // skipcq: JS-0105
   createGeoAdminLayer(layerId: string, timestamp: string, extension: string, zIndex: number) {
     return new OlTileLayer({
       source: new OlTileWMTS({
@@ -105,7 +63,7 @@ export class GeoadminService {
         matrixSet: '',
       }),
       opacity: 0.6,
-      zIndex: zIndex,
+      zIndex,
     });
   }
 }

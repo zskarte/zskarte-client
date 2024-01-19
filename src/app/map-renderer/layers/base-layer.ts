@@ -178,7 +178,9 @@ export abstract class ZsMapBaseLayer {
 
   public remove(): void {
     this._state.updateDisplayState((draft) => {
+      // skipcq: JS-0320
       delete draft.layerVisibility[this._id];
+      // skipcq: JS-0320
       delete draft.layerOpacity[this._id];
       const index = draft.layerOrder.findIndex((o) => o === this._id);
       if (index >= 0) {
