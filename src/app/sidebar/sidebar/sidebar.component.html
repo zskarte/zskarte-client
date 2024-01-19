@@ -43,7 +43,7 @@
       </mat-action-list>
     </div>
   </mat-expansion-panel>
-  <ng-container *ngIf="(mapState.observeSelectedFeatures() | async)?.length ?? 0 > 0">
+  <ng-container *ngIf="(mapState.observeSelectedFeatures$() | async)?.length ?? 0 > 0">
     <mat-divider></mat-divider>
     <mat-expansion-panel class="mat-elevation-z0" (opened)="selectedLayersOpenState = true" (closed)="selectedLayersOpenState = false">
       <mat-expansion-panel-header>
@@ -53,7 +53,7 @@
       </mat-expansion-panel-header>
       <div class="allSelected">
         <div
-          *ngFor="let item of mapState.observeSelectedFeatures() | async; let index = index; let first = first; let last = last"
+          *ngFor="let item of mapState.observeSelectedFeatures$() | async; let index = index; let first = first; let last = last"
           title="{{ item.label }}"
           class="selectedLayer"
         >
