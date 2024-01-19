@@ -907,6 +907,8 @@ export class MapRendererComponent implements AfterViewInit {
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: true,
           };
+        default:
+          throw Error(`getCoordinationGroupOfLastPoint not implemented for type ${feature?.getGeometry()?.getType()}`);
       }
     }
     return null;
