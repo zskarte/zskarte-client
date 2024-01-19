@@ -55,6 +55,7 @@ export class EditCoordinatesComponent {
     }
   }
 
+  // skipcq: JS-0105
   private isValidPointCoordinate(coordinates: Coordinate | number) {
     return Array.isArray(coordinates) && coordinates.length === 2 && coordinates.filter((c) => typeof c !== 'number').length === 0;
   }

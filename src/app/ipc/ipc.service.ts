@@ -10,6 +10,7 @@ import { isElectron } from '../helper/os';
 export class IpcService {
   constructor(private _zone: NgZone) {}
 
+  // skipcq: JS-0105
   private async _invoke<PARAMS = any, RESULT = any>(channel: string, params: PARAMS): Promise<RESULT> {
     return await (window as any).zskarte.ipcInvoke(channel, params);
   }

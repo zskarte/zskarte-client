@@ -65,6 +65,7 @@ export class GeocoderComponent implements OnDestroy {
     }
   }
 
+  // skipcq: JS-0105
   getLabel(selected: IFoundLocationAttrs): string {
     return selected ? selected.label.replace(/<[^>]*>/g, '') : '';
   }
