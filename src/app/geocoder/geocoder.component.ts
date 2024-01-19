@@ -87,7 +87,7 @@ export class GeocoderComponent implements OnDestroy {
         coordinates = [element.mercatorCoordinates[1], element.mercatorCoordinates[0]];
         this.zsMapStateService.updatePositionFlag({
           isVisible: true,
-          coordinates: coordinates,
+          coordinates,
         });
         if (center) {
           this.zsMapStateService.setMapCenter(coordinates);
@@ -96,7 +96,7 @@ export class GeocoderComponent implements OnDestroy {
         coordinates = transform([element.lon, element.lat], 'EPSG:4326', 'EPSG:3857');
         this.zsMapStateService.updatePositionFlag({
           isVisible: true,
-          coordinates: coordinates,
+          coordinates,
         });
 
         if (center) {

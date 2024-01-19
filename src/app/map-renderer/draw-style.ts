@@ -37,7 +37,7 @@ export class DrawStyle {
   filter = null;
 
   public static getImageUrl(file: string): string {
-    return 'assets/img/signs/' + file;
+    return `assets/img/signs/${file}`;
   }
 
   private static scale(resolution: number, scaleFactor: number, min = 0.1): number {
@@ -323,8 +323,8 @@ export class DrawStyle {
       JSON.stringify({
         resolution,
         selected,
+        editMode,
         color: signature.color,
-        editMode: editMode,
         protected: signature.protected,
         opacity: signature.fillOpacity,
         lineStyle: signature.style,
