@@ -17,7 +17,8 @@ export class SelectSignDialog implements OnInit {
   allSigns: Sign[] = [];
   filteredSigns: Sign[] = [];
   selected = '';
-  signCategories = Array.from(signCategories.values());
+  hiddenTypes = ['incident'];
+  signCategories = Array.from(signCategories.values()).filter((c) => !this.hiddenTypes.includes(c.name));
 
   capitalizeFirstLetter = capitalizeFirstLetter;
   @Output() readonly signSelected = new EventEmitter<Sign>();
@@ -43,7 +44,9 @@ export class SelectSignDialog implements OnInit {
   updateAvailableSigns() {
     this.filteredSigns = this.allSigns.filter(
       (s) =>
-        (!this.filter || this.i18n.getLabelForSign(s).toLowerCase().includes(this.filter)) && (!this.selected || this.selected === s.kat),
+        (!this.filter || this.i18n.getLabelForSign(s).toLowerCase().includes(this.filter.toLowerCase())) &&
+        (!this.selected || this.selected === s.kat) &&
+        !this.hiddenTypes.includes(s.kat ?? ''),
     );
   }
 
@@ -62,10 +65,12 @@ export class SelectSignDialog implements OnInit {
   select(sign: Sign) {
     // We need to pass a deep copy of the object
     const toEmit = JSON.parse(JSON.stringify(sign));
-    if (this.signSelected) {
-      this.signSelected.emit(toEmit);
+    // If this was directly called as a dialog, close it
+    // Else emit an event
+    if (this.dialogRef.componentInstance?.constructor?.name === 'SelectSignDialog') {
+      this.dialogRef.close(toEmit);
     } else {
-      this.dialogRef?.close(toEmit);
+      this.signSelected.emit(toEmit);
     }
   }
 

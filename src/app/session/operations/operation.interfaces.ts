@@ -5,6 +5,7 @@ export interface IZsMapOperation {
   name: string;
   description: string;
   mapState: IZsMapState;
+  eventStates: number[];
   status: 'active' | 'archived';
 }
 

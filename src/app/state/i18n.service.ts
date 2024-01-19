@@ -1299,6 +1299,11 @@ export class I18NService {
       en: 'Feature clustering',
       fr: 'Regroupement de formes',
     },
+    eventState: {
+      de: 'Situationslage',
+      en: 'Event state',
+      fr: 'Sutiation',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {
