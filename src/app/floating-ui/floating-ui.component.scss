@@ -123,3 +123,9 @@ app-coordinates {
     display: none;
   }
 }
+
+.sidebar-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
