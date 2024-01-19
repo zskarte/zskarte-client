@@ -1,4 +1,3 @@
-import { Coordinate } from 'ol/coordinate';
 import { FeatureLike } from 'ol/Feature';
 import { LineString, MultiPolygon, Point, Polygon } from 'ol/geom';
 
@@ -48,20 +47,6 @@ export interface Sign {
   affectedPersons?: number;
 }
 
-export function isMoreOptimalIconCoordinate(
-  coordinateToTest: Coordinate | Coordinate[],
-  currentCoordinate: Coordinate | Coordinate[] | undefined | null,
-) {
-  if (currentCoordinate === undefined || currentCoordinate === null) {
-    return true;
-  } else if (coordinateToTest[1] > currentCoordinate[1]) {
-    return true;
-  } else if (coordinateToTest[1] === currentCoordinate[1]) {
-    return coordinateToTest[0] < currentCoordinate[0];
-  }
-  return false;
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getFirstCoordinate(feature: FeatureLike): any {
   switch (feature?.getGeometry()?.getType()) {
@@ -72,25 +57,28 @@ export function getFirstCoordinate(feature: FeatureLike): any {
       return (feature?.getGeometry() as LineString)?.getCoordinates()[0];
     case 'Point':
       return (feature?.getGeometry() as Point)?.getCoordinates();
+    default:
+      return [];
   }
-  return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getLastCoordinate(feature: FeatureLike): any {
   switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
-    case 'MultiPolygon':
+    case 'MultiPolygon': {
       const pCoordinates = (feature?.getGeometry() as Polygon)?.getCoordinates();
       return pCoordinates[pCoordinates.length - 2][0]; // -2 because the last coordinates are the same as the first
-    case 'LineString':
+    }
+    case 'LineString': {
       const lCoordinates = (feature?.getGeometry() as LineString)?.getCoordinates();
       return lCoordinates[lCoordinates.length - 1];
+    }
     case 'Point':
       return (feature?.getGeometry() as Point)?.getCoordinates();
+    default:
+      return [];
   }
-
-  return [];
 }
 
 export const signCategories: SignCategory[] = [
