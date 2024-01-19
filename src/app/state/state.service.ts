@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import {
+  getDefaultIZsMapState,
   IPositionFlag,
   IZsMapDisplayState,
   IZsMapState,
@@ -24,7 +25,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawElementHelper } from '../helper/draw-element-helper';
-import { areArraysEqual } from '../helper/array';
+import { areArraysEqual, toggleInArray } from '../helper/array';
 import { GeoFeature } from '../core/entity/geoFeature';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
@@ -46,7 +47,7 @@ import { Coordinate } from 'ol/coordinate';
   providedIn: 'root',
 })
 export class ZsMapStateService {
-  private _map = new BehaviorSubject<IZsMapState>(produce<IZsMapState>(this._getDefaultMapState(), (draft) => draft));
+  private _map = new BehaviorSubject<IZsMapState>(produce<IZsMapState>(getDefaultIZsMapState(), (draft) => draft));
   private _mapPatches = new BehaviorSubject<Patch[]>([]);
   private _mapInversePatches = new BehaviorSubject<Patch[]>([]);
   private _undoStackPointer = new BehaviorSubject<number>(0);
@@ -76,11 +77,6 @@ export class ZsMapStateService {
     private _snackBar: MatSnackBar,
     private _api: ApiService,
   ) {}
-
-  private _getDefaultMapState(): IZsMapState {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return {} as any;
-  }
 
   private _getDefaultDisplayState(mapState?: IZsMapState): IZsMapDisplayState {
     const state: IZsMapDisplayState = {
@@ -201,7 +197,7 @@ export class ZsMapStateService {
     }
     this._drawElementCache = {};
     this.updateMapState(() => {
-      return newState || this._getDefaultMapState();
+      return newState || getDefaultIZsMapState();
     }, true);
   }
 
@@ -860,7 +856,7 @@ export class ZsMapStateService {
       return;
     }
     this.updateDisplayState((draft) => {
-      this.toggleInArray<number>(draft.hiddenSymbols, symbolId);
+      toggleInArray<number>(draft.hiddenSymbols, symbolId);
     });
   }
 
@@ -869,7 +865,7 @@ export class ZsMapStateService {
       return;
     }
     this.updateDisplayState((draft) => {
-      this.toggleInArray<string>(draft.hiddenFeatureTypes, featureType);
+      toggleInArray<string>(draft.hiddenFeatureTypes, featureType);
     });
   }
 
@@ -878,17 +874,8 @@ export class ZsMapStateService {
       return;
     }
     this.updateDisplayState((draft) => {
-      this.toggleInArray<string>(draft.hiddenCategories, category);
+      toggleInArray<string>(draft.hiddenCategories, category);
     });
-  }
-
-  private toggleInArray<T>(array: T[], value: T) {
-    const index = array.indexOf(value);
-    if (index > -1) {
-      array.splice(index, 1);
-    } else {
-      array.push(value);
-    }
   }
 
   public observeHiddenSymbols() {

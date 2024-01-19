@@ -4,7 +4,6 @@ import { db } from '../db/db';
 import { AccessTokenType, IAuthResult, IZsMapSession, PermissionType } from './session.interfaces';
 import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
-import jwtDecode from 'jwt-decode';
 import { ZsMapStateService } from '../state/state.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
@@ -12,6 +11,7 @@ import { IZsMapOperation, IZsMapOrganization } from './operations/operation.inte
 import { transform } from 'ol/proj';
 import { coordinatesProjection, mercatorProjection } from '../helper/projections';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from './default-map-values';
+import { decodeJWT } from '../helper/jwt';
 
 @Injectable({
   providedIn: 'root',
@@ -149,11 +149,11 @@ export class SessionService {
     return this._session?.value?.organizationLogo;
   }
 
+  // skipcq: JS-0105
   public async getSavedSession(): Promise<IZsMapSession | undefined> {
     const sessions = await db.sessions.toArray();
     if (sessions.length === 1) {
-      const session: IZsMapSession = sessions[0];
-      return session;
+      return sessions[0];
     }
     if (sessions.length > 1) {
       await db.sessions.clear();
@@ -173,14 +173,14 @@ export class SessionService {
     const { result, error: authError } = await this._api.post<IAuthResult>('/api/auth/local', params);
     this._authError.next(authError);
     if (authError || !result) {
-      this._router.navigateByUrl('/login');
+      await this._router.navigateByUrl('/login');
       return;
     }
     await this.updateJWT(result.jwt);
   }
 
   public async updateJWT(jwt: string) {
-    const decoded = this._decodeJWT(jwt);
+    const decoded = decodeJWT(jwt);
     if (decoded.expired) {
       await this.logout();
       return;
@@ -277,7 +277,7 @@ export class SessionService {
         if (!session?.jwt) {
           return false;
         }
-        if (this._decodeJWT(session.jwt).expired) {
+        if (decodeJWT(session.jwt).expired) {
           this.logout();
           return false;
         }
@@ -304,11 +304,6 @@ export class SessionService {
 
   public isOnline(): boolean {
     return this._isOnline.value;
-  }
-
-  private _decodeJWT(jwt: string): { expired: boolean; operationId: number; permission: PermissionType } {
-    const token = jwtDecode<{ exp: number; operationId: number; permission: PermissionType }>(jwt);
-    return { ...token, expired: token.exp < Date.now() / 1000 };
   }
 
   public async generateShareLink(permission: PermissionType, tokenType: AccessTokenType) {

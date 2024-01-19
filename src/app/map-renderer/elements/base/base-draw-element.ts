@@ -8,7 +8,6 @@ import VectorSource from 'ol/source/Vector';
 import { Options } from 'ol/interaction/Draw';
 import { Geometry } from 'ol/geom';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
-import { IZsMapDrawElementUi } from './draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
 import { areCoordinatesEqual } from '../../../helper/coordinates';
@@ -129,10 +128,6 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
         draft.drawElements[this._id].layer = layer;
       }
     });
-  }
-
-  public getUi(): IZsMapDrawElementUi | undefined {
-    return undefined;
   }
 
   // static handlers for drawing

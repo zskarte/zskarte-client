@@ -27,6 +27,10 @@ export interface IZsMapState {
   center: [number, number];
 }
 
+export const getDefaultIZsMapState = (): IZsMapState => {
+  return {} as IZsMapState;
+};
+
 export interface IPositionFlag {
   coordinates: number[];
   isVisible: boolean;

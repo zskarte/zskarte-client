@@ -14,3 +14,12 @@ export const areArraysEqual = (a: any[], b: any[]): boolean => {
   }
   return true;
 };
+
+export const toggleInArray = <T>(array: T[], value: T) => {
+  const index = array.indexOf(value);
+  if (index > -1) {
+    array.splice(index, 1);
+  } else {
+    array.push(value);
+  }
+};

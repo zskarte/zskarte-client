@@ -4,7 +4,6 @@ import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
-import { MatSliderChange } from '@angular/material/slider';
 import { I18NService } from '../state/i18n.service';
 import { FillStyle, getColorForCategory, Sign, signatureDefaultValues } from '../core/entity/sign';
 import { ZsMapStateService } from '../state/state.service';
@@ -132,6 +131,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     return this.featureType === 'LineString';
   }
 
+  // skipcq: JS-0105
   isText(element?: ZsMapDrawElementState) {
     if (!element) return false;
     return element.type === ZsMapDrawElementStateType.TEXT;
@@ -166,22 +166,6 @@ export class SelectedFeatureComponent implements OnDestroy {
     return result;
   }
 
-  showFeature(feature: any) {
-    /*
-    if (feature && feature.getGeometry()) {
-      this.sharedState.gotoCoordinate({
-        lon: feature.getGeometry().getCoordinates()[0],
-        lat: feature.getGeometry().getCoordinates()[1],
-        mercator: true,
-        center: false,
-      });
-    }*/
-  }
-
-  hideFeature() {
-    // this.sharedState.gotoCoordinate(null);
-  }
-
   updateProperty<T extends keyof ZsMapDrawElementState>(
     element: ZsMapDrawElementState,
     field: T | string,
@@ -200,11 +184,15 @@ export class SelectedFeatureComponent implements OnDestroy {
 
   updateFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]) {
     if (element.id) {
-      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', this.getUpdatedFillStyle(element, field, value));
+      this.zsMapStateService.updateDrawElementState(
+        element.id,
+        'fillStyle',
+        SelectedFeatureComponent.getUpdatedFillStyle(element, field, value),
+      );
     }
   }
 
-  getUpdatedFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]): FillStyle {
+  static getUpdatedFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]): FillStyle {
     return { ...element.fillStyle, [field]: value } as FillStyle;
   }
 
@@ -263,10 +251,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     });
   }
 
-  getOriginalImageUrl(file: string) {
-    return undefined; // CustomImageStoreService.getOriginalImageDataUrl(file);
-  }
-
+  // skipcq: JS-0105
   getImageUrl(file: string) {
     // const imageFromStore = CustomImageStoreService.getImageDataUrl(file);
     // if (imageFromStore) {
@@ -301,32 +286,8 @@ export class SelectedFeatureComponent implements OnDestroy {
     this.updateProperty(element, 'zindex', minZIndex - 1);
   }
 
-  findSigBySrc(src: any) {
-    // const fromCustomStore = CustomImageStoreService.getSign(src);
-    // if (fromCustomStore) {
-    //   return fromCustomStore;
-    // }
-    return Signs.getSignBySource(src);
-  }
-
   openImageDetail(sig: any) {
     this.dialog.open(DetailImageViewComponent, { data: sig });
-  }
-
-  setSliderValueOnSignature(field: string, event: MatSliderChange) {
-    const updateProp = (object: any, path: string[], value: any): any => {
-      if (path.length === 1) object[path[0]] = value;
-      else if (path.length === 0) throw new Error('path not found');
-      else {
-        if (object[path[0]]) return updateProp(object[path[0]], path.slice(1), value);
-        else {
-          object[path[0]] = {};
-          return updateProp(object[path[0]], path.slice(1), value);
-        }
-      }
-    };
-    updateProp(this.selectedSignature, field.split('.'), event.value);
-    //this.redraw();
   }
 
   resetSignature(element: ZsMapDrawElementState) {
