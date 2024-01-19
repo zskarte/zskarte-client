@@ -209,7 +209,7 @@ export class DrawStyle {
               new Style({
                 text: new Text({
                   text: groupedFeatures[src].toString(),
-                  font: 11 + 'px sans-serif',
+                  font: `11px sans-serif`,
                   offsetX: 19,
                   offsetY: -19,
                   fill: DrawStyle.getColorFill('#FFFFFF'),
@@ -325,7 +325,7 @@ export class DrawStyle {
           text: new Text({
             text: signature.text,
             backgroundFill: this.getColorFill('#FFFFFF'),
-            font: fontSize * 30 + 'px sans-serif',
+            font: `${fontSize * 30}px sans-serif`,
             rotation: signature.rotation !== undefined ? (signature.rotation * Math.PI) / 180 : 0,
             scale: DrawStyle.scale(resolution, DrawStyle.textScaleFactor, 0.4),
             fill: this.getColorFill(color),
@@ -614,7 +614,7 @@ export class DrawStyle {
           iconTextScale = DrawStyle.scale(resolution, DrawStyle.textScaleFactor, 0.4);
           iconLabel = new Text({
             text: signature.label,
-            font: 20 + 'px sans-serif',
+            font: `20px sans-serif`,
             scale: iconTextScale,
             fill: this.getColorFill(signature.color || '#535353'),
             backgroundFill: DrawStyle.getColorFill(`rgba(255, 255, 255, ${signature.iconOpacity})`),
@@ -777,7 +777,7 @@ export class DrawStyle {
           new Style({
             geometry: new Point(lastCoordinate),
             image: new Icon({
-              src: 'assets/img/arrow_' + signature.arrow + '.svg',
+              src: `assets/img/arrow_${signature.arrow}.svg`,
               anchorXUnits: 'fraction',
               anchorYUnits: 'fraction',
               anchor: [1, 0.5],
@@ -870,10 +870,10 @@ export class DrawStyle {
     if (signatureColor) {
       let hexAlpha = Math.floor(255 * (alpha !== undefined ? alpha : 1)).toString(16);
       if (hexAlpha.length === 1) {
-        hexAlpha = '0' + hexAlpha;
+        hexAlpha = `0${hexAlpha}`;
       }
       return signatureColor + hexAlpha;
     }
-    return 'rgba(121, 153, 242, ' + (alpha !== undefined ? alpha : '1') + ')';
+    return `rgba(121, 153, 242, ${alpha !== undefined ? alpha : '1'})`;
   };
 }
