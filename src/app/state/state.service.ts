@@ -641,7 +641,7 @@ export class ZsMapStateService {
         fontSize: sign.fontSize,
         id: uuidv4(),
         nameShow: true,
-        createdAt: Date.now()
+        createdAt: Date.now(),
       };
 
       this.updateMapState((draft) => {
