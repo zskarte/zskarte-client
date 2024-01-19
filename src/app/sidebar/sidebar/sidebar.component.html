@@ -16,11 +16,6 @@
           </mat-slider>
         </div>
         <mat-action-list *ngFor="let layer of mapSources">
-          <mat-radio-group>
-            <mat-radio-button [value]="layer.key" (click)="switchLayer(layer.key)" [checked]="layer.selected">
-              {{ layer.translation }}
-            </mat-radio-button>
-          </mat-radio-group>
           @if (isDownloadableMap(layer.key)) {
             <div>
               @switch (mapDownloadStates[layer.key]) {
@@ -28,14 +23,21 @@
                   <mat-progress-bar color="primary" mode="indeterminate" />
                 }
                 @case ('downloaded') {
-                  <button (click)="removeLocalMap(layer.key)" mat-list-item>Remove</button>
+                  <button mat-flat-button color="warn" color="warn" class="buttonDownload" (click)="removeLocalMap(layer.key)">
+                    Remove
+                  </button>
                 }
                 @default {
-                  <button (click)="downloadMap(layer.key)" mat-list-item>Download</button>
+                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(layer.key)">Download</button>
                 }
               }
             </div>
           }
+          <mat-radio-group>
+            <mat-radio-button [value]="layer.key" (click)="switchLayer(layer.key)" [checked]="layer.selected">
+              {{ layer.translation }}
+            </mat-radio-button>
+          </mat-radio-group>
         </mat-action-list>
       </div>
     </ng-template>
