@@ -621,7 +621,7 @@ export class DrawStyle {
               point.translate(x, y);
               return point;
             },
-            zIndex: zIndex,
+            zIndex,
           });
 
           iconStyles.push(notificationIcon);
