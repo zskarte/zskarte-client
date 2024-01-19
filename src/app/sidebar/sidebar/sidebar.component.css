@@ -43,3 +43,7 @@ mat-form-field,
 mat-slider {
   width: 100%;
 }
+
+.buttonDownload {
+  margin-bottom: 1rem;
+}
