@@ -177,7 +177,7 @@ export class MapRendererComponent implements AfterViewInit {
       .observeCurrentMapCenter$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((coordinates) => {
-        if (coordinates && coordinates[0] && coordinates[1] && this._map) {
+        if (coordinates?.[0] && coordinates?.[1] && this._map) {
           this._map.getView().animate({
             center: transform(coordinates, 'EPSG:4326', 'EPSG:3857'),
             zoom: 14,
