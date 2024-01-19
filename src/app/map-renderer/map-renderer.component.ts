@@ -647,6 +647,7 @@ export class MapRendererComponent implements AfterViewInit {
           if (elements.every((e) => e.getId() !== element.element.getId())) {
             // New elements do not contain element from cache
             this._state.getLayer(element.layer || '').removeOlFeature(element.element.getOlFeature());
+            // skipcq: JS-0320
             delete this._drawElementCache[element.element.getId()];
           }
         }

@@ -185,6 +185,7 @@ export class ZsMapStateService {
     for (const c of cached) {
       if (!newState?.layers?.find((l) => l.id === c)) {
         this._layerCache[c].unsubscribe();
+        // skipcq: JS-0320
         delete this._layerCache[c];
       }
     }
