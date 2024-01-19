@@ -1,0 +1,6 @@
+{
+  "/api": {
+    "target": "https://api-dev.zskarte.ch",
+    "secure": false
+  }
+}
