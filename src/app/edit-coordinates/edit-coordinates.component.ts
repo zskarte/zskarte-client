@@ -34,7 +34,7 @@ export class EditCoordinatesComponent {
       this.error = 'Invalid JSON payload';
     }
     if (parsedCoordinates) {
-      let valid = true;
+      let valid: boolean;
       switch (this.geometry) {
         case 'Point':
           valid = this.isValidPointCoordinate(parsedCoordinates);
@@ -47,7 +47,7 @@ export class EditCoordinatesComponent {
           valid = this.isValidPolygon(parsedCoordinates);
           break;
         default:
-          throw new Error(`No matching geometry: ${this.geometry}`);
+          valid = true;
       }
       if (valid) {
         this.dialogRef.close(parsedCoordinates);
