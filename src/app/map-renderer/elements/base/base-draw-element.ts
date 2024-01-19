@@ -69,6 +69,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       text: state['text'],
       zindex: state.zindex,
       reportNumber: state.reportNumber,
+      affectedPersons: state.affectedPersons,
     });
   }
 

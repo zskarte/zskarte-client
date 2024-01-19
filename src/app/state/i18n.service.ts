@@ -1289,6 +1289,11 @@ export class I18NService {
       en: 'Import Scenario',
       fr: 'Importer événement',
     },
+    affectedPersons: {
+      de: 'Betroffene Personen',
+      en: 'Affected Persons',
+      fr: 'Persones affectés',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

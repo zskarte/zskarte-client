@@ -44,6 +44,7 @@ export interface Sign {
   origSrc?: string;
   createdAt?: Date;
   reportNumber?: number;
+  affectedPersons?: number;
 }
 
 export function isMoreOptimalIconCoordinate(
@@ -158,6 +159,7 @@ export function defineDefaultValuesForSignature(signature: Sign) {
   signature.rotation = signature.rotation || signatureDefaultValues.rotation;
   signature.images = signature.images || signatureDefaultValues.images;
   signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
+  signature.affectedPersons = signature.affectedPersons || signatureDefaultValues.affectedPersons;
 }
 
 export const signatureDefaultValues: SignatureDefaultValues = {
@@ -189,6 +191,7 @@ export const signatureDefaultValues: SignatureDefaultValues = {
   images: [],
   flipIcon: false,
   hideIcon: false,
+  affectedPersons: undefined,
 };
 
 export interface SignatureDefaultValues {
@@ -212,4 +215,5 @@ export interface SignatureDefaultValues {
   images: string[];
   flipIcon: boolean;
   hideIcon: boolean;
+  affectedPersons: number | undefined;
 }

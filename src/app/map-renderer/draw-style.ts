@@ -398,6 +398,7 @@ export class DrawStyle {
         iconSize: signature.iconSize,
         iconOpacity: signature.iconOpacity,
         zindex: this.getZIndex(feature),
+        affectedPersons: signature.affectedPersons,
       }),
     ).toString();
   }
@@ -531,6 +532,7 @@ export class DrawStyle {
       const showIcon = this.showIcon(signature);
       const dashedStroke = this.createDefaultStroke(scale, signature.color || '#535353', true, signature.iconOpacity);
       const iconRadius = scale * 250 * (signature.iconSize || 1);
+      const notificationIconRadius = iconRadius / 4;
       const highlightStroke = selected ? DrawStyle.getHighlightStroke(feature, scale) : null;
       if (showIcon && selected) {
         // Highlight the stroke to the icon
@@ -596,6 +598,34 @@ export class DrawStyle {
             zIndex: zIndex,
           }),
         );
+
+        if (signature.affectedPersons) {
+          const notificationIcon = new Style({
+            image: new Circle({
+              radius: notificationIconRadius,
+              fill: this.getColorFill(`#3f51b5`),
+            }),
+            text: new Text({
+              font: `${notificationIconRadius}px sans-serif`,
+              fill: new Fill({
+                color: '#fff',
+              }),
+              text: signature.affectedPersons.toString(),
+            }),
+            geometry: function (feature) {
+              // Calculate the coordinates of the point on the circumference in the top-right quadrant
+              const x = (Math.sqrt(2) * iconRadius * resolution) / 2;
+              const y = (Math.sqrt(2) * iconRadius * resolution) / 2;
+              const coordinates = DrawStyle.getIconCoordinates(feature, resolution)[1];
+              const p = new Point(coordinates);
+              p.translate(x, y);
+              return p;
+            },
+            zIndex: zIndex,
+          });
+
+          iconStyles.push(notificationIcon);
+        }
 
         let iconLabel;
         let iconTextScale: any;
