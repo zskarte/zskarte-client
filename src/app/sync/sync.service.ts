@@ -159,7 +159,8 @@ export class SyncService {
         identifier: this._connectionId,
       },
     });
-    if (error) {
+
+    if (error?.status !== 200) {
       return;
     }
     await db.patchSyncQueue.clear();
