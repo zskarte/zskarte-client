@@ -92,6 +92,12 @@ app-coordinates {
   margin-right: 1.25rem;
 }
 
+app-geocoder {
+  width: 80%;
+  max-width: 400px;
+  
+}
+
 .main {
   display: flex;
   flex-direction: column;
@@ -112,13 +118,9 @@ app-coordinates {
     margin-right: 0;
     margin-bottom: 3rem;
   }
-
-  app-geocoder {
-    width: 200px;
-  }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 800px) {
   .sidebar-open {
     display: none;
   }
