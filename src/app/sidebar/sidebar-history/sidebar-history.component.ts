@@ -39,7 +39,7 @@ export class SidebarHistoryComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.snapshots$ = this.paginator.page.pipe(
       startWith({ pageIndex: 0 }),
-      switchMap((p) => this.loadData(p.pageIndex)),
+      switchMap((p) => this.loadData(p.pageIndex + 1)),
       tap((r) => {
         this.resultSize = r.meta.pagination.total;
       }),
@@ -49,7 +49,7 @@ export class SidebarHistoryComponent implements AfterViewInit {
   loadData(page: number) {
     const operationId = this.sessionService.getOperationId();
     return this.apiService.get$<Snapshots>(
-      `${this.apiPath}?fields[0]=createdAt&filters=[operation][id][$eq]=${operationId}&sort[0]=createdAt:desc&pagination[page]=${page}`,
+      `${this.apiPath}?fields[0]=createdAt&filters[operation][id][$eq]=${operationId}&sort[0]=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=20`,
     );
   }
 

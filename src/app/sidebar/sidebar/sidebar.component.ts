@@ -17,10 +17,6 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
-  currentMapOpenState = false;
-  selectedLayersOpenState = false;
-  favoriteLayersOpenState = false;
-  availableLayersOpenState = false;
   mapSources = Object.values(ZsMapStateSource)
     .map((key) => ({
       key,
@@ -55,7 +51,7 @@ export class SidebarComponent {
       share(),
       map((features) => Object.values(features)),
     );
-    const availableFeatures$: Observable<GeoFeature[]> = combineLatest([allFeatures$, mapState.observeSelectedFeatures()]).pipe(
+    const availableFeatures$: Observable<GeoFeature[]> = combineLatest([allFeatures$, mapState.observeSelectedFeatures$()]).pipe(
       map(([source, selected]) => {
         const selectedNames = selected.map((f) => f.serverLayerName);
         return source.filter((s) => !selectedNames.includes(s.serverLayerName));

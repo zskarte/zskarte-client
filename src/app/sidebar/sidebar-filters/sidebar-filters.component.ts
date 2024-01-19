@@ -23,8 +23,6 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   hiddenSymbols$: Observable<number[]>;
   hiddenFeatureTypes$: Observable<string[]>;
   hiddenCategories$: Observable<string[]>;
-  filtersOpenState = false;
-  filtersGeneralOpenState = false;
   capitalizeFirstLetter = capitalizeFirstLetter;
   private _ngUnsubscribe = new Subject<void>();
 
@@ -83,7 +81,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
           symbols[sig.src] = {
             label: this.i18n.getLabelForSign(sig),
             origSrc: sig.src,
-            src: dataUrl ? dataUrl : 'assets/img/signs/' + sig.src,
+            src: dataUrl ? dataUrl : `assets/img/signs/${sig.src}`,
             kat: sig.kat,
             id: sig.id,
           };

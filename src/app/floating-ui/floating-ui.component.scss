@@ -58,6 +58,30 @@ button {
   pointer-events: auto;
 }
 
+.button-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: none;
+  pointer-events: auto;
+  border-radius: 2em;
+  overflow: hidden;
+}
+
+.toggle-button {
+  border-radius: 0 !important;
+}
+
+.toggle-button ::ng-deep .mat-mdc-button-persistent-ripple {
+  border-radius: 0 !important;
+}
+
+.divider {
+  width: 100%;
+}
+
 app-fab-menu {
   pointer-events: auto;
   margin-top: 1.25rem;

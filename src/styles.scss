@@ -111,3 +111,14 @@ mat-card {
 .mat-mdc-elevation-specific.mat-elevation-z8 {
   box-shadow: none;
 }
+
+mat-accordion mat-expansion-panel {
+  .mat-expansion-panel-content {
+    height: 0;
+  }
+  &.mat-expanded {
+    .mat-expansion-panel-content {
+      height: auto;
+    }
+  }
+}

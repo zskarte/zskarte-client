@@ -273,6 +273,11 @@ export class I18NService {
       fr: 'Charger à partir du fichier',
       en: 'Load from file',
     },
+    createdBy: {
+      de: 'Erstellt von',
+      en: 'Created by',
+      fr: 'Créé par',
+    },
     import: {
       de: 'Importieren',
       fr: 'Importer',
@@ -1293,6 +1298,11 @@ export class I18NService {
       de: 'Bearbeiten',
       en: 'Edit',
       fr: 'Modifier',
+    },
+    eventState: {
+      de: 'Situationslage',
+      en: 'Event state',
+      fr: 'Sutiation',
     },
   };
 

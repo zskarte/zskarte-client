@@ -60,7 +60,6 @@ export class MapRendererComponent implements AfterViewInit {
   ROTATE_OFFSET_X = 30;
   ROTATE_OFFSET_Y = -30;
 
-  sidebarContextValues = SidebarContext;
   sidebarContext: Observable<SidebarContext | null>;
 
   private _ngUnsubscribe = new Subject<void>();
@@ -114,7 +113,7 @@ export class MapRendererComponent implements AfterViewInit {
     private dialog: MatDialog,
   ) {
     _state
-      .observeSelectedElement()
+      .observeSelectedElement$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((element) => {
         if (element) {
@@ -147,11 +146,15 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
-      .ObserveShowCurrentLocation()
+      .observeShowCurrentLocation$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((show) => {
         this.isDevicePositionFlagVisible = show;
         if (!this._deviceTrackingLayer) return;
+
+        if (!show) {
+          this._sync.publishCurrentLocation(undefined);
+        }
 
         // only track if the position flag is visible
         this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
@@ -175,10 +178,10 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
-      .ObserveCurrentMapCenter()
+      .observeCurrentMapCenter$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((coordinates) => {
-        if (coordinates && coordinates[0] && coordinates[1] && this._map) {
+        if (coordinates?.[0] && coordinates?.[1] && this._map) {
           this._map.getView().animate({
             center: transform(coordinates, 'EPSG:4326', 'EPSG:3857'),
             zoom: 14,
@@ -232,7 +235,7 @@ export class MapRendererComponent implements AfterViewInit {
       });
     combineLatest([
       this.selectedVertexPoint.asObservable(),
-      this._state.observeSelectedElement().pipe(
+      this._state.observeSelectedElement$().pipe(
         filter(Boolean),
         // get feature each time the coordinates change
         switchMap((element) => element.observeCoordinates().pipe(map(() => element.getOlFeature()))),
@@ -513,7 +516,7 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     const debouncedZoomSave = debounce(() => {
-      this._state.setMapZoom(this._view.getZoom() || 10);
+      this._state.setMapZoom(this._view.getZoom() ?? 10);
     }, 1000);
 
     this._view.on('change:resolution', () => {
@@ -602,9 +605,10 @@ export class MapRendererComponent implements AfterViewInit {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(([hiddenSymbols, hiddenFeatureTypes, hiddenCategories]) => {
         const hiddenSignIds = Signs.SIGNS.filter((sign) => sign.kat && hiddenCategories?.includes(sign.kat)).map((sig) => sig.id);
-        for (const key in this._drawElementCache) {
-          const feature = this._drawElementCache[key].element.getOlFeature();
-          const filterType = this._drawElementCache[key].element.elementState?.type as string;
+        for (const _el of Object.values(this._drawElementCache)) {
+          if (!_el) continue;
+          const feature = _el.element.getOlFeature();
+          const filterType = _el.element.elementState?.type as string;
           const hidden =
             hiddenSymbols.includes(feature?.get('sig')?.id) ||
             hiddenFeatureTypes.includes(filterType) ||
@@ -636,7 +640,7 @@ export class MapRendererComponent implements AfterViewInit {
                   }
                 }
                 cache.layer = layer;
-                const newLayer = this._state.getLayer(layer || '');
+                const newLayer = this._state.getLayer(layer ?? '');
                 newLayer?.addOlFeature(feature);
               });
           }
@@ -644,16 +648,17 @@ export class MapRendererComponent implements AfterViewInit {
 
         // Removed old elements
         for (const element of Object.values(this._drawElementCache)) {
-          if (elements.every((e) => e.getId() != element.element.getId())) {
+          if (elements.every((e) => e.getId() !== element.element.getId())) {
             // New elements do not contain element from cache
-            this._state.getLayer(element.layer || '').removeOlFeature(element.element.getOlFeature());
+            this._state.getLayer(element.layer ?? '').removeOlFeature(element.element.getOlFeature());
+            // skipcq: JS-0320
             delete this._drawElementCache[element.element.getId()];
           }
         }
       });
 
     this._state
-      .observeSelectedFeatures()
+      .observeSelectedFeatures$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((features) => {
         // removed features
@@ -672,7 +677,7 @@ export class MapRendererComponent implements AfterViewInit {
             this._featureLayerCache.set(feature.serverLayerName, layer);
 
             // observe feature changes
-            this._state.observeFeature(feature.serverLayerName).subscribe({
+            this._state.observeFeature$(feature.serverLayerName).subscribe({
               next: (updatedFeature) => {
                 if (updatedFeature) {
                   layer.setZIndex(updatedFeature.zIndex);
@@ -843,7 +848,7 @@ export class MapRendererComponent implements AfterViewInit {
     if (coordinationGroup) {
       if (!coordinationGroup.minimalAmountOfPoints) {
         this._modify.removePoint();
-      } else if (coordinationGroup.otherCoordinationGroupCount == 0) {
+      } else if (coordinationGroup.otherCoordinationGroupCount === 0) {
         // It's the last coordination group - we can remove the feature.
         const confirm = this.dialog.open(ConfirmationDialogComponent, {
           data: this.i18n.get('removeFeatureFromMapConfirm'), // this.i18n.get('deleteLastPointOnFeature') + " " + this.i18n.get('removeFeatureFromMapConfirm')
@@ -861,7 +866,7 @@ export class MapRendererComponent implements AfterViewInit {
 
         if (oldCoordinates) {
           for (let i = 0; i < oldCoordinates.length; i++) {
-            if (i != coordinationGroup.coordinateGroupIndex) {
+            if (i !== coordinationGroup.coordinateGroupIndex) {
               newCoordinates.push(oldCoordinates[i]);
             }
           }
@@ -882,9 +887,9 @@ export class MapRendererComponent implements AfterViewInit {
         case 'Polygon':
           for (let i = 0; i < coordinates.length; i++) {
             const coordinateGroup = coordinates[i];
-            if (indexOfPointInCoordinateGroup(coordinateGroup, this.selectedVertexPoint.getValue() ?? []) != -1) {
+            if (indexOfPointInCoordinateGroup(coordinateGroup, this.selectedVertexPoint.getValue() ?? []) !== -1) {
               return {
-                feature: feature,
+                feature,
                 coordinateGroupIndex: i,
                 otherCoordinationGroupCount: coordinates.length - 1,
                 minimalAmountOfPoints: coordinateGroup.length <= 4,
@@ -894,18 +899,20 @@ export class MapRendererComponent implements AfterViewInit {
           return null;
         case 'LineString':
           return {
-            feature: feature,
+            feature,
             coordinateGroupIndex: null,
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: coordinates.length <= 2,
           };
         case 'Point':
           return {
-            feature: feature,
+            feature,
             coordinateGroupIndex: null,
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: true,
           };
+        default:
+          throw Error(`getCoordinationGroupOfLastPoint not implemented for type ${feature?.getGeometry()?.getType()}`);
       }
     }
     return null;
@@ -921,13 +928,13 @@ export class MapRendererComponent implements AfterViewInit {
     this._state.resetSelectedFeature();
   }
 
-  async toggleEditButtons(show: boolean, allowRotation = false) {
+  toggleEditButtons(show: boolean, allowRotation = false) {
     this.toggleButton(show, this.removeButton?.getElement());
     this.toggleButton(allowRotation, this.rotateButton?.getElement());
     this.toggleButton(allowRotation, this.copyButton?.getElement());
   }
 
-  async toggleFlagButtons(show: boolean) {
+  toggleFlagButtons(show: boolean) {
     this.toggleButton(show, this.drawButton?.getElement());
     this.toggleButton(show, this.closeButton?.getElement());
   }
@@ -945,34 +952,6 @@ export class MapRendererComponent implements AfterViewInit {
 
   areFeaturesModifiable() {
     return this._modifyCache.getArray().every((feature) => feature?.get('sig') && !feature.get('sig').protected);
-  }
-
-  zoomIn() {
-    this._state.updateMapZoom(1);
-  }
-
-  zoomOut() {
-    this._state.updateMapZoom(-1);
-  }
-
-  setSidebarContext(context: SidebarContext | null) {
-    this._state.toggleSidebarContext(context);
-  }
-
-  async rotateProjection() {
-    const nextIndex = this.selectedProjectionIndex + 1;
-    this.selectedProjectionIndex = nextIndex >= availableProjections.length ? 0 : nextIndex;
-    const feature = await firstValueFrom(this.selectedFeature);
-    if (feature) {
-      // trigger selectedFeature to enable projection rotation while a feature is selected
-      this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
-    }
-
-    // After rotating the projection,
-    // the coordinates component is not automatically reloaded.
-    // To "force" the component to reload,
-    // we push the current mouse position to the mouse coordinates.
-    this._state.setCoordinates(this.mousePosition.value);
   }
 
   getFeatureCoordinates(feature: Feature | null | undefined): number[] {
@@ -1000,13 +979,5 @@ export class MapRendererComponent implements AfterViewInit {
   hidePositionFlag() {
     this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
     this.toggleFlagButtons(false);
-  }
-
-  undo() {
-    this._state.undoMapStateChange();
-  }
-
-  redo() {
-    this._state.redoMapStateChange();
   }
 }

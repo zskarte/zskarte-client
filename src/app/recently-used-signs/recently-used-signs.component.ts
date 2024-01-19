@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { I18NService } from '../state/i18n.service';
 import { ZsMapStateService } from '../state/state.service';
 import { Sign } from '../core/entity/sign';
@@ -44,7 +44,7 @@ export class RecentlyUsedSignsComponent implements OnInit, OnDestroy {
   }
 
   @Input() dialog!: SelectSignDialog;
-  @Output() selectSign: EventEmitter<Sign> = new EventEmitter<Sign>();
+  @Output() readonly selectSign: EventEmitter<Sign> = new EventEmitter<Sign>();
 
   private signsSource: Sign[] = [];
 
@@ -56,6 +56,7 @@ export class RecentlyUsedSignsComponent implements OnInit, OnDestroy {
     this.selectSign.emit(sign);
   }
 
+  // skipcq: JS-0105
   getImageUrl(file: string) {
     if (file) {
       return DrawStyle.getImageUrl(file);

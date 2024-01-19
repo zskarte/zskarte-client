@@ -4,6 +4,7 @@ interface IBaseShortcut {
   shortcut: string;
   preventDefault?: boolean;
   showOnInfoOverlay?: boolean;
+  drawModeOnly?: boolean;
 }
 
 interface IShortcutWithInfo extends IBaseShortcut {

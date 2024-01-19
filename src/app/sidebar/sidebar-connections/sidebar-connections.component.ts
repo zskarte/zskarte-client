@@ -28,9 +28,9 @@ export class SidebarConnectionsComponent implements OnDestroy {
     public state: ZsMapStateService,
   ) {
     this.connections$ = this.syncService.observeConnections().pipe(takeUntil(this._ngUnsubscribe));
-    this.label$?.next(this.session.getLabel() || '');
+    this.label$?.next(this.session.getLabel() ?? '');
     this.state
-      .ObserveShowCurrentLocation()
+      .observeShowCurrentLocation$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((showCurrentLocation) => {
         this.showCurrentLocation$.next(showCurrentLocation);
@@ -52,14 +52,9 @@ export class SidebarConnectionsComponent implements OnDestroy {
     this.labelEdit$?.next(!this.labelEdit$.value);
     if (this.labelEdit$.value) return;
     this.session.setLabel(this.label$.value);
-    if (!this.showCurrentLocation$.value) return;
-    setTimeout(() => {
-      this.state.updateShowCurrentLocation(false);
-      this.state.updateShowCurrentLocation(true);
-    }, 1000);
   }
 
   public centerMap(location: { long: number; lat: number }): void {
-    this.state.UpdateCurrentMapCenter([location.long, location.lat]);
+    this.state.updateCurrentMapCenter$([location.long, location.lat]);
   }
 }
