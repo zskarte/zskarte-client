@@ -17,10 +17,6 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
-  currentMapOpenState = false;
-  selectedLayersOpenState = false;
-  favoriteLayersOpenState = false;
-  availableLayersOpenState = false;
   mapSources = Object.values(ZsMapStateSource)
     .map((key) => ({
       key,

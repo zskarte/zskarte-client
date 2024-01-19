@@ -23,8 +23,6 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   hiddenSymbols$: Observable<number[]>;
   hiddenFeatureTypes$: Observable<string[]>;
   hiddenCategories$: Observable<string[]>;
-  filtersOpenState = false;
-  filtersGeneralOpenState = false;
   capitalizeFirstLetter = capitalizeFirstLetter;
   private _ngUnsubscribe = new Subject<void>();
 
