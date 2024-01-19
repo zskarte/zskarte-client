@@ -49,7 +49,7 @@ export class SyncService {
         const isOnline = this._session.isOnline();
         const label = this._session.getLabel();
         if (!isOnline || !operationId || !label) {
-          await this._disconnect();
+          this._disconnect();
           return;
         }
         await this._reconnect();
@@ -62,7 +62,7 @@ export class SyncService {
   }
 
   private async _reconnect(): Promise<void> {
-    await this._disconnect();
+    this._disconnect();
     await this._connect();
   }
 
@@ -118,10 +118,10 @@ export class SyncService {
       this._connectingPromise = undefined;
     });
 
-    return await this._connectingPromise;
+    await this._connectingPromise;
   }
 
-  private async _disconnect(): Promise<void> {
+  private _disconnect() {
     if (!this._socket) {
       return;
     }
@@ -177,7 +177,7 @@ export class SyncService {
   public async _publishCurrentLocation(longLat: { long: number; lat: number } | undefined): Promise<void> {
     const { error } = await this._api.post('/api/operations/mapstate/currentlocation', longLat, {
       headers: {
-        operationId: this._session.getOperationId() + '',
+        operationId: String(this._session.getOperationId()),
         identifier: this._connectionId,
       },
     });
