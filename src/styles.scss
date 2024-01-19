@@ -45,8 +45,14 @@ body {
 .mat-mdc-list-item-interactive:hover,
 .mat-mdc-list-item-interactive:focus,
 .mat-mdc-menu-item:hover,
-.mat-mdc-menu-item:focus {
+.mat-mdc-menu-item:focus,
+.mat-mdc-option-active {
   border-radius: 2rem !important;
+}
+
+.mat-mdc-autocomplete-panel,
+.mat-mdc-select-panel {
+  padding: 0.5rem !important;
 }
 
 .mat-expansion-panel {

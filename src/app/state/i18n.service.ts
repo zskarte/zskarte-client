@@ -1289,6 +1289,11 @@ export class I18NService {
       en: 'Import Scenario',
       fr: 'Importer événement',
     },
+    edit: {
+      de: 'Bearbeiten',
+      en: 'Edit',
+      fr: 'Modifier',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

@@ -76,17 +76,22 @@ mat-slider {
   line-height: 1.2em;
   padding-top: 5px;
 }
+
 .label-left {
   float: left;
 }
-.label-right {
-  float: right;
-}
+
 .clearfix::after {
   content: '';
   display: table;
   clear: both;
 }
+
+.time {
+  margin-top: 1rem;
+  color: #787878;
+}
+
 .title {
   text-align: center;
   font-size: 1.2em;
