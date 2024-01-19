@@ -23,10 +23,12 @@
                   <mat-progress-bar color="primary" mode="indeterminate" />
                 }
                 @case ('downloaded') {
-                  <button mat-flat-button color="warn" color="warn" class="buttonDownload" (click)="removeLocalMap(layer.key)" >Remove</button>
+                  <button mat-flat-button color="warn" color="warn" class="buttonDownload" (click)="removeLocalMap(layer.key)">
+                    Remove
+                  </button>
                 }
                 @default {
-                  <button mat-flat-button color="primary" class="buttonDownload" (click)="downloadMap(layer.key)" >Download</button>
+                  <button mat-flat-button color="primary" class="buttonDownload" (click)="downloadMap(layer.key)">Download</button>
                 }
               }
             </div>
@@ -36,7 +38,6 @@
               {{ layer.translation }}
             </mat-radio-button>
           </mat-radio-group>
-
         </mat-action-list>
       </div>
     </ng-template>
