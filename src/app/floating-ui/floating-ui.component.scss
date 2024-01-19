@@ -135,4 +135,8 @@ app-geocoder {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
 }
