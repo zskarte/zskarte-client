@@ -35,11 +35,15 @@
               </div>
             </div>
 
-            <mat-form-field appearance="outline" *ngIf="(editMode | async)">
+            <mat-form-field appearance="outline" *ngIf="editMode | async">
               <mat-label>{{ i18n.get('reportNumber') }}</mat-label>
-              <input matInput type="number" min="1"
-                              [ngModel]="drawElement['reportNumber']"
-                              (ngModelChange)="updateProperty(drawElement, 'reportNumber', $event)">
+              <input
+                matInput
+                type="number"
+                min="1"
+                [ngModel]="drawElement['reportNumber']"
+                (ngModelChange)="updateProperty(drawElement, 'reportNumber', $event)"
+              />
             </mat-form-field>
 
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
@@ -81,7 +85,7 @@
             >
             <br />
             <div *ngIf="drawElement.createdAt" class="time">
-              {{ drawElement.createdAt | date : 'dd.MM.yyyy, HH:mm' }}
+              {{ drawElement.createdAt | date: 'dd.MM.yyyy, HH:mm' }}
             </div>
             <div class="clearfix"></div>
             <div *ngIf="selectedSignature.size" class="time">
@@ -132,7 +136,7 @@
                 >{{ i18n.get('hideSymbol') }}</mat-checkbox
               >
             </div>
-            <mat-form-field class="slider" *ngIf="drawElement.symbolId && !drawElement.hideIcon" >
+            <mat-form-field class="slider" *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('symbolSize') }}</mat-label>
               <mat-slider [max]="2" [min]="0.5" [step]="0.1">
                 <input matSliderThumb [ngModel]="drawElement.iconSize" (ngModelChange)="updateProperty(drawElement, 'iconSize', $event)" />
@@ -140,7 +144,7 @@
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
 
-            <mat-form-field class="slider" *ngIf="drawElement.symbolId && !drawElement.hideIcon" >
+            <mat-form-field class="slider" *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('symbolOffset') }}</mat-label>
               <mat-slider [max]="5000" [min]="0.1" [step]="100">
                 <input
@@ -158,7 +162,7 @@
               >
             </mat-form-field>
 
-            <mat-form-field class="slider" *ngIf="drawElement.symbolId && !drawElement.hideIcon" >
+            <mat-form-field class="slider" *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('rotate') }}</mat-label>
               <mat-slider [max]="180" [min]="-180" [step]="1">
                 <input matSliderThumb [ngModel]="drawElement.rotation" (ngModelChange)="updateProperty(drawElement, 'rotation', $event)" />
@@ -166,7 +170,7 @@
               <input type="text" matInput hidden value="-" />
             </mat-form-field>
 
-            <mat-form-field class="slider" *ngIf="drawElement.symbolId && !drawElement.hideIcon" >
+            <mat-form-field class="slider" *ngIf="drawElement.symbolId && !drawElement.hideIcon">
               <mat-label>{{ i18n.get('opacity') }}</mat-label>
               <mat-slider [max]="1" [min]="0.01" [step]="0.05">
                 <input

@@ -32,7 +32,9 @@ body {
 
 /********** Levin's Material Style changes ***********/
 
-.mat-mdc-menu-content, .mat-accordion, .mat-accordion-multi {
+.mat-mdc-menu-content,
+.mat-accordion,
+.mat-accordion-multi {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -89,7 +91,10 @@ mat-card {
   border-radius: 1rem;
   overflow: hidden;
   margin-top: 0.25rem;
-  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
 .cdk-overlay-pane:not(:has(mat-option)) {
@@ -97,7 +102,10 @@ mat-card {
 }
 
 .cdk-overlay-pane:has(button) {
-  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
 .mat-mdc-elevation-specific.mat-elevation-z8 {

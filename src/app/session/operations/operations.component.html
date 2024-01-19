@@ -2,7 +2,9 @@
   <mat-card>
     <ng-container *ngIf="operationToEdit | async as edit; else list">
       <mat-card-header>
-        <mat-card-title class="edit-title"><h1>{{ i18n.get('edit') }}</h1></mat-card-title>
+        <mat-card-title class="edit-title"
+          ><h1>{{ i18n.get('edit') }}</h1></mat-card-title
+        >
       </mat-card-header>
       <mat-card-content>
         <form class="edit-form">
