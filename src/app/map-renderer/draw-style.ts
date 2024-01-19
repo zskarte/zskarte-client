@@ -137,7 +137,7 @@ export class DrawStyle {
     const size = features.length;
     if (size === 0) {
       return [];
-    } else if (size == 1) {
+    } else if (size === 1) {
       return DrawStyle.styleFunction(features[0], resolution);
     }
 
@@ -694,6 +694,7 @@ export class DrawStyle {
   private static getHighlightLineWhenSelectedStyle(feature: FeatureLike, scale: number, selected: boolean): Style | null {
     feature = DrawStyle.getSubFeature(feature);
     if (selected) {
+      // skipcq: JS-0047
       switch (feature.getGeometry()?.getType()) {
         case 'Polygon':
         case 'MultiPolygon':

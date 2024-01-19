@@ -1025,6 +1025,7 @@ export class MapRendererComponent implements AfterViewInit {
    * If handed a cluster, returns the first feature inside the cluster
    * Else returns the feature itself
    */
+  // skipcq:  JS-0105
   private getFeatureInsideCluster(feature?: FeatureLike) {
     if (feature?.get(ZsMapOLFeatureProps.IS_DRAW_ELEMENT)) {
       return feature;
