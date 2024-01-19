@@ -33,7 +33,7 @@ export class OperationsComponent implements OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  public async selectOperation(operation: IZsMapOperation): Promise<void> {
+  public selectOperation(operation: IZsMapOperation) {
     if (operation.id) {
       this._session.setOperation(operation);
     }

@@ -10,21 +10,22 @@ import { isElectron } from '../helper/os';
 export class IpcService {
   constructor(private _zone: NgZone) {}
 
+  // skipcq: JS-0105
   private async _invoke<PARAMS = any, RESULT = any>(channel: string, params: PARAMS): Promise<RESULT> {
-    return (window as any).zskarte.ipcInvoke(channel, params);
+    return await (window as any).zskarte.ipcInvoke(channel, params);
   }
 
   public async saveFile(params: { data: string; fileName: string; mimeType: string; filters?: FileFilter[] }): Promise<void> {
     if (isElectron()) {
-      return this._invoke('fs:saveFile', params);
+      await this._invoke('fs:saveFile', params);
+      return;
     }
 
     const blob = new Blob([params.data], { type: params.mimeType });
     FileSaver.saveAs(blob, params.fileName);
-    return;
   }
 
   public async openFile(params: { filters: FileFilter[] }): Promise<string> {
-    return this._invoke('fs:openFile', params);
+    return await this._invoke('fs:openFile', params);
   }
 }

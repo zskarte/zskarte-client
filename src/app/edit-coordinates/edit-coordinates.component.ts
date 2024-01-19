@@ -28,9 +28,9 @@ export class EditCoordinatesComponent {
 
   ok(): void {
     try {
-      const parsedCoordinates: Coordinate = JSON.parse(this.coordinates);
+      const parsedCoordinates = JSON.parse(this.coordinates);
       if (parsedCoordinates) {
-        let valid = true;
+        let valid: boolean;
         switch (this.geometry) {
           case 'Point':
             valid = this.isValidPointCoordinate(parsedCoordinates);
@@ -42,6 +42,8 @@ export class EditCoordinatesComponent {
           case 'MultiPolygon':
             valid = this.isValidPolygon(parsedCoordinates);
             break;
+          default:
+            valid = true;
         }
         if (valid) {
           this.dialogRef.close(parsedCoordinates);
@@ -54,6 +56,7 @@ export class EditCoordinatesComponent {
     }
   }
 
+  // skipcq: JS-0105
   private isValidPointCoordinate(coordinates: Coordinate | number) {
     return Array.isArray(coordinates) && coordinates.length === 2 && coordinates.filter((c) => typeof c !== 'number').length === 0;
   }
