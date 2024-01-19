@@ -4,7 +4,6 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![ZSKarte.ch](https://img.shields.io/website?url=https%3A%2F%2Fwww.zskarte.ch)](https://www.zskarte.ch)
 
-
 [![DeepSource](https://app.deepsource.com/gh/zskarte/zskarte-client.svg/?label=active+issues&show_trend=true&token=l9_fXyHSZ8v9FcMpZbK0ouA2)](https://app.deepsource.com/gh/zskarte/zskarte-client/)
 [![DeepSource](https://app.deepsource.com/gh/zskarte/zskarte-client.svg/?label=resolved+issues&show_trend=true&token=l9_fXyHSZ8v9FcMpZbK0ouA2)](https://app.deepsource.com/gh/zskarte/zskarte-client/)
 
