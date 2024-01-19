@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Component, OnDestroy, Output } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
-import { MatSliderChange } from '@angular/material/slider';
 import { I18NService } from '../state/i18n.service';
 import { FillStyle, getColorForCategory, Sign, signatureDefaultValues } from '../core/entity/sign';
 import { ZsMapStateService } from '../state/state.service';
@@ -62,21 +61,22 @@ export class SelectedFeatureComponent implements OnDestroy {
     public i18n: I18NService,
     public zsMapStateService: ZsMapStateService,
   ) {
-    this.selectedFeature = this.zsMapStateService.observeSelectedElement().pipe(
+    this.selectedFeature = this.zsMapStateService.observeSelectedElement$().pipe(
       takeUntil(this._ngUnsubscribe),
       map((element) => element?.getOlFeature() as Feature<SimpleGeometry> | undefined),
     );
-    this.selectedDrawElement = this.zsMapStateService.observeSelectedElement().pipe(
+    this.selectedDrawElement = this.zsMapStateService.observeSelectedElement$().pipe(
       takeUntil(this._ngUnsubscribe),
       switchMap((element) => element?.observeElement() ?? EMPTY),
     );
-    this.selectedSignature = this.zsMapStateService.observeSelectedElement().pipe(
+    this.selectedSignature = this.zsMapStateService.observeSelectedElement$().pipe(
       takeUntil(this._ngUnsubscribe),
       map((element) => {
         const sig = element?.getOlFeature()?.get('sig');
-        if (sig) {
-          return sig.id ? Signs.getSignById(sig.id) : { ...sig };
-        }
+        if (!sig) return undefined;
+        const signById = sig.id ? Signs.getSignById(sig.id) : { ...sig };
+        signById.createdBy = element?.elementState?.createdBy;
+        return signById;
       }),
     );
 
@@ -133,6 +133,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     return this.featureType === 'LineString';
   }
 
+  // skipcq: JS-0105
   isText(element?: ZsMapDrawElementState) {
     if (!element) return false;
     return element.type === ZsMapDrawElementStateType.TEXT;
@@ -144,7 +145,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
 
     const point = this._drawElementCache[element.id].getOlFeature()?.getGeometry() as SimpleGeometry;
-    return this.isPolygon() && this.selectedFeature != null && (point?.getCoordinates()?.length ?? 0) > 1;
+    return this.isPolygon() && this.selectedFeature !== null && (point?.getCoordinates()?.length ?? 0) > 1;
   }
 
   private extractFeatureGroups(allFeatures: any[]): any {
@@ -154,9 +155,7 @@ export class SelectedFeatureComponent implements OnDestroy {
       const label = this.i18n.getLabelForSign(sig);
       let group = result[label];
       if (!group) {
-        group = result[label] = {
-          label: label,
-        };
+        group = result[label] = { label };
       }
       if (!group.src && sig.src) {
         group.src = sig.src;
@@ -167,22 +166,6 @@ export class SelectedFeatureComponent implements OnDestroy {
       group.features.push(f);
     });
     return result;
-  }
-
-  showFeature(feature: any) {
-    /*
-    if (feature && feature.getGeometry()) {
-      this.sharedState.gotoCoordinate({
-        lon: feature.getGeometry().getCoordinates()[0],
-        lat: feature.getGeometry().getCoordinates()[1],
-        mercator: true,
-        center: false,
-      });
-    }*/
-  }
-
-  hideFeature() {
-    // this.sharedState.gotoCoordinate(null);
   }
 
   updateProperty<T extends keyof ZsMapDrawElementState>(
@@ -203,11 +186,15 @@ export class SelectedFeatureComponent implements OnDestroy {
 
   updateFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]) {
     if (element.id) {
-      this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', this.getUpdatedFillStyle(element, field, value));
+      this.zsMapStateService.updateDrawElementState(
+        element.id,
+        'fillStyle',
+        SelectedFeatureComponent.getUpdatedFillStyle(element, field, value),
+      );
     }
   }
 
-  getUpdatedFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]): FillStyle {
+  static getUpdatedFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]): FillStyle {
     return { ...element.fillStyle, [field]: value } as FillStyle;
   }
 
@@ -223,7 +210,7 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   async editCoordinates() {
-    const selectedElement = await firstValueFrom(this.zsMapStateService.observeSelectedElement());
+    const selectedElement = await firstValueFrom(this.zsMapStateService.observeSelectedElement$());
     if (selectedElement) {
       const editDialog = this.dialog.open(EditCoordinatesComponent, {
         data: {
@@ -258,7 +245,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     const confirm = this.dialog.open(ConfirmationDialogComponent, {
       data: this.i18n.get('removeFeatureFromMapConfirm'),
     });
-    confirm.afterClosed().subscribe(async (r) => {
+    confirm.afterClosed().subscribe((r) => {
       if (r && drawElement.id) {
         this.zsMapStateService.removeDrawElement(drawElement.id);
         this.zsMapStateService.resetSelectedFeature();
@@ -266,10 +253,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     });
   }
 
-  getOriginalImageUrl(file: string) {
-    return undefined; // CustomImageStoreService.getOriginalImageDataUrl(file);
-  }
-
+  // skipcq: JS-0105
   getImageUrl(file: string) {
     // const imageFromStore = CustomImageStoreService.getImageDataUrl(file);
     // if (imageFromStore) {
@@ -304,32 +288,8 @@ export class SelectedFeatureComponent implements OnDestroy {
     this.updateProperty(element, 'zindex', minZIndex - 1);
   }
 
-  findSigBySrc(src: any) {
-    // const fromCustomStore = CustomImageStoreService.getSign(src);
-    // if (fromCustomStore) {
-    //   return fromCustomStore;
-    // }
-    return Signs.getSignBySource(src);
-  }
-
   openImageDetail(sig: any) {
     this.dialog.open(DetailImageViewComponent, { data: sig });
-  }
-
-  setSliderValueOnSignature(field: string, event: MatSliderChange) {
-    const updateProp = (object: any, path: string[], value: any): any => {
-      if (path.length === 1) object[path[0]] = value;
-      else if (path.length === 0) throw new Error('path not found');
-      else {
-        if (object[path[0]]) return updateProp(object[path[0]], path.slice(1), value);
-        else {
-          object[path[0]] = {};
-          return updateProp(object[path[0]], path.slice(1), value);
-        }
-      }
-    };
-    updateProp(this.selectedSignature, field.split('.'), event.value);
-    //this.redraw();
   }
 
   resetSignature(element: ZsMapDrawElementState) {

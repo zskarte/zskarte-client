@@ -273,6 +273,11 @@ export class I18NService {
       fr: 'Charger à partir du fichier',
       en: 'Load from file',
     },
+    createdBy: {
+      de: 'Erstellt von',
+      en: 'Created by',
+      fr: 'Créé par',
+    },
     import: {
       de: 'Importieren',
       fr: 'Importer',
@@ -1288,6 +1293,11 @@ export class I18NService {
       de: 'Ereigniss importieren',
       en: 'Import Scenario',
       fr: 'Importer événement',
+    },
+    eventState: {
+      de: 'Situationslage',
+      en: 'Event state',
+      fr: 'Sutiation',
     },
     affectedPersons: {
       de: 'Betroffene Personen',

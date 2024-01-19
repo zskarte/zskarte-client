@@ -21,6 +21,7 @@ export interface Sign {
   en?: string;
   text?: string;
   label?: string;
+  createdBy?: string;
   labelShow?: boolean;
   fontSize?: number;
   style?: string;
@@ -139,29 +140,6 @@ export function getColorForCategory(category: string): string {
   return foundCategory ? foundCategory.color : '#535353';
 }
 
-export function defineDefaultValuesForSignature(signature: Sign) {
-  signature.style = signature.style || signatureDefaultValues.style;
-  signature.size = signature.size || signatureDefaultValues.size;
-  signature.color = signature.color || signatureDefaultValues.color(signature.kat);
-  signature.fillOpacity = signature.fillOpacity || signatureDefaultValues.fillOpacity;
-  signature.strokeWidth = signature.strokeWidth || signatureDefaultValues.strokeWidth;
-  signature.fontSize = signature.fontSize || signatureDefaultValues.fontSize;
-  signature.fillStyle = signature.fillStyle || signatureDefaultValues.fillStyle;
-  signature.fillStyle.angle = signature.fillStyle.angle || signatureDefaultValues.fillStyleAngle;
-  signature.fillStyle.size = signature.fillStyle.size || signatureDefaultValues.fillStyleSize;
-  signature.fillStyle.spacing = signature.fillStyle.spacing || signatureDefaultValues.fillStyleSpacing;
-  signature.iconOffset = signature.iconOffset || signatureDefaultValues.iconOffset;
-  signature.protected = signature.protected || signatureDefaultValues.protected;
-  signature.labelShow = signature.labelShow || signatureDefaultValues.labelShow;
-  signature.arrow = signature.arrow || signatureDefaultValues.arrow;
-  signature.iconSize = signature.iconSize || signatureDefaultValues.iconSize;
-  signature.iconOpacity = signature.iconOpacity || signatureDefaultValues.iconOpacity;
-  signature.rotation = signature.rotation || signatureDefaultValues.rotation;
-  signature.images = signature.images || signatureDefaultValues.images;
-  signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
-  signature.affectedPersons = signature.affectedPersons || signatureDefaultValues.affectedPersons;
-}
-
 export const signatureDefaultValues: SignatureDefaultValues = {
   style: 'solid',
   size: undefined,
@@ -193,6 +171,29 @@ export const signatureDefaultValues: SignatureDefaultValues = {
   hideIcon: false,
   affectedPersons: undefined,
 };
+
+export function defineDefaultValuesForSignature(signature: Sign) {
+  signature.style = signature.style || signatureDefaultValues.style;
+  signature.size = signature.size || signatureDefaultValues.size;
+  signature.color = signature.color || signatureDefaultValues.color(signature.kat);
+  signature.fillOpacity = signature.fillOpacity || signatureDefaultValues.fillOpacity;
+  signature.strokeWidth = signature.strokeWidth || signatureDefaultValues.strokeWidth;
+  signature.fontSize = signature.fontSize || signatureDefaultValues.fontSize;
+  signature.fillStyle = signature.fillStyle || signatureDefaultValues.fillStyle;
+  signature.fillStyle.angle = signature.fillStyle.angle || signatureDefaultValues.fillStyleAngle;
+  signature.fillStyle.size = signature.fillStyle.size || signatureDefaultValues.fillStyleSize;
+  signature.fillStyle.spacing = signature.fillStyle.spacing || signatureDefaultValues.fillStyleSpacing;
+  signature.iconOffset = signature.iconOffset || signatureDefaultValues.iconOffset;
+  signature.protected = signature.protected || signatureDefaultValues.protected;
+  signature.labelShow = signature.labelShow || signatureDefaultValues.labelShow;
+  signature.arrow = signature.arrow || signatureDefaultValues.arrow;
+  signature.iconSize = signature.iconSize || signatureDefaultValues.iconSize;
+  signature.iconOpacity = signature.iconOpacity || signatureDefaultValues.iconOpacity;
+  signature.rotation = signature.rotation || signatureDefaultValues.rotation;
+  signature.images = signature.images || signatureDefaultValues.images;
+  signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
+  signature.affectedPersons = signature.affectedPersons || signatureDefaultValues.affectedPersons;
+}
 
 export interface SignatureDefaultValues {
   style: string;

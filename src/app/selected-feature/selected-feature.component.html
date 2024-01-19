@@ -10,6 +10,10 @@
             <div *ngIf="i18n.getLabelForSign(selectedSignature)" class="label">
               {{ i18n.getLabelForSign(selectedSignature) }}
             </div>
+            <div *ngIf="selectedSignature.createdBy" class="label label-gray">
+              <span>{{ i18n.get('createdBy') }}</span>
+              <span style="font-weight: bold">{{ selectedSignature.createdBy }}</span>
+            </div>
             <mat-form-field *ngIf="editMode | async">
               <mat-label>{{ i18n.get('name') }}</mat-label>
               <input

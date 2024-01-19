@@ -8,7 +8,6 @@ import VectorSource from 'ol/source/Vector';
 import { Options } from 'ol/interaction/Draw';
 import { Geometry } from 'ol/geom';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
-import { IZsMapDrawElementUi } from './draw-element-ui.interfaces';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
 import { areCoordinatesEqual } from '../../../helper/coordinates';
@@ -53,6 +52,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       label: state.name,
       labelShow: state.nameShow,
       color: state.color,
+      createdBy: state.createdBy,
       protected: state.protected,
       iconSize: state.iconSize,
       hideIcon: state.hideIcon,
@@ -132,10 +132,6 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     });
   }
 
-  public getUi(): IZsMapDrawElementUi | undefined {
-    return undefined;
-  }
-
   // static handlers for drawing
   public static getOlDrawHandler(state: ZsMapStateService, element: ZsMapElementToDraw): Draw {
     const draw = new Draw(
@@ -150,7 +146,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     return draw;
   }
   protected static _getOlDrawType(symbolId?: number): Type {
-    throw new Error('static fn _getOlDrawType is not implemented ' + symbolId);
+    throw new Error(`static fn _getOlDrawType is not implemented ${symbolId}`);
   }
   protected static _enhanceOlDrawOptions(options: Options) {
     return options;

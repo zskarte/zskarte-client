@@ -72,6 +72,7 @@ import { SidebarMenuComponent } from './sidebar/sidebar-menu/sidebar-menu.compon
 import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { IncidentSelectComponent } from './incident-select/incident-select.component';
 
 registerLocaleData(localeCH);
 
@@ -121,6 +122,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     CoordinatesComponent,
     SidebarMenuComponent,
     DrawDialogComponent,
+    IncidentSelectComponent,
   ],
   imports: [
     BrowserModule,

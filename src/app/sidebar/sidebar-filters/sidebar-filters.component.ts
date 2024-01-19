@@ -83,7 +83,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
           symbols[sig.src] = {
             label: this.i18n.getLabelForSign(sig),
             origSrc: sig.src,
-            src: dataUrl ? dataUrl : 'assets/img/signs/' + sig.src,
+            src: dataUrl ? dataUrl : `assets/img/signs/${sig.src}`,
             kat: sig.kat,
             id: sig.id,
           };
