@@ -28,14 +28,14 @@ export class OperationsComponent implements OnDestroy {
     public ipc: IpcService,
     private _dialog: MatDialog,
     private _sanitizer: DomSanitizer,
-    public operation: OperationService,
+    public operationService: OperationService,
   ) {
     this._session
       .observeOrganizationId()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(async (organizationId) => {
         if (organizationId) {
-          await this.operation.reload();
+          await this.operationService.reload();
         }
       });
   }

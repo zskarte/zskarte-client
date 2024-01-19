@@ -41,7 +41,7 @@ export class SessionService {
             .pipe(skip(1), takeUntil(this._clearOperation))
             .subscribe(async (displayState) => {
               if (this._session.value?.operation?.id) {
-                db.displayStates.put({ ...displayState, id: this._session.value.operation?.id });
+                await db.displayStates.put({ ...displayState, id: this._session.value.operation?.id });
               }
             });
 
