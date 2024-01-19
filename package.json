@@ -7,7 +7,7 @@
   },
   "scripts": {
     "ng:serve": "ng serve --port 4300",
-    "ng:serve:dev": "ng serve --port 4300 --configuration development",
+    "ng:serve:dev": "ng serve --port 4300 --configuration development-local",
     "ng:serve:e2e": "npm-run-all -p ng:serve:dev wait",
     "ng:serve:prod": "ng serve --port 4300 --configuration production",
     "ng:build:prod": "ng build --configuration production",

@@ -162,7 +162,7 @@ export class SyncService {
       },
     });
 
-    if (error?.status !== 200) {
+    if (error) {
       return;
     }
     await db.patchSyncQueue.clear();
