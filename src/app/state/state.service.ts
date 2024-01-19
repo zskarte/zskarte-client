@@ -748,10 +748,6 @@ export class ZsMapStateService {
   }
 
   public undoMapStateChange() {
-    if (this.isHistoryMode()) {
-      return;
-    }
-
     if (this._mapInversePatches.value.length - this._undoStackPointer.value === 0) {
       return;
     }
@@ -771,10 +767,6 @@ export class ZsMapStateService {
   }
 
   public redoMapStateChange() {
-    if (this.isHistoryMode()) {
-      return;
-    }
-
     if (this._undoStackPointer.value === 0) {
       return;
     }

@@ -33,6 +33,7 @@ export class ShortcutService {
   };
   private _inputs = ['INPUT', 'TEXTAREA'];
   private _keydownObserver: Observable<KeyboardEvent>;
+  private _readOnlyMode = false;
 
   constructor(private _state: ZsMapStateService) {
     this._keydownObserver = new Observable((observer) => {
@@ -44,36 +45,40 @@ export class ShortcutService {
     this._state.observeSelectedElement().subscribe((element) => {
       this._selectedElement = element;
     });
+
+    this._state.observeIsReadOnly().subscribe((readOnlyMode) => {
+      this._readOnlyMode = readOnlyMode;
+    });
   }
 
   public initialize(): void {
-    this._listen({ shortcut: 'mod+backspace' }).subscribe(async () => {
+    this._listen({ shortcut: 'mod+backspace', drawModeOnly: true }).subscribe(async () => {
       if (this._selectedFeatureId) {
         this._state.removeDrawElement(this._selectedFeatureId);
       }
     });
 
-    this._listen({ shortcut: 'mod+1' }).subscribe(() => {
+    this._listen({ shortcut: 'mod+1', drawModeOnly: true }).subscribe(() => {
       const layer = this._state.getActiveLayer();
       layer?.draw(ZsMapDrawElementStateType.TEXT);
     });
 
-    this._listen({ shortcut: 'mod+2' }).subscribe(() => {
+    this._listen({ shortcut: 'mod+2', drawModeOnly: true }).subscribe(() => {
       const layer = this._state.getActiveLayer();
       layer?.draw(ZsMapDrawElementStateType.POLYGON);
     });
 
-    this._listen({ shortcut: 'mod+3' }).subscribe(() => {
+    this._listen({ shortcut: 'mod+3', drawModeOnly: true }).subscribe(() => {
       const layer = this._state.getActiveLayer();
       layer?.draw(ZsMapDrawElementStateType.LINE);
     });
 
-    this._listen({ shortcut: 'mod+4' }).subscribe(() => {
+    this._listen({ shortcut: 'mod+4', drawModeOnly: true }).subscribe(() => {
       const layer = this._state.getActiveLayer();
       layer?.draw(ZsMapDrawElementStateType.FREEHAND);
     });
 
-    this._listen({ shortcut: 'mod+5' }).subscribe(() => {
+    this._listen({ shortcut: 'mod+5', drawModeOnly: true }).subscribe(() => {
       const layer = this._state.getActiveLayer();
       layer?.draw(ZsMapDrawElementStateType.SYMBOL);
     });
@@ -82,26 +87,26 @@ export class ShortcutService {
       this._copyElement = this._selectedElement;
     });
 
-    this._listen({ shortcut: 'mod+v' }).subscribe(() => {
+    this._listen({ shortcut: 'mod+v', drawModeOnly: true }).subscribe(() => {
       if (this._copyElement?.elementState) {
         this._state.addDrawElement(this._copyElement.elementState);
       }
     });
 
-    this._listen({ shortcut: 'mod+y' }).subscribe(() => {
+    this._listen({ shortcut: 'mod+y', drawModeOnly: true }).subscribe(() => {
       this._state.undoMapStateChange();
     });
 
-    this._listen({ shortcut: 'mod+z' }).subscribe(() => {
+    this._listen({ shortcut: 'mod+z', drawModeOnly: true }).subscribe(() => {
       this._state.redoMapStateChange();
     });
 
-    this._listen({ shortcut: 'escape' }).subscribe(() => {
+    this._listen({ shortcut: 'escape', drawModeOnly: true }).subscribe(() => {
       this._state.cancelDrawing();
     });
   }
 
-  private _listen({ shortcut, preventDefault = true }: IShortcut): Observable<KeyboardEvent> {
+  private _listen({ shortcut, preventDefault = true, drawModeOnly = false }: IShortcut): Observable<KeyboardEvent> {
     const keys = (shortcut?.split('+') || []).map((key) => key.trim().toLowerCase());
 
     const shiftKey = keys.includes('shift');
@@ -116,6 +121,10 @@ export class ShortcutService {
 
     return this._keydownObserver.pipe(
       filter((event) => {
+        if (drawModeOnly && this._readOnlyMode) {
+          return false;
+        }
+
         if (!shortcut || !key) {
           return true;
         }

@@ -62,10 +62,13 @@ export class SelectSignDialog implements OnInit {
   select(sign: Sign) {
     // We need to pass a deep copy of the object
     const toEmit = JSON.parse(JSON.stringify(sign));
-    if (this.signSelected) {
-      this.signSelected.emit(toEmit);
+
+    // If this was directly called as a dialog, close it
+    // Else emit an event
+    if (this.dialogRef.componentInstance?.constructor?.name === 'SelectSignDialog') {
+      this.dialogRef.close(toEmit);
     } else {
-      this.dialogRef?.close(toEmit);
+      this.signSelected.emit(toEmit);
     }
   }
 
