@@ -165,7 +165,7 @@ export class DrawStyle {
           }),
           text: new Text({
             text: size.toString(),
-            font: 150 + 'px sans-serif',
+            font: `${150}px sans-serif`,
             scale,
             fill: new Fill({
               color: '#fff',
