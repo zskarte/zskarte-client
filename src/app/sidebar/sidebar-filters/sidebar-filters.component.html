@@ -14,6 +14,9 @@
         <button mat-raised-button (click)="filterAll(true)">
           {{ i18n.get('hideAllElements') }}
         </button>
+        <mat-slide-toggle [checked]="enableClustering$ | async" (change)="toggleClustering()">
+          {{ i18n.get('featureClustering') }}
+        </mat-slide-toggle>
       </div>
     </ng-template>
   </mat-expansion-panel>

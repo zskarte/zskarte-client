@@ -290,13 +290,22 @@ export class MapRendererComponent implements AfterViewInit {
     select.on('select', (event) => {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
-      for (const feature of event.selected) {
+      for (const cluster of event.selected) {
+        const feature = this.getFeatureInsideCluster(cluster);
         const nextElement = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
 
         if (this._mergeMode) {
           const selectedElement = this._drawElementCache[this.selectedFeature.getValue()?.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
           this._state.mergePolygons(selectedElement.element, nextElement.element);
         } else {
+          if (feature && !feature.get('sig')?.protected) {
+            this._modifyCache.push(feature);
+
+            // Only add the cluster to the modify cache if we are in clustering mode
+            if (feature !== cluster) {
+              this._modifyCache.push(cluster);
+            }
+          }
           this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
           // reset selectedVertexPoint, since we selected a whole feature.
           this.selectedVertexPoint.next(null);
@@ -330,7 +339,7 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     this._modify.on('modifystart', (event) => {
-      this._currentSketch = event.features.getArray()[0];
+      this._currentSketch = this.getFeatureInsideCluster(event.features.getArray()[0]);
       this.toggleEditButtons(false);
     });
 
@@ -341,7 +350,7 @@ export class MapRendererComponent implements AfterViewInit {
 
       this._currentSketch = undefined;
       // only first feature is relevant
-      const feature = e.features.getArray()[0] as Feature<SimpleGeometry>;
+      const feature = this.getFeatureInsideCluster(e.features.getArray()[0] as Feature<SimpleGeometry>);
       const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
       element.element.setCoordinates(feature.getGeometry()?.getCoordinates() ?? []);
       if (this._modify['vertexFeature_']) {
@@ -350,23 +359,9 @@ export class MapRendererComponent implements AfterViewInit {
       }
     });
 
-    // select on ol-Map layer
-    this.selectedFeature.pipe(takeUntil(this._ngUnsubscribe)).subscribe((feature) => {
-      if (feature && !feature.get('sig').protected && !this._modifyCache.getArray().includes(feature)) {
-        this._modifyCache.push(feature);
-      }
-    });
-
     const translate = new Translate({
-      features: select.getFeatures(),
-      condition: () => {
-        return (
-          select
-            .getFeatures()
-            .getArray()
-            .every((feature) => !feature?.get('sig').protected) && !this.isReadOnly.value
-        );
-      },
+      features: this._modifyCache,
+      condition: () => this.areFeaturesModifiable(),
     });
 
     translate.on('translatestart', () => {
@@ -378,10 +373,9 @@ export class MapRendererComponent implements AfterViewInit {
         return;
       }
       // only the first feature is relevant
-      const feature = e.features.getArray()[0];
+      const feature = this.getFeatureInsideCluster(e.features.getArray()[0]);
       const element = this._drawElementCache[feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID)];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as any);
+      element.element.setCoordinates((feature.getGeometry() as SimpleGeometry).getCoordinates() as number[]);
 
       if (element.element.elementState?.type === ZsMapDrawElementStateType.SYMBOL) {
         // Hack to ensure, the buttons show up at the correct location immediately
@@ -517,7 +511,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     const debouncedZoomSave = debounce(() => {
       this._state.setMapZoom(this._view.getZoom() ?? 10);
-    }, 1000);
+    }, 500);
 
     this._view.on('change:resolution', () => {
       debouncedZoomSave();
@@ -951,7 +945,20 @@ export class MapRendererComponent implements AfterViewInit {
   }
 
   areFeaturesModifiable() {
-    return this._modifyCache.getArray().every((feature) => feature?.get('sig') && !feature.get('sig').protected);
+    return (
+      !this.isReadOnly.value &&
+      this._modifyCache.getArray().every((clusterOrFeature) => {
+        const feature = this.getFeatureInsideCluster(clusterOrFeature);
+
+        // If the feature is a ZS DrawElement, ensure it's not protected
+        // Else it's a cluster, ensure it's a cluster with a single feature
+        if (clusterOrFeature.get(ZsMapOLFeatureProps.IS_DRAW_ELEMENT)) {
+          return feature.get('sig') && !feature.get('sig').protected;
+        } else {
+          return (clusterOrFeature.get('features')?.length ?? 0) <= 1;
+        }
+      })
+    );
   }
 
   getFeatureCoordinates(feature: Feature | null | undefined): number[] {
@@ -979,5 +986,22 @@ export class MapRendererComponent implements AfterViewInit {
   hidePositionFlag() {
     this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
     this.toggleFlagButtons(false);
+  }
+
+  /**
+   * If handed a cluster, returns the first feature inside the cluster
+   * Else returns the feature itself
+   */
+  // skipcq:  JS-0105
+  private getFeatureInsideCluster(feature?: FeatureLike) {
+    if (feature?.get(ZsMapOLFeatureProps.IS_DRAW_ELEMENT)) {
+      return feature;
+    }
+
+    const features = feature?.get('features');
+    if (features?.length > 0) {
+      return features[0];
+    }
+    return feature;
   }
 }
