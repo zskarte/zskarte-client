@@ -1,0 +1,22 @@
+<mat-form-field appearance="outline">
+  <mat-label>{{ i18n.get('eventState') }}</mat-label>
+  <mat-select [formControl]="incidents" multiple>
+    <mat-select-trigger>
+      @for (id of incidents.value; track id) {
+        @if (getIncident(id); as incident) {
+          <div class="trigger-row">
+            <img [src]="incident.icon" />
+            <span>{{ incident.name }}</span>
+          </div>
+        }
+      }
+    </mat-select-trigger>
+    @for (incident of incidentList | async; track incident.id) {
+      <mat-option [value]="incident.id">
+        <div class="row">
+          <img [src]="incident.icon" /><span>{{ incident.name }}</span>
+        </div>
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>

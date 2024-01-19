@@ -1294,6 +1294,11 @@ export class I18NService {
       en: 'Import Scenario',
       fr: 'Importer événement',
     },
+    eventState: {
+      de: 'Situationslage',
+      en: 'Event state',
+      fr: 'Sutiation',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

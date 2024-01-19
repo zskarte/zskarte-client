@@ -1,14 +1,13 @@
 .credits {
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 100%;
-  max-width: 300px;
+  margin-bottom: 1.5rem;
 }
 
 .credits img {
   height: 46px;
   width: auto;
+  margin-right: 1rem;
 }
 
 .credits h1 {
@@ -27,4 +26,3 @@ h1 {
     display: none;
   }
 }
-

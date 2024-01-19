@@ -3,7 +3,7 @@ import { I18NService, Locale, LOCALES } from '../../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../../help/help.component';
 import { ZsMapStateService } from '../../state/state.service';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SessionService } from '../../session/session.service';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -14,6 +14,7 @@ import { ProtocolTableComponent } from '../../protocol-table/protocol-table.comp
 import { ShareDialogComponent } from '../../session/share-dialog/share-dialog.component';
 import { AccessTokenType, PermissionType } from '../../session/session.interfaces';
 import { RevokeShareDialogComponent } from '../../session/revoke-share-dialog/revoke-share-dialog.component';
+import { OperationService } from '../../session/operations/operation.service';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -25,6 +26,7 @@ export class SidebarMenuComponent implements OnDestroy {
 
   locales: Locale[] = LOCALES;
   protocolEntries: ProtocolEntry[] = [];
+  public incidents = new BehaviorSubject<number[]>([]);
   private _ngUnsubscribe = new Subject<void>();
 
   constructor(
@@ -35,6 +37,7 @@ export class SidebarMenuComponent implements OnDestroy {
     public session: SessionService,
     private datePipe: DatePipe,
     private _dialog: MatDialog,
+    private _operation: OperationService,
   ) {
     this.zsMapStateService
       .observeDrawElements()
@@ -47,6 +50,16 @@ export class SidebarMenuComponent implements OnDestroy {
           this.session.getLocale() === undefined ? 'de' : this.session.getLocale(),
         );
       });
+
+    this.incidents.next(this.session.getOperationEventStates() || []);
+  }
+
+  async updateIncidents(incidents: number[]): Promise<void> {
+    const operation = this.session.getOperation();
+    if (operation) {
+      operation.eventStates = incidents;
+      await this._operation.saveOperation(operation);
+    }
   }
 
   ngOnDestroy(): void {
