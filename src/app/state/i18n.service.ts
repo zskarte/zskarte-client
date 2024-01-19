@@ -1299,6 +1299,11 @@ export class I18NService {
       en: 'Event state',
       fr: 'Sutiation',
     },
+    affectedPersons: {
+      de: 'Betroffene Personen',
+      en: 'Affected Persons',
+      fr: 'Persones affectés',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

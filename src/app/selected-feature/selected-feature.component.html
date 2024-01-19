@@ -50,6 +50,17 @@
               />
             </mat-form-field>
 
+            <mat-form-field *ngIf="(editMode | async) && personSigns.includes((selectedFeature | async)?.get('sig').id)">
+              <mat-label>{{ i18n.get('affectedPersons') }}</mat-label>
+              <input
+                matInput
+                type="number"
+                min="1"
+                [ngModel]="drawElement['affectedPersons']"
+                (ngModelChange)="updateProperty(drawElement, 'affectedPersons', $event)"
+              />
+            </mat-form-field>
+
             <div *ngIf="!editMode && drawElement.description" class="description" [innerHTML]="drawElement.description"></div>
             <mat-checkbox *ngIf="editMode | async" [(ngModel)]="useColorPicker" class="color-mode-toggle">
               {{ i18n.get('colorPickerMode') }}
