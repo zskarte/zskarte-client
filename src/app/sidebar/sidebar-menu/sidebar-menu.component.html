@@ -1,15 +1,19 @@
-<ng-container>
-  <button mat-menu-item (click)="toggleHistory()" title="ALT+H">
-    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(zsMapStateService.observeIsHistoryMode() | async)"
-      >history</mat-icon
-    >
-    <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="zsMapStateService.observeIsHistoryMode() | async"
-      >brush</mat-icon
-    >
-    {{ (zsMapStateService.observeIsHistoryMode() | async) ? i18n.get('drawMode') : i18n.get('history') }}
-  </button>
-  <mat-divider></mat-divider>
-</ng-container>
+<app-credits />
+<app-incident-select [values]="(incidents | async) || []" (valuesChange)="updateIncidents($event)"></app-incident-select>
+
+<mat-divider></mat-divider>
+
+<button mat-menu-item (click)="toggleHistory()" title="ALT+H">
+  <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(zsMapStateService.observeIsHistoryMode() | async)"
+    >history</mat-icon
+  >
+  <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="zsMapStateService.observeIsHistoryMode() | async"
+    >brush</mat-icon
+  >
+  {{ (zsMapStateService.observeIsHistoryMode() | async) ? i18n.get('drawMode') : i18n.get('history') }}
+</button>
+<mat-divider></mat-divider>
+
 <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="languageOptions">
   <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('language')">language</mat-icon>
   {{ i18n.get('language') }}

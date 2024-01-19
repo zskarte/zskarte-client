@@ -31,17 +31,17 @@ export class SessionService {
       this._clearOperation.next();
       if (session?.jwt) {
         await db.sessions.put(session);
-        if (session.operationId) {
+        if (session.operation?.id) {
           await this._state?.refreshMapState();
-          const displayState = await db.displayStates.get({ id: session.operationId });
+          const displayState = await db.displayStates.get({ id: session.operation?.id });
           this._state.setDisplayState(displayState);
 
           this._state
             .observeDisplayState()
             .pipe(skip(1), takeUntil(this._clearOperation))
-            .subscribe((displayState) => {
-              if (this._session.value?.operationId) {
-                db.displayStates.put({ ...displayState, id: this._session.value.operationId });
+            .subscribe(async (displayState) => {
+              if (this._session.value?.operation?.id) {
+                await db.displayStates.put({ ...displayState, id: this._session.value.operation?.id });
               }
             });
 
@@ -93,7 +93,7 @@ export class SessionService {
   }
 
   public getOrganizationId(): number | undefined {
-    return this._session.value?.organizationId;
+    return this._session.value?.organization?.id;
   }
 
   public getLabel(): string | undefined {
@@ -117,32 +117,38 @@ export class SessionService {
   }
 
   public observeOrganizationId(): Observable<number | undefined> {
-    return this._session.pipe(map((session) => session?.organizationId));
+    return this._session.pipe(map((session) => session?.organization?.id));
   }
 
   public setOperation(operation?: IZsMapOperation): void {
     if (this._session?.value) {
-      this._session.value.operationId = operation?.id;
-      this._session.value.operationName = operation?.name;
-      this._session.value.operationDescription = operation?.description;
+      this._session.value.operation = operation;
     }
     this._session.next(this._session.value);
   }
 
   public observeOperationId(): Observable<number | undefined> {
-    return this._session.pipe(map((session) => session?.operationId));
+    return this._session.pipe(map((session) => session?.operation?.id));
+  }
+
+  public getOperation(): IZsMapOperation | undefined {
+    return this._session?.value?.operation;
   }
 
   public getOperationId(): number | undefined {
-    return this._session?.value?.operationId;
+    return this._session?.value?.operation?.id;
   }
 
   public getOperationName(): string | undefined {
-    return this._session?.value?.operationName;
+    return this._session?.value?.operation?.name;
+  }
+
+  public getOperationEventStates(): number[] | undefined {
+    return this._session?.value?.operation?.eventStates;
   }
 
   public getOperationDescription(): string | undefined {
-    return this._session?.value?.operationDescription;
+    return this._session?.value?.operation?.description;
   }
 
   public getLogo(): string | undefined {
@@ -217,28 +223,19 @@ export class SessionService {
     // update organization values
     newSession.jwt = jwt;
     newSession.organizationLogo = meResult.organization?.logo?.url;
-    newSession.organizationId = meResult.organization?.id;
+    newSession.organization = meResult.organization;
 
     // update operation values
-    const operationId = decoded.operationId || currentSession?.operationId;
+    const operationId = decoded.operationId || currentSession?.operation?.id;
     if (operationId) {
       const { result: operation } = await this._api.get<IZsMapOperation>(`/api/operations/${operationId}`, { token: jwt });
       if (operation) {
-        newSession.operationId = operation?.id;
-        newSession.operationName = operation?.name;
-        newSession.operationDescription = operation?.description;
+        newSession.operation = operation;
       }
     }
 
-    if (decoded.operationId) {
-      newSession.operationId = decoded.operationId;
-    }
-
     if (meResult.organization) {
-      newSession.organizationId = meResult.organization.id;
-      newSession.defaultLatitude = meResult.organization.mapLatitude;
-      newSession.defaultLongitude = meResult.organization.mapLongitude;
-      newSession.defaultZoomLevel = meResult.organization.mapZoomLevel;
+      newSession.organization = meResult.organization;
     }
 
     this._session.next(newSession);
