@@ -40,7 +40,7 @@ export class GeoadminService {
     }
 
     return this.http
-      .get(`https://api3.geo.admin.ch/rest/services/api/MapServer/${layerId}/legend?lang=` + this._session.getLocale(), {
+      .get(`https://api3.geo.admin.ch/rest/services/api/MapServer/${layerId}/legend?lang=${this._session.getLocale()}`, {
         responseType: 'text',
       })
       .pipe(tap((data) => (this._legendCache = data)));

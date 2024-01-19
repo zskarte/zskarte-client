@@ -169,7 +169,7 @@ export class SyncService {
   public async publishCurrentLocation(longLat: { long: number; lat: number }): Promise<void> {
     const { error } = await this._api.post('/api/operations/mapstate/currentlocation', longLat, {
       headers: {
-        operationId: this._session.getOperationId() + '',
+        operationId: String(this._session.getOperationId()),
         identifier: this._connectionId,
       },
     });

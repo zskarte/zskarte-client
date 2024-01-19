@@ -149,7 +149,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     return draw;
   }
   protected static _getOlDrawType(symbolId?: number): Type {
-    throw new Error('static fn _getOlDrawType is not implemented ' + symbolId);
+    throw new Error(`static fn _getOlDrawType is not implemented ${symbolId}`);
   }
   protected static _enhanceOlDrawOptions(options: Options) {
     return options;

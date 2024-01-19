@@ -221,7 +221,7 @@ export class SessionService {
     // update operation values
     const operationId = decoded.operationId || currentSession?.operationId;
     if (operationId) {
-      const { result: operation } = await this._api.get<IZsMapOperation>('/api/operations/' + operationId, { token: jwt });
+      const { result: operation } = await this._api.get<IZsMapOperation>(`/api/operations/${operationId}`, { token: jwt });
       if (operation) {
         newSession.operationId = operation?.id;
         newSession.operationName = operation?.name;

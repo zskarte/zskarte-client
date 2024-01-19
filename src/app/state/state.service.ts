@@ -446,7 +446,7 @@ export class ZsMapStateService {
     layer.id = uuidv4();
     if (!layer.name) {
       const layerCount = (this._map.value.layers?.length || 0) + 1;
-      layer.name = 'Layer ' + layerCount;
+      layer.name = `Layer ${layerCount}`;
     }
     this.updateMapState((draft) => {
       if (!draft.layers) {
@@ -952,9 +952,9 @@ export class ZsMapStateService {
       }
       const sha256 = async (str: string): Promise<string> => {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-        return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + (x as number).toString(16)).slice(-2)).join('');
+        return Array.prototype.map.call(new Uint8Array(buf), (x) => `00${(x as number).toString(16)}`.slice(-2)).join('');
       };
-      const { error, result } = await this._api.get<IZsMapOperation>('/api/operations/' + this._session.getOperationId());
+      const { error, result } = await this._api.get<IZsMapOperation>(`/api/operations/${this._session.getOperationId()}`);
       if (error || !result) return;
       if (result.mapState) {
         const [oldDigest, newDigest] = await Promise.all([
