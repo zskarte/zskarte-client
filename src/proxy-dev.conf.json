@@ -3,5 +3,11 @@
     "target": "https://api-dev.zskarte.ch",
     "secure": false,
     "changeOrigin": true
+  },
+  "/socket.io": {
+    "target": "https://api-dev.zskarte.ch",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true
   }
 }
