@@ -1294,6 +1294,11 @@ export class I18NService {
       en: 'Import Scenario',
       fr: 'Importer événement',
     },
+    featureClustering: {
+      de: 'Symbole Gruppieren',
+      en: 'Sign clustering',
+      fr: 'Regroupement de formes',
+    },
     edit: {
       de: 'Bearbeiten',
       en: 'Edit',

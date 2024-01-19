@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, Observable, Subject, takeUntil } from 'rxjs';
-import { SidebarContext } from '../state/interfaces';
+
 import { ZsMapStateService } from '../state/state.service';
 import { I18NService } from '../state/i18n.service';
 import { SyncService } from '../sync/sync.service';
@@ -9,6 +9,8 @@ import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { DrawDialogComponent } from '../draw-dialog/draw-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
+import { SidebarContext } from '../sidebar/sidebar.interfaces';
+import { SidebarService } from '../sidebar/sidebar.service';
 
 @Component({
   selector: 'app-floating-ui',
@@ -18,8 +20,8 @@ import { HelpComponent } from '../help/help.component';
 export class FloatingUIComponent {
   static ONBOARDING_VERSION = '1.0';
 
-  sidebarContext = SidebarContext;
-  sidebarContext$: Observable<SidebarContext | null>;
+  SidebarContext = SidebarContext;
+
   private _ngUnsubscribe = new Subject<void>();
   public connectionCount = new BehaviorSubject<number>(0);
   public isOnline = new BehaviorSubject<boolean>(true);
@@ -34,6 +36,7 @@ export class FloatingUIComponent {
     private _sync: SyncService,
     private _session: SessionService,
     private _dialog: MatDialog,
+    public sidebar: SidebarService,
   ) {
     if (this.isInitialLaunch()) {
       this._dialog.open(HelpComponent, {
@@ -41,7 +44,6 @@ export class FloatingUIComponent {
       });
     }
 
-    this.sidebarContext$ = this._state.observeSidebarContext();
     this._state.observeIsReadOnly().pipe(takeUntil(this._ngUnsubscribe)).subscribe(this.isReadOnly);
 
     this._state
@@ -85,9 +87,6 @@ export class FloatingUIComponent {
 
   zoomOut() {
     this._state.updateMapZoom(-1);
-  }
-  setSidebarContext(context: SidebarContext | null) {
-    this._state.toggleSidebarContext(context);
   }
 
   undo() {

@@ -8,7 +8,6 @@ import {
   IZsMapState,
   IZsMapSymbolDrawElementParams,
   IZsMapTextDrawElementParams,
-  SidebarContext,
   ZsMapDisplayMode,
   ZsMapDrawElementParams,
   ZsMapDrawElementState,
@@ -94,10 +93,10 @@ export class ZsMapStateService {
       elementVisibility: {},
       elementOpacity: {},
       features: [],
-      sidebarContext: null,
       hiddenSymbols: [],
       hiddenFeatureTypes: [],
       hiddenCategories: [],
+      enableClustering: true,
     };
     if (!mapState) {
       mapState = this._map.value;
@@ -216,8 +215,6 @@ export class ZsMapStateService {
     // This prevents old states from the history getting applied to the state
     await this.refreshMapState();
     this.updateDisplayState((draft) => {
-      // Reset sidebarcontext on historymode change
-      draft.sidebarContext = null;
       if (draft.displayMode === ZsMapDisplayMode.HISTORY) {
         draft.displayMode = ZsMapDisplayMode.DRAW;
         this._snackBar.open(this.i18n.get('toastDrawing'), 'OK', {
@@ -267,6 +264,13 @@ export class ZsMapStateService {
       map((o) => {
         return o.positionFlag;
       }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public observeEnableClustering(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => o.enableClustering),
       distinctUntilChanged((x, y) => x === y),
     );
   }
@@ -784,19 +788,6 @@ export class ZsMapStateService {
     this._display.next(newState);
   }
 
-  toggleSidebarContext(context: SidebarContext | null) {
-    this.updateDisplayState((draft) => {
-      draft.sidebarContext = draft.sidebarContext === context ? null : context;
-    });
-  }
-
-  public observeSidebarContext(): Observable<SidebarContext | null> {
-    return this._display.pipe(
-      map((o) => o?.sidebarContext),
-      distinctUntilChanged((x, y) => x === y),
-    );
-  }
-
   public filterAll(active: boolean, featureTypes: string[], categoryNames: string[]) {
     this.updateDisplayState((draft) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -830,6 +821,12 @@ export class ZsMapStateService {
     }
     this.updateDisplayState((draft) => {
       toggleInArray<string>(draft.hiddenCategories, category);
+    });
+  }
+
+  public toggleClustering() {
+    this.updateDisplayState((draft) => {
+      draft.enableClustering = !draft.enableClustering;
     });
   }
 
