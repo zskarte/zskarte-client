@@ -122,7 +122,7 @@
         </button>
       </div>
       <div class="fab-button">
-        <button mat-fab color="primary" aria-label="Add" (click)="openDrawDialog()">
+        <button mat-fab color="primary" aria-label="Add" (click)="openDrawDialog()" *ngIf="!(isReadOnly | async)">
           <mat-icon>add</mat-icon>
         </button>
       </div>
