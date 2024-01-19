@@ -37,6 +37,7 @@ body {
   flex-direction: column;
   gap: 0.25rem;
 }
+
 .mat-mdc-list-item:hover,
 .mat-mdc-list-item:focus,
 .mdc-list-item:hover,
@@ -87,6 +88,10 @@ mat-card {
 
 .cdk-overlay-pane:not(:has(mat-option)) {
   box-shadow: none;
+}
+
+.cdk-overlay-pane:has(button) {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
 .mat-mdc-elevation-specific.mat-elevation-z8 {

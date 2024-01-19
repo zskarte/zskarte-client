@@ -21,7 +21,11 @@
   align-items: center;
   justify-content: center;
   width: 80%;
-  max-width: 600px;
+  max-width: 500px;
+
+  mat-card {
+    width: 100%;
+  }
 
   .full-width {
     width: 100%;
