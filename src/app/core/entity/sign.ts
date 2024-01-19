@@ -1,4 +1,3 @@
-import { Coordinate } from 'ol/coordinate';
 import { FeatureLike } from 'ol/Feature';
 import { LineString, MultiPolygon, Point, Polygon } from 'ol/geom';
 
@@ -46,20 +45,6 @@ export interface Sign {
   createdAt?: Date;
   reportNumber?: number;
   affectedPersons?: number;
-}
-
-export function isMoreOptimalIconCoordinate(
-  coordinateToTest: Coordinate | Coordinate[],
-  currentCoordinate: Coordinate | Coordinate[] | undefined | null,
-) {
-  if (currentCoordinate === undefined || currentCoordinate === null) {
-    return true;
-  } else if (coordinateToTest[1] > currentCoordinate[1]) {
-    return true;
-  } else if (coordinateToTest[1] === currentCoordinate[1]) {
-    return coordinateToTest[0] < currentCoordinate[0];
-  }
-  return false;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
