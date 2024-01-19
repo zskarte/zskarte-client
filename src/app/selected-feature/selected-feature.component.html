@@ -1,6 +1,6 @@
 <ng-container *ngIf="selectedDrawElement | async as drawElement">
-  <mat-card class="selection" *ngIf="selectedSignature | async as selectedSignature">
-    <mat-card-content *ngIf="!(mergeMode | async)">
+  <ng-container *ngIf="selectedSignature | async as selectedSignature">
+    <ng-container *ngIf="!(mergeMode | async)">
       <div>
         <mat-card *ngIf="!featureGroups" class="titleCard">
           <mat-card-content>
@@ -371,7 +371,7 @@
           {{ i18n.get('delete') }}
         </button>
       </stack>
-    </mat-card-content>
+    </ng-container>
     <mat-card-content *ngIf="(editMode | async) && (mergeMode | async)">
       <div>{{ i18n.get('chooseGroupingArea') }}</div>
       <button mat-raised-button (click)="merge(false)" [disabled]="drawHoleMode | async" *ngIf="isPolygon()">
@@ -379,5 +379,5 @@
         {{ i18n.get('cancelGrouping') }}
       </button>
     </mat-card-content>
-  </mat-card>
+  </ng-container>
 </ng-container>

@@ -52,7 +52,6 @@ export interface IZsMapDisplayState {
   elementOpacity: Record<string, number>;
   elementVisibility: Record<string, boolean>;
   features: GeoFeature[];
-  sidebarContext: SidebarContext | null;
   positionFlag: IPositionFlag;
   hiddenSymbols: number[];
   hiddenFeatureTypes: string[];
@@ -150,14 +149,6 @@ export interface ZsMapPolygonDrawElementState extends IZsMapBaseDrawElementState
 
 export interface ZsMapFreehandDrawElementState extends IZsMapBaseDrawElementState {
   type: ZsMapDrawElementStateType.FREEHAND;
-}
-
-export enum SidebarContext {
-  Layers,
-  Filters,
-  Connections,
-  History,
-  Menu,
 }
 
 export interface ZsMapElementToDraw {

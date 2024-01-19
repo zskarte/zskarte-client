@@ -12,7 +12,7 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { SidebarContext, ZsMapDrawElementStateType } from '../state/interfaces';
+import { ZsMapDrawElementStateType } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
@@ -59,8 +59,6 @@ export class MapRendererComponent implements AfterViewInit {
   closeButton?: Overlay;
   ROTATE_OFFSET_X = 30;
   ROTATE_OFFSET_Y = -30;
-
-  sidebarContext: Observable<SidebarContext | null>;
 
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
@@ -123,7 +121,6 @@ export class MapRendererComponent implements AfterViewInit {
           this.toggleEditButtons(false);
         }
       });
-    this.sidebarContext = this._state.observeSidebarContext();
     this.selectedFeatureCoordinates = this.selectedFeature.pipe(
       map((feature) => {
         const coords = this.getFeatureCoordinates(feature);

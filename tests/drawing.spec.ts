@@ -21,7 +21,7 @@ test('add symbol', async ({ page }) => {
   await page.getByRole('button', { name: 'Add' }).click();
   await page.getByRole('cell', { name: 'ABC Dekontaminationsstelle' }).click();
   await clickOnMap(page, { x: 659, y: 250 });
-  await expect(page.locator('app-selected-feature > mat-card')).toBeVisible();
+  await expect(page.locator('app-selected-feature')).toBeVisible();
   await expect(page.getByText('ABC Dekontaminationsstelle')).toBeVisible();
 });
 
@@ -32,7 +32,7 @@ test('add polygon', async ({ page }) => {
   await clickOnMap(page, { x: 350, y: 180 });
   await clickOnMap(page, { x: 340, y: 180 });
   await dblclickOnMap(page, { x: 340, y: 160 });
-  await expect(page.locator('app-selected-feature > mat-card')).toBeVisible();
+  await expect(page.locator('app-selected-feature')).toBeVisible();
 });
 
 test('add line', async ({ page }) => {
@@ -40,7 +40,7 @@ test('add line', async ({ page }) => {
   await page.getByRole('button', { name: 'Linie' }).click();
   await clickOnMap(page, { x: 700, y: 400 });
   await dblclickOnMap(page, { x: 700, y: 600 });
-  await expect(page.locator('app-selected-feature > mat-card')).toBeVisible();
+  await expect(page.locator('app-selected-feature')).toBeVisible();
 });
 
 test('add text', async ({ page }) => {
@@ -50,6 +50,6 @@ test('add text', async ({ page }) => {
   await page.getByRole('button', { name: 'OK' }).click();
   await clickOnMap(page, { x: 700, y: 400 });
   await dblclickOnMap(page, { x: 600, y: 400 });
-  await expect(page.locator('app-selected-feature > mat-card')).toBeVisible();
+  await expect(page.locator('app-selected-feature')).toBeVisible();
   await expect(page.getByLabel('Name')).toHaveValue('A TEST');
 });
