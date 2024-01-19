@@ -5,4 +5,5 @@ import { Component } from '@angular/core';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
+// skipcq: JS-0327
 export class MapComponent {}
