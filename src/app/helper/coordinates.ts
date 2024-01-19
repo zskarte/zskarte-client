@@ -24,24 +24,24 @@ export const areCoordinatesEqual = (
   return c1 === c2;
 };
 
-export function formatLength(line: Geometry) {
+export function formatLength(line: Geometry): string {
   const length = getLength(line);
-  let output;
+  let output: string;
   if (length > 100) {
-    output = Math.round((length / 1000) * 100) / 100 + ' ' + 'km';
+    output = `${Math.round((length / 1000) * 100) / 100} km`;
   } else {
-    output = Math.round(length * 100) / 100 + ' ' + 'm';
+    output = `${Math.round(length * 100) / 100} m`;
   }
   return output;
 }
 
-export function formatArea(polygon: Geometry) {
+export function formatArea(polygon: Geometry): string {
   const area = getArea(polygon);
-  let output;
+  let output: string;
   if (area > 10000) {
-    output = Math.round((area / 1000000) * 100) / 100 + ' ' + 'km<sup>2</sup>';
+    output = `${Math.round((area / 1000000) * 100) / 100} km<sup>2</sup>`;
   } else {
-    output = Math.round(area * 100) / 100 + ' ' + 'm<sup>2</sup>';
+    output = `${Math.round(area * 100) / 100} m<sup>2</sup>`;
   }
   return output;
 }
