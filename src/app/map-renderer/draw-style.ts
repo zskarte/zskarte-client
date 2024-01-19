@@ -603,7 +603,7 @@ export class DrawStyle {
           const notificationIcon = new Style({
             image: new Circle({
               radius: notificationIconRadius,
-              fill: this.getColorFill(`#3f51b5`),
+              fill: this.getColorFill("#3f51b5"),
             }),
             text: new Text({
               font: `${notificationIconRadius}px sans-serif`,
