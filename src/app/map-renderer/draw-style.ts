@@ -526,7 +526,7 @@ export class DrawStyle {
           iconTextScale = DrawStyle.scale(resolution, DrawStyle.textScaleFactor, 0.4);
           iconLabel = new Text({
             text: signature.label,
-            font: `20px sans-serif`,
+            font: "20px sans-serif",
             scale: iconTextScale,
             fill: this.getColorFill(signature.color ?? '#535353'),
             backgroundFill: DrawStyle.getColorFill(`rgba(255, 255, 255, ${signature.iconOpacity})`),
