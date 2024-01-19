@@ -46,6 +46,8 @@ export class EditCoordinatesComponent {
         case 'MultiPolygon':
           valid = this.isValidPolygon(parsedCoordinates);
           break;
+        default:
+          throw new Error(`No matching geometry: ${this.geometry}`);
       }
       if (valid) {
         this.dialogRef.close(parsedCoordinates);

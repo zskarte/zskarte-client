@@ -57,8 +57,9 @@ export function getFirstCoordinate(feature: FeatureLike): any {
       return (feature?.getGeometry() as LineString)?.getCoordinates()[0];
     case 'Point':
       return (feature?.getGeometry() as Point)?.getCoordinates();
+    default:
+      return [];
   }
-  return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,9 +74,9 @@ export function getLastCoordinate(feature: FeatureLike): any {
       return lCoordinates[lCoordinates.length - 1];
     case 'Point':
       return (feature?.getGeometry() as Point)?.getCoordinates();
+    default:
+      return [];
   }
-
-  return [];
 }
 
 export const signCategories: SignCategory[] = [

@@ -823,6 +823,8 @@ export class DrawStyle {
           return new Style({
             stroke: DrawStyle.getHighlightStroke(feature, scale),
           });
+        default:
+          throw new Error(`No matching type: ${feature.getGeometry()?.getType()}`);
       }
     }
     return null;
@@ -847,6 +849,8 @@ export class DrawStyle {
             return (feature.getGeometry() as LineString).getCoordinates();
           };
           break;
+        default:
+          throw new Error(`No matching type: ${feature.getGeometry()?.getType()}`);
       }
       if (coordinatesFunction) {
         return new Style({
