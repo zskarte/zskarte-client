@@ -449,7 +449,7 @@ export class ZsMapStateService {
   public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
     const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
     const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
-    if (featureA.getGeometry()?.getType() === 'Polygon' && featureB.getGeometry()?.getType() == 'Polygon') {
+    if (featureA.getGeometry()?.getType() === 'Polygon' && featureB.getGeometry()?.getType() === 'Polygon') {
       const newCoordinates: number[][] = [];
       featureA
         ?.getGeometry()
