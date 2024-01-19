@@ -123,14 +123,6 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
     );
   }
 
-  public setLayer(layer: string): void {
-    this._state.updateMapState((draft) => {
-      if (draft?.drawElements?.[this._id]) {
-        draft.drawElements[this._id].layer = layer;
-      }
-    });
-  }
-
   // static handlers for drawing
   public static getOlDrawHandler(state: ZsMapStateService, element: ZsMapElementToDraw): Draw {
     const draw = new Draw(

@@ -92,33 +92,6 @@ export function getLastCoordinate(feature: FeatureLike): any {
   return [];
 }
 
-export function getMostTopCoordinate(feature: FeatureLike) {
-  let symbolAnchorCoordinate: Coordinate | null = null;
-  switch (feature?.getGeometry()?.getType()) {
-    case 'Polygon':
-    case 'MultiPolygon':
-      for (const coordinateGroup of (feature.getGeometry() as Polygon).getCoordinates()) {
-        for (const coordinate of coordinateGroup) {
-          if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
-            symbolAnchorCoordinate = coordinate;
-          }
-        }
-      }
-      break;
-    case 'LineString':
-      for (const coordinate of (feature.getGeometry() as LineString).getCoordinates()) {
-        if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
-          symbolAnchorCoordinate = coordinate;
-        }
-      }
-      break;
-    case 'Point':
-      symbolAnchorCoordinate = (feature.getGeometry() as Point).getCoordinates();
-      break;
-  }
-  return symbolAnchorCoordinate;
-}
-
 export const signCategories: SignCategory[] = [
   { name: 'place', color: '#0000FF' },
   { name: 'formation', color: '#0000FF' },

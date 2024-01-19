@@ -13,11 +13,6 @@ export const zsMapStateSourceToDownloadUrl = {
   [ZsMapStateSource.LOCAL]: 'https://zskarte.blob.core.windows.net/etienne/ch.swisstopo.pmtiles',
 };
 
-export interface IZsMapSaveFileState {
-  map: IZsMapState;
-  display: IZsMapDisplayState;
-}
-
 export interface IZsMapState {
   version: number;
   id: string;

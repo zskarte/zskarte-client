@@ -5,13 +5,12 @@ import { ZsMapBaseDrawElement } from './base/base-draw-element';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { ZsMapOLFeatureProps } from './base/ol-feature-props';
 import { Type } from 'ol/geom/Geometry';
-import { StyleLike } from 'ol/style/Style';
 import { Signs } from '../signs';
 import { takeUntil } from 'rxjs';
 
 export class ZsMapSymbolDrawElement extends ZsMapBaseDrawElement<ZsMapSymbolDrawElementState> {
   protected _olGeometryItem!: SimpleGeometry;
-  protected _olStyles!: StyleLike;
+
   constructor(
     protected override _id: string,
     protected override _state: ZsMapStateService,
