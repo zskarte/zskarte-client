@@ -143,7 +143,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     }
 
     const point = this._drawElementCache[element.id].getOlFeature()?.getGeometry() as SimpleGeometry;
-    return this.isPolygon() && this.selectedFeature != null && (point?.getCoordinates()?.length ?? 0) > 1;
+    return this.isPolygon() && this.selectedFeature !== null && (point?.getCoordinates()?.length ?? 0) > 1;
   }
 
   private extractFeatureGroups(allFeatures: any[]): any {

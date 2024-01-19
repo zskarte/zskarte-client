@@ -218,7 +218,7 @@ export class ZsMapStateService {
     this.updateDisplayState((draft) => {
       // Reset sidebarcontext on historymode change
       draft.sidebarContext = null;
-      if (draft.displayMode == ZsMapDisplayMode.HISTORY) {
+      if (draft.displayMode === ZsMapDisplayMode.HISTORY) {
         draft.displayMode = ZsMapDisplayMode.DRAW;
         this._snackBar.open(this.i18n.get('toastDrawing'), 'OK', {
           duration: 2000,
@@ -460,7 +460,7 @@ export class ZsMapStateService {
   public mergePolygons(elementA: ZsMapBaseDrawElement, elementB: ZsMapBaseDrawElement) {
     const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
     const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
-    if (featureA.getGeometry()?.getType() == 'Polygon' && featureB.getGeometry()?.getType() == 'Polygon') {
+    if (featureA.getGeometry()?.getType() === 'Polygon' && featureB.getGeometry()?.getType() == 'Polygon') {
       const newCoordinates: number[][] = [];
       featureA
         ?.getGeometry()
@@ -487,7 +487,7 @@ export class ZsMapStateService {
 
   public splitPolygon(element: ZsMapBaseDrawElement) {
     const feature = element.getOlFeature() as Feature<SimpleGeometry>;
-    if (feature.getGeometry()?.getType() == 'Polygon') {
+    if (feature.getGeometry()?.getType() === 'Polygon') {
       const coords = feature.getGeometry()?.getCoordinates() as number[][];
       // we only split polygons which have multiple paths
       if (coords.length <= 1) {

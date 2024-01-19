@@ -644,7 +644,7 @@ export class MapRendererComponent implements AfterViewInit {
 
         // Removed old elements
         for (const element of Object.values(this._drawElementCache)) {
-          if (elements.every((e) => e.getId() != element.element.getId())) {
+          if (elements.every((e) => e.getId() !== element.element.getId())) {
             // New elements do not contain element from cache
             this._state.getLayer(element.layer || '').removeOlFeature(element.element.getOlFeature());
             delete this._drawElementCache[element.element.getId()];
@@ -843,7 +843,7 @@ export class MapRendererComponent implements AfterViewInit {
     if (coordinationGroup) {
       if (!coordinationGroup.minimalAmountOfPoints) {
         this._modify.removePoint();
-      } else if (coordinationGroup.otherCoordinationGroupCount == 0) {
+      } else if (coordinationGroup.otherCoordinationGroupCount === 0) {
         // It's the last coordination group - we can remove the feature.
         const confirm = this.dialog.open(ConfirmationDialogComponent, {
           data: this.i18n.get('removeFeatureFromMapConfirm'), // this.i18n.get('deleteLastPointOnFeature') + " " + this.i18n.get('removeFeatureFromMapConfirm')
@@ -861,7 +861,7 @@ export class MapRendererComponent implements AfterViewInit {
 
         if (oldCoordinates) {
           for (let i = 0; i < oldCoordinates.length; i++) {
-            if (i != coordinationGroup.coordinateGroupIndex) {
+            if (i !== coordinationGroup.coordinateGroupIndex) {
               newCoordinates.push(oldCoordinates[i]);
             }
           }
@@ -882,7 +882,7 @@ export class MapRendererComponent implements AfterViewInit {
         case 'Polygon':
           for (let i = 0; i < coordinates.length; i++) {
             const coordinateGroup = coordinates[i];
-            if (indexOfPointInCoordinateGroup(coordinateGroup, this.selectedVertexPoint.getValue() ?? []) != -1) {
+            if (indexOfPointInCoordinateGroup(coordinateGroup, this.selectedVertexPoint.getValue() ?? []) !== -1) {
               return {
                 feature,
                 coordinateGroupIndex: i,

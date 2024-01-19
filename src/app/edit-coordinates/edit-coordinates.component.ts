@@ -72,7 +72,7 @@ export class EditCoordinatesComponent {
           !Array.isArray(coordinateGroup) ||
           coordinateGroup.length < 3 ||
           coordinateGroup.filter((c) => !this.isValidPointCoordinate(c)).length > 0,
-      ).length == 0
+      ).length === 0
     );
   }
 }
