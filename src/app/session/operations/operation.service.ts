@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { DateTime } from 'luxon';
 import { OperationExportFileVersion } from '../../core/entity/operationExportFile';
 import { ImportDialogComponent } from '../../import-dialog/import-dialog.component';
-import { SafeUrl } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 import { IpcService } from '../../ipc/ipc.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,7 +17,6 @@ import { MatDialog } from '@angular/material/dialog';
 export class OperationService {
   public operations = new BehaviorSubject<IZsMapOperation[]>([]);
   public operationToEdit = new BehaviorSubject<IZsMapOperation | undefined>(undefined);
-  public downloadData: SafeUrl | null = null;
 
   constructor(
     private _api: ApiService,
@@ -75,7 +73,7 @@ export class OperationService {
 
   public importOperation(): void {
     const importDialog = this._dialog.open(ImportDialogComponent);
-    importDialog.afterClosed().subscribe((result) => {
+    importDialog.afterClosed().subscribe(async (result) => {
       if (result) {
         // Prior to V2 the "map" key was used to store the map state.
         // To keep consistent with our internal naming, use "mapState" from V2 on
@@ -87,7 +85,7 @@ export class OperationService {
           eventStates: result.eventStates,
           mapState,
         };
-        this.saveOperation(operation);
+        await this.saveOperation(operation);
       }
     });
   }

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { SessionService } from '../session/session.service';
 import { I18NService } from '../state/i18n.service';
 import { Sign } from '../core/entity/sign';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
@@ -17,7 +16,6 @@ export class DrawDialogComponent {
     public dialogRef: MatDialogRef<DrawDialogComponent>,
     public i18n: I18NService,
     public dialog: MatDialog,
-    private _session: SessionService,
   ) {}
 
   public setLayer(layer: ZsMapBaseLayer | undefined): void {

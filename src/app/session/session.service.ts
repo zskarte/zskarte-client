@@ -147,10 +147,6 @@ export class SessionService {
     return this._session?.value?.operation?.eventStates;
   }
 
-  public getOperationDescription(): string | undefined {
-    return this._session?.value?.operation?.description;
-  }
-
   public getLogo(): string | undefined {
     return this._session?.value?.organizationLogo;
   }
