@@ -44,7 +44,7 @@ export class SelectSignDialog implements OnInit {
   updateAvailableSigns() {
     this.filteredSigns = this.allSigns.filter(
       (s) =>
-        (!this.filter || this.i18n.getLabelForSign(s).toLowerCase().includes(this.filter)) &&
+        (!this.filter || this.i18n.getLabelForSign(s).toLowerCase().includes(this.filter.toLowerCase())) &&
         (!this.selected || this.selected === s.kat) &&
         !this.hiddenTypes.includes(s.kat ?? ''),
     );
