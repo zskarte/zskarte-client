@@ -39,14 +39,26 @@
         </button>
 
         <button
+          *ngIf="isOnline | async"
+          [matBadge]="connectionCount | async" matBadgePosition="after"
           class="sidebar-button mat-elevation-z3"
           mat-icon-button
           [color]="(sidebarContext$ | async) === sidebarContext.Connections ? 'primary' : 'basic'"
           (click)="setSidebarContext(sidebarContext.Connections)"
           [attr.aria-label]="i18n.get('connections')"
         >
-          <mat-icon *ngIf="isOnline | async" [matBadge]="connectionCount | async" matBadgePosition="after">people</mat-icon>
-          <mat-icon *ngIf="!(isOnline | async)" [matBadge]="0" matBadgeColor="warn" matBadgePosition="after">cloud_off</mat-icon>
+          <mat-icon>people</mat-icon>
+        </button>
+        <button
+          *ngIf="!(isOnline | async)"
+          [matBadge]="0" matBadgeColor="warn" matBadgePosition="after"
+          class="sidebar-button mat-elevation-z3"
+          mat-icon-button
+          [color]="(sidebarContext$ | async) === sidebarContext.Connections ? 'primary' : 'basic'"
+          (click)="setSidebarContext(sidebarContext.Connections)"
+          [attr.aria-label]="i18n.get('connections')"
+        >
+          <mat-icon>cloud_off</mat-icon>
         </button>
         <button
           class="sidebar-button mat-elevation-z3"

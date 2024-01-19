@@ -114,6 +114,11 @@ app-geocoder {
   pointer-events: none;
 }
 
+#mat-badge-content-0 {
+  top: -8px !important;
+  right: -8px !important;
+}
+
 @media (max-width: 650px) {
   .main {
     align-items: start;
