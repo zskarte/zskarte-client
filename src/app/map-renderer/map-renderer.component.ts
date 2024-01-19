@@ -884,7 +884,7 @@ export class MapRendererComponent implements AfterViewInit {
             const coordinateGroup = coordinates[i];
             if (indexOfPointInCoordinateGroup(coordinateGroup, this.selectedVertexPoint.getValue() ?? []) != -1) {
               return {
-                feature: feature,
+                feature,
                 coordinateGroupIndex: i,
                 otherCoordinationGroupCount: coordinates.length - 1,
                 minimalAmountOfPoints: coordinateGroup.length <= 4,
@@ -894,14 +894,14 @@ export class MapRendererComponent implements AfterViewInit {
           return null;
         case 'LineString':
           return {
-            feature: feature,
+            feature,
             coordinateGroupIndex: null,
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: coordinates.length <= 2,
           };
         case 'Point':
           return {
-            feature: feature,
+            feature,
             coordinateGroupIndex: null,
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: true,

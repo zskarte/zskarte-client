@@ -35,7 +35,7 @@ import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { SimpleGeometry } from 'ol/geom';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { I18NService } from '../state/i18n.service';
+import { I18NService } from './i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { Feature } from 'ol';
@@ -136,9 +136,9 @@ export class ZsMapStateService {
         if (result) {
           if (result.type === 'Point') {
             const element: ZsMapDrawElementState = {
+              layer,
+              coordinates,
               type: ZsMapDrawElementStateType.SYMBOL,
-              coordinates: coordinates,
-              layer: layer,
               symbolId: result.id,
             };
             this.addDrawElement(element);
@@ -169,8 +169,7 @@ export class ZsMapStateService {
             maxWidth: '80vw',
             maxHeight: '70vh',
           });
-          const result: string = await lastValueFrom(dialogRef.afterClosed());
-          (params as IZsMapTextDrawElementParams).text = result;
+          (params as IZsMapTextDrawElementParams).text = await lastValueFrom(dialogRef.afterClosed());
         }
         break;
     }
@@ -462,7 +461,7 @@ export class ZsMapStateService {
     });
   }
 
-  public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+  public mergePolygons(elementA: ZsMapBaseDrawElement, elementB: ZsMapBaseDrawElement) {
     const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
     const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
     if (featureA.getGeometry()?.getType() == 'Polygon' && featureB.getGeometry()?.getType() == 'Polygon') {
@@ -490,7 +489,7 @@ export class ZsMapStateService {
     }
   }
 
-  public splitPolygon(element: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+  public splitPolygon(element: ZsMapBaseDrawElement) {
     const feature = element.getOlFeature() as Feature<SimpleGeometry>;
     if (feature.getGeometry()?.getType() == 'Polygon') {
       const coords = feature.getGeometry()?.getCoordinates() as number[][];
@@ -538,7 +537,7 @@ export class ZsMapStateService {
     return this._selectedFeature.asObservable();
   }
 
-  public observeSelectedElement(): Observable<ZsMapBaseDrawElement<ZsMapDrawElementState> | undefined> {
+  public observeSelectedElement(): Observable<ZsMapBaseDrawElement | undefined> {
     return combineLatest([this.observeSelectedFeature(), this.observeDrawElements()]).pipe(
       map(([featureId, elements]) => elements.find((e) => e.getId() === featureId)),
     );
@@ -953,7 +952,7 @@ export class ZsMapStateService {
       }
       const sha256 = async (str: string): Promise<string> => {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-        return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
+        return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + (x as number).toString(16)).slice(-2)).join('');
       };
       const { error, result } = await this._api.get<IZsMapOperation>('/api/operations/' + this._session.getOperationId());
       if (error || !result) return;

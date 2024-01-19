@@ -80,11 +80,13 @@ export class SyncService {
       const url = this._api.getUrl();
 
       this._socket = io(url, {
-        auth: {
-          token: token,
-        },
+        auth: { token },
         transports: ['websocket'],
-        query: { identifier: this._connectionId, operationId: this._session.getOperationId(), label: this._session.getLabel() },
+        query: {
+          identifier: this._connectionId,
+          operationId: this._session.getOperationId(),
+          label: this._session.getLabel(),
+        },
         forceNew: true,
       });
 

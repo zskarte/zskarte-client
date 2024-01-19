@@ -30,7 +30,7 @@ export function mapProtocolEntry(
         : sig.de,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       location: JSON.stringify((geometry as any).getCoordinates() || []),
-      centroid: centroid,
+      centroid,
       size: sig.size,
 
       // if the element is of type text,

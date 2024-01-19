@@ -105,7 +105,7 @@ export class GeoadminService {
         matrixSet: '',
       }),
       opacity: 0.6,
-      zIndex: zIndex,
+      zIndex,
     });
   }
 }

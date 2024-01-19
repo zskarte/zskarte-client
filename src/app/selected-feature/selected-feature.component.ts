@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Component, OnDestroy, Output } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
@@ -153,9 +153,7 @@ export class SelectedFeatureComponent implements OnDestroy {
       const label = this.i18n.getLabelForSign(sig);
       let group = result[label];
       if (!group) {
-        group = result[label] = {
-          label: label,
-        };
+        group = result[label] = { label };
       }
       if (!group.src && sig.src) {
         group.src = sig.src;
