@@ -603,7 +603,7 @@ export class DrawStyle {
           const notificationIcon = new Style({
             image: new Circle({
               radius: notificationIconRadius,
-              fill: this.getColorFill(`#3f51b5`),
+              fill: this.getColorFill('#3f51b5'),
             }),
             text: new Text({
               font: `${notificationIconRadius}px sans-serif`,
@@ -612,14 +612,14 @@ export class DrawStyle {
               }),
               text: signature.affectedPersons.toString(),
             }),
-            geometry: function (feature) {
+            geometry(feature) {
               // Calculate the coordinates of the point on the circumference in the top-right quadrant
               const x = (Math.sqrt(2) * iconRadius * resolution) / 2;
               const y = (Math.sqrt(2) * iconRadius * resolution) / 2;
               const coordinates = DrawStyle.getIconCoordinates(feature, resolution)[1];
-              const p = new Point(coordinates);
-              p.translate(x, y);
-              return p;
+              const point = new Point(coordinates);
+              point.translate(x, y);
+              return point;
             },
             zIndex: zIndex,
           });
