@@ -9,12 +9,6 @@ export const renderStrategy$ = new Subject<RenderStrategy>();
 
 function isWebGLSupported(): boolean {
   return false;
-  try {
-    const canvas = document.createElement('canvas');
-    return Boolean(Boolean(window.WebGLRenderingContext) && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-  } catch (e) {
-    return false;
-  }
 }
 
 export type OlTileLayerType = typeof CPUTileLayer<TileWMTS> | typeof GPUTileLayer;
