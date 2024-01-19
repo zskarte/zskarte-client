@@ -605,9 +605,10 @@ export class MapRendererComponent implements AfterViewInit {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(([hiddenSymbols, hiddenFeatureTypes, hiddenCategories]) => {
         const hiddenSignIds = Signs.SIGNS.filter((sign) => sign.kat && hiddenCategories?.includes(sign.kat)).map((sig) => sig.id);
-        for (const key in Object.keys(this._drawElementCache)) {
-          const feature = this._drawElementCache[key].element.getOlFeature();
-          const filterType = this._drawElementCache[key].element.elementState?.type as string;
+        for (const _el of Object.values(this._drawElementCache)) {
+          if (!_el) continue;
+          const feature = _el.element.getOlFeature();
+          const filterType = _el.element.elementState?.type as string;
           const hidden =
             hiddenSymbols.includes(feature?.get('sig')?.id) ||
             hiddenFeatureTypes.includes(filterType) ||
