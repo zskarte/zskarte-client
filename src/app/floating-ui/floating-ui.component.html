@@ -40,7 +40,8 @@
 
         <button
           *ngIf="isOnline | async"
-          [matBadge]="connectionCount | async" matBadgePosition="after"
+          [matBadge]="connectionCount | async"
+          matBadgePosition="after"
           class="sidebar-button mat-elevation-z3"
           mat-icon-button
           [color]="(sidebarContext$ | async) === sidebarContext.Connections ? 'primary' : 'basic'"
@@ -51,7 +52,9 @@
         </button>
         <button
           *ngIf="!(isOnline | async)"
-          [matBadge]="0" matBadgeColor="warn" matBadgePosition="after"
+          [matBadge]="0"
+          matBadgeColor="warn"
+          matBadgePosition="after"
           class="sidebar-button mat-elevation-z3"
           mat-icon-button
           [color]="(sidebarContext$ | async) === sidebarContext.Connections ? 'primary' : 'basic'"
