@@ -8,6 +8,7 @@ export type RenderStrategy = 'webgl' | 'default';
 export const renderStrategy$ = new Subject<RenderStrategy>();
 
 function isWebGLSupported(): boolean {
+  return false;
   try {
     const canvas = document.createElement('canvas');
     return Boolean(Boolean(window.WebGLRenderingContext) && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
