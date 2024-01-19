@@ -252,7 +252,8 @@ export class SessionService {
   public async refreshToken(): Promise<void> {
     const currentToken = this._session.value?.jwt;
     if (!currentToken) {
-      return await this.logout();
+      await this.logout();
+      return;
     }
 
     const { result, error: authError } = await this._api.get<IAuthResult>('/api/accesses/auth/refresh', {
@@ -260,7 +261,8 @@ export class SessionService {
     });
 
     if (authError || !result?.jwt) {
-      return await this.logout();
+      await this.logout();
+      return;
     }
 
     await this.updateJWT(result.jwt);
