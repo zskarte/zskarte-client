@@ -360,7 +360,7 @@ export class ZsMapStateService {
   public observeMapName(): Observable<string> {
     return this._map.pipe(
       map((o) => {
-        return o?.name || '';
+        return o?.name ?? '';
       }),
       distinctUntilChanged((x, y) => x === y),
     );
@@ -447,7 +447,7 @@ export class ZsMapStateService {
   private _addLayer(layer: ZsMapLayerState): void {
     layer.id = uuidv4();
     if (!layer.name) {
-      const layerCount = (this._map.value.layers?.length || 0) + 1;
+      const layerCount = (this._map.value.layers?.length ?? 0) + 1;
       layer.name = `Layer  ${layerCount}`;
     }
     this.updateMapState((draft) => {

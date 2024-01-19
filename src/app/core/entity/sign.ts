@@ -159,7 +159,7 @@ export function defineDefaultValuesForSignature(signature: Sign) {
   signature.rotation = signature.rotation || signatureDefaultValues.rotation;
   signature.images = signature.images || signatureDefaultValues.images;
   signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
-  signature.createdBy = signature.createdBy || '';
+  signature.createdBy = signature.createdBy ?? '';
 }
 
 export const signatureDefaultValues: SignatureDefaultValues = {
