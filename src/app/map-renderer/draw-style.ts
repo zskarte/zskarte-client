@@ -510,8 +510,8 @@ export class DrawStyle {
     if (!iconStyles && signature.src && feature.getGeometry()) {
       iconStyles = this.symbolStyleCache[symbolCacheHash] = [];
       const showIcon = this.showIcon(signature);
-      const dashedStroke = this.createDefaultStroke(scale, signature.color || '#535353', true, signature.iconOpacity);
-      const iconRadius = scale * 250 * (signature.iconSize || 1);
+      const dashedStroke = this.createDefaultStroke(scale, signature.color ?? '#535353', true, signature.iconOpacity);
+      const iconRadius = scale * 250 * (signature.iconSize ?? 1);
       const notificationIconRadius = iconRadius / 4;
       const highlightStroke = selected ? DrawStyle.getHighlightStroke(feature, scale) : null;
       if (showIcon && selected) {
@@ -555,7 +555,7 @@ export class DrawStyle {
         iconStyles.push(
           new Style({
             stroke: dashedStroke,
-            opacity: signature.iconOpacity || 1,
+            opacity: signature.iconOpacity ?? 1,
             geometry(feature: FeatureLike) {
               return DrawStyle.createLineToIcon(feature, resolution);
             },
@@ -616,7 +616,7 @@ export class DrawStyle {
             text: signature.label,
             font: `20px sans-serif`,
             scale: iconTextScale,
-            fill: this.getColorFill(signature.color || '#535353'),
+            fill: this.getColorFill(signature.color ?? '#535353'),
             backgroundFill: DrawStyle.getColorFill(`rgba(255, 255, 255, ${signature.iconOpacity})`),
             padding: [5, 5, 5, 5],
           });
@@ -802,7 +802,7 @@ export class DrawStyle {
   }
 
   private static calculateStrokeWidth(scale: number, signature: Sign): number {
-    return scale * 20 * (signature.strokeWidth || 1);
+    return scale * 20 * (signature.strokeWidth ?? 1);
   }
 
   private static getHighlightStroke(feature: FeatureLike, scale: number): Stroke {
