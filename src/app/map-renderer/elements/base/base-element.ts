@@ -5,7 +5,6 @@ import { ZsMapStateService } from '../../../state/state.service';
 import { ZsMapOLFeatureProps } from './ol-feature-props';
 
 export abstract class ZsMapBaseElement<T> {
-  private _layer!: string;
   protected _element!: Observable<T | undefined>;
   protected _olFeature: Feature = new Feature();
   protected _isInitialized = false;

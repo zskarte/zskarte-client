@@ -65,7 +65,6 @@ export class ZsMapStateService {
   private _recentlyUsedElement = new BehaviorSubject<ZsMapDrawElementState[]>([]);
 
   private _mergeMode = new BehaviorSubject<boolean>(false);
-  private _splitMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
   private _currentMapCenter: BehaviorSubject<number[]> | undefined;
 
@@ -245,10 +244,6 @@ export class ZsMapStateService {
 
   public isHistoryMode(): boolean {
     return this._display.value?.displayMode === ZsMapDisplayMode.HISTORY;
-  }
-
-  public saveDisplayState(): void {
-    localStorage.setItem('tempDisplayState', JSON.stringify(this._display.value));
   }
 
   public observeDisplayState(): Observable<IZsMapDisplayState> {
@@ -431,30 +426,7 @@ export class ZsMapStateService {
     );
   }
 
-  public addDrawLayer(): void {
-    this._addLayer({ type: ZsMapLayerStateType.DRAW });
-  }
-
-  private _addLayer(layer: ZsMapLayerState): void {
-    layer.id = uuidv4();
-    if (!layer.name) {
-      const layerCount = (this._map.value.layers?.length ?? 0) + 1;
-      layer.name = `Layer  ${layerCount}`;
-    }
-    this.updateMapState((draft) => {
-      if (!draft.layers) {
-        draft.layers = [];
-      }
-      draft.layers.push(layer);
-    });
-    this.updateDisplayState((draft) => {
-      draft.layerVisibility[layer.id as string] = true;
-      draft.activeLayer = layer.id;
-      draft.layerOrder.push(layer.id as string);
-    });
-  }
-
-  public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+  public mergePolygons(elementA: ZsMapBaseDrawElement, elementB: ZsMapBaseDrawElement) {
     const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
     const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
     if (featureA.getGeometry()?.getType() === 'Polygon' && featureB.getGeometry()?.getType() === 'Polygon') {
@@ -909,10 +881,6 @@ export class ZsMapStateService {
     return this._mergeMode.asObservable();
   }
 
-  public observeSplitMode(): Observable<boolean> {
-    return this._splitMode.asObservable();
-  }
-
   public setDrawHoleMode(drawHoleMode: boolean) {
     this._drawHoleMode.next(drawHoleMode);
   }
@@ -923,10 +891,6 @@ export class ZsMapStateService {
 
   public observeDrawHoleMode(): Observable<boolean> {
     return this._drawHoleMode.asObservable();
-  }
-
-  public setSplitMode(splitMode: boolean) {
-    this._splitMode.next(splitMode);
   }
 
   public async refreshMapState(): Promise<void> {

@@ -94,14 +94,6 @@ export class SidebarMenuComponent implements OnDestroy {
     this.session.setLocale(locale);
   }
 
-  toggleHistoryIfButton(event: MouseEvent) {
-    const element = event.target as HTMLElement;
-    if (element.id === 'historyButton') {
-      this.toggleHistory();
-    }
-    event.stopPropagation();
-  }
-
   navigateEvents() {
     this.session.setOperation(undefined);
   }

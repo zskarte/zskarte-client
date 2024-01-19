@@ -497,7 +497,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._map.on('pointermove', (event) => {
       this.mousePosition.next(event.pixel);
       this._state.setCoordinates(event.coordinate);
-      let sketchSize = null;
+      let sketchSize: string | null = null;
       if (this._currentSketch) {
         const geom = this._currentSketch.getGeometry();
         if (geom instanceof Polygon) {
@@ -759,7 +759,7 @@ export class MapRendererComponent implements AfterViewInit {
       const coordinationGroup = await this.getCoordinationGroupOfLastPoint();
       this.toggleEditButtons(false);
       if (coordinationGroup) {
-        this.doCopySign(coordinationGroup?.feature);
+        await this.doCopySign(coordinationGroup?.feature);
       }
     });
     this.drawButton.getElement()?.addEventListener('click', () => this.toggleDrawingDialog());

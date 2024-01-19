@@ -1299,10 +1299,20 @@ export class I18NService {
       en: 'Sign clustering',
       fr: 'Regroupement de formes',
     },
+    edit: {
+      de: 'Bearbeiten',
+      en: 'Edit',
+      fr: 'Modifier',
+    },
     eventState: {
       de: 'Situationslage',
       en: 'Event state',
       fr: 'Sutiation',
+    },
+    affectedPersons: {
+      de: 'Betroffene Personen',
+      en: 'Affected Persons',
+      fr: 'Persones affectés',
     },
   };
 

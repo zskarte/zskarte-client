@@ -35,8 +35,7 @@ export class IpcHandler {
         });
 
         if (result && !result.canceled && result.filePaths?.length > 0) {
-          const data = await fs.promises.readFile(result?.filePaths?.[0].toString(), 'utf8');
-          return data;
+          return await fs.promises.readFile(result?.filePaths?.[0].toString(), 'utf8');
         }
         return undefined;
       },

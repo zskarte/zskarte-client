@@ -1,6 +1,6 @@
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
-import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from '../../state/interfaces';
+import { ZsMapDrawElementStateType, ZsMapLayerState } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -97,16 +97,6 @@ export abstract class ZsMapBaseLayer {
 
   // public getOlSource(): VectorSource;
 
-  public observeType(): Observable<ZsMapLayerStateType | undefined> {
-    return this._layer.pipe(
-      map((o) => {
-        return o?.type;
-      }),
-      distinctUntilChanged((x, y) => x === y),
-      takeUntil(this._unsubscribe),
-    );
-  }
-
   public observeOpacity(): Observable<number> {
     return this._state.observeDisplayState().pipe(
       map((o) => {
@@ -115,12 +105,6 @@ export abstract class ZsMapBaseLayer {
       distinctUntilChanged((x, y) => x === y),
       takeUntil(this._unsubscribe),
     );
-  }
-
-  public setOpacity(opacity: number): void {
-    this._state.updateDisplayState((draft) => {
-      draft.layerOpacity[this._id] = opacity;
-    });
   }
 
   public observeName(): Observable<string | undefined> {
@@ -159,15 +143,6 @@ export abstract class ZsMapBaseLayer {
     );
   }
 
-  public observeIsActive(): Observable<boolean> {
-    return this._state.observeDisplayState().pipe(
-      map((o) => {
-        return o?.activeLayer === this._id;
-      }),
-      distinctUntilChanged((x, y) => x === y),
-    );
-  }
-
   public observePosition(): Observable<number> {
     return this._state.observeDisplayState().pipe(
       map((o) => {
@@ -176,59 +151,6 @@ export abstract class ZsMapBaseLayer {
       distinctUntilChanged((x, y) => x === y),
       takeUntil(this._unsubscribe),
     );
-  }
-
-  public show(): void {
-    this._state.updateDisplayState((draft) => {
-      draft.layerVisibility[this._id] = true;
-    });
-  }
-
-  public hide(): void {
-    this._state.updateDisplayState((draft) => {
-      draft.layerVisibility[this._id] = false;
-    });
-  }
-
-  public moveUp(): void {
-    this._state.updateDisplayState((draft) => {
-      const index = draft.layerOrder.findIndex((o) => o === this._id);
-      draft.layerOrder.splice(index, 1);
-      draft.layerOrder.splice(index + 1, 0, this._id);
-    });
-  }
-
-  public moveDown(): void {
-    this._state.updateDisplayState((draft) => {
-      const index = draft.layerOrder.findIndex((o) => o === this._id);
-      draft.layerOrder.splice(index, 1);
-      draft.layerOrder.splice(index - 1, 0, this._id);
-    });
-  }
-
-  public remove(): void {
-    this._state.updateDisplayState((draft) => {
-      // skipcq: JS-0320
-      delete draft.layerVisibility[this._id];
-      // skipcq: JS-0320
-      delete draft.layerOpacity[this._id];
-      const index = draft.layerOrder.findIndex((o) => o === this._id);
-      if (index >= 0) {
-        draft.layerOrder.splice(index, 1);
-      }
-    });
-    this._state.updateMapState((draft) => {
-      const index = draft.layers?.findIndex((o) => o.id === this._id) || -1;
-      if (index > -1) {
-        draft.layers?.splice(index, 1);
-      }
-    });
-  }
-
-  public activate(): void {
-    this._state.updateDisplayState((draft) => {
-      draft.activeLayer = this._id;
-    });
   }
 
   public abstract draw(type: ZsMapDrawElementStateType, options?: { symbolId?: number; text?: string }): void;
