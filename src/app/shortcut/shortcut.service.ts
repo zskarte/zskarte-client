@@ -41,7 +41,7 @@ export class ShortcutService {
       });
     });
 
-    this._state.observeSelectedElement().subscribe((element) => {
+    this._state.observeSelectedElement$().subscribe((element) => {
       this._selectedElement = element;
     });
   }

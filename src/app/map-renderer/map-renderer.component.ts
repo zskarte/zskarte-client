@@ -60,7 +60,6 @@ export class MapRendererComponent implements AfterViewInit {
   ROTATE_OFFSET_X = 30;
   ROTATE_OFFSET_Y = -30;
 
-  sidebarContextValues = SidebarContext;
   sidebarContext: Observable<SidebarContext | null>;
 
   private _ngUnsubscribe = new Subject<void>();
@@ -114,7 +113,7 @@ export class MapRendererComponent implements AfterViewInit {
     private dialog: MatDialog,
   ) {
     _state
-      .observeSelectedElement()
+      .observeSelectedElement$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((element) => {
         if (element) {
@@ -147,7 +146,7 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
-      .ObserveShowCurrentLocation()
+      .observeShowCurrentLocation$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((show) => {
         this.isDevicePositionFlagVisible = show;
@@ -175,7 +174,7 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
-      .ObserveCurrentMapCenter()
+      .observeCurrentMapCenter$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((coordinates) => {
         if (coordinates && coordinates[0] && coordinates[1] && this._map) {
@@ -232,7 +231,7 @@ export class MapRendererComponent implements AfterViewInit {
       });
     combineLatest([
       this.selectedVertexPoint.asObservable(),
-      this._state.observeSelectedElement().pipe(
+      this._state.observeSelectedElement$().pipe(
         filter(Boolean),
         // get feature each time the coordinates change
         switchMap((element) => element.observeCoordinates().pipe(map(() => element.getOlFeature()))),
@@ -513,7 +512,7 @@ export class MapRendererComponent implements AfterViewInit {
     });
 
     const debouncedZoomSave = debounce(() => {
-      this._state.setMapZoom(this._view.getZoom() || 10);
+      this._state.setMapZoom(this._view.getZoom() ?? 10);
     }, 1000);
 
     this._view.on('change:resolution', () => {
@@ -636,7 +635,7 @@ export class MapRendererComponent implements AfterViewInit {
                   }
                 }
                 cache.layer = layer;
-                const newLayer = this._state.getLayer(layer || '');
+                const newLayer = this._state.getLayer(layer ?? '');
                 newLayer?.addOlFeature(feature);
               });
           }
@@ -646,7 +645,7 @@ export class MapRendererComponent implements AfterViewInit {
         for (const element of Object.values(this._drawElementCache)) {
           if (elements.every((e) => e.getId() !== element.element.getId())) {
             // New elements do not contain element from cache
-            this._state.getLayer(element.layer || '').removeOlFeature(element.element.getOlFeature());
+            this._state.getLayer(element.layer ?? '').removeOlFeature(element.element.getOlFeature());
             // skipcq: JS-0320
             delete this._drawElementCache[element.element.getId()];
           }
@@ -654,7 +653,7 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
-      .observeSelectedFeatures()
+      .observeSelectedFeatures$()
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((features) => {
         // removed features
@@ -673,7 +672,7 @@ export class MapRendererComponent implements AfterViewInit {
             this._featureLayerCache.set(feature.serverLayerName, layer);
 
             // observe feature changes
-            this._state.observeFeature(feature.serverLayerName).subscribe({
+            this._state.observeFeature$(feature.serverLayerName).subscribe({
               next: (updatedFeature) => {
                 if (updatedFeature) {
                   layer.setZIndex(updatedFeature.zIndex);
@@ -950,34 +949,6 @@ export class MapRendererComponent implements AfterViewInit {
     return this._modifyCache.getArray().every((feature) => feature?.get('sig') && !feature.get('sig').protected);
   }
 
-  zoomIn() {
-    this._state.updateMapZoom(1);
-  }
-
-  zoomOut() {
-    this._state.updateMapZoom(-1);
-  }
-
-  setSidebarContext(context: SidebarContext | null) {
-    this._state.toggleSidebarContext(context);
-  }
-
-  async rotateProjection() {
-    const nextIndex = this.selectedProjectionIndex + 1;
-    this.selectedProjectionIndex = nextIndex >= availableProjections.length ? 0 : nextIndex;
-    const feature = await firstValueFrom(this.selectedFeature);
-    if (feature) {
-      // trigger selectedFeature to enable projection rotation while a feature is selected
-      this._state.setSelectedFeature(feature.get(ZsMapOLFeatureProps.DRAW_ELEMENT_ID));
-    }
-
-    // After rotating the projection,
-    // the coordinates component is not automatically reloaded.
-    // To "force" the component to reload,
-    // we push the current mouse position to the mouse coordinates.
-    this._state.setCoordinates(this.mousePosition.value);
-  }
-
   getFeatureCoordinates(feature: Feature | null | undefined): number[] {
     const center = getCenter(feature?.getGeometry()?.getExtent() ?? []);
     return this.transformToCurrentProjection(center) ?? [];
@@ -1003,13 +974,5 @@ export class MapRendererComponent implements AfterViewInit {
   hidePositionFlag() {
     this._state.updatePositionFlag({ isVisible: false, coordinates: [0, 0] });
     this.toggleFlagButtons(false);
-  }
-
-  undo() {
-    this._state.undoMapStateChange();
-  }
-
-  redo() {
-    this._state.redoMapStateChange();
   }
 }

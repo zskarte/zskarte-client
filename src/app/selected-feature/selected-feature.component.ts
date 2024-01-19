@@ -60,15 +60,15 @@ export class SelectedFeatureComponent implements OnDestroy {
     public i18n: I18NService,
     public zsMapStateService: ZsMapStateService,
   ) {
-    this.selectedFeature = this.zsMapStateService.observeSelectedElement().pipe(
+    this.selectedFeature = this.zsMapStateService.observeSelectedElement$().pipe(
       takeUntil(this._ngUnsubscribe),
       map((element) => element?.getOlFeature() as Feature<SimpleGeometry> | undefined),
     );
-    this.selectedDrawElement = this.zsMapStateService.observeSelectedElement().pipe(
+    this.selectedDrawElement = this.zsMapStateService.observeSelectedElement$().pipe(
       takeUntil(this._ngUnsubscribe),
       switchMap((element) => element?.observeElement() ?? EMPTY),
     );
-    this.selectedSignature = this.zsMapStateService.observeSelectedElement().pipe(
+    this.selectedSignature = this.zsMapStateService.observeSelectedElement$().pipe(
       takeUntil(this._ngUnsubscribe),
       map((element) => {
         const sig = element?.getOlFeature()?.get('sig');
@@ -207,7 +207,7 @@ export class SelectedFeatureComponent implements OnDestroy {
   }
 
   async editCoordinates() {
-    const selectedElement = await firstValueFrom(this.zsMapStateService.observeSelectedElement());
+    const selectedElement = await firstValueFrom(this.zsMapStateService.observeSelectedElement$());
     if (selectedElement) {
       const editDialog = this.dialog.open(EditCoordinatesComponent, {
         data: {

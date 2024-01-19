@@ -355,22 +355,6 @@ export class ZsMapStateService {
     });
   }
 
-  // name
-  public observeMapName(): Observable<string> {
-    return this._map.pipe(
-      map((o) => {
-        return o?.name || '';
-      }),
-      distinctUntilChanged((x, y) => x === y),
-    );
-  }
-
-  public setMapName(name: string) {
-    this.updateMapState((draft) => {
-      draft.name = name;
-    });
-  }
-
   // opacity
   public observeMapOpacity(): Observable<number> {
     return this._display.pipe(
@@ -435,29 +419,6 @@ export class ZsMapStateService {
     );
   }
 
-  public addDrawLayer(): void {
-    this._addLayer({ type: ZsMapLayerStateType.DRAW });
-  }
-
-  private _addLayer(layer: ZsMapLayerState): void {
-    layer.id = uuidv4();
-    if (!layer.name) {
-      const layerCount = (this._map.value.layers?.length || 0) + 1;
-      layer.name = `Layer ${layerCount}`;
-    }
-    this.updateMapState((draft) => {
-      if (!draft.layers) {
-        draft.layers = [];
-      }
-      draft.layers.push(layer);
-    });
-    this.updateDisplayState((draft) => {
-      draft.layerVisibility[layer.id as string] = true;
-      draft.activeLayer = layer.id;
-      draft.layerOrder.push(layer.id as string);
-    });
-  }
-
   public mergePolygons(elementA: ZsMapBaseDrawElement, elementB: ZsMapBaseDrawElement) {
     const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
     const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
@@ -511,7 +472,7 @@ export class ZsMapStateService {
   }
 
   // features
-  public observeSelectedFeatures(): Observable<GeoFeature[]> {
+  public observeSelectedFeatures$(): Observable<GeoFeature[]> {
     return this._display.pipe(
       map((o) => {
         return o?.features?.filter((feature) => !feature.deleted);
@@ -520,7 +481,7 @@ export class ZsMapStateService {
     );
   }
 
-  public observeFeature(serverLayerName: string): Observable<GeoFeature | undefined> {
+  public observeFeature$(serverLayerName: string): Observable<GeoFeature | undefined> {
     return this._display.pipe(
       map((o) => {
         return o?.features?.find((feature) => feature.serverLayerName === serverLayerName);
@@ -530,12 +491,12 @@ export class ZsMapStateService {
     );
   }
 
-  public observeSelectedFeature(): Observable<string | undefined> {
+  public observeSelectedFeature$(): Observable<string | undefined> {
     return this._selectedFeature.asObservable();
   }
 
-  public observeSelectedElement(): Observable<ZsMapBaseDrawElement | undefined> {
-    return combineLatest([this.observeSelectedFeature(), this.observeDrawElements()]).pipe(
+  public observeSelectedElement$(): Observable<ZsMapBaseDrawElement | undefined> {
+    return combineLatest([this.observeSelectedFeature$(), this.observeDrawElements()]).pipe(
       map(([featureId, elements]) => elements.find((e) => e.getId() === featureId)),
     );
   }
@@ -565,7 +526,7 @@ export class ZsMapStateService {
     });
   }
 
-  public ObserveShowCurrentLocation(): Observable<boolean> {
+  public observeShowCurrentLocation$(): Observable<boolean> {
     return this._display.pipe(
       map((o) => {
         return o?.showMyLocation;
@@ -574,14 +535,14 @@ export class ZsMapStateService {
     );
   }
 
-  public ObserveCurrentMapCenter(): Observable<number[]> {
+  public observeCurrentMapCenter$(): Observable<number[]> {
     if (!this._currentMapCenter) {
       this._currentMapCenter = new BehaviorSubject<number[]>(DEFAULT_COORDINATES);
     }
     return this._currentMapCenter.asObservable();
   }
 
-  public UpdateCurrentMapCenter(coordinates: number[]) {
+  public updateCurrentMapCenter$(coordinates: number[]) {
     if (!this._currentMapCenter) {
       this._currentMapCenter = new BehaviorSubject<number[]>(DEFAULT_COORDINATES);
     }
