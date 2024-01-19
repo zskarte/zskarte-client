@@ -9,7 +9,7 @@
   </ng-container>
   <ng-container matColumnDef="type">
     <th mat-header-cell *matHeaderCellDef>{{ i18n.get('type') }}</th>
-    <td mat-cell *matCellDef="let element">{{ i18n.get(element.type == 'read' ? 'read' : 'write') }}</td>
+    <td mat-cell *matCellDef="let element">{{ i18n.get(element.type === 'read' ? 'read' : 'write') }}</td>
   </ng-container>
   <ng-container matColumnDef="expiresOn">
     <th mat-header-cell *matHeaderCellDef>{{ i18n.get('expiresOn') }}</th>
@@ -26,4 +26,4 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
 
-<div class="margin-2" *ngIf="shareLinks.length == 0">Es sind keine Links für diese Operation vorhanden.</div>
+<div class="margin-2" *ngIf="shareLinks.length === 0">Es sind keine Links für diese Operation vorhanden.</div>

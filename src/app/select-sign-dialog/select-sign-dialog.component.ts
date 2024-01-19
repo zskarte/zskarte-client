@@ -46,7 +46,7 @@ export class SelectSignDialog implements OnInit {
       (s) =>
         (!this.filter || this.i18n.getLabelForSign(s).toLowerCase().includes(this.filter)) &&
         (!this.selected || this.selected === s.kat) &&
-        !this.hiddenTypes.includes(s.kat || ''),
+        !this.hiddenTypes.includes(s.kat ?? ''),
     );
   }
 

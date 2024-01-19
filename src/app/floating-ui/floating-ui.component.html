@@ -1,5 +1,5 @@
 <mat-sidenav-container>
-  <mat-sidenav class="mat-elevation-z3" position="end" mode="side" #sidenav [opened]="(sidebarContext$ | async) !== null">
+  <mat-sidenav class="mat-elevation-z3 noprint" position="end" mode="side" #sidenav [opened]="(sidebarContext$ | async) !== null">
     @switch (sidebarContext$ | async) {
       @case (sidebarContext.Filters) {
         <app-sidebar-filters></app-sidebar-filters>
