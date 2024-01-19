@@ -91,7 +91,6 @@ export class MapRendererComponent implements AfterViewInit {
   private _mergeMode = false;
   public currentSketchSize = new BehaviorSubject<string | null>(null);
   public mousePosition = new BehaviorSubject<number[]>([0, 0]);
-  public mouseCoordinates = new BehaviorSubject<number[]>([0, 0]);
   public mouseProjection: Observable<string>;
   public availableProjections = availableProjections;
   public selectedProjectionIndex = 0;
@@ -132,7 +131,7 @@ export class MapRendererComponent implements AfterViewInit {
         return this.availableProjections[this.selectedProjectionIndex].translate(coords);
       }),
     );
-    this.mouseProjection = this.mouseCoordinates.asObservable().pipe(
+    this.mouseProjection = this._state.getCoordinates().pipe(
       takeUntil(this._ngUnsubscribe),
       map((coords) => {
         const transform = this.transformToCurrentProjection(coords) ?? [];
@@ -504,7 +503,7 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._map.on('pointermove', (event) => {
       this.mousePosition.next(event.pixel);
-      this.mouseCoordinates.next(event.coordinate);
+      this._state.setCoordinates(event.coordinate);
       let sketchSize = null;
       if (this._currentSketch) {
         const geom = this._currentSketch.getGeometry();
@@ -977,7 +976,7 @@ export class MapRendererComponent implements AfterViewInit {
     // the coordinates component is not automatically reloaded.
     // To "force" the component to reload,
     // we push the current mouse position to the mouse coordinates.
-    this.mouseCoordinates.next(this.mousePosition.value);
+    this._state.setCoordinates(this.mousePosition.value);
   }
 
   getFeatureCoordinates(feature: Feature | null | undefined): number[] {

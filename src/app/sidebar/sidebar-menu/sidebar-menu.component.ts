@@ -1,29 +1,27 @@
 import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
-import { I18NService, Locale, LOCALES } from '../state/i18n.service';
+import { I18NService, Locale, LOCALES } from '../../state/i18n.service';
 import { MatDialog } from '@angular/material/dialog';
-import { HelpComponent } from '../help/help.component';
-import { ZsMapStateService } from '../state/state.service';
+import { HelpComponent } from '../../help/help.component';
+import { ZsMapStateService } from '../../state/state.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SessionService } from '../session/session.service';
+import { SessionService } from '../../session/session.service';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
+import { ZsMapBaseDrawElement } from '../../map-renderer/elements/base/base-draw-element';
 import { DatePipe } from '@angular/common';
-import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../helper/protocolEntry';
-import { ProtocolTableComponent } from '../protocol-table/protocol-table.component';
-import { AccessTokenType, PermissionType } from '../session/session.interfaces';
-import { ShareDialogComponent } from '../session/share-dialog/share-dialog.component';
-import { RevokeShareDialogComponent } from '../session/revoke-share-dialog/revoke-share-dialog.component';
+import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../../helper/protocolEntry';
+import { ProtocolTableComponent } from '../../protocol-table/protocol-table.component';
+import { ShareDialogComponent } from '../../session/share-dialog/share-dialog.component';
+import { AccessTokenType, PermissionType } from '../../session/session.interfaces';
+import { RevokeShareDialogComponent } from '../../session/revoke-share-dialog/revoke-share-dialog.component';
 
 @Component({
-  selector: 'app-toolbar',
-  templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.css'],
+  selector: 'app-sidebar-menu',
+  templateUrl: './sidebar-menu.component.html',
+  styleUrl: './sidebar-menu.component.scss',
 })
-export class ToolbarComponent implements OnDestroy {
+export class SidebarMenuComponent implements OnDestroy {
   @ViewChild(MatMenuTrigger) menu!: MatMenuTrigger;
-
-  static ONBOARDING_VERSION = '1.0';
 
   locales: Locale[] = LOCALES;
   protocolEntries: ProtocolEntry[] = [];
@@ -38,12 +36,6 @@ export class ToolbarComponent implements OnDestroy {
     private datePipe: DatePipe,
     private _dialog: MatDialog,
   ) {
-    if (this.isInitialLaunch()) {
-      this.dialog.open(HelpComponent, {
-        data: true,
-      });
-    }
-
     this.zsMapStateService
       .observeDrawElements()
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -60,15 +52,6 @@ export class ToolbarComponent implements OnDestroy {
   ngOnDestroy(): void {
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
-  }
-
-  isInitialLaunch(): boolean {
-    const currentOnboardingVersion = localStorage.getItem('onboardingVersion');
-    if (currentOnboardingVersion !== ToolbarComponent.ONBOARDING_VERSION) {
-      localStorage.setItem('onboardingVersion', ToolbarComponent.ONBOARDING_VERSION);
-      return true;
-    }
-    return false;
   }
 
   toggleHistory(): void {

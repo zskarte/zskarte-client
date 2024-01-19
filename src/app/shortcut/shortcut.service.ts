@@ -5,13 +5,15 @@ import { getOS, OS } from '../helper/os';
 import { ZsMapDrawElementStateType } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 import { IShortcut } from './shortcut.interfaces';
+import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShortcutService {
+  private _selectedElement: ZsMapBaseDrawElement | undefined = undefined;
   private _selectedFeatureId: string | undefined = undefined;
-  private _copiedFeatureId: string | undefined = undefined;
+  private _copyElement: ZsMapBaseDrawElement | undefined = undefined;
   private _symbols: { [key: string]: string } = {
     command: '\u2318',
     // ⌘
@@ -39,8 +41,8 @@ export class ShortcutService {
       });
     });
 
-    this._state.observeSelectedFeature().subscribe((id) => {
-      this._selectedFeatureId = id;
+    this._state.observeSelectedElement().subscribe((element) => {
+      this._selectedElement = element;
     });
   }
 
@@ -76,25 +78,15 @@ export class ShortcutService {
       layer?.draw(ZsMapDrawElementStateType.SYMBOL);
     });
 
-    // currently not implemented since it is not clear how to handle this without a proper UI state
-    // this._listen({ shortcut: 'mod+c' }).subscribe(() => {
-    //   this._copiedFeatureId = undefined;
-    //   if (this._selectedFeatureId) {
-    //     console.warn('todo', 'ctrl+c', this._selectedFeatureId);
-    //     this._copiedFeatureId = this._selectedFeatureId;
-    //   }
-    // });
+    this._listen({ shortcut: 'mod+c' }).subscribe(() => {
+      this._copyElement = this._selectedElement;
+    });
 
-    // this._listen({ shortcut: 'mod+x' }).subscribe(() => {
-    //   console.warn('todo', 'ctrl+x');
-    // });
-
-    // this._listen({ shortcut: 'mod+v' }).subscribe(() => {
-    //   if (this._copiedFeatureId) {
-    //     console.warn('todo', 'ctrl+v', this._copiedFeatureId);
-    //     this._copiedFeatureId = undefined;
-    //   }
-    // });
+    this._listen({ shortcut: 'mod+v' }).subscribe(() => {
+      if (this._copyElement?.elementState) {
+        this._state.addDrawElement(this._copyElement.elementState);
+      }
+    });
 
     this._listen({ shortcut: 'mod+y' }).subscribe(() => {
       this._state.undoMapStateChange();
@@ -103,12 +95,13 @@ export class ShortcutService {
     this._listen({ shortcut: 'mod+z' }).subscribe(() => {
       this._state.redoMapStateChange();
     });
+
+    this._listen({ shortcut: 'escape' }).subscribe(() => {
+      this._state.cancelDrawing();
+    });
   }
 
-  private _listen({ shortcut, preventDefault }: IShortcut): Observable<KeyboardEvent> {
-    if (preventDefault === undefined) {
-      preventDefault = true;
-    }
+  private _listen({ shortcut, preventDefault = true }: IShortcut): Observable<KeyboardEvent> {
     const keys = (shortcut?.split('+') || []).map((key) => key.trim().toLowerCase());
 
     const shiftKey = keys.includes('shift');

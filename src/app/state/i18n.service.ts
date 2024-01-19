@@ -1068,7 +1068,7 @@ export class I18NService {
       en: 'Generate one way link',
       fr: 'Copier le qr code de partage',
     },
-    rewokeAccess: {
+    revokeAccess: {
       de: 'Freigabelinks verwalten',
       en: 'Revoke share link',
       fr: 'Arranger les liens de partage',
@@ -1278,6 +1278,21 @@ export class I18NService {
       de: 'Ohne Signatur',
       en: 'Without signature',
       fr: 'Sans signature',
+    },
+    back: {
+      de: 'Zurück',
+      en: 'Back',
+      fr: 'Retour',
+    },
+    newScenario: {
+      de: 'Neues Ereigniss',
+      en: 'New Scenario',
+      fr: 'Nouvel Événement',
+    },
+    importScenario: {
+      de: 'Ereigniss importieren',
+      en: 'Import Scenario',
+      fr: 'Importer événement',
     },
   };
 
