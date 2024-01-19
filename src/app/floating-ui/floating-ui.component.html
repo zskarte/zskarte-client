@@ -48,13 +48,6 @@
           <mat-icon *ngIf="isOnline | async" [matBadge]="connectionCount | async" matBadgePosition="after">people</mat-icon>
           <mat-icon *ngIf="!(isOnline | async)" [matBadge]="0" matBadgeColor="warn" matBadgePosition="after">cloud_off</mat-icon>
         </button>
-
-        <button class="sidebar-button mat-elevation-z3" mat-icon-button (click)="zoomIn()" [attr.aria-label]="i18n.get('zoomIn')">
-          <mat-icon>zoom_in</mat-icon>
-        </button>
-        <button class="sidebar-button mat-elevation-z3" mat-icon-button (click)="zoomOut()" [attr.aria-label]="i18n.get('zoomOut')">
-          <mat-icon>zoom_out</mat-icon>
-        </button>
         <button
           class="sidebar-button mat-elevation-z3"
           mat-icon-button
@@ -84,29 +77,42 @@
         >
           <mat-icon>history</mat-icon>
         </button>
+        <div class="button-toggle mat-elevation-z3">
+          <button
+            mat-icon-button
+            class="toggle-button"
+            *ngIf="!(isReadOnly | async)"
+            [disabled]="!(canUndo | async)"
+            (click)="undo()"
+            [attr.aria-label]="i18n.get('undo')"
+          >
+            <mat-icon>undo</mat-icon>
+          </button>
+          <mat-divider class="divider"></mat-divider>
+          <button
+            mat-icon-button
+            class="toggle-button"
+            *ngIf="!(isReadOnly | async)"
+            [disabled]="!(canRedo | async)"
+            (click)="redo()"
+            [attr.aria-label]="i18n.get('redo')"
+          >
+            <mat-icon>redo</mat-icon>
+          </button>
+        </div>
+        <div class="button-toggle mat-elevation-z3">
+          <button mat-icon-button class="toggle-button" (click)="zoomIn()" [attr.aria-label]="i18n.get('zoomIn')">
+            <mat-icon>zoom_in</mat-icon>
+          </button>
+          <mat-divider class="divider"></mat-divider>
+          <button mat-icon-button class="toggle-button" (click)="zoomOut()" [attr.aria-label]="i18n.get('zoomOut')">
+            <mat-icon>zoom_out</mat-icon>
+          </button>
+        </div>
+
         <button
-          class="sidebar-button mat-elevation-z3"
           mat-icon-button
-          *ngIf="!(isReadOnly | async)"
-          [disabled]="!(canUndo | async)"
-          (click)="undo()"
-          [attr.aria-label]="i18n.get('undo')"
-        >
-          <mat-icon>undo</mat-icon>
-        </button>
-        <button
           class="sidebar-button mat-elevation-z3"
-          mat-icon-button
-          *ngIf="!(isReadOnly | async)"
-          [disabled]="!(canRedo | async)"
-          (click)="redo()"
-          [attr.aria-label]="i18n.get('redo')"
-        >
-          <mat-icon>redo</mat-icon>
-        </button>
-        <button
-          class="sidebar-button mat-elevation-z3"
-          mat-icon-button
           *ngIf="(sidebarContext$ | async) !== null"
           (click)="setSidebarContext(null)"
           color="accent"
