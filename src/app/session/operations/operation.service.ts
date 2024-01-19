@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { DateTime } from 'luxon';
 import { OperationExportFileVersion } from '../../core/entity/operationExportFile';
 import { ImportDialogComponent } from '../../import-dialog/import-dialog.component';
-import { SafeUrl } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 import { IpcService } from '../../ipc/ipc.service';
 import { MatDialog } from '@angular/material/dialog';

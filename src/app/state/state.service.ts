@@ -422,11 +422,7 @@ export class ZsMapStateService {
     );
   }
 
-<<<<<<< Updated upstream
   public mergePolygons(elementA: ZsMapBaseDrawElement, elementB: ZsMapBaseDrawElement) {
-=======
-  public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
->>>>>>> Stashed changes
     const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
     const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
     if (featureA.getGeometry()?.getType() === 'Polygon' && featureB.getGeometry()?.getType() === 'Polygon') {

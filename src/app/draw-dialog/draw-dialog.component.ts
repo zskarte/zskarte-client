@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { SessionService } from '../session/session.service';
 import { I18NService } from '../state/i18n.service';
 import { Sign } from '../core/entity/sign';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
