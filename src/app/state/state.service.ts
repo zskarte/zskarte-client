@@ -649,7 +649,7 @@ export class ZsMapStateService {
 
   public removeDrawElement(id: string) {
     const index = this._map.value.drawElements?.findIndex((o) => o.id === id) ?? -1;
-    if (index > -1) {
+    if (index === -1) {
       throw new Error('Id not correct');
     }
     this.updateMapState((draft) => {
