@@ -17,7 +17,6 @@ export class DrawDialogComponent {
     public dialogRef: MatDialogRef<DrawDialogComponent>,
     public i18n: I18NService,
     public dialog: MatDialog,
-    private _session: SessionService,
   ) {}
 
   public setLayer(layer: ZsMapBaseLayer | undefined): void {

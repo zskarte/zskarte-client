@@ -422,7 +422,11 @@ export class ZsMapStateService {
     );
   }
 
+<<<<<<< Updated upstream
   public mergePolygons(elementA: ZsMapBaseDrawElement, elementB: ZsMapBaseDrawElement) {
+=======
+  public mergePolygons(elementA: ZsMapBaseDrawElement<ZsMapDrawElementState>, elementB: ZsMapBaseDrawElement<ZsMapDrawElementState>) {
+>>>>>>> Stashed changes
     const featureA = elementA.getOlFeature() as Feature<SimpleGeometry>;
     const featureB = elementB.getOlFeature() as Feature<SimpleGeometry>;
     if (featureA.getGeometry()?.getType() === 'Polygon' && featureB.getGeometry()?.getType() === 'Polygon') {
@@ -640,16 +644,16 @@ export class ZsMapStateService {
 
   public updateDrawElementState<T extends keyof ZsMapDrawElementState>(id: string, field: T, value: ZsMapDrawElementState[T]) {
     this.updateMapState((draft) => {
-      const index = draft.drawElements?.findIndex((e) => e.id === id);
-      if (index !== undefined && index > -1 && draft.drawElements) {
+      const index = draft.drawElements?.findIndex((e) => e.id === id) ?? -1;
+      if (index > -1 && draft.drawElements) {
         draft.drawElements[index][field] = value;
       }
     });
   }
 
   public removeDrawElement(id: string) {
-    const index = this._map.value.drawElements?.findIndex((o) => o.id === id);
-    if (index === undefined) {
+    const index = this._map.value.drawElements?.findIndex((o) => o.id === id) ?? -1;
+    if (index > -1) {
       throw new Error('Id not correct');
     }
     this.updateMapState((draft) => {

@@ -20,14 +20,8 @@ export class OperationsComponent implements OnDestroy {
   private _ngUnsubscribe = new Subject<void>();
 
   constructor(
-    private _api: ApiService,
-    private _state: ZsMapStateService,
     private _session: SessionService,
     public i18n: I18NService,
-    private _router: Router,
-    public ipc: IpcService,
-    private _dialog: MatDialog,
-    private _sanitizer: DomSanitizer,
     public operationService: OperationService,
   ) {
     this._session

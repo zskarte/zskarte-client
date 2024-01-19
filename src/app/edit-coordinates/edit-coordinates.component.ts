@@ -27,31 +27,30 @@ export class EditCoordinatesComponent {
   }
 
   ok(): void {
-    let parsedCoordinates;
     try {
-      parsedCoordinates = JSON.parse(this.coordinates);
+      const parsedCoordinates: Coordinate = JSON.parse(this.coordinates);
+      if (parsedCoordinates) {
+        let valid = true;
+        switch (this.geometry) {
+          case 'Point':
+            valid = this.isValidPointCoordinate(parsedCoordinates);
+            break;
+          case 'LineString':
+            valid = this.isValidLine(parsedCoordinates);
+            break;
+          case 'Polygon':
+          case 'MultiPolygon':
+            valid = this.isValidPolygon(parsedCoordinates);
+            break;
+        }
+        if (valid) {
+          this.dialogRef.close(parsedCoordinates);
+        } else {
+          this.error = 'Invalid coordinates';
+        }
+      }
     } catch (e) {
       this.error = 'Invalid JSON payload';
-    }
-    if (parsedCoordinates) {
-      let valid = true;
-      switch (this.geometry) {
-        case 'Point':
-          valid = this.isValidPointCoordinate(parsedCoordinates);
-          break;
-        case 'LineString':
-          valid = this.isValidLine(parsedCoordinates);
-          break;
-        case 'Polygon':
-        case 'MultiPolygon':
-          valid = this.isValidPolygon(parsedCoordinates);
-          break;
-      }
-      if (valid) {
-        this.dialogRef.close(parsedCoordinates);
-      } else {
-        this.error = 'Invalid coordinates';
-      }
     }
   }
 

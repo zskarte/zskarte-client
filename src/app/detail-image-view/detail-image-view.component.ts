@@ -10,20 +10,14 @@ import { DrawStyle } from '../map-renderer/draw-style';
   styleUrls: ['./detail-image-view.component.css'],
 })
 export class DetailImageViewComponent {
-  title;
-  imageSrc;
+  title: string;
+  imageSrc: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Sign,
     public i18n: I18NService,
   ) {
     this.title = i18n.getLabelForSign(data);
-    // this.imageSrc = CustomImageStoreService.getOriginalImageDataUrl(data.src);
-    // if (!this.imageSrc) {
-    //   this.imageSrc = CustomImageStoreService.getImageDataUrl(data.src);
-    // }
-    // if (!this.imageSrc) {
     this.imageSrc = DrawStyle.getImageUrl(data.src);
-    // }
   }
 }
