@@ -1,0 +1,38 @@
+mat-form-field {
+  width: 100%;
+}
+
+mat-select-trigger {
+  display: flex;
+  flex-direction: row;
+
+  :not(:last-child) {
+    ::after {
+      content: ',';
+      margin-right: 0.3rem;
+    }
+  }
+}
+
+.trigger-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  img {
+    height: 0.7rem;
+    margin-right: 0.5rem;
+  }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  img {
+    height: 1.5rem;
+    margin-right: 0.5rem;
+  }
+}
