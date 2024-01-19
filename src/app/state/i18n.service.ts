@@ -1294,6 +1294,11 @@ export class I18NService {
       en: 'Import Scenario',
       fr: 'Importer événement',
     },
+    featureClustering: {
+      de: 'Feature-Clustering',
+      en: 'Feature clustering',
+      fr: 'Regroupement de formes',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

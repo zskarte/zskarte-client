@@ -1,5 +1,7 @@
-.filterAll button {
-  margin-bottom: 14px;
+.filterAll {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .filterItem {

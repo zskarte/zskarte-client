@@ -23,6 +23,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
   hiddenSymbols$: Observable<number[]>;
   hiddenFeatureTypes$: Observable<string[]>;
   hiddenCategories$: Observable<string[]>;
+  enableClustering$: Observable<boolean>;
   filtersOpenState = false;
   filtersGeneralOpenState = false;
   capitalizeFirstLetter = capitalizeFirstLetter;
@@ -35,6 +36,7 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     this.hiddenSymbols$ = this.mapState.observeHiddenSymbols().pipe(takeUntil(this._ngUnsubscribe));
     this.hiddenFeatureTypes$ = this.mapState.observeHiddenFeatureTypes().pipe(takeUntil(this._ngUnsubscribe));
     this.hiddenCategories$ = this.mapState.observeHiddenCategories().pipe(takeUntil(this._ngUnsubscribe));
+    this.enableClustering$ = this.mapState.observeEnableClustering().pipe(takeUntil(this._ngUnsubscribe));
   }
 
   ngOnInit(): void {
@@ -140,5 +142,9 @@ export class SidebarFiltersComponent implements OnInit, OnDestroy {
     if (category.name !== '' && category.name !== undefined) {
       this.mapState.toggleCategory(category.name);
     }
+  }
+
+  public toggleClustering() {
+    this.mapState.toggleClustering();
   }
 }

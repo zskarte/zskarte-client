@@ -99,6 +99,7 @@ export class ZsMapStateService {
       hiddenSymbols: [],
       hiddenFeatureTypes: [],
       hiddenCategories: [],
+      enableClustering: true,
     };
     if (!mapState) {
       mapState = this._map.value;
@@ -272,6 +273,13 @@ export class ZsMapStateService {
       map((o) => {
         return o.positionFlag;
       }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public observeEnableClustering(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => o.enableClustering),
       distinctUntilChanged((x, y) => x === y),
     );
   }
@@ -866,6 +874,12 @@ export class ZsMapStateService {
     }
     this.updateDisplayState((draft) => {
       toggleInArray<string>(draft.hiddenCategories, category);
+    });
+  }
+
+  public toggleClustering() {
+    this.updateDisplayState((draft) => {
+      draft.enableClustering = !draft.enableClustering;
     });
   }
 

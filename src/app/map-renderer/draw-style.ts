@@ -144,10 +144,12 @@ export class DrawStyle {
 
     let style = this.clusterStyleCache[features.length];
     if (!style) {
+      const scale = DrawStyle.scale(resolution, DrawStyle.defaultScaleFactor);
       style = [
         new Style({
           image: new Circle({
-            radius: 20,
+            radius: 250,
+            scale,
             fill: new Fill({
               color: 'rgba(255, 153, 102, 0.3)',
             }),
@@ -155,19 +157,22 @@ export class DrawStyle {
         }),
         new Style({
           image: new Circle({
-            radius: 14,
+            radius: 200,
+            scale,
             fill: new Fill({
               color: 'rgba(255, 165, 0, 0.7)',
             }),
           }),
           text: new Text({
             text: size.toString(),
+            font: 150 + 'px sans-serif',
+            scale,
             fill: new Fill({
               color: '#fff',
             }),
             stroke: new Stroke({
               color: 'rgba(0, 0, 0, 0.6)',
-              width: 3,
+              width: 30,
             }),
           }),
         }),

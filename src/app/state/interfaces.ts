@@ -62,6 +62,7 @@ export interface IZsMapDisplayState {
   hiddenSymbols: number[];
   hiddenFeatureTypes: string[];
   hiddenCategories: string[];
+  enableClustering: boolean;
 }
 
 export type ZsMapLayerState = IZsMapDrawLayerState | IZsMapGeoDataLayerState;

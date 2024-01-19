@@ -1,4 +1,4 @@
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { ZsMapDrawElementStateType, ZsMapLayerState, ZsMapLayerStateType } from '../../state/interfaces';
 import { ZsMapStateService } from '../../state/state.service';
@@ -72,9 +72,10 @@ export abstract class ZsMapBaseLayer {
         this._olLayer.setOpacity(opacity);
       });
 
-    this.observeMapZoom().subscribe((mapZoom) => {
+    combineLatest([this.observeMapZoom(), this._state.observeEnableClustering()]).subscribe(([mapZoom, enableClustering]) => {
       // don't show clustering if zoomed in more than 14
-      this._olLayer.setSource(mapZoom > 14 ? this._olSource : this._clusterSource);
+      const shouldCluster = enableClustering && mapZoom < 14;
+      this._olLayer.setSource(shouldCluster ? this._clusterSource : this._olSource);
     });
   }
 
