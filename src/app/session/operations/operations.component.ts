@@ -53,7 +53,7 @@ export class OperationsComponent implements OnDestroy {
 
   private async _reload(): Promise<void> {
     const { error, result: operations } = await this._api.get<IZsMapOperation[]>(
-      '/api/operations?filters[organization][id][$eq]=' + this._session.getOrganizationId() + '&filters[status][$eq]=active',
+      `/api/operations?filters[organization][id][$eq]=${this._session.getOrganizationId()}&filters[status][$eq]=active`,
     );
     if (error || !operations) return;
     this.operations.next(operations);
@@ -105,7 +105,7 @@ export class OperationsComponent implements OnDestroy {
     }
 
     operation.status = 'archived';
-    await this._api.put('/api/operations/' + operation.id, {
+    await this._api.put(`/api/operations/${operation.id}`, {
       data: { ...operation, organization: this._session.getOrganizationId() },
     });
     await this._reload();
@@ -128,7 +128,7 @@ export class OperationsComponent implements OnDestroy {
     }
 
     if (operation.id) {
-      await this._api.put('/api/operations/' + operation.id, { data: { ...operation, organization: this._session.getOrganizationId() } });
+      await this._api.put(`/api/operations/${operation.id}`, { data: { ...operation, organization: this._session.getOrganizationId() } });
     } else {
       await this._api.post('/api/operations', { data: { ...operation, organization: this._session.getOrganizationId() } });
     }
@@ -142,7 +142,7 @@ export class OperationsComponent implements OnDestroy {
       return;
     }
     const fileName = `Ereignis_${DateTime.now().toFormat('yyyy_LL_dd_hh_mm')}.zsjson`;
-    const { result: operation } = await this._api.get<IZsMapOperation>('/api/operations/' + operationId);
+    const { result: operation } = await this._api.get<IZsMapOperation>(`/api/operations/${operationId}`);
     const saveFile = {
       name: operation?.name,
       description: operation?.description,

@@ -402,7 +402,7 @@ export class DrawStyle {
 
   private static getSubFeature(feature: FeatureLike): FeatureLike {
     const subfeature = feature.get('features');
-    if (subfeature && subfeature.length == 1) {
+    if (subfeature && subfeature.length === 1) {
       return subfeature[0];
     }
     return feature;
@@ -750,7 +750,7 @@ export class DrawStyle {
   private static colorFunction = function (signatureColor: string | undefined, alpha = 1) {
     if (signatureColor) {
       let hexAlpha = Math.floor(255 * (alpha !== undefined ? alpha : 1)).toString(16);
-      if (hexAlpha.length == 1) {
+      if (hexAlpha.length === 1) {
         hexAlpha = '0' + hexAlpha;
       }
       return signatureColor + hexAlpha;

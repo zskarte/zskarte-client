@@ -72,7 +72,7 @@ export class SyncService {
     }
 
     if (this._connectingPromise) {
-      return await this._connectingPromise;
+      await this._connectingPromise;
     }
 
     this._connectingPromise = new Promise<void>((resolve, reject) => {
@@ -80,11 +80,13 @@ export class SyncService {
       const url = this._api.getUrl();
 
       this._socket = io(url, {
-        auth: {
-          token: token,
-        },
+        auth: { token },
         transports: ['websocket'],
-        query: { identifier: this._connectionId, operationId: this._session.getOperationId(), label: this._session.getLabel() },
+        query: {
+          identifier: this._connectionId,
+          operationId: this._session.getOperationId(),
+          label: this._session.getLabel(),
+        },
         forceNew: true,
       });
 
@@ -121,7 +123,7 @@ export class SyncService {
     await this._connectingPromise;
   }
 
-  private _disconnect() {
+  private _disconnect(): void {
     if (!this._socket) {
       return;
     }

@@ -41,13 +41,13 @@ export class ShortcutService {
       });
     });
 
-    this._state.observeSelectedElement().subscribe((element) => {
+    this._state.observeSelectedElement$().subscribe((element) => {
       this._selectedElement = element;
     });
   }
 
   public initialize(): void {
-    this._listen({ shortcut: 'mod+backspace' }).subscribe(async () => {
+    this._listen({ shortcut: 'mod+backspace' }).subscribe(() => {
       if (this._selectedFeatureId) {
         this._state.removeDrawElement(this._selectedFeatureId);
       }
