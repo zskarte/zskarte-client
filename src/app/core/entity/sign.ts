@@ -66,12 +66,14 @@ export function getFirstCoordinate(feature: FeatureLike): any {
 export function getLastCoordinate(feature: FeatureLike): any {
   switch (feature?.getGeometry()?.getType()) {
     case 'Polygon':
-    case 'MultiPolygon':
+    case 'MultiPolygon': {
       const pCoordinates = (feature?.getGeometry() as Polygon)?.getCoordinates();
       return pCoordinates[pCoordinates.length - 2][0]; // -2 because the last coordinates are the same as the first
-    case 'LineString':
+    }
+    case 'LineString': {
       const lCoordinates = (feature?.getGeometry() as LineString)?.getCoordinates();
       return lCoordinates[lCoordinates.length - 1];
+    }
     case 'Point':
       return (feature?.getGeometry() as Point)?.getCoordinates();
     default:
