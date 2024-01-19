@@ -53,6 +53,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       label: state.name,
       labelShow: state.nameShow,
       color: state.color,
+      createdBy: state.createdBy,
       protected: state.protected,
       iconSize: state.iconSize,
       hideIcon: state.hideIcon,

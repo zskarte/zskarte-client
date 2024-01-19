@@ -109,6 +109,11 @@ export class SyncService {
         this._connections.next(connections);
       });
       this._socket.connect();
+      if (!this._state.getShowCurrentLocation()) return;
+      setTimeout(() => {
+        this._state.updateShowCurrentLocation(false);
+        this._state.updateShowCurrentLocation(true);
+      }, 500);
     }).finally(() => {
       this._connectingPromise = undefined;
     });
@@ -164,7 +169,11 @@ export class SyncService {
     await this._publishMapStatePatches();
   }, 250);
 
-  public async publishCurrentLocation(longLat: { long: number; lat: number }): Promise<void> {
+  public publishCurrentLocation = debounce(async (longLat: { long: number; lat: number } | undefined) => {
+    await this._publishCurrentLocation(longLat);
+  }, 1000);
+
+  public async _publishCurrentLocation(longLat: { long: number; lat: number } | undefined): Promise<void> {
     const { error } = await this._api.post('/api/operations/mapstate/currentlocation', longLat, {
       headers: {
         operationId: this._session.getOperationId() + '',
