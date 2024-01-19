@@ -137,8 +137,8 @@ export class ZsMapStateService {
           if (result.type === 'Point') {
             const element: ZsMapDrawElementState = {
               type: ZsMapDrawElementStateType.SYMBOL,
-              coordinates: coordinates,
-              layer: layer,
+              coordinates,
+              layer,
               symbolId: result.id,
             };
             this.addDrawElement(element);
@@ -363,7 +363,7 @@ export class ZsMapStateService {
   public observeMapName(): Observable<string> {
     return this._map.pipe(
       map((o) => {
-        return o?.name || '';
+        return o?.name ?? '';
       }),
       distinctUntilChanged((x, y) => x === y),
     );
@@ -399,6 +399,10 @@ export class ZsMapStateService {
 
   public getActiveLayer(): ZsMapBaseLayer | undefined {
     return this._display.value.activeLayer ? this._layerCache[this._display.value.activeLayer] : undefined;
+  }
+
+  public getShowCurrentLocation(): boolean {
+    return this._display.value.showMyLocation;
   }
 
   public observeActiveLayer(): Observable<ZsMapBaseLayer | undefined> {
@@ -446,8 +450,8 @@ export class ZsMapStateService {
   private _addLayer(layer: ZsMapLayerState): void {
     layer.id = uuidv4();
     if (!layer.name) {
-      const layerCount = (this._map.value.layers?.length || 0) + 1;
-      layer.name = 'Layer ' + layerCount;
+      const layerCount = (this._map.value.layers?.length ?? 0) + 1;
+      layer.name = `Layer  ${layerCount}`;
     }
     this.updateMapState((draft) => {
       if (!draft.layers) {
@@ -622,6 +626,7 @@ export class ZsMapStateService {
     const activeLayerState = this.getActiveLayerState();
     if (activeLayerState?.type === ZsMapLayerStateType.DRAW) {
       const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
+      if (!sign.createdBy) sign.createdBy = this._session.getLabel();
       defineDefaultValuesForSignature(sign);
       const drawElement: ZsMapDrawElementState = {
         ...element,
@@ -629,6 +634,7 @@ export class ZsMapStateService {
         protected: sign.protected,
         iconSize: sign.iconSize,
         hideIcon: sign.hideIcon,
+        createdBy: sign.createdBy,
         iconOffset: sign.iconOffset,
         flipIcon: sign.flipIcon,
         rotation: sign.rotation,
@@ -955,7 +961,7 @@ export class ZsMapStateService {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
         return Array.prototype.map.call(new Uint8Array(buf), (x) => ('00' + x.toString(16)).slice(-2)).join('');
       };
-      const { error, result } = await this._api.get<IZsMapOperation>('/api/operations/' + this._session.getOperationId());
+      const { error, result } = await this._api.get<IZsMapOperation>(`/api/operations/${this._session.getOperationId()}`);
       if (error || !result) return;
       if (result.mapState) {
         const [oldDigest, newDigest] = await Promise.all([

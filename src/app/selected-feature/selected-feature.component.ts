@@ -74,7 +74,9 @@ export class SelectedFeatureComponent implements OnDestroy {
       map((element) => {
         const sig = element?.getOlFeature()?.get('sig');
         if (sig) {
-          return sig.id ? Signs.getSignById(sig.id) : { ...sig };
+          const signById = sig.id ? Signs.getSignById(sig.id) : { ...sig };
+          signById.createdBy = element?.elementState?.createdBy;
+          return signById;
         }
       }),
     );
