@@ -150,7 +150,7 @@ export class MapRendererComponent implements AfterViewInit {
     this._state
       .ObserveShowCurrentLocation()
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(async (show) => {
+      .subscribe((show) => {
         this.isDevicePositionFlagVisible = show;
         if (!this._deviceTrackingLayer) return;
 
@@ -162,11 +162,11 @@ export class MapRendererComponent implements AfterViewInit {
         this._deviceTrackingLayer.setVisible(this.isDevicePositionFlagVisible);
         this._geolocation.setTracking(this.isDevicePositionFlagVisible);
 
-        this._geolocation.on('change', async () => {
+        this._geolocation.on('change', () => {
           const coordinates = this._geolocation.getPosition();
           if (!coordinates) return;
           const longlat = transform(coordinates, this._view.getProjection(), 'EPSG:4326');
-          await this._sync.publishCurrentLocation({ long: longlat[0], lat: longlat[1] });
+          this._sync.publishCurrentLocation({ long: longlat[0], lat: longlat[1] });
         });
 
         this._geolocation.once('change:position', () => {
@@ -889,7 +889,7 @@ export class MapRendererComponent implements AfterViewInit {
             const coordinateGroup = coordinates[i];
             if (indexOfPointInCoordinateGroup(coordinateGroup, this.selectedVertexPoint.getValue() ?? []) != -1) {
               return {
-                feature: feature,
+                feature,
                 coordinateGroupIndex: i,
                 otherCoordinationGroupCount: coordinates.length - 1,
                 minimalAmountOfPoints: coordinateGroup.length <= 4,
@@ -899,14 +899,14 @@ export class MapRendererComponent implements AfterViewInit {
           return null;
         case 'LineString':
           return {
-            feature: feature,
+            feature,
             coordinateGroupIndex: null,
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: coordinates.length <= 2,
           };
         case 'Point':
           return {
-            feature: feature,
+            feature,
             coordinateGroupIndex: null,
             otherCoordinationGroupCount: 0,
             minimalAmountOfPoints: true,
