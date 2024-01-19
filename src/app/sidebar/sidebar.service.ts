@@ -8,24 +8,37 @@ import { ZsMapStateService } from '../state/state.service';
 })
 export class SidebarService {
   private _context = new BehaviorSubject<SidebarContext | undefined>(undefined);
+  private _preventDeselect = false;
 
   constructor(private _state: ZsMapStateService) {
     this._state.observeSelectedFeature$().subscribe((element) => {
       if (element) {
         this.open(SidebarContext.SelectedFeature);
       } else {
+        this._preventDeselect = true;
         this.close();
       }
     });
   }
 
   close(): void {
-    this._state.resetSelectedFeature();
+    if (!this._preventDeselect) {
+      this._state.resetSelectedFeature();
+    }
     this._context.next(undefined);
+    this._preventDeselect = false;
   }
 
   open(context: SidebarContext): void {
     this._context.next(context);
+  }
+
+  toggle(context: SidebarContext): void {
+    if (this._context.value === context) {
+      this.close();
+    } else {
+      this.open(context);
+    }
   }
 
   observeIsOpen(): Observable<boolean> {

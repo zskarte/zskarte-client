@@ -284,6 +284,14 @@ export class MapRendererComponent implements AfterViewInit {
       },
       layers: this._allLayers,
     });
+    this._state
+      .observeSelectedFeature$()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((element) => {
+        if (!element) {
+          select.getFeatures().clear();
+        }
+      });
     select.on('select', (event) => {
       this._modifyCache.clear();
       this.toggleEditButtons(false);
