@@ -69,6 +69,7 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       text: state['text'],
       zindex: state.zindex,
       reportNumber: state.reportNumber,
+      affectedPersons: state.affectedPersons,
     });
   }
 
@@ -121,14 +122,6 @@ export abstract class ZsMapBaseDrawElement<T extends ZsMapDrawElementState = ZsM
       distinctUntilChanged((x, y) => x === y),
       takeUntil(this._unsubscribe),
     );
-  }
-
-  public setLayer(layer: string): void {
-    this._state.updateMapState((draft) => {
-      if (draft?.drawElements?.[this._id]) {
-        draft.drawElements[this._id].layer = layer;
-      }
-    });
   }
 
   // static handlers for drawing

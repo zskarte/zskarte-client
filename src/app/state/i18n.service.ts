@@ -1294,10 +1294,20 @@ export class I18NService {
       en: 'Import Scenario',
       fr: 'Importer événement',
     },
+    edit: {
+      de: 'Bearbeiten',
+      en: 'Edit',
+      fr: 'Modifier',
+    },
     eventState: {
       de: 'Situationslage',
       en: 'Event state',
       fr: 'Sutiation',
+    },
+    affectedPersons: {
+      de: 'Betroffene Personen',
+      en: 'Affected Persons',
+      fr: 'Persones affectés',
     },
   };
 

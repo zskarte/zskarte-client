@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FloatingUiComponent } from './floating-ui.component';
+import { FloatingUIComponent } from './floating-ui.component';
 
 describe('FloatingUiComponent', () => {
-  let component: FloatingUiComponent;
-  let fixture: ComponentFixture<FloatingUiComponent>;
+  let component: FloatingUIComponent;
+  let fixture: ComponentFixture<FloatingUIComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FloatingUiComponent],
+      imports: [FloatingUIComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(FloatingUiComponent);
+    fixture = TestBed.createComponent(FloatingUIComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

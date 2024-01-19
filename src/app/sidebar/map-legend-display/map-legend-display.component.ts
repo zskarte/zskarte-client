@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GeoadminService } from '../../core/geoadmin.service';
 import { I18NService } from '../../state/i18n.service';
 
@@ -11,7 +11,6 @@ import { I18NService } from '../../state/i18n.service';
 export class MapLegendDisplayComponent {
   html: string | null = null;
   constructor(
-    public dialogRef: MatDialogRef<MapLegendDisplayComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string,
     geoAdmin: GeoadminService,
     public i18n: I18NService,

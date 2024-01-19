@@ -45,6 +45,7 @@ export interface Sign {
   origSrc?: string;
   createdAt?: Date;
   reportNumber?: number;
+  affectedPersons?: number;
 }
 
 export function isMoreOptimalIconCoordinate(
@@ -90,33 +91,6 @@ export function getLastCoordinate(feature: FeatureLike): any {
   }
 
   return [];
-}
-
-export function getMostTopCoordinate(feature: FeatureLike) {
-  let symbolAnchorCoordinate: Coordinate | null = null;
-  switch (feature?.getGeometry()?.getType()) {
-    case 'Polygon':
-    case 'MultiPolygon':
-      for (const coordinateGroup of (feature.getGeometry() as Polygon).getCoordinates()) {
-        for (const coordinate of coordinateGroup) {
-          if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
-            symbolAnchorCoordinate = coordinate;
-          }
-        }
-      }
-      break;
-    case 'LineString':
-      for (const coordinate of (feature.getGeometry() as LineString).getCoordinates()) {
-        if (isMoreOptimalIconCoordinate(coordinate, symbolAnchorCoordinate)) {
-          symbolAnchorCoordinate = coordinate;
-        }
-      }
-      break;
-    case 'Point':
-      symbolAnchorCoordinate = (feature.getGeometry() as Point).getCoordinates();
-      break;
-  }
-  return symbolAnchorCoordinate;
 }
 
 export const signCategories: SignCategory[] = [
@@ -167,6 +141,7 @@ export const signatureDefaultValues: SignatureDefaultValues = {
   images: [],
   flipIcon: false,
   hideIcon: false,
+  affectedPersons: undefined,
 };
 
 export function defineDefaultValuesForSignature(signature: Sign) {
@@ -189,6 +164,7 @@ export function defineDefaultValuesForSignature(signature: Sign) {
   signature.rotation = signature.rotation || signatureDefaultValues.rotation;
   signature.images = signature.images || signatureDefaultValues.images;
   signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
+  signature.affectedPersons = signature.affectedPersons || signatureDefaultValues.affectedPersons;
 }
 
 export interface SignatureDefaultValues {
@@ -212,4 +188,5 @@ export interface SignatureDefaultValues {
   images: string[];
   flipIcon: boolean;
   hideIcon: boolean;
+  affectedPersons: number | undefined;
 }

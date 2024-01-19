@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Style, { StyleLike } from 'ol/style/Style';
+import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import FillPattern from 'ol-ext/style/FillPattern';
@@ -127,17 +127,8 @@ export class DrawStyle {
     return [iconSizeInCoordinates - leftOffset * iconSizeInCoordinates, iconSizeInCoordinates - topOffset * iconSizeInCoordinates];
   }
 
-  public static clusterStyleFunctionDefault(feature: FeatureLike, resolution: number): StyleLike {
-    if (resolution !== DrawStyle.lastResolution) {
-      DrawStyle.lastResolution = resolution;
-      DrawStyle.clearCaches();
-    }
-    return DrawStyle.clusterStyleFunction(feature, resolution, false);
-  }
-
   private static clusterStyleFunction(feature: FeatureLike, resolution: number, selected: boolean): Style[] {
-    const coordinateScale = resolution;
-    const iconSizeInCoordinates = 50 * coordinateScale;
+    const iconSizeInCoordinates = 50 * resolution;
     const scale = 0.12;
     const features = feature.get('features');
     if (features.length === 0) {
@@ -398,6 +389,7 @@ export class DrawStyle {
         iconSize: signature.iconSize,
         iconOpacity: signature.iconOpacity,
         zindex: this.getZIndex(feature),
+        affectedPersons: signature.affectedPersons,
       }),
     ).toString();
   }
@@ -437,15 +429,6 @@ export class DrawStyle {
         reportNumber: signature.reportNumber,
       }),
     ).toString();
-  }
-
-  private static getAnchorCoordinate(feature: FeatureLike) {
-    feature = DrawStyle.getSubFeature(feature);
-    switch (feature.getGeometry()?.getType()) {
-      case 'Point':
-        return (feature.getGeometry() as Point)?.getCoordinates();
-    }
-    return undefined;
   }
 
   public static getIconCoordinates(feature: FeatureLike, resolution: number) {
@@ -531,6 +514,7 @@ export class DrawStyle {
       const showIcon = this.showIcon(signature);
       const dashedStroke = this.createDefaultStroke(scale, signature.color || '#535353', true, signature.iconOpacity);
       const iconRadius = scale * 250 * (signature.iconSize || 1);
+      const notificationIconRadius = iconRadius / 4;
       const highlightStroke = selected ? DrawStyle.getHighlightStroke(feature, scale) : null;
       if (showIcon && selected) {
         // Highlight the stroke to the icon
@@ -596,6 +580,34 @@ export class DrawStyle {
             zIndex: zIndex,
           }),
         );
+
+        if (signature.affectedPersons) {
+          const notificationIcon = new Style({
+            image: new Circle({
+              radius: notificationIconRadius,
+              fill: this.getColorFill('#3f51b5'),
+            }),
+            text: new Text({
+              font: `${notificationIconRadius}px sans-serif`,
+              fill: new Fill({
+                color: '#fff',
+              }),
+              text: signature.affectedPersons.toString(),
+            }),
+            geometry(feature) {
+              // Calculate the coordinates of the point on the circumference in the top-right quadrant
+              const x = (Math.sqrt(2) * iconRadius * resolution) / 2;
+              const y = (Math.sqrt(2) * iconRadius * resolution) / 2;
+              const coordinates = DrawStyle.getIconCoordinates(feature, resolution)[1];
+              const point = new Point(coordinates);
+              point.translate(x, y);
+              return point;
+            },
+            zIndex,
+          });
+
+          iconStyles.push(notificationIcon);
+        }
 
         let iconLabel;
         let iconTextScale: any;

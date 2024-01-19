@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { getOS, OS } from '../helper/os';
 import { ZsMapDrawElementStateType } from '../state/interfaces';
 import { ZsMapStateService } from '../state/state.service';
 import { IShortcut } from './shortcut.interfaces';
@@ -14,23 +13,6 @@ export class ShortcutService {
   private _selectedElement: ZsMapBaseDrawElement | undefined = undefined;
   private _selectedFeatureId: string | undefined = undefined;
   private _copyElement: ZsMapBaseDrawElement | undefined = undefined;
-  private _symbols: { [key: string]: string } = {
-    command: '\u2318',
-    // ⌘
-    shift: '\u21E7',
-    // ⇧
-    left: '\u2190',
-    // ←
-    right: '\u2192',
-    // →
-    up: '\u2191',
-    // ↑
-    down: '\u2193',
-    // ↓
-    enter: '\u23CE',
-    // ⏎
-    backspace: '\u232B',
-  };
   private _inputs = ['INPUT', 'TEXTAREA'];
   private _keydownObserver: Observable<KeyboardEvent>;
   private _readOnlyMode = false;
@@ -157,25 +139,5 @@ export class ShortcutService {
         return false;
       }),
     );
-  }
-
-  public symbolize(combo: string): string {
-    if (!combo) {
-      return combo;
-    }
-
-    const comboArray = combo.split('+');
-    for (let i = 0; i < comboArray.length; i++) {
-      // try to resolve command / ctrl based on OS:
-      if (comboArray[i] === 'mod' || comboArray[i] === 'ctrl' || comboArray[i] === 'meta' || comboArray[i] === 'cmd') {
-        if (getOS() === OS.MACOS || getOS() === OS.IOS) {
-          comboArray[i] = 'command';
-        } else {
-          comboArray[i] = 'ctrl';
-        }
-      }
-      comboArray[i] = this._symbols[comboArray[i]] || comboArray[i].toUpperCase();
-    }
-    return comboArray.join('+');
   }
 }

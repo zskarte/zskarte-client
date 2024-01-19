@@ -1,6 +1,11 @@
 # Zivilschutz-Karte V3
 
-[![GitHub issues](https://img.shields.io/github/issues/zskarte/zskarte-v3)](https://github.com/zskarte/zskarte-v3/issues) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![GitHub issues](https://img.shields.io/github/issues/zskarte/zskarte-v3)](https://github.com/zskarte/zskarte-v3/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![ZSKarte.ch](https://img.shields.io/website?url=https%3A%2F%2Fwww.zskarte.ch)](https://www.zskarte.ch)
+
+[![DeepSource](https://app.deepsource.com/gh/zskarte/zskarte-client.svg/?label=active+issues&show_trend=true&token=l9_fXyHSZ8v9FcMpZbK0ouA2)](https://app.deepsource.com/gh/zskarte/zskarte-client/)
+[![DeepSource](https://app.deepsource.com/gh/zskarte/zskarte-client.svg/?label=resolved+issues&show_trend=true&token=l9_fXyHSZ8v9FcMpZbK0ouA2)](https://app.deepsource.com/gh/zskarte/zskarte-client/)
 
 Zivilschutz-Karte is a javascript application (based on Angular) which allows to draw situation maps for disaster management. It has been developed for Swiss civil defense organisations. The drawing application can be used either with standard computers or with interactive whiteboards.
 

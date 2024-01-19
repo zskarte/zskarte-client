@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { app, BrowserWindow, Menu, protocol } from 'electron';
-import * as path from 'path';
+import { app } from 'electron';
 
 // import pkgJson from '../../package.json';
-import { ArgsHandler } from './args';
 import { IpcHandler } from './ipc';
 import { AppWindowHandler } from './windows';
 

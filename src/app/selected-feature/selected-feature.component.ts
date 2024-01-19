@@ -33,6 +33,8 @@ export class SelectedFeatureComponent implements OnDestroy {
   mergeMode: Observable<boolean>;
   featureType?: string;
   useColorPicker = false;
+  // we only show the affected persons for Dead, Trapped, Missing, Homeless and Injured
+  personSigns = [39, 82, 112, 122, 123];
   private _drawElementCache: Record<string, ZsMapBaseDrawElement> = {};
   private _ngUnsubscribe = new Subject<void>();
 

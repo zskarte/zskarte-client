@@ -6,6 +6,10 @@ mat-card.selection {
   z-index: 55;
 }
 
+.selection {
+  border-radius: 0 !important;
+}
+
 .titleCard {
   min-height: 10vh;
 }
@@ -71,17 +75,22 @@ mat-slider {
   line-height: 1.2em;
   padding-top: 5px;
 }
+
 .label-left {
   float: left;
 }
-.label-right {
-  float: right;
-}
+
 .clearfix::after {
   content: '';
   display: table;
   clear: both;
 }
+
+.time {
+  margin-top: 1rem;
+  color: #787878;
+}
+
 .title {
   text-align: center;
   font-size: 1.2em;
@@ -94,14 +103,6 @@ mat-slider {
 
 .menu {
   transform: scale(0.6);
-}
-
-#functionsPanel .mat-expansion-panel-header {
-  background-color: #3f51b5;
-}
-
-#functionsPanel .mat-expansion-panel-header * {
-  color: white;
 }
 
 mat-expansion-panel button {
