@@ -8,6 +8,7 @@
   "scripts": {
     "ng:serve": "ng serve --port 4300",
     "ng:serve:dev": "ng serve --port 4300 --configuration development-local",
+    "ng:serve:local": "ng serve --port 4300 --configuration local",
     "ng:serve:e2e": "npm-run-all -p ng:serve:dev wait",
     "ng:serve:prod": "ng serve --port 4300 --configuration production",
     "ng:build:prod": "ng build --configuration production",
@@ -16,6 +17,7 @@
     "electron:build": "tsc -p tsconfig.electron.json && electron-builder install-app-deps",
     "build": "run-p ng:build:prod electron:build",
     "start": "run-p ng:serve:dev electron:serve",
+    "start:local": "run-p ng:serve:local electron:serve",
     "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
     "prettify": "prettier --write \"**/*.{js,ts,html,css,json,md}\"",
     "test:e2e": "playwright test"
