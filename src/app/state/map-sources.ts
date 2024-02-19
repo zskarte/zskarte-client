@@ -22,6 +22,7 @@ export const ZsMapSources = {
           new OlTileXYZ({
             attributions: ['<a target="new" href="https://www.swisstopo.admin.ch/internet/swisstopo/en/home.html">swisstopo</a>'],
             url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg',
+            maxZoom: 20,
           }),
         );
       case ZsMapStateSource.GEO_ADMIN_PIXEL:
@@ -29,6 +30,7 @@ export const ZsMapSources = {
           new OlTileXYZ({
             attributions: ['<a target="new" href="https://www.swisstopo.admin.ch/internet/swisstopo/en/home.html">swisstopo</a>'],
             url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg',
+            maxZoom: 19,
           }),
         );
       case ZsMapStateSource.GEO_ADMIN_PIXEL_BW:
@@ -36,6 +38,7 @@ export const ZsMapSources = {
           new OlTileXYZ({
             attributions: ['<a target="new" href="https://www.swisstopo.admin.ch/internet/swisstopo/en/home.html">swisstopo</a>'],
             url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg',
+            maxZoom: 19,
           }),
         );
       case ZsMapStateSource.LOCAL: {
@@ -83,6 +86,7 @@ export const ZsMapSources = {
         return this.getOlTileLayer(
           new OlTileXYZ({
             url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            maxZoom: 19,
           }),
         );
       default:
@@ -90,6 +94,7 @@ export const ZsMapSources = {
         return this.getOlTileLayer(
           new OlTileXYZ({
             url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            maxZoom: 19,
           }),
         );
     }
