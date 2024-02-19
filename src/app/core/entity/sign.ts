@@ -133,26 +133,26 @@ export const signatureDefaultValues: SignatureDefaultValues = {
 };
 
 export function defineDefaultValuesForSignature(signature: Sign) {
-  signature.style = signature.style || signatureDefaultValues.style;
-  signature.size = signature.size || signatureDefaultValues.size;
-  signature.color = signature.color || signatureDefaultValues.color(signature.kat);
-  signature.fillOpacity = signature.fillOpacity || signatureDefaultValues.fillOpacity;
-  signature.strokeWidth = signature.strokeWidth || signatureDefaultValues.strokeWidth;
-  signature.fontSize = signature.fontSize || signatureDefaultValues.fontSize;
-  signature.fillStyle = signature.fillStyle || signatureDefaultValues.fillStyle;
-  signature.fillStyle.angle = signature.fillStyle.angle || signatureDefaultValues.fillStyleAngle;
-  signature.fillStyle.size = signature.fillStyle.size || signatureDefaultValues.fillStyleSize;
-  signature.fillStyle.spacing = signature.fillStyle.spacing || signatureDefaultValues.fillStyleSpacing;
-  signature.iconOffset = signature.iconOffset || signatureDefaultValues.iconOffset;
-  signature.protected = signature.protected || signatureDefaultValues.protected;
-  signature.labelShow = signature.labelShow || signatureDefaultValues.labelShow;
-  signature.arrow = signature.arrow || signatureDefaultValues.arrow;
-  signature.iconSize = signature.iconSize || signatureDefaultValues.iconSize;
-  signature.iconOpacity = signature.iconOpacity || signatureDefaultValues.iconOpacity;
-  signature.rotation = signature.rotation || signatureDefaultValues.rotation;
-  signature.images = signature.images || signatureDefaultValues.images;
-  signature.flipIcon = signature.flipIcon || signatureDefaultValues.flipIcon;
-  signature.affectedPersons = signature.affectedPersons || signatureDefaultValues.affectedPersons;
+  signature.style = signature.style ?? signatureDefaultValues.style;
+  signature.size = signature.size ?? signatureDefaultValues.size;
+  signature.color = signature.color ?? signatureDefaultValues.color(signature.kat);
+  signature.fillOpacity = signature.fillOpacity ?? signatureDefaultValues.fillOpacity;
+  signature.strokeWidth = signature.strokeWidth ?? signatureDefaultValues.strokeWidth;
+  signature.fontSize = signature.fontSize ?? signatureDefaultValues.fontSize;
+  signature.fillStyle = signature.fillStyle ?? signatureDefaultValues.fillStyle;
+  signature.fillStyle.angle = signature.fillStyle.angle ?? signatureDefaultValues.fillStyleAngle;
+  signature.fillStyle.size = signature.fillStyle.size ?? signatureDefaultValues.fillStyleSize;
+  signature.fillStyle.spacing = signature.fillStyle.spacing ?? signatureDefaultValues.fillStyleSpacing;
+  signature.iconOffset = signature.iconOffset ?? signatureDefaultValues.iconOffset;
+  signature.protected = signature.protected ?? signatureDefaultValues.protected;
+  signature.labelShow = signature.labelShow ?? signatureDefaultValues.labelShow;
+  signature.arrow = signature.arrow ?? signatureDefaultValues.arrow;
+  signature.iconSize = signature.iconSize ?? signatureDefaultValues.iconSize;
+  signature.iconOpacity = signature.iconOpacity ?? signatureDefaultValues.iconOpacity;
+  signature.rotation = signature.rotation ?? signatureDefaultValues.rotation;
+  signature.images = signature.images ?? signatureDefaultValues.images;
+  signature.flipIcon = signature.flipIcon ?? signatureDefaultValues.flipIcon;
+  signature.affectedPersons = signature.affectedPersons ?? signatureDefaultValues.affectedPersons;
 }
 
 export interface SignatureDefaultValues {
