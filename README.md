@@ -27,6 +27,8 @@ Please note, that this application integrates several different map provider ser
 
 Run `yarn start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+To use your own local backend (https://github.com/zskarte/zskarte-server) run `yarn start:local`.
+
 ### Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
