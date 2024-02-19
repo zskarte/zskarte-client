@@ -58,7 +58,7 @@ export class SidebarMenuComponent implements OnDestroy {
     const operation = this.session.getOperation();
     if (operation) {
       operation.eventStates = incidents;
-      await this._operation.saveOperation(operation);
+      await this._operation.updateMeta(operation);
     }
   }
 

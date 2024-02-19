@@ -18,8 +18,6 @@ export interface IZsMapOrganization {
   defaultLocale: string;
   url: string;
   logo: IZsStrapiAsset;
-  mapXCoord: number;
-  mapYCoord: number;
   operations: IZsMapOperation[];
   users: IZsMapUser[];
 }
