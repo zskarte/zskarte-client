@@ -1,4 +1,5 @@
 import { IZsStrapiAsset } from '../session/operations/operation.interfaces';
+import { environment } from '../../environments/environment';
 
 interface ImageResponsiveSource {
   src: string;
@@ -17,15 +18,22 @@ export type StrapiApiResponseList<T> = {
   };
 };
 
+const mapInternalUrl = (url: string) => {
+  if (url.startsWith('http')) {
+    return url;
+  }
+  return environment.apiUrl + url;
+};
+
 export const getResponsiveImageSource = (asset: IZsStrapiAsset) => {
   if (!asset) return undefined;
-  const responsiveImageSource: ImageResponsiveSource = { src: asset.url, srcSet: '' };
+  const responsiveImageSource: ImageResponsiveSource = { src: mapInternalUrl(asset.url), srcSet: '' };
   if (asset.formats) {
     responsiveImageSource.srcSet = Object.keys(asset.formats)
       .map((key) => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const format = asset.formats![key];
-        return format.url ? `${format.url} ${format.width}w` : '';
+        return format.url ? `${mapInternalUrl(format.url)} ${format.width}w` : '';
       })
       .filter((src) => Boolean(src))
       .join(', ');
