@@ -12,7 +12,7 @@
     <app-projection-selection
       [projectionFormatIndex]="projectionFormatIndex"
       [numerical]="numerical"
-      (change)="updateProjection($event)"
+      (projectionChanged)="updateProjection($event)"
     ></app-projection-selection>
   </div>
   <table mat-table [dataSource]="protocolTableDataSource" class="mat-elevation-z8 protocol-table" matSort>

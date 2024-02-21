@@ -11,14 +11,14 @@ export type ChangeType = { projectionFormatIndex?: number; projectionFormatIndex
   styleUrl: './projection-selection.component.scss',
 })
 export class ProjectionSelectionComponent {
-  @Input() projectionFormatIndex: number = 0;
+  @Input() projectionFormatIndex = 0;
   @Input() projectionFormatIndexes: number[] = [0];
-  @Input() numerical: boolean = true;
-  @Output() change = new EventEmitter<ChangeType>();
+  @Input() numerical = true;
+  @Output() readonly projectionChanged = new EventEmitter<ChangeType>();
 
-  @Input() multiple: boolean = false;
-  @Input() showNumerical: boolean = true;
-  @Input() disabled: boolean = false;
+  @Input() multiple = false;
+  @Input() showNumerical = true;
+  @Input() disabled = false;
 
   availableProjections: Array<ZsKarteProjection> = availableProjections;
 
@@ -56,6 +56,6 @@ export class ProjectionSelectionComponent {
     } else {
       state.projectionFormatIndex = this.projectionFormatIndex;
     }
-    this.change.emit(state);
+    this.projectionChanged.emit(state);
   }
 }

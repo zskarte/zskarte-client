@@ -10,7 +10,7 @@ import { first } from 'rxjs/operators';
   styleUrl: './coordinates.component.scss',
 })
 export class CoordinatesComponent {
-  showOptions: boolean = false;
+  showOptions = false;
   projectionFormatIndexes: number[];
   coordinates: string[] = [];
   constructor(private _state: ZsMapStateService) {
@@ -27,10 +27,10 @@ export class CoordinatesComponent {
   }
 
   updateProjection(value: ChangeType) {
-    if (value.projectionFormatIndexes!.length == 0) {
+    if (!value.projectionFormatIndexes || value.projectionFormatIndexes?.length === 0) {
       this.projectionFormatIndexes = [0];
     } else {
-      this.projectionFormatIndexes = value.projectionFormatIndexes!;
+      this.projectionFormatIndexes = value.projectionFormatIndexes;
     }
     this._state.getCoordinates().pipe(first()).subscribe(this.updateCoordinates.bind(this));
     //TODO: save this to session/state?

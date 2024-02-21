@@ -18,8 +18,8 @@ import { first } from 'rxjs/operators';
 })
 export class ProtocolTableComponent implements OnInit, OnDestroy, AfterViewInit {
   private _ngUnsubscribe = new Subject<void>();
-  projectionFormatIndex: number = 0;
-  numerical: boolean = false;
+  projectionFormatIndex = 0;
+  numerical = false;
 
   constructor(
     public zsMapStateService: ZsMapStateService,
@@ -51,8 +51,8 @@ export class ProtocolTableComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   updateProjection(value: ChangeType) {
-    this.projectionFormatIndex = value.projectionFormatIndex!;
-    this.numerical = value.numerical!;
+    this.projectionFormatIndex = value.projectionFormatIndex ?? this.projectionFormatIndex;
+    this.numerical = value.numerical ?? this.numerical;
     this.zsMapStateService.observeDrawElements().pipe(first()).subscribe(this.updateTable.bind(this));
   }
 

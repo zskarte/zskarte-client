@@ -6,7 +6,7 @@ import capitalizeFirstLetter from './capitalizeFirstLetter';
 import { getCenter } from 'ol/extent';
 import saveAs from 'file-saver';
 import { Workbook } from 'exceljs';
-import { convertTo } from '../helper/projections';
+import { convertTo } from './projections';
 import { SimpleGeometry } from 'ol/geom';
 
 export function mapProtocolEntry(

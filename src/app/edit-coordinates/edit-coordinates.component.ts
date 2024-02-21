@@ -13,10 +13,10 @@ import { ChangeType } from '../projection-selection/projection-selection.compone
   styleUrls: ['./edit-coordinates.component.css'],
 })
 export class EditCoordinatesComponent {
-  projectionFormatIndex: number = 0;
-  lastProjectionFormatIndex: number = 0;
-  numerical: boolean = true;
-  lastNumerical: boolean = true;
+  projectionFormatIndex = 0;
+  lastProjectionFormatIndex = 0;
+  numerical = true;
+  lastNumerical = true;
   coordinates: Coordinate;
   geometry: string;
   error = '';
@@ -53,8 +53,8 @@ export class EditCoordinatesComponent {
 
   updateProjection(value: ChangeType) {
     if (this.formatedCoordinatesControl.valid || this.formatedCoordinatesControl.pending) {
-      this.projectionFormatIndex = value.projectionFormatIndex!;
-      this.numerical = value.numerical!;
+      this.projectionFormatIndex = value.projectionFormatIndex ?? this.lastProjectionFormatIndex;
+      this.numerical = value.numerical ?? this.lastNumerical;
       this.updateFormatedCoordinates();
     } else {
       this.projectionFormatIndex = this.lastProjectionFormatIndex;
