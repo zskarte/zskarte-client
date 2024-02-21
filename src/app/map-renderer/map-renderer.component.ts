@@ -22,7 +22,7 @@ import { GeoadminService } from '../core/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
 import { FeatureLike } from 'ol/Feature';
-import { availableProjections, mercatorProjection } from '../helper/projections';
+import { projectionByIndex } from '../helper/projections';
 import { getCenter } from 'ol/extent';
 import { transform } from 'ol/proj';
 import { ScaleLine } from 'ol/control';
@@ -89,7 +89,6 @@ export class MapRendererComponent implements AfterViewInit {
   public currentSketchSize = new BehaviorSubject<string | null>(null);
   public mousePosition = new BehaviorSubject<number[]>([0, 0]);
   public mouseProjection: Observable<string>;
-  public availableProjections = availableProjections;
   public selectedProjectionIndex = 0;
   public selectedFeature = new BehaviorSubject<Feature<SimpleGeometry> | undefined>(undefined);
   public selectedFeatureCoordinates: Observable<string>;
@@ -124,14 +123,14 @@ export class MapRendererComponent implements AfterViewInit {
     this.selectedFeatureCoordinates = this.selectedFeature.pipe(
       map((feature) => {
         const coords = this.getFeatureCoordinates(feature);
-        return this.availableProjections[this.selectedProjectionIndex].translate(coords);
+        return projectionByIndex(this.selectedProjectionIndex).translate(coords);
       }),
     );
     this.mouseProjection = this._state.getCoordinates().pipe(
       takeUntil(this._ngUnsubscribe),
       map((coords) => {
         const transform = this.transformToCurrentProjection(coords) ?? [];
-        return this.availableProjections[this.selectedProjectionIndex].translate(transform);
+        return projectionByIndex(this.selectedProjectionIndex).translate(transform);
       }),
     );
 
@@ -966,17 +965,13 @@ export class MapRendererComponent implements AfterViewInit {
     );
   }
 
-  getFeatureCoordinates(feature: Feature | null | undefined): number[] {
+  getFeatureCoordinates(feature: Feature | null | undefined): Coordinate {
     const center = getCenter(feature?.getGeometry()?.getExtent() ?? []);
     return this.transformToCurrentProjection(center) ?? [];
   }
 
   transformToCurrentProjection(coordinates: Coordinate) {
-    const projection = availableProjections[this.selectedProjectionIndex].projection;
-    if (projection && mercatorProjection && coordinates.every((c) => !isNaN(c))) {
-      return transform(coordinates, mercatorProjection, projection);
-    }
-    return undefined;
+    return projectionByIndex(this.selectedProjectionIndex).transformTo(coordinates);
   }
 
   toggleDrawingDialog() {

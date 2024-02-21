@@ -1,7 +1,8 @@
-import { get } from 'ol/proj';
+import { get, transform } from 'ol/proj';
 import proj4 from 'proj4';
 import { register } from 'ol/proj/proj4';
 import Projection from 'ol/proj/Projection';
+import { Coordinate } from 'ol/coordinate';
 
 proj4.defs(
   'EPSG:2056',
@@ -13,18 +14,76 @@ export const coordinatesProjection = getCoordinatesProjection();
 export const mercatorProjection = getMercatorProjection();
 export const swissProjection = getSwissProjection();
 
-type ZsKarteProjection = {
-  format: string;
+type CoordinateTypes<T> = T | Array<T> | Array<Array<T>>;
+
+interface IOverloadedCoordinateFunction<T, U> {
+  (coordinates: T): U;
+  (coordinates: Array<T>): Array<U>;
+  (coordinates: Array<Array<T>>): Array<Array<U>>;
+}
+
+export type ZsKarteProjection = {
+  name: string;
   projection: Projection | null;
-  translate: (coords: number[]) => string;
+  parse: (coords: string) => Coordinate | undefined;
+  translate: (coords: Coordinate, prefix?: boolean) => string;
+  transformTo: IOverloadedCoordinateFunction<Coordinate, Coordinate>;
+  transformFrom: IOverloadedCoordinateFunction<Coordinate, Coordinate>;
+  asString: IOverloadedCoordinateFunction<Coordinate, string>;
+  fromString: IOverloadedCoordinateFunction<string, Coordinate>;
+};
+
+const callUnpacked = <U>(coordinates: CoordinateTypes<Coordinate>, func: (c: Coordinate) => U) => {
+  if (Array.isArray(coordinates) && coordinates.length === 2 && !Array.isArray(coordinates[0])) {
+    return func(coordinates as Coordinate);
+  }
+  return coordinates.map((c) => callUnpacked(c, func));
+};
+const callUnpackedString = (coordinates: CoordinateTypes<string>, func: (c: string) => Coordinate | undefined) => {
+  if (typeof coordinates === 'string') {
+    return func(coordinates);
+  }
+  return coordinates.map((c: CoordinateTypes<string>) => callUnpackedString(c, func));
+};
+
+const addTransformationFunctions = (
+  proj: Omit<ZsKarteProjection, 'transformTo' | 'transformFrom' | 'asString' | 'fromString'>,
+): ZsKarteProjection => {
+  if (!proj.projection || !mercatorProjection) {
+    throw Error(`projection for ${proj.name} or mercatorProjection is missing!`);
+  }
+  const projection = proj.projection;
+
+  return {
+    ...proj,
+    transformTo(coordinates: CoordinateTypes<Coordinate>) {
+      return callUnpacked(coordinates, (c: Coordinate) => transform(c, mercatorProjection, projection));
+    },
+    transformFrom(coordinates: CoordinateTypes<Coordinate>) {
+      return callUnpacked(coordinates, (c: Coordinate) => transform(c, projection, mercatorProjection));
+    },
+    asString(coordinates: CoordinateTypes<Coordinate>) {
+      return callUnpacked(coordinates, (c: Coordinate) => this.translate(transform(c, mercatorProjection, projection), false));
+    },
+    fromString(coordinates: CoordinateTypes<string>) {
+      return callUnpackedString(coordinates, (c: string) => {
+        const parsedCoord = this.parse(c);
+        if (parsedCoord) {
+          return transform(parsedCoord, projection, mercatorProjection);
+        } else {
+          return undefined;
+        }
+      });
+    },
+  };
 };
 
 export const availableProjections: Array<ZsKarteProjection> = [
-  {
-    format: '1.2-2',
+  addTransformationFunctions({
+    name: 'LV95',
     projection: swissProjection,
     // see: https://www.swisstopo.admin.ch/de/wissen-fakten/geodaesie-vermessung/bezugsrahmen/lokal/lv95.html > E / N
-    translate(coords?: number[]): string {
+    translate(coords?: Coordinate, prefix = true): string {
       const numberFormatOptions = {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -32,20 +91,99 @@ export const availableProjections: Array<ZsKarteProjection> = [
       if (!coords || coords.length !== 2) return '';
       const longitude = coords[0].toLocaleString('de-CH', numberFormatOptions);
       const latitude = coords[1].toLocaleString('de-CH', numberFormatOptions);
-      return `LV95 E${longitude} / N${latitude}`;
+      return `${prefix ? 'LV95 ' : ''}E${longitude} / N${latitude}`;
     },
-  },
-  {
-    format: '1.5-5',
+    parse(coords: string): Coordinate | undefined {
+      const values = coords.match(/E([0-9'’]+(?:\.\d+)?) *\/ *N([0-9'’]+(?:\.\d+)?)/u);
+      if (!values) {
+        return undefined;
+      }
+      values.shift(); //skip fullmatch
+      return values.map((v) => parseFloat(v.replace(/['’]/gu, '')));
+    },
+  }),
+  addTransformationFunctions({
+    name: 'GPS',
     projection: coordinatesProjection,
     // see: https://de.wikipedia.org/wiki/Geographische_Koordinaten > LAT(N) should be 1st and LONG(E) 2nd
-    translate(coords: number[]) {
+    translate(coords: Coordinate, prefix = true): string {
       if (!coords || coords.length !== 2) return 'GPS';
-      const latitude = coords[1].toFixed(5);
-      const longitude = coords[0].toFixed(5);
-      return `GPS N${latitude}°, E${longitude}°`;
+      const latitude = coords[1].toFixed(6);
+      const longitude = coords[0].toFixed(6);
+      return `${prefix ? 'GPS ' : ''}N${latitude}°, E${longitude}°`;
     },
-  },
+    parse(coords: string): Coordinate | undefined {
+      const values = coords.match(/N(\d+(?:\.\d+)?)°? *, *E(\d+(?:\.\d+)?)°?/);
+      if (!values) {
+        return undefined;
+      }
+      values.shift(); //skip fullmatch
+      const numbers = values.map(parseFloat);
+      return [numbers[1], numbers[0]];
+    },
+  }),
+  addTransformationFunctions({
+    name: 'GPS°\'"',
+    projection: coordinatesProjection,
+    // see: https://de.wikipedia.org/wiki/Geographische_Koordinaten > LAT(N) should be 1st and LONG(E) 2nd
+    translate(coords: Coordinate, prefix = true): string {
+      if (!coords || coords.length !== 2) return 'GPS';
+      const latitudeGrad = Math.floor(coords[1]);
+      const latitudeMin = Math.floor((coords[1] - latitudeGrad) * 60);
+      const latitudeSec = (((coords[1] - latitudeGrad) * 60 - latitudeMin) * 60).toFixed(3);
+      const longitudeGrad = Math.floor(coords[0]);
+      const longitudeMin = Math.floor((coords[0] - longitudeGrad) * 60);
+      const longitudeSec = (((coords[0] - longitudeGrad) * 60 - longitudeMin) * 60).toFixed(3);
+      return `${prefix ? 'GPS ' : ''}N${latitudeGrad}° ${latitudeMin}' ${latitudeSec}", E${longitudeGrad}° ${longitudeMin}' ${longitudeSec}"`;
+    },
+    parse(coords: string): Coordinate | undefined {
+      const values = coords.match(/N(\d+)° *(?:(\d\d?)')? *(?:(\d\d?(?:\.\d+)?)"?)? *, *E(\d+)° *(?:(\d\d?)')? *(?:(\d\d?(?:\.\d+)?)"?)?/);
+      if (!values) {
+        return undefined;
+      }
+      values?.shift(); //skip fullmatch
+      const numbers = values.map(parseFloat);
+      let latitude = 0;
+      if (numbers[2]) {
+        latitude += numbers[2];
+      }
+      latitude /= 60;
+      if (numbers[1]) {
+        latitude += numbers[1];
+      }
+      latitude /= 60;
+      latitude += numbers[0];
+      let longitude = 0;
+      if (numbers[5]) {
+        longitude += numbers[5];
+      }
+      longitude /= 60;
+      if (numbers[4]) {
+        longitude += numbers[4];
+      }
+      longitude /= 60;
+      longitude += numbers[3];
+      return [longitude, latitude];
+    },
+  }),
+  addTransformationFunctions({
+    name: 'Mercator',
+    projection: mercatorProjection,
+    translate(coords: Coordinate, prefix = true): string {
+      if (!coords || coords.length !== 2) return 'Mercator';
+      const longitude = coords[0].toFixed(8);
+      const latitude = coords[1].toFixed(8);
+      return `${prefix ? 'Mercator ' : ''}${longitude} / ${latitude}`;
+    },
+    parse(coords: string): Coordinate | undefined {
+      const values = coords.match(/(\d+(?:\.\d+)?) *\/ *(\d+(?:\.\d+)?)/);
+      if (!values) {
+        return undefined;
+      }
+      values.shift(); //skip fullmatch
+      return values.map(parseFloat);
+    },
+  }),
 ];
 
 function getCoordinatesProjection() {
@@ -74,3 +212,34 @@ function getSwissProjection() {
   }
   return projection;
 }
+
+export const projectionByIndex = (projectionIndex: number) => {
+  return availableProjections[projectionIndex];
+};
+export const projectionByName = (formatName: string) => {
+  return availableProjections.find((p) => p.name === formatName);
+};
+
+interface IOverloadedConvertFunction<T, U> {
+  (coordinates: T, projectionFormatIndex: number, numerical?: boolean): U;
+  (coordinates: Array<T>, projectionFormatIndex: number, numerical?: boolean): Array<U>;
+  (coordinates: Array<Array<T>>, projectionFormatIndex: number, numerical?: boolean): Array<Array<U>>;
+}
+
+export const convertTo: IOverloadedConvertFunction<Coordinate, Coordinate | string> = <U>(
+  coordinates,
+  projectionFormatIndex: number,
+  numerical = true,
+): U => {
+  const proj = projectionByIndex(projectionFormatIndex);
+  return numerical ? (proj.transformTo(coordinates) as U) : (proj.asString(coordinates) as U);
+};
+
+export const convertFrom: IOverloadedConvertFunction<Coordinate | string, Coordinate> = <U>(
+  coordinates,
+  projectionFormatIndex: number,
+  numerical = true,
+): U => {
+  const proj = projectionByIndex(projectionFormatIndex);
+  return numerical ? (proj.transformFrom(coordinates) as U) : (proj.fromString(coordinates) as U);
+};

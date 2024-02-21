@@ -1,13 +1,26 @@
 <div mat-dialog-content>
-  <mat-form-field appearance="outline">
+  <div class="format">
+    <app-projection-selection
+      [projectionFormatIndex]="projectionFormatIndex"
+      [numerical]="numerical"
+      (projectionChanged)="updateProjection($event)"
+      [disabled]="formatedCoordinatesControl.invalid || formatedCoordinatesControl.pending"
+    ></app-projection-selection>
+  </div>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('defineCoordinates') }}</mat-label>
-    <textarea matInput [(ngModel)]="coordinates"></textarea>
+    <textarea matInput [formControl]="formatedCoordinatesControl"></textarea>
+    <mat-error>{{ error }}</mat-error>
   </mat-form-field>
 </div>
-<div *ngIf="error" class="error">{{ error }}</div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button (click)="cancel()">{{ i18n.get('cancel') }}</button>
-  <button mat-raised-button color="primary" (click)="ok()">
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="ok()"
+    [disabled]="formatedCoordinatesControl.invalid || formatedCoordinatesControl.pending"
+  >
     {{ i18n.get('ok') }}
   </button>
 </div>

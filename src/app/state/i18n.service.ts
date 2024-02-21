@@ -648,6 +648,16 @@ export class I18NService {
       fr: 'Voulez-vous vraiment supprimer ce symbole ?',
       en: 'Do you really want to delete this symbol?',
     },
+    selectFormat: {
+      de: 'Format wählen',
+      en: 'Select format',
+      fr: 'Sélectionnez le format',
+    },
+    numerical: {
+      de: 'numerisch',
+      en: 'numerical',
+      fr: 'numérique',
+    },
     defineCoordinates: {
       de: 'Koordinaten definieren',
       en: 'Define coordinates',
