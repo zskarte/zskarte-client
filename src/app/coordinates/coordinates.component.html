@@ -1,5 +1,17 @@
 <div class="coordinates mat-elevation-z3">
-  <span *ngFor="let coordinate of coordinates">
-    {{ coordinate }}
-  </span>
+  <app-projection-selection
+    *ngIf="showOptions"
+    [projectionFormatIndexes]="projectionFormatIndexes"
+    [showNumerical]="false"
+    [multiple]="true"
+    (change)="updateProjection($event)"
+  ></app-projection-selection>
+  <div class="box">
+    <div class="coords">
+      <span *ngFor="let coordinate of coordinates">
+        {{ coordinate }}
+      </span>
+    </div>
+    <span class="menu" (click)="showOptions = !showOptions">{{ showOptions ? '&cross;' : '&#x2637;' }}</span>
+  </div>
 </div>

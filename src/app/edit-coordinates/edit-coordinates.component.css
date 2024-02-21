@@ -1,3 +1,7 @@
+.format {
+  padding-bottom: 5px;
+}
+
 textarea {
   width: 100%;
   height: 50vh;
@@ -10,4 +14,35 @@ textarea {
 
 mat-form-field {
   width: 30vw;
+  min-width: 400px;
+}
+
+mat-form-field textarea {
+  min-height: 100px;
+  height: 30vh;
+}
+
+@media screen and (max-width: 650px) and (orientation: portrait), screen and (max-height: 650px) and (orientation: landscape) {
+  mat-form-field {
+    width: 100%;
+    min-width: auto;
+  }
+  mat-form-field textarea {
+    height: 100vh;
+  }
+  .mat-mdc-dialog-content {
+    padding: 0;
+    max-height: 100vh;
+  }
+}
+
+@media screen and (max-width: 650px) and (orientation: portrait) {
+  mat-form-field textarea {
+    max-height: 70vh;
+  }
+}
+@media screen and (max-height: 650px) and (orientation: landscape) {
+  mat-form-field textarea {
+    max-height: 50vh;
+  }
 }
