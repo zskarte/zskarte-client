@@ -666,6 +666,10 @@ export class ZsMapStateService {
     return this._map.value.drawElements?.find((o) => o.id === id);
   }
 
+  public getDrawElemente(id: string) {
+    return this._drawElementCache[id];
+  }
+
   public observeDrawElements(): Observable<ZsMapBaseDrawElement[]> {
     return this._map.pipe(
       map((o) => {
