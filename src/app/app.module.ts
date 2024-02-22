@@ -67,6 +67,7 @@ import { RevokeShareDialogComponent } from './session/revoke-share-dialog/revoke
 import { SidebarHistoryComponent } from './sidebar/sidebar-history/sidebar-history.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FloatingUIComponent } from './floating-ui/floating-ui.component';
+import { ScaleSelectionComponent } from './scale-selection/scale-selection.component';
 import { CoordinatesComponent } from './coordinates/coordinates.component';
 import { SidebarMenuComponent } from './sidebar/sidebar-menu/sidebar-menu.component';
 import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
@@ -119,6 +120,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     ShareDialogComponent,
     TextDividerComponent,
     FloatingUIComponent,
+    ScaleSelectionComponent,
     CoordinatesComponent,
     SidebarMenuComponent,
     DrawDialogComponent,

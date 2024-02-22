@@ -43,6 +43,7 @@ export interface IZsMapDisplayState {
   mapOpacity: number;
   mapCenter: number[];
   mapZoom: number;
+  dpi?: number;
   showMyLocation: boolean;
   activeLayer: string | undefined;
   layerVisibility: Record<string, boolean>;
