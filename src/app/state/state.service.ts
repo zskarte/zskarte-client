@@ -39,8 +39,10 @@ import { I18NService } from './i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { Feature } from 'ol';
-import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM, DEFAULT_DPI, LOG2_ZOOM_0_RESOLUTION } from '../session/default-map-values';
 import { Coordinate } from 'ol/coordinate';
+import { getPointResolution } from 'ol/proj';
+import { mercatorProjection } from '../helper/projections';
 
 @Injectable({
   providedIn: 'root',
@@ -84,6 +86,7 @@ export class ZsMapStateService {
       positionFlag: { coordinates: DEFAULT_COORDINATES, isVisible: false },
       mapCenter: DEFAULT_COORDINATES,
       mapZoom: DEFAULT_ZOOM,
+      dpi: DEFAULT_DPI,
       activeLayer: undefined,
       showMyLocation: false,
       source: ZsMapStateSource.OPEN_STREET_MAP,
@@ -259,6 +262,23 @@ export class ZsMapStateService {
     );
   }
 
+  // dpi
+  public observeDPI(): Observable<number> {
+    return this._display.pipe(
+      map((o) => {
+        if (!o?.dpi) {
+          return DEFAULT_DPI;
+        }
+        return o?.dpi;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public getDPI(): number {
+    return this._display.value.dpi ?? DEFAULT_DPI;
+  }
+
   public observePositionFlag(): Observable<IPositionFlag> {
     return this._display.pipe(
       map((o) => {
@@ -308,6 +328,27 @@ export class ZsMapStateService {
   public updateMapZoom(delta: number) {
     this.updateDisplayState((draft) => {
       draft.mapZoom = draft.mapZoom + delta;
+    });
+  }
+
+  public setMapZoomScale(scale: number, dpi?: number) {
+    this.updateDisplayState((draft) => {
+      if (mercatorProjection) {
+        if (dpi) {
+          draft.dpi = dpi;
+        } else {
+          dpi = this._display.value.dpi ?? DEFAULT_DPI;
+        }
+        const inchesPerMeter = 1000 / 25.4;
+        const desiredResolution = getPointResolution(mercatorProjection, inchesPerMeter * dpi, draft.mapCenter, 'm');
+        draft.mapZoom = LOG2_ZOOM_0_RESOLUTION - Math.log2(scale / desiredResolution);
+      }
+    });
+  }
+
+  public setDPI(dpi: number) {
+    this.updateDisplayState((draft) => {
+      draft.dpi = dpi;
     });
   }
 

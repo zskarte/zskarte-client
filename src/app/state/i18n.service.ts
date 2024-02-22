@@ -863,6 +863,16 @@ export class I18NService {
       en: 'Zoom in',
       fr: 'Zoom in',
     },
+    zoomToScale: {
+      de: 'massstabsgetreu vergrössern',
+      en: 'zoom to scale',
+      fr: "zoomer à l'échelle",
+    },
+    scaleToUse: {
+      de: 'Massstab (1:xxx)',
+      en: 'scale (1:xxx)',
+      fr: 'échelle (1:xxx)',
+    },
     filters: {
       de: 'Filter',
       en: 'Filters',
