@@ -5,4 +5,5 @@ export enum SidebarContext {
   History = 'History',
   Menu = 'Menu',
   SelectedFeature = 'SelectedFeature',
+  Print = 'Print',
 }
