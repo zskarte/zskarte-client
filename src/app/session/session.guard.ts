@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { SessionService } from './session.service';
 
@@ -11,11 +11,13 @@ export class SessionGuard implements CanActivate {
     private _session: SessionService,
     private _router: Router,
   ) {}
-  async canActivate(): Promise<boolean | UrlTree> {
+  async canActivate(route: ActivatedRouteSnapshot): Promise<boolean | UrlTree> {
     const isAuthenticated = await firstValueFrom(this._session.observeAuthenticated());
     if (isAuthenticated) {
       return true;
     }
-    return this._router.parseUrl('/login');
+    const urlTree = this._router.parseUrl('/login');
+    urlTree.queryParams = route.queryParams;
+    return urlTree;
   }
 }
