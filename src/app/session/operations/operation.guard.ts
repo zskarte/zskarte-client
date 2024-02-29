@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SessionService } from '../session.service';
 
@@ -12,9 +12,11 @@ export class OperationGuard implements CanActivate {
     private _session: SessionService,
   ) {}
 
-  canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (!this._session.getOperationId()) {
-      return this._router.parseUrl('/operations');
+      const urlTree = this._router.parseUrl('/operations');
+      urlTree.queryParams = route.queryParams;
+      return urlTree;
     }
     return true;
   }
