@@ -718,6 +718,81 @@ export class I18NService {
       en: 'Print',
       fr: 'Imprimer',
     },
+    paperFormat: {
+      de: 'Papierformat',
+      en: 'paper format',
+      fr: 'Format papier',
+    },
+    orientation: {
+      de: 'Orientierung',
+      en: 'orientation',
+      fr: 'orientation',
+    },
+    landscape: {
+      de: 'Querformat',
+      en: 'landscape',
+      fr: 'format paysage',
+    },
+    portrait: {
+      de: 'Hochformat',
+      en: 'portrait',
+      fr: 'format portrait',
+    },
+    printMargin: {
+      de: 'Druckrand',
+      en: 'Print margin',
+      fr: 'Marge imprimante',
+    },
+    resolution: {
+      de: 'Auflösung',
+      en: 'resolution',
+      fr: 'résolution',
+    },
+    scale: {
+      de: 'Massstab',
+      en: 'scale',
+      fr: 'échelle',
+    },
+    autoScale: {
+      de: 'Automatische Skalierung',
+      en: 'auto scale',
+      fr: 'échelle automatique',
+    },
+    emptyMap: {
+      de: 'Leere Karte',
+      en: 'empty map',
+      fr: 'carte vide',
+    },
+    printScale: {
+      de: 'Massstab drucken',
+      en: 'Print scale',
+      fr: "imprimer l'échelle",
+    },
+    hideAllInfos: {
+      de: '​alle Signaturen und Informationen ausblenden',
+      en: 'hide all signatures and infos',
+      fr: 'masquer toutes les signatures et informations',
+    },
+    qrCode: {
+      de: 'QR-Code',
+      en: 'QR code',
+      fr: 'code QR',
+    },
+    addQRCode: {
+      de: 'QR-Code hinzufügen',
+      en: 'Add QR code',
+      fr: 'Ajouter code QR',
+    },
+    withShare: {
+      de: 'mit Freigabe',
+      en: 'with share',
+      fr: 'avec partage',
+    },
+    generatePdf: {
+      de: 'PDF generieren',
+      en: 'generate PDF',
+      fr: 'générer le PDF',
+    },
     protocol: {
       de: 'Protokoll',
       en: 'Protocol',
@@ -862,6 +937,16 @@ export class I18NService {
       de: 'Hinein zoomen',
       en: 'Zoom in',
       fr: 'Zoom in',
+    },
+    zoomToScale: {
+      de: 'massstabsgetreu vergrössern',
+      en: 'zoom to scale',
+      fr: "zoomer à l'échelle",
+    },
+    scaleToUse: {
+      de: 'Massstab (1:xxx)',
+      en: 'scale (1:xxx)',
+      fr: 'échelle (1:xxx)',
     },
     filters: {
       de: 'Filter',

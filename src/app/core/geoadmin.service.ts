@@ -61,6 +61,7 @@ export class GeoadminService {
         requestEncoding: 'REST',
         style: '',
         matrixSet: '',
+        crossOrigin: 'anonymous',
       }),
       opacity: 0.6,
       zIndex,

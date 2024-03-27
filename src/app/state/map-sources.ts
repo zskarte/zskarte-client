@@ -23,6 +23,7 @@ export const ZsMapSources = {
             attributions: ['<a target="new" href="https://www.swisstopo.admin.ch/internet/swisstopo/en/home.html">swisstopo</a>'],
             url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg',
             maxZoom: 20,
+            crossOrigin: 'anonymous',
           }),
         );
       case ZsMapStateSource.GEO_ADMIN_PIXEL:
@@ -31,6 +32,7 @@ export const ZsMapSources = {
             attributions: ['<a target="new" href="https://www.swisstopo.admin.ch/internet/swisstopo/en/home.html">swisstopo</a>'],
             url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg',
             maxZoom: 19,
+            crossOrigin: 'anonymous',
           }),
         );
       case ZsMapStateSource.GEO_ADMIN_PIXEL_BW:
@@ -39,6 +41,7 @@ export const ZsMapSources = {
             attributions: ['<a target="new" href="https://www.swisstopo.admin.ch/internet/swisstopo/en/home.html">swisstopo</a>'],
             url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg',
             maxZoom: 19,
+            crossOrigin: 'anonymous',
           }),
         );
       case ZsMapStateSource.LOCAL: {
@@ -73,6 +76,7 @@ export const ZsMapSources = {
           declutter: true,
           source: new PMTilesVectorSource({
             url: mapUrl,
+            crossOrigin: 'anonymous',
           }),
           style: null,
         });
@@ -85,16 +89,20 @@ export const ZsMapSources = {
       case undefined:
         return this.getOlTileLayer(
           new OlTileXYZ({
+            attributions: ['<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.'],
             url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             maxZoom: 19,
+            crossOrigin: 'anonymous',
           }),
         );
       default:
         console.error(`Map source ${source} is not implemented`);
         return this.getOlTileLayer(
           new OlTileXYZ({
+            attributions: ['<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.'],
             url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             maxZoom: 19,
+            crossOrigin: 'anonymous',
           }),
         );
     }
