@@ -508,7 +508,7 @@ export class ZsMapStateService {
     this.updateDisplayState((draft) => {
       let maxIndex = Math.max(...(draft.features.map((f) => f.zIndex).filter(Boolean) as number[]));
       maxIndex = Number.isInteger(maxIndex) ? maxIndex + 1 : 0;
-      draft.features.unshift({ ...feature, opacity: 0.75, deleted: false, zIndex: maxIndex });
+      draft.features.unshift({ ...feature, deleted: false, zIndex: maxIndex });
     });
   }
 
@@ -570,8 +570,10 @@ export class ZsMapStateService {
   }
 
   public toggleFeature(item: GeoFeature, index: number) {
-    const opacity = item.opacity > 0 ? 0 : 0.75;
-    this.setFeatureOpacity(index, opacity);
+    const hidden = !item.hidden;
+    this.updateDisplayState((draft) => {
+      draft.features[index].hidden = hidden;
+    });
   }
 
   public getActiveLayerState(): ZsMapLayerState | undefined {
