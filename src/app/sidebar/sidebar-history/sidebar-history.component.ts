@@ -49,7 +49,7 @@ export class SidebarHistoryComponent implements AfterViewInit {
   loadData(page: number) {
     const operationId = this.sessionService.getOperationId();
     return this.apiService.get$<Snapshots>(
-      `${this.apiPath}?fields[0]=createdAt&filters[operation][id][$eq]=${operationId}&sort[0]=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=20`,
+      `${this.apiPath}?fields[0]=createdAt&operationId=${operationId}&sort[0]=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=20`,
     );
   }
 
