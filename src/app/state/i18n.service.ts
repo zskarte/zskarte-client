@@ -718,6 +718,86 @@ export class I18NService {
       en: 'Print',
       fr: 'Imprimer',
     },
+    paperFormat: {
+      de: 'Papierformat',
+      en: 'paper format',
+      fr: 'Format papier',
+    },
+    orientation: {
+      de: 'Orientierung',
+      en: 'orientation',
+      fr: 'orientation',
+    },
+    landscape: {
+      de: 'Querformat',
+      en: 'landscape',
+      fr: 'format paysage',
+    },
+    portrait: {
+      de: 'Hochformat',
+      en: 'portrait',
+      fr: 'format portrait',
+    },
+    printMargin: {
+      de: 'Druckrand',
+      en: 'Print margin',
+      fr: 'Marge imprimante',
+    },
+    resolution: {
+      de: 'Auflösung',
+      en: 'resolution',
+      fr: 'résolution',
+    },
+    scale: {
+      de: 'Massstab',
+      en: 'scale',
+      fr: 'échelle',
+    },
+    autoScale: {
+      de: 'Automatische Skalierung',
+      en: 'auto scale',
+      fr: 'échelle automatique',
+    },
+    emptyMap: {
+      de: 'Leere Karte',
+      en: 'empty map',
+      fr: 'carte vide',
+    },
+    printScale: {
+      de: 'Massstab drucken',
+      en: 'Print scale',
+      fr: "imprimer l'échelle",
+    },
+    hideAllInfos: {
+      de: '​alle Signaturen und Informationen ausblenden',
+      en: 'hide all signatures and infos',
+      fr: 'masquer toutes les signatures et informations',
+    },
+    qrCode: {
+      de: 'QR-Code',
+      en: 'QR code',
+      fr: 'code QR',
+    },
+    addQRCode: {
+      de: 'QR-Code hinzufügen',
+      en: 'Add QR code',
+      fr: 'Ajouter code QR',
+    },
+    withShare: {
+      de: 'mit Freigabe',
+      en: 'with share',
+      fr: 'avec partage',
+    },
+    generatePdf: {
+      de: 'PDF generieren',
+      en: 'generate PDF',
+      fr: 'générer le PDF',
+    },
+    deactivateWebGL: {
+      de: 'Der angeforderte Export ist zu gross für den WebGL-Renderer. Seite mit deaktivierter WebGL-Unterstützung neu laden?',
+      en: 'The requested export is too large for the WebGL renderer. Reload the page with WebGL support disabled?',
+      fr: "L'exportation demandée est trop volumineuse pour le moteur de rendu WebGL. Recharger la page avec le support WebGL désactivé?",
+    },
     protocol: {
       de: 'Protokoll',
       en: 'Protocol',

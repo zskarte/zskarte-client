@@ -1,5 +1,7 @@
+import { Coordinate } from 'ol/coordinate';
 import { GeoFeature } from '../core/entity/geoFeature';
 import { FillStyle } from '../core/entity/sign';
+import { PermissionType } from '../session/session.interfaces';
 
 export enum ZsMapStateSource {
   OPEN_STREET_MAP = 'openStreetMap',
@@ -58,6 +60,41 @@ export interface IZsMapDisplayState {
   hiddenFeatureTypes: string[];
   hiddenCategories: string[];
   enableClustering: boolean;
+}
+
+//DIN paper dimension in mm, landscape
+export const PaperDimensions: Record<string, [number, number]> = {
+  A0: [1189, 841],
+  A1: [841, 594],
+  A2: [594, 420],
+  A3: [420, 297],
+  A4: [297, 210],
+  A5: [210, 148],
+};
+
+export interface IZsMapPrintExtent {
+  dpi: number;
+  scale?: number;
+  autoScaleVal?: number;
+  dimensions: [number, number];
+}
+
+export interface IZsMapPrintState extends IZsMapPrintExtent {
+  printView: boolean;
+  format: string;
+  orientation: 'landscape' | 'portrait';
+  printMargin: number;
+  printScale: boolean;
+  emptyMap: boolean;
+  qrCode: boolean;
+  shareLink: boolean;
+  sharePermission: PermissionType;
+  printCenter?: Coordinate;
+  generateCallback: (() => void) | undefined;
+  tileEventCallback: ((Event) => void) | undefined;
+  backupResolution?: number;
+  backupDpi?: number;
+  attributions?: string[];
 }
 
 export type ZsMapLayerState = IZsMapDrawLayerState | IZsMapGeoDataLayerState;

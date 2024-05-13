@@ -70,6 +70,7 @@ import { FloatingUIComponent } from './floating-ui/floating-ui.component';
 import { ScaleSelectionComponent } from './scale-selection/scale-selection.component';
 import { CoordinatesComponent } from './coordinates/coordinates.component';
 import { SidebarMenuComponent } from './sidebar/sidebar-menu/sidebar-menu.component';
+import { SidebarPrintComponent } from './sidebar/sidebar-print/sidebar-print.component';
 import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -123,6 +124,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     ScaleSelectionComponent,
     CoordinatesComponent,
     SidebarMenuComponent,
+    SidebarPrintComponent,
     DrawDialogComponent,
     IncidentSelectComponent,
   ],
