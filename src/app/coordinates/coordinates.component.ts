@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ZsMapStateService } from '../state/state.service';
-import { Coordinate } from 'ol/coordinate';
-import { availableProjections, mercatorProjection } from '../helper/projections';
-import { transform } from 'ol/proj';
+import { projectionByIndex } from '../helper/projections';
+import { ChangeType } from '../projection-selection/projection-selection.component';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-coordinates',
@@ -10,21 +10,29 @@ import { transform } from 'ol/proj';
   styleUrl: './coordinates.component.scss',
 })
 export class CoordinatesComponent {
+  showOptions = false;
+  projectionFormatIndexes: number[];
   coordinates: string[] = [];
   constructor(private _state: ZsMapStateService) {
-    this._state.getCoordinates().subscribe((coordinates) => {
-      const lv95 = this.coordinatesToString(coordinates, '1.2-2');
-      const gps = this.coordinatesToString(coordinates, '1.5-5');
-      this.coordinates = [lv95, gps];
+    //TODO: load this from session/state?
+    this.projectionFormatIndexes = [0, 1];
+    this._state.getCoordinates().subscribe(this.updateCoordinates.bind(this));
+  }
+
+  updateCoordinates(coordinates) {
+    this.coordinates = this.projectionFormatIndexes.map((i) => {
+      const proj = projectionByIndex(i);
+      return proj.translate(proj.transformTo(coordinates));
     });
   }
 
-  // skipcq:  JS-0105
-  coordinatesToString(coordinates: Coordinate, format: string): string {
-    const projection = availableProjections.find((p) => p.format === format);
-    if (projection?.projection && mercatorProjection && coordinates.every((c) => !isNaN(c))) {
-      return projection.translate(transform(coordinates, mercatorProjection, projection.projection));
+  updateProjection(value: ChangeType) {
+    if (!value.projectionFormatIndexes || value.projectionFormatIndexes?.length === 0) {
+      this.projectionFormatIndexes = [0];
+    } else {
+      this.projectionFormatIndexes = value.projectionFormatIndexes;
     }
-    return '';
+    this._state.getCoordinates().pipe(first()).subscribe(this.updateCoordinates.bind(this));
+    //TODO: save this to session/state?
   }
 }
