@@ -64,9 +64,7 @@ export class OperationService {
   }
 
   public async reload(): Promise<void> {
-    const { error, result: operations } = await this._api.get<IZsMapOperation[]>(
-      `/api/operations?filters[organization][id][$eq]=${this._session.getOrganizationId()}&filters[status][$eq]=active`,
-    );
+    const { error, result: operations } = await this._api.get<IZsMapOperation[]>('/api/operations?status=active');
     if (error || !operations) return;
     this.operations.next(operations);
   }

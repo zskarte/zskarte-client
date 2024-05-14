@@ -189,12 +189,7 @@ export class SessionService {
       return;
     }
 
-    const { error, result: meResult } = await this._api.get<{ organization: IZsMapOrganization }>(
-      '/api/users/me?populate[0]=organization.logo',
-      {
-        token: jwt,
-      },
-    );
+    const { error, result: meResult } = await this._api.get<{ organization: IZsMapOrganization }>('/api/users/me', { token: jwt });
     if (error || !meResult) {
       await this.logout();
       return;
