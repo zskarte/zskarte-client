@@ -8,6 +8,7 @@ import { mapProtocolEntry, ProtocolEntry } from '../helper/protocolEntry';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { SessionService } from '../session/session.service';
 import { I18NService } from '../state/i18n.service';
+import { getCenter } from 'ol/extent';
 import { ChangeType } from '../projection-selection/projection-selection.component';
 import { first } from 'rxjs/operators';
 
@@ -71,4 +72,11 @@ export class ProtocolTableComponent implements OnInit, OnDestroy, AfterViewInit 
     'label',
     'description',
   ];
+
+  navigateTo(element: ProtocolEntry) {
+    const extent = this.zsMapStateService.getDrawElemente(element.id)?.getOlFeature()?.getGeometry()?.getExtent();
+    if (extent) {
+      this.zsMapStateService.setMapCenter(getCenter(extent));
+    }
+  }
 }
