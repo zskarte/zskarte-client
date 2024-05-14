@@ -1,5 +1,5 @@
 <div class="table-container">
-  <div>
+  <div class="header">
     <mat-form-field appearance="outline">
       <input
         matInput
@@ -9,6 +9,11 @@
         [placeholder]="i18n.get('csvSearchFor')"
       />
     </mat-form-field>
+    <app-projection-selection
+      [projectionFormatIndex]="projectionFormatIndex"
+      [numerical]="numerical"
+      (projectionChanged)="updateProjection($event)"
+    ></app-projection-selection>
   </div>
   <table mat-table [dataSource]="protocolTableDataSource" class="mat-elevation-z8 protocol-table" matSort>
     <ng-container matColumnDef="id">

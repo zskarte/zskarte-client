@@ -1,0 +1,20 @@
+<div class="projectionSelection">
+  <mat-radio-group *ngIf="!multiple" [(ngModel)]="projectionFormatIndex" (change)="updateFormat($event.value)" [disabled]="disabled">
+    <div>{{ i18n.get('selectFormat') }}:</div>
+    <mat-radio-button *ngFor="let projection of availableProjections; index as i" [value]="i">{{ projection.name }}</mat-radio-button>
+  </mat-radio-group>
+  <div *ngIf="multiple">
+    <div>{{ i18n.get('selectFormat') }}:</div>
+    <mat-checkbox
+      *ngFor="let projection of availableProjections; index as i"
+      [checked]="projectionFormatIndexes.includes(i)"
+      (change)="updateFormats(i, $event.checked)"
+      [disabled]="disabled"
+      >{{ projection.name }}</mat-checkbox
+    >
+  </div>
+  <span *ngIf="showNumerical" class="separator">|</span>
+  <mat-checkbox *ngIf="showNumerical" [checked]="numerical" (change)="updateNumerical($event.checked)" [disabled]="disabled">{{
+    i18n.get('numerical')
+  }}</mat-checkbox>
+</div>

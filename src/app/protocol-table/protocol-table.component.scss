@@ -7,6 +7,12 @@
   position: sticky;
   top: 0;
 }
+.header {
+  display: flex;
+}
+app-projection-selection {
+  margin-left: 20px;
+}
 
 .protocol-table {
   width: 100%;

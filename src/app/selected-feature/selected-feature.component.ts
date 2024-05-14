@@ -216,8 +216,9 @@ export class SelectedFeatureComponent implements OnDestroy {
       const editDialog = this.dialog.open(EditCoordinatesComponent, {
         data: {
           geometry: selectedElement.getOlFeature().getGeometry()?.getType(),
-          coordinates: JSON.stringify(selectedElement.elementState?.coordinates),
+          coordinates: selectedElement.elementState?.coordinates,
         },
+        maxWidth: '100vw',
       });
       editDialog.afterClosed().subscribe((result) => {
         if (result) {
