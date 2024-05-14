@@ -96,6 +96,13 @@ export class SessionService {
     return this._session.value?.organization?.id;
   }
 
+  public getOrganizationLongLat(): [number, number] {
+    if (this._session.value?.organization?.mapLongitude && this._session.value?.organization?.mapLatitude) {
+      return [this._session.value?.organization?.mapLongitude, this._session.value?.organization?.mapLatitude];
+    }
+    return [0, 0];
+  }
+
   public getLabel(): string | undefined {
     return this._session.value?.label;
   }

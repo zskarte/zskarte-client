@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ZsMapLayerStateType } from '../../state/interfaces';
+import { ZsMapLayerStateType, IZsMapState } from '../../state/interfaces';
 import { IZsMapOperation } from './operation.interfaces';
 import { ApiService } from '../../api/api.service';
 import { SessionService } from '../session.service';
@@ -30,41 +30,39 @@ export class OperationService {
       return;
     }
 
-    operation.status = 'archived';
-    await this._api.put(`/api/operations/${operation.id}`, {
-      data: { ...operation, organization: this._session.getOrganizationId() },
-    });
+    await this._api.put(`/api/operations/${operation.id}/archive`, null);
     await this.reload();
   }
 
   public async saveOperation(operation: IZsMapOperation): Promise<void> {
+    if (operation.id) {
+      await this.updateMeta(operation);
+    } else {
+      await this.insertOperation(operation);
+    }
+    await this.reload();
+    this.operationToEdit.next(undefined);
+  }
+
+  public async insertOperation(operation: IZsMapOperation): Promise<void> {
     if (!operation.mapState) {
-      // TODO encapsulate this
-      operation.mapState = {
-        version: 1,
-        id: uuidv4(),
-        // TODO get map center from organization
-        center: [0, 0],
-        name: operation.name,
-        layers: [{ id: uuidv4(), type: ZsMapLayerStateType.DRAW, name: 'Layer 1' }],
-      };
+      operation.mapState = this.createMapstate();
     }
     if (!operation.status) {
       operation.status = 'active';
     }
 
-    if (operation.id) {
-      await this._api.put(`/api/operations/${operation.id}`, { data: { ...operation, organization: this._session.getOrganizationId() } });
-    } else {
-      await this._api.post('/api/operations', { data: { ...operation, organization: this._session.getOrganizationId() } });
-    }
+    await this._api.post('/api/operations', { data: { ...operation, organization: this._session.getOrganizationId() } });
+  }
 
-    await this.reload();
-    this.operationToEdit.next(undefined);
+  public async updateMeta(operation: IZsMapOperation): Promise<void> {
+    await this._api.put(`/api/operations/${operation.id}/meta`, {
+      data: { name: operation.name, description: operation.description, eventStates: operation.eventStates },
+    });
   }
 
   public async reload(): Promise<void> {
-    const { error, result: operations } = await this._api.get<IZsMapOperation[]>('/api/operations?status=active');
+    const { error, result: operations } = await this._api.get<IZsMapOperation[]>('/api/operations/overview?status=active');
     if (error || !operations) return;
     this.operations.next(operations);
   }
@@ -83,7 +81,7 @@ export class OperationService {
           eventStates: result.eventStates,
           mapState,
         };
-        await this.saveOperation(operation);
+        await this.insertOperation(operation);
       }
     });
   }
@@ -120,14 +118,17 @@ export class OperationService {
       description: '',
       status: 'active',
       eventStates: [],
-      mapState: {
-        version: 1,
-        id: uuidv4(),
-        // TODO get map center from organization
-        center: [0, 0],
-        name: '',
-        layers: [{ id: uuidv4(), type: ZsMapLayerStateType.DRAW, name: 'Layer 1' }],
-      },
+      mapState: this.createMapstate(),
     });
+  }
+
+  private createMapstate(): IZsMapState {
+    return {
+      version: 1,
+      id: uuidv4(),
+      center: this._session.getOrganizationLongLat(),
+      name: '',
+      layers: [{ id: uuidv4(), type: ZsMapLayerStateType.DRAW, name: 'Layer 1' }],
+    };
   }
 }
