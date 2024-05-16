@@ -23,7 +23,7 @@ export class RevokeShareDialogComponent {
 
   async ngOnInit() {
     const { error, result } = await this._api.get<IZsAccess[]>(
-      `/api/accesses?&pagination[limit]=-1&sort[0]=type&operationId=${this.session.getOperationId()}`,
+      `/api/accesses?pagination[limit]=-1&sort[0]=type&operationId=${this.session.getOperationId()}`,
     );
     if (error || !result) return;
     this.shareLinks = result;
