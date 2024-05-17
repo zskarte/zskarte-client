@@ -19,7 +19,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Absperrung Einsatzraum.svg',
       de: 'Absperrung Einsatzraum',
-      en: 'Absperrung Einsatzraum',
+      en: 'Cordoning off the operating area',
       fr: 'Barrage du secteur d’engagement',
     },
     {
