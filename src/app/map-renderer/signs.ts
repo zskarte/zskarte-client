@@ -934,7 +934,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Standort mobile Fuehrungsstelle.svg',
       de: 'Standort mobile Führungsstelle',
-      en: '',
+      en: 'Location of mobile control center',
       fr: 'Poste de conduite',
     },
     {
