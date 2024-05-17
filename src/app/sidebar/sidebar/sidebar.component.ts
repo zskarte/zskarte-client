@@ -17,9 +17,9 @@ import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
-  mapProgress: number = 0;
-  private fileReader: FileReader = new FileReader();
-  private fileReadAborted: boolean = false;
+  mapProgress = 0;
+  private fileReader = new FileReader();
+  private fileReadAborted = false;
   private subscriptions = new Map<ZsMapStateSource, Subscription>();
 
   mapSources = Object.values(ZsMapStateSource)
