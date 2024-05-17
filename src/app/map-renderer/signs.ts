@@ -9,7 +9,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/ABC Dekontaminationsstelle.svg',
       de: 'ABC Dekontaminationsstelle',
-      en: 'ABC Dekontaminationsstelle',
+      en: 'Decontamination site',
       fr: 'Place de décontamination',
     },
     {
@@ -29,7 +29,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Absperrung Verkehrswege.svg',
       de: 'Absperrung Verkehrswege',
-      en: 'Absperrung Verkehrswege',
+      en: 'Road closure',
       fr: 'Fermeture de la route',
     },
     {
@@ -39,7 +39,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Achse fuer Ei, Rttg, Vsg.svg',
       de: 'Achse für Ei, Rttg, Vsg',
-      en: 'Achse für Ei, Rttg, Vsg',
+      en: 'Line of engagement for rescue, supply, etc.',
       fr: 'Axe d’engagement pour le sauvetage, l’approvisionnement, etc.',
       style: 'dash',
     },
@@ -50,7 +50,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Angehoerigensammelstelle.svg',
       de: 'Angehörigensammelstelle',
-      en: 'Angehörigensammelstelle',
+      en: 'Pick up for close ones',
       fr: 'Poste collecteur pour les proches',
     },
     {
@@ -60,7 +60,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Atomunfall.svg',
       de: 'Atomunfall',
-      en: 'Atomunfall',
+      en: 'Nuclear accident',
       fr: 'Accident nucléaire',
     },
     {
@@ -70,7 +70,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Autounfall.svg',
       de: 'Autounfall',
-      en: 'Autounfall',
+      en: 'Car traffic accident',
       fr: 'Accident de circulation automobile',
     },
     {
@@ -80,7 +80,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Beabsichtigte Erkundung.svg',
       de: 'Beabsichtigte Erkundung',
-      en: 'Beabsichtigte Erkundung',
+      en: 'Planned Exploration / Scouting',
       fr: 'Exploration / Reconnaissances prévues',
       arrow: 'filled',
     },
@@ -91,7 +91,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Beabsichtigter Einsatz.svg',
       de: 'Beabsichtigter Einsatz',
-      en: 'Beabsichtigter Einsatz',
+      en: 'Planned operation',
       fr: 'Engagements prévus',
       style: 'dash',
       arrow: 'filled',
@@ -103,7 +103,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Beabsichtigte Verschiebung.svg',
       de: 'Beabsichtigte Verschiebung',
-      en: 'Beabsichtigte Verschiebung',
+      en: 'Planned movement',
       fr: 'Mouvements prévus',
       style: 'dash',
       hideIcon: true,
@@ -117,7 +117,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Beobachtung.svg',
       de: 'Beobachtung',
-      en: 'Beobachtung',
+      en: 'Observation',
       fr: 'Observation',
     },
     {
@@ -127,7 +127,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Beschaedigung.svg',
       de: 'Beschädigung',
-      en: 'Beschädigung',
+      en: 'Damage',
       fr: 'Dégât',
     },
     {
@@ -137,7 +137,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Betreuungsstelle.svg',
       de: 'Betreuungsstelle',
-      en: 'Betreuungsstelle',
+      en: 'Help center',
       fr: 'Poste d’assistance',
     },
     {
@@ -147,7 +147,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Betriebsstoffabgabestelle.svg',
       de: 'Betriebsstoffabgabestelle',
-      en: 'Betriebsstoffabgabestelle',
+      en: 'Fuel station',
       fr: 'Station de carburant',
     },
     {
@@ -157,7 +157,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Bezirksfuehrungsorgan.svg',
       de: 'Bezirksführungsorgan',
-      en: 'Bezirksführungsorgan',
+      en: 'District executive body',
       fr: 'Organe de conduite de district',
     },
     {
@@ -167,7 +167,7 @@ export class Signs {
       color: '#948B68',
       src: 'BABS/Biologisch verseuchtes Gebiet.svg',
       de: 'Biologisch verseuchtes Gebiet',
-      en: 'Biologisch verseuchtes Gebiet',
+      en: 'Biologically contaminated area',
       fr: 'Zone biologiquement contaminée',
     },
     {
@@ -177,7 +177,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Biounfall.svg',
       de: 'Biounfall',
-      en: 'Biounfall',
+      en: 'Biologic accident',
       fr: 'Accident biologique',
     },
     {
@@ -187,7 +187,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/B Laboratorium.svg',
       de: 'B Laboratorium',
-      en: 'B Laboratorium',
+      en: 'Laboratory B',
       fr: 'Laboratoire B',
     },
     {
@@ -197,7 +197,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Bombenanschlag.svg',
       de: 'Bombenanschlag',
-      en: 'Bombenanschlag',
+      en: 'Bomb attempt',
       fr: 'Attentat à la bombe',
     },
     {
@@ -207,7 +207,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Bombendrohung.svg',
       de: 'Bombendrohung',
-      en: 'Bombendrohung',
+      en: 'Bomb threat',
       fr: 'Menace à la bombe',
     },
     {
@@ -217,7 +217,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Brandanschlag.svg',
       de: 'Brandanschlag',
-      en: 'Brandanschlag',
+      en: 'Criminal fire',
       fr: 'Incendie criminel',
     },
     {
@@ -227,7 +227,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Brand einzelnes Gebaeude Flamme.svg',
       de: 'Brand einzelnes Gebäude Flamme',
-      en: 'Brand einzelnes Gebäude Flamme',
+      en: 'Isolated fire',
       fr: 'Incendie isolé',
     },
     {
@@ -237,7 +237,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Brand.svg',
       de: 'Brand',
-      en: 'Brand',
+      en: 'Fire',
       fr: 'Incendie',
     },
     {
@@ -247,7 +247,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Brandzone Flaechenbrand.svg',
       de: 'Brandzone Flächenbrand',
-      en: 'Brandzone Flächenbrand',
+      en: 'Fire area',
       fr: 'Zone en feu',
       hideIcon: true,
       fillStyle: {
@@ -264,7 +264,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Chemieunfall.svg',
       de: 'Chemieunfall',
-      en: 'Chemieunfall',
+      en: 'Chemical accident',
       fr: 'Accident chimique',
     },
     {
@@ -274,8 +274,8 @@ export class Signs {
       color: '#948B68',
       src: 'BABS/Chemievergiftetes Gebiet gasfoermig - fluechtig.svg',
       de: 'Chemievergiftetes Gebiet gasförmig - flüchtig',
-      en: 'Chemievergiftetes Gebiet gasförmig - flüchtig',
-      fr: 'Zone chimiquement contaminée gazeux - volatil',
+      en: 'Chemically contaminated area gas - volatil',
+      fr: 'Zone chimiquement contaminée gazeux - volatile',
     },
     {
       id: 29,
@@ -284,7 +284,7 @@ export class Signs {
       color: '#948B68',
       src: 'BABS/Chemievergiftete Zone fluessig - sesshaft.svg',
       de: 'Chemievergiftete Zone flüssig - sesshaft',
-      en: 'Chemievergiftete Zone flüssig - sesshaft',
+      en: 'Chemically contaminated area liquid',
       fr: 'Zone chimiquement contaminée liquide',
     },
     {
@@ -294,7 +294,7 @@ export class Signs {
       color: '#FF9100',
       src: 'BABS/Chemikalien.svg',
       de: 'Chemikalien',
-      en: 'Chemikalien',
+      en: 'Chemicals',
       fr: 'Chimique',
     },
     {
@@ -304,7 +304,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Debriefingstelle.svg',
       de: 'Debriefingstelle',
-      en: 'Debriefingstelle',
+      en: 'Debriefing post',
       fr: 'Poste de débriefing',
     },
     {
@@ -314,7 +314,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Demo gewaltlos.svg',
       de: 'Demo gewaltlos',
-      en: 'Demo gewaltlos',
+      en: 'Peaceful Demonstration',
       fr: 'Manifestation',
     },
     {
@@ -324,7 +324,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Demo gewaltsam.svg',
       de: 'Demo gewaltsam',
-      en: 'Demo gewaltsam',
+      en: 'Violent demonstration',
       fr: 'Manifestation avec exactions',
     },
     {
@@ -334,7 +334,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Drohung.svg',
       de: 'Drohung',
-      en: 'Drohung',
+      en: 'Threat',
       fr: 'Menace',
     },
     {
@@ -344,7 +344,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Duerre.svg',
       de: 'Dürre',
-      en: 'Dürre',
+      en: 'Drought',
       fr: 'Sécheresse',
     },
     {
@@ -354,7 +354,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Durchgefuehrte Erkundung.svg',
       de: 'Durchgeführte Erkundung',
-      en: 'Durchgeführte Erkundung',
+      en: 'Completed exploration / scouting',
       fr: 'Exploration / Reconnaissances exécutées',
     },
     {
@@ -364,7 +364,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Durchgefuehrter Einsatz.svg',
       de: 'Durchgeführter Einsatz',
-      en: 'Durchgeführter Einsatz',
+      en: 'Completed operation',
       fr: 'Engagements exécutés',
     },
     {
@@ -374,7 +374,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Durchgefuehrte Verschiebung.svg',
       de: 'Durchgeführte Verschiebung',
-      en: 'Durchgeführte Verschiebung',
+      en: 'Completed movement',
       fr: 'Mouvements exécutés',
     },
     {
@@ -384,7 +384,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Eingesperrte - Abgeschnittene.svg',
       de: 'Eingesperrte - Abgeschnittene',
-      en: 'Eingesperrte - Abgeschnittene',
+      en: 'Locked up / Cut off person',
       fr: 'Personnes enfermées ou retranchées',
     },
     {
@@ -395,7 +395,7 @@ export class Signs {
       src: 'BABS/Einsatzleiter.svg',
       de: 'Einsatzleiter',
       en: 'Einsatzleiter',
-      fr: 'Chef d’intervention',
+      fr: 'Operations manager',
     },
     {
       id: 41,
@@ -404,7 +404,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Einsatzleitung.svg',
       de: 'Einsatzleitung',
-      en: 'Einsatzleitung',
+      en: 'Operation management',
       fr: 'Direction d’intervention',
     },
     {
@@ -414,7 +414,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Einsatzzentrale.svg',
       de: 'Einsatzzentrale',
-      en: 'Einsatzzentrale',
+      en: 'Operations center',
       fr: 'Centrale d‘engagement',
     },
     {
@@ -424,7 +424,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Eisenbahnunglueck.svg',
       de: 'Eisenbahnunglück',
-      en: 'Eisenbahnunglück',
+      en: 'Train accident',
       fr: 'Accident ferroviaire',
     },
     {
@@ -434,7 +434,7 @@ export class Signs {
       color: '#FF9100',
       src: 'BABS/Elektrizitaet.svg',
       de: 'Elektrizität',
-      en: 'Elektrizität',
+      en: 'Electricity',
       fr: 'Electricité',
     },
     {
@@ -444,8 +444,8 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Energieausfall.svg',
       de: 'Energieausfall',
-      en: 'Energieausfall',
-      fr: 'Panne énergétique',
+      en: 'Power failure',
+      fr: 'Panne électrique',
     },
     {
       id: 46,
@@ -454,7 +454,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Epidemie.svg',
       de: 'Epidemie',
-      en: 'Epidemie',
+      en: 'Epidemic',
       fr: 'Epidemie',
     },
     {
@@ -464,7 +464,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Erdbeben.svg',
       de: 'Erdbeben',
-      en: 'Erdbeben',
+      en: 'Earthquake',
       fr: 'Tremblement de terre',
     },
     {
@@ -474,7 +474,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Erdrutsch.svg',
       de: 'Erdrutsch',
-      en: 'Erdrutsch',
+      en: 'Landslide',
       fr: 'Glissement de terrain',
     },
     {
@@ -494,7 +494,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Fluechtlinge.svg',
       de: 'Flüchtlinge',
-      en: 'Flüchtlinge',
+      en: 'Refugees',
       fr: 'Réfugiés',
     },
     {
@@ -504,7 +504,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Flugzeugabsturz.svg',
       de: 'Flugzeugabsturz',
-      en: 'Flugzeugabsturz',
+      en: 'Plane crash',
       fr: 'Catastrophe aérienne',
     },
     {
@@ -524,7 +524,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Gebaeudeeinsturz.svg',
       de: 'Gebäudeeinsturz',
-      en: 'Gebäudeeinsturz',
+      en: 'Building collapse',
       fr: 'Immeuble effondré',
     },
     {
@@ -534,7 +534,7 @@ export class Signs {
       color: '#FF9100',
       src: 'BABS/Gefahr durch Loeschen mit Wasser.svg',
       de: 'Gefahr durch Löschen mit Wasser',
-      en: 'Gefahr durch Löschen mit Wasser',
+      en: 'Danger from extinguishing with water',
       fr: "Danger en cas d'extinction avec de l'eau",
     },
     {
@@ -544,7 +544,7 @@ export class Signs {
       color: '#FF9100',
       src: 'BABS/Gefahrentafel mit UN-Nummer.svg',
       de: 'Gefahrentafel mit UN-Nummer',
-      en: 'Gefahrentafel mit UN-Nummer',
+      en: 'Danger sign with UN number',
       fr: 'Plaque de danger avec numéro ONU',
     },
     {
@@ -554,7 +554,7 @@ export class Signs {
       color: '#FF9100',
       src: 'BABS/Gefahr fuer Grundwasser.svg',
       de: 'Gefahr für Grundwasser',
-      en: 'Gefahr für Grundwasser',
+      en: 'Danger to groundwater',
       fr: 'Danger pour les eaux de surface et/ou nappes souterraines',
     },
     {
@@ -564,7 +564,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Gemeindefuehrungsorgan.svg',
       de: 'Gemeindeführungsorgan',
-      en: 'Gemeindeführungsorgan',
+      en: 'Municipality executive body',
       fr: 'Organe de conduite communal',
     },
     {
@@ -574,7 +574,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Gruppenfuehrer.svg',
       de: 'Gruppenführer',
-      en: 'Gruppenführer',
+      en: 'Group leader',
       fr: 'Chef de groupe',
     },
     {
@@ -584,7 +584,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Gruppe.svg',
       de: 'Gruppe',
-      en: 'Gruppe',
+      en: 'Group',
       fr: 'Groupe',
     },
     {
@@ -594,7 +594,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Helikopterlandeplatz.svg',
       de: 'Helikopterlandeplatz',
-      en: 'Helikopterlandeplatz',
+      en: 'Helicopter landing pad',
       fr: 'Place d’atterrissage pour hélicoptère',
     },
     {
@@ -604,7 +604,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Informationsstelle.svg',
       de: 'Informationsstelle',
-      en: 'Informationsstelle',
+      en: 'Information point',
       fr: 'Point d’information',
     },
     {
@@ -614,7 +614,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Informationszentrum.svg',
       de: 'Informationszentrum',
-      en: 'Informationszentrum',
+      en: 'Media centre',
       fr: 'Centre de presse',
     },
     {
@@ -624,7 +624,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Infrastrukturschaden.svg',
       de: 'Infrastrukturschaden',
-      en: 'Infrastrukturschaden',
+      en: 'Infrastructure damage',
       fr: 'Dommages aux infrastructures',
     },
     {
@@ -634,7 +634,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Kadaversammelstelle.svg',
       de: 'Kadaversammelstelle',
-      en: 'Kadaversammelstelle',
+      en: 'Animal corpses collecting post',
       fr: 'Poste collecteur de cadavres d’animaux',
     },
     {
@@ -644,7 +644,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Kanalisationsausfall.svg',
       de: 'Kanalisationsausfall',
-      en: 'Kanalisationsausfall',
+      en: 'Sewer failure',
       fr: 'Egoûts défectueux',
     },
     {
@@ -654,7 +654,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Kantonales Fuehrungsorgan.svg',
       de: 'Kantonales Führungsorgan',
-      en: 'Kantonales Führungsorgan',
+      en: 'Cantonal executive body',
       fr: 'Organe de conduite cantonal',
     },
     {
@@ -694,7 +694,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Kommandoposten Front.svg',
       de: 'Kommandoposten Front',
-      en: 'Kommandoposten Front',
+      en: 'Command post front',
       fr: 'PC engagement',
     },
     {
@@ -704,7 +704,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Kommandoposten Rueckwaertiges.svg',
       de: 'Kommandoposten Rückwärtiges',
-      en: 'Kommandoposten Rückwärtiges',
+      en: 'Command post rear',
       fr: 'PC opérations',
     },
     {
@@ -714,7 +714,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Kommunikationsstoerung.svg',
       de: 'Kommunikationsstörung',
-      en: 'Kommunikationsstörung',
+      en: 'Communication disruption',
       fr: 'Perturbation de la communication',
     },
     {
@@ -724,7 +724,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Kompanie.svg',
       de: 'Kompanie',
-      en: 'Kompanie',
+      en: 'Company',
       fr: 'Compagnie',
     },
     {
@@ -734,7 +734,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Kontrollstelle.svg',
       de: 'Kontrollstelle',
-      en: 'Kontrollstelle',
+      en: 'Control point',
       fr: 'Point de contrôle',
     },
     {
@@ -744,7 +744,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Kontrollzentrum.svg',
       de: 'Kontrollzentrum',
-      en: 'Kontrollzentrum',
+      en: 'Control center',
       fr: 'Centre de contrôle',
     },
     {
@@ -754,7 +754,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Lawine.svg',
       de: 'Lawine',
-      en: 'Lawine',
+      en: 'Avalanche',
       fr: 'Avalanche',
     },
     {
@@ -764,7 +764,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Massenpanik.svg',
       de: 'Massenpanik',
-      en: 'Massenpanik',
+      en: 'Mass panic',
       fr: 'Effets de panique',
     },
     {
@@ -774,7 +774,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Materialdepot.svg',
       de: 'Materialdepot',
-      en: 'Materialdepot',
+      en: 'Material depot',
       fr: 'Dépôt de matériel',
     },
     {
@@ -784,7 +784,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Mobile Einsatzzentrale.svg',
       de: 'Mobile Einsatzzentrale',
-      en: 'Mobile Einsatzzentrale',
+      en: 'Mobile operations centre',
       fr: 'Centrale d’engagement mobile',
     },
     {
@@ -794,7 +794,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Obdachlose.svg',
       de: 'Obdachlose',
-      en: 'Obdachlose',
+      en: 'Homeless',
       fr: 'Sans-abri',
     },
     {
@@ -804,7 +804,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Oelverschmutzung.svg',
       de: 'Ölverschmutzung',
-      en: 'Ölverschmutzung',
+      en: 'Oil pollution',
       fr: 'Pollution aux hydrocarbures',
     },
     {
@@ -814,7 +814,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Offizier - Zugfuehrer.svg',
       de: 'Offizier - Zugführer',
-      en: 'Offizier - Zugführer',
+      en: 'Officer',
       fr: 'Officier',
     },
     {
@@ -824,7 +824,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Patientensammelstelle.svg',
       de: 'Patientensammelstelle',
-      en: 'Patientensammelstelle',
+      en: 'Patient collection point',
       fr: 'Poste collecteur de patients',
     },
     {
@@ -834,7 +834,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Pforte.svg',
       de: 'Pforte',
-      en: 'Pforte',
+      en: 'Gate',
       fr: 'Porte',
     },
     {
@@ -844,7 +844,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Pluenderung.svg',
       de: 'Plünderung',
-      en: 'Plünderung',
+      en: 'Plundering',
       fr: 'Pillage',
     },
     {
@@ -854,7 +854,7 @@ export class Signs {
       color: '#948B68',
       src: 'BABS/Radioaktives Gebiet.svg',
       de: 'Radioaktives Gebiet',
-      en: 'Radioaktives Gebiet',
+      en: 'Radioactive area',
       fr: 'Zone radioactive',
     },
     {
@@ -864,7 +864,7 @@ export class Signs {
       color: '#FF9100',
       src: 'BABS/Radioaktive Stoffe.svg',
       de: 'Radioaktive Stoffe',
-      en: 'Radioaktive Stoffe',
+      en: 'Radioactive substances',
       fr: 'Substances radioactives',
     },
     {
@@ -874,7 +874,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Regionales Fuehrungsorgan.svg',
       de: 'Regionales Führungsorgan',
-      en: 'Regionales Führungsorgan',
+      en: 'Regional executive body',
       fr: 'Organe de conduite régional',
     },
     {
@@ -884,7 +884,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Rutschgebiet.svg',
       de: 'Rutschgebiet',
-      en: 'Rutschgebiet',
+      en: 'Landslide',
       fr: 'Glissement de terrain',
     },
     {
@@ -904,7 +904,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Sammelstelle.svg',
       de: 'Sammelstelle',
-      en: 'Sammelstelle',
+      en: 'Collecting post',
       fr: 'Poste collecteur',
     },
     {
@@ -914,7 +914,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Sanitaetshilfsstelle.svg',
       de: 'Sanitätshilfsstelle',
-      en: 'Sanitätshilfsstelle',
+      en: 'Medical aid centre',
       fr: 'Poste médical avancé',
     },
     {
@@ -924,7 +924,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Sperre.svg',
       de: 'Sperre',
-      en: 'Sperre',
+      en: 'Dam',
       fr: 'Barrage',
     },
     {
@@ -934,7 +934,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Standort mobile Fuehrungsstelle.svg',
       de: 'Standort mobile Führungsstelle',
-      en: 'Standort mobile Führungsstelle',
+      en: '',
       fr: 'Poste de conduite',
     },
     {
@@ -944,7 +944,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Starkniederschlag.svg',
       de: 'Starkniederschlag',
-      en: 'Starkniederschlag',
+      en: 'Heavy rainfall',
       fr: 'Fortes précipitations',
     },
     {
@@ -954,7 +954,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Stau.svg',
       de: 'Stau',
-      en: 'Stau',
+      en: 'Traffic jam',
       fr: 'Embouteillage',
     },
     {
@@ -975,7 +975,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Streugutsammelstelle.svg',
       de: 'Streugutsammelstelle',
-      en: 'Streugutsammelstelle',
+      en: 'Lost property collecting point',
       fr: 'Poste collecteur des objets trouvés',
     },
     {
@@ -1005,7 +1005,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Stuetzpunkt.svg',
       de: 'Stützpunkt',
-      en: 'Stützpunkt',
+      en: 'Security point',
       fr: 'Point de sécurité',
     },
     {
@@ -1015,7 +1015,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Sturm.svg',
       de: 'Sturm',
-      en: 'Sturm',
+      en: 'Storm',
       fr: 'Tempête',
     },
     {
@@ -1025,7 +1025,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Tankloeschfahrzeug.svg',
       de: 'Tanklöschfahrzeug',
-      en: 'Tanklöschfahrzeug',
+      en: 'Water tender',
       fr: 'Tonne-pompe',
     },
     {
@@ -1035,7 +1035,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Teilzerstoerung.svg',
       de: 'Teilzerstörung',
-      en: 'Teilzerstörung',
+      en: 'Partial destruction',
       fr: 'Destruction partielle',
       fillStyle: {
         name: 'cross',
@@ -1051,7 +1051,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Terroranschlag.svg',
       de: 'Terroranschlag',
-      en: 'Terroranschlag',
+      en: 'Terrorist attack',
       fr: 'Acte de terrorisme',
     },
     {
@@ -1061,7 +1061,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Tierseuche.svg',
       de: 'Tierseuche',
-      en: 'Tierseuche',
+      en: 'Epizootic',
       fr: 'Epizootie',
     },
     {
@@ -1071,7 +1071,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Totalzerstoerung.svg',
       de: 'Totalzerstörung',
-      en: 'Totalzerstörung',
+      en: 'Complete destruction',
       fr: 'Destruction totale',
     },
     {
@@ -1081,7 +1081,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Totensammelstelle.svg',
       de: 'Totensammelstelle',
-      en: 'Totensammelstelle',
+      en: 'Deadbodies collecting post',
       fr: 'Poste collecteur de cadavres',
     },
     {
@@ -1091,7 +1091,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Tote.svg',
       de: 'Tote',
-      en: 'Tote',
+      en: 'Dead',
       fr: 'Morts',
     },
     {
@@ -1101,7 +1101,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Trinkwasserabgabestelle.svg',
       de: 'Trinkwasserabgabestelle',
-      en: 'Trinkwasserabgabestelle',
+      en: 'Drinking water supply point',
       fr: 'Poste de distribution d’eau potable',
     },
     {
@@ -1111,7 +1111,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Trupp.svg',
       de: 'Trupp',
-      en: 'Trupp',
+      en: 'Patrol',
       fr: 'Patrouille',
     },
     {
@@ -1121,7 +1121,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Ueberschwemmtes Gebiet.svg',
       de: 'Überschwemmtes Gebiet',
-      en: 'Überschwemmtes Gebiet',
+      en: 'Flooded area',
       fr: 'Zone inondée ou submergée',
     },
     {
@@ -1131,7 +1131,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Ueberschwemmung.svg',
       de: 'Überschwemmung',
-      en: 'Überschwemmung',
+      en: 'Flood',
       fr: 'Inondation',
     },
     {
@@ -1141,7 +1141,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Ueberwachung.svg',
       de: 'Überwachung',
-      en: 'Überwachung',
+      en: 'Surveillance',
       fr: 'Surveillance',
     },
     {
@@ -1151,7 +1151,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Umleitung.svg',
       de: 'Umleitung',
-      en: 'Umleitung',
+      en: 'Deviations',
       fr: 'Déviations',
     },
     {
@@ -1161,7 +1161,7 @@ export class Signs {
       color: '#FF9100',
       src: 'BABS/Unfall.svg',
       de: 'Unfall',
-      en: 'Unfall',
+      en: 'Accident',
       fr: 'Accident',
     },
     {
@@ -1171,7 +1171,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Verkehrsposten.svg',
       de: 'Verkehrsposten',
-      en: 'Verkehrsposten',
+      en: 'Traffic post',
       fr: 'Poste de circulation',
     },
     {
@@ -1181,7 +1181,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Verletztennest.svg',
       de: 'Verletztennest',
-      en: 'Verletztennest',
+      en: 'Injured nest',
       fr: 'Nid de blessés',
     },
     {
@@ -1191,7 +1191,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Verletzte.svg',
       de: 'Verletzte',
-      en: 'Verletzte',
+      en: 'Injured patients',
       fr: 'Patients (blessés)',
     },
     {
@@ -1201,7 +1201,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Vermisste.svg',
       de: 'Vermisste',
-      en: 'Vermisste',
+      en: 'Missing persons',
       fr: 'Disparus',
     },
     {
@@ -1211,7 +1211,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Verpflegungsabgabestelle.svg',
       de: 'Verpflegungsabgabestelle',
-      en: 'Verpflegungsabgabestelle',
+      en: 'Food distribution point',
       fr: 'Poste de distribution de subsistance',
     },
     {
@@ -1221,7 +1221,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Wasservsgausfall.svg',
       de: 'Wasserversorgungsausfall',
-      en: 'Wasserversorgungsausfall',
+      en: 'Water supply failure',
       fr: 'Interruption de l’approvisionnement en eau',
     },
     {
@@ -1231,7 +1231,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Wasserwerfer.svg',
       de: 'Wasserwerfer',
-      en: 'Wasserwerfer',
+      en: 'Water cannon',
       fr: 'Canon à eau',
     },
     {
@@ -1241,7 +1241,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Zerstoerte Zone einer Ortschaft.svg',
       de: 'Zerstörte Zone einer Ortschaft',
-      en: 'Zerstörte Zone einer Ortschaft',
+      en: 'Destroyed area of a village',
       fr: 'Zone sinistrée, impraticable à l’intérieur d’une localité',
       hideIcon: true,
       fillStyle: {
@@ -1258,7 +1258,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Zug.svg',
       de: 'Zug',
-      en: 'Zug',
+      en: 'Section',
       fr: 'Section',
     },
     {
@@ -1268,7 +1268,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BSM/Absperrung mit Ueberwachung.svg',
       de: 'Absperrung mit Überwachung',
-      en: 'Absperrung mit Überwachung',
+      en: 'Barrier with surveillance',
       fr: 'Barrière avec surveillance ',
     },
     {
@@ -1278,7 +1278,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Brand einzelnes Gebaeude - Signatur.svg',
       de: 'Brand einzelnes Gebäude',
-      en: 'Brand einzelnes Gebäude',
+      en: 'Single building fire',
       fr: 'Incendie bâtiment unique',
     },
     {
@@ -1288,7 +1288,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Brand mehrerer Gebaeude - Signatur.svg',
       de: 'Brand mehrerer Gebäude',
-      en: 'Brand mehrerer Gebäude',
+      en: 'Several buildings fire',
       fr: 'Incendie dans plusieurs immeubles',
     },
     {
@@ -1308,7 +1308,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BSM/Komm Ausfall Nat.svg',
       de: 'Komm Ausfall Nat - Mobilnetz',
-      en: 'Komm Ausfall Nat - Mobilnetz',
+      en: 'Comm. Nat failure - Mobile network',
       fr: 'Échec de la comm. Nat - Réseau cellulaire',
     },
     {
@@ -1318,7 +1318,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BSM/Komm Ausfall Tel.svg',
       de: 'Komm Ausfall Tel - Festnetz',
-      en: 'Komm Ausfall Tel - Festnetz',
+      en: 'Comm. Tel failure - Fixed network',
       fr: 'Échec de la comm. Tel - ligne fixe',
     },
     {
@@ -1328,7 +1328,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BSM/Obdachlosensammelstelle.svg',
       de: 'Obdachlosensammelstelle',
-      en: 'Obdachlosensammelstelle',
+      en: 'Homeless gathering point',
       fr: 'Point de rassemblement sans abri',
     },
     {
@@ -1338,7 +1338,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Personenbergungsuebersicht - Leerraster.svg',
       de: 'Personenbergungsübersicht',
-      en: 'Personenbergungsübersicht',
+      en: 'Passenger recovery overview',
       fr: "Vue d'ensemble de sauvetage",
     },
     {
@@ -1348,7 +1348,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BSM/Polizei.svg',
       de: 'Polizei',
-      en: 'Polizei',
+      en: 'Police',
       fr: 'Police',
     },
     {
@@ -1358,7 +1358,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Schadengebiet - Schadenraum.svg',
       de: 'Schadengebiet, Schadenraum',
-      en: 'Schadengebiet, Schadenraum',
+      en: 'Damaged area',
       fr: 'Zone de dégâts',
     },
     {
@@ -1368,8 +1368,8 @@ export class Signs {
       color: '#0000FF',
       src: 'BSM/Spital.svg',
       de: 'Spital',
-      en: 'Hôpital',
-      fr: 'Spital',
+      en: 'Hospital',
+      fr: 'Hôpital',
     },
     {
       id: 152,
@@ -1378,7 +1378,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BSM/Stromausfall.svg',
       de: 'Stromausfall',
-      en: 'Stromausfall',
+      en: 'Power failure',
       fr: 'Panne électrique',
     },
     {
@@ -1388,7 +1388,7 @@ export class Signs {
       color: '#FF0000',
       src: 'BABS/Truemmerbereich - Signatur.svg',
       de: 'Trümmerbereich',
-      en: 'Trümmerbereich',
+      en: 'Debris area',
       fr: 'Zone de débris',
     },
     {
@@ -1398,7 +1398,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BSM/Verwaltungskreisfuehrungsorgan.svg',
       de: 'Verwaltungskreisführungsorgan',
-      en: 'Verwaltungskreisführungsorgan',
+      en: 'Administrative district management body',
       fr: 'Organe de gestion du district administratif',
     },
     {
@@ -1408,7 +1408,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BSM/Zivilschutz.svg',
       de: 'Zivilschutz',
-      en: 'Zivilschutz',
+      en: 'Civil defense',
       fr: 'Défense civile',
     },
     {
@@ -1418,7 +1418,7 @@ export class Signs {
       color: '#0000FF',
       src: 'BABS/Ziviles Fuehrungsorgan.svg',
       de: 'Ziviles Führungsorgan',
-      en: 'Ziviles Führungsorgan',
+      en: 'Civil executive body',
       fr: 'Organe exécutif civil',
     },
     {
