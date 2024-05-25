@@ -1,13 +1,13 @@
 import { Injectable, SecurityContext } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { I18NService } from '../state/i18n.service';
+import { I18NService } from '../../state/i18n.service';
 import { Observable, firstValueFrom, map, of, tap } from 'rxjs';
-import { GeoAdminMapLayer, GeoAdminMapLayers } from './entity/map-layer-interface';
+import { GeoAdminMapLayer, GeoAdminMapLayers } from '../map-layer-interface';
 import OlTileGridWMTS from 'ol/tilegrid/WMTS';
 import OlTileWMTS from 'ol/source/WMTS';
-import { swissProjection } from '../helper/projections';
-import { SessionService } from '../session/session.service';
-import OlTileLayer from '../map-renderer/utils';
+import { swissProjection } from '../../helper/projections';
+import { SessionService } from '../../session/session.service';
+import OlTileLayer from '../../map-renderer/utils';
 import TileWMS from 'ol/source/TileWMS';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -36,6 +36,7 @@ export class GeoadminService {
         tap((data) => {
           Object.keys(data).forEach((key) => {
             data[key].opacity = data[key].opacity ?? data[key].background ? 1.0 : 0.75;
+            data[key].fullId = `${data[key].source}|${data[key].serverLayerName}`;
           });
         }),
         tap((data) => (this._layersCache = data)),

@@ -1,0 +1,33 @@
+.mat-mdc-dialog-content {
+  padding-top: 0.5rem;
+  min-width: 400px;
+  max-width: 500px;
+}
+mat-form-field {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+.fullUrl {
+  font-size: 0.75em;
+}
+.buttonMargin {
+  margin-top: 0.5rem;
+}
+.attributionTitle {
+  font-size: 0.75em;
+}
+.attribution, .attributionTitle {
+  display: flex;
+  .attr-title {
+    width: 25%;
+  }
+  .attr-url {
+    width: 75%;
+  }
+  .attr-remove {
+    cursor: pointer;
+  }
+}
+.attr-add {
+  cursor: pointer;
+}

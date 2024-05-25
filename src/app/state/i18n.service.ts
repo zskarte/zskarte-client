@@ -373,6 +373,26 @@ export class I18NService {
       fr: 'Mode de dessin',
       en: 'Drawing mode',
     },
+    expertView: {
+      de: 'Experten Ansicht',
+      fr: 'Expert view',
+      en: "Point de vue d'expert",
+    },
+    defaultView: {
+      de: 'Standard Ansicht',
+      fr: 'Default view',
+      en: 'Vue générale',
+    },
+    toastExpertView: {
+      de: 'Experten Ansicht aktiviert',
+      fr: 'Expert view activated',
+      en: "Point de vue d'expert activée",
+    },
+    toastDefaultView: {
+      de: 'Standard Ansicht aktiviert',
+      fr: 'Default view activated',
+      en: 'Vue générale activée',
+    },
     color: {
       de: 'Farbe',
       fr: 'Couleur',
@@ -1254,6 +1274,11 @@ export class I18NService {
       fr: 'Carte pixelisée en gris',
       en: 'Gray pixel map',
     },
+    noBaseMap: {
+      de: 'keine Basiskarte',
+      fr: 'pas de carte de base',
+      en: 'no base Map',
+    },
     reportNumber: {
       de: 'Meldenummer',
       en: 'Report number',
@@ -1313,6 +1338,126 @@ export class I18NService {
       de: 'Betroffene Personen',
       en: 'Affected Persons',
       fr: 'Persones affectés',
+    },
+    addNewLayer: {
+      de: 'Neue Ebene erstellen',
+      en: 'Create new layer',
+      fr: 'Créer un nouveau couche',
+    },
+    layerSource: {
+      de: 'Ebenen Quelle',
+      en: 'Layer Source',
+      fr: 'Source du couche',
+    },
+    allSources: {
+      de: 'Alle Quellen',
+      en: 'all sources',
+      fr: 'toutes les sources',
+    },
+    editWmsSources: {
+      de: 'WMS/WMTS Quellen Bearbeiten',
+      en: 'Edit WMS/WMTS Sources',
+      fr: 'Modifier les sources WMS/WMTS',
+    },
+    addLayerSource: {
+      de: 'Neue Quelle Hinzufügen',
+      en: 'Add new source',
+      fr: 'Ajouter une nouvelle source',
+    },
+    layerSourceUrl: {
+      de: 'Quell-URL',
+      en: 'source URL',
+      fr: 'URL source',
+    },
+    mapLayerType: {
+      de: 'Ebenentyp',
+      en: 'Layer type',
+      fr: 'Type de calque',
+    },
+    sourceAttribution: {
+      de: 'Quellenangabe',
+      en: 'source attribution',
+      fr: 'attribution de la source',
+    },
+    sourceAttributionInfo: {
+      de: 'Hier gepflegte Quellenangaben überschreiben die Angaben aus der Ebenen Quelle.',
+      en: 'Source attribution maintained here overwrites the information from the layer source.',
+      fr: 'Les attribution de la source conservées ici écrasent les informations de la source du couche.',
+    },
+    removeSource: {
+      de: 'entfernen',
+      en: 'remove',
+      fr: 'supprimer',
+    },
+    addSource: {
+      de: 'Hinzufügen',
+      en: 'Add',
+      fr: 'Ajouter',
+    },
+    wmsLayerSettings: {
+      de: 'Einstellungen der WMS-Ebene',
+      en: 'WMS layer settings',
+      fr: 'Paramètres de calque WMS',
+    },
+    wmsLayerName: {
+      de: 'Ebenenname',
+      en: 'layer name',
+      fr: 'nom du calque',
+    },
+    wmsLayerRenderType: {
+      de: 'Ebenentyp',
+      en: 'Layer type',
+      fr: 'Type de calque',
+    },
+    wmsLayerRenderTypeTiled: {
+      de: 'gekachelt',
+      en: 'tiled',
+      fr: 'carrelé',
+    },
+    wmsLayerRenderTypeFullImage: {
+      de: 'Vollbild',
+      en: 'fullimage',
+      fr: 'image complète',
+    },
+    hideSubLayers: {
+      de: 'Unterebenen ausblenden',
+      en: 'hide sub layers',
+      fr: 'masquer les sous-calque',
+    },
+    wmsLayerDrawingMode: {
+      de: 'Ebenen-Zeichenmodus',
+      en: 'Layers drawing mode',
+      fr: 'Mode de dessin des calques',
+    },
+    mergedLayers: {
+      de: 'zusammengeführte Ebenen',
+      en: 'merged layers',
+      fr: 'calques fusionnés',
+    },
+    separatedLevels: {
+      de: 'aufgetrennte Ebenen',
+      en: 'separated layers',
+      fr: 'calques séparés',
+    },
+    tileFormat: {
+      de: 'Inhaltstyp',
+      en: 'content type',
+      fr: 'type de contenu',
+    },
+    tileSize: {
+      de: 'Kachelgrösse',
+      en: 'Tile size',
+      fr: 'Dimension des carreaux',
+    },
+    MinScaleDenominator: {
+      de: 'Min. Skalennenner',
+      en: 'Min scale denominator',
+      fr: "Dénominateur d'échelle minimum",
+    },
+    MaxScaleDenominator: {
+      de: 'Max. Skalennenner',
+      en: 'Max scale denominator',
+      fr: "Dénominateur d'échelle maximum",
     },
   };
 

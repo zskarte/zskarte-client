@@ -18,7 +18,7 @@ import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { Circle, Fill, Icon, Stroke, Style } from 'ol/style';
-import { GeoadminService } from '../core/geoadmin.service';
+import { GeoadminService } from '../map-layer/geoadmin/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
 import { FeatureLike } from 'ol/Feature';
@@ -37,7 +37,8 @@ import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { Layer } from 'ol/layer';
-import { GeoAdminMapLayer } from '../core/entity/map-layer-interface';
+import { WmsService } from '../map-layer/wms/wms.service';
+import { GeoAdminMapLayer, WMSMapLayer } from '../map-layer/map-layer-interface';
 
 @Component({
   selector: 'app-map-renderer',
@@ -109,6 +110,7 @@ export class MapRendererComponent implements AfterViewInit {
     public i18n: I18NService,
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
+    private wmsService: WmsService,
   ) {
     _state
       .observeSelectedElement$()
@@ -662,16 +664,28 @@ export class MapRendererComponent implements AfterViewInit {
         takeUntil(this._ngUnsubscribe),
         concatMap(async (mapLayers) => {
           const cacheNames = Array.from(this._mapLayerCache.keys());
-          mapLayers = mapLayers.filter((el) => !cacheNames.includes(el.serverLayerName));
+          mapLayers = mapLayers.filter((el) => !cacheNames.includes(el.fullId));
           for (const mapLayer of mapLayers) {
-            const olLayers = await this.geoAdminService.createGeoAdminLayer(mapLayer as GeoAdminMapLayer);
+            let olLayers: Layer[];
+            if (!mapLayer.source) {
+              olLayers = await this.geoAdminService.createGeoAdminLayer(mapLayer as GeoAdminMapLayer);
+            } else if (mapLayer.type === 'wmts') {
+              olLayers = await this.wmsService.createWMTSLayer(mapLayer);
+            } else if (mapLayer.type === 'wms') {
+              olLayers = await this.wmsService.createWMSLayer(mapLayer as WMSMapLayer);
+            } else if (mapLayer.type === 'wms_custom') {
+              olLayers = await this.wmsService.createWMSCustomLayer(mapLayer as WMSMapLayer);
+            } else {
+              console.error('unknown layer type', mapLayer.type, 'for source', mapLayer.source, mapLayer);
+              return;
+            }
             olLayers.forEach((olLayer, index) => {
               this._map.addLayer(olLayer);
-              const name = index > 0 ? `${mapLayer.serverLayerName}:${index}` : mapLayer.serverLayerName;
+              const name = index > 0 ? `${mapLayer.fullId}:${index}` : mapLayer.fullId;
               this._mapLayerCache.set(name, olLayer);
 
               // observe mapLayer changes
-              this._state.observeMapLayers$(mapLayer.serverLayerName).subscribe({
+              this._state.observeMapLayers$(mapLayer.fullId).subscribe({
                 next: (updatedLayer) => {
                   if (updatedLayer) {
                     olLayer.setZIndex(updatedLayer.zIndex);

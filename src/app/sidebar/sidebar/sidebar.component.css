@@ -44,7 +44,27 @@ mat-slider {
   margin-left: 40px;
 }
 
+.sourceControl {
+  display: flex;
+}
+.sourceControl mat-form-field {
+  margin-bottom: 5px;
+}
+.sourceControl button {
+  margin-left: 15px
+}
+
 .material-icons {
   /*needed as not match for 'visibility_on'*/
   width: 24px;
+}
+
+.wmsSourceError {
+  color:red;
+}
+
+.expertButton {
+  transform: translateX(-50%);
+  left: 50%;
+  margin-bottom: 5px;
 }

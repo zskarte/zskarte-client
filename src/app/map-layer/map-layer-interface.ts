@@ -1,3 +1,15 @@
+export interface WmsSource {
+  url: string;
+  label: string;
+  type: 'wmts' | 'wms';
+  attribution?: [string, string][];
+}
+
+//use the partial part to prevent need to use type guards in template
+export interface MapSource extends Partial<WmsSource> {
+  url: string;
+}
+
 interface SelectedMapLayerSettings {
   opacity: number;
   hidden: boolean;
@@ -11,7 +23,25 @@ interface MapLayerGeneralSettings {
   type: string;
 }
 
+export interface GenericOptionalMapLayerOptions {
+  MinScaleDenominator?: number;
+  MaxScaleDenominator?: number;
+  attribution?: [string, string][];
+}
+
 export interface MapLayer extends SelectedMapLayerSettings, MapLayerGeneralSettings {
+  source?: MapSource | WmsSource;
+  fullId: string;
+}
+
+export interface WMSMapLayer extends MapLayer, GenericOptionalMapLayerOptions {
+  noneTiled?: boolean;
+  subLayersNames?: string[];
+  hiddenSubLayers?: string[];
+  splitIntoSubLayers?: boolean;
+  originalServerLayerName?: string;
+  tileSize?: number;
+  tileFormat?: string;
 }
 
 export interface GeoAdminMapLayer extends MapLayer {

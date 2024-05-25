@@ -1,0 +1,35 @@
+.mat-mdc-dialog-content {
+  padding-top: 0.5rem;
+  min-width: 400px;
+  max-width: 500px;
+}
+mat-form-field {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.infoText {
+  font-size: 0.75em;
+  line-height: 1em;
+  margin-bottom: 5px;
+}
+.attributionTitle {
+  line-height: 1em;
+}
+.attributionTitle div {
+  display: inline-block;
+  font-size: 0.8em;
+}
+
+.mat-icon {
+  vertical-align: bottom;
+}
+
+.attr-title {
+  box-sizing: border-box;
+  width: 30%;
+}
+.attr-url {
+  box-sizing: border-box;
+  width: calc( 70% - 24px );
+}

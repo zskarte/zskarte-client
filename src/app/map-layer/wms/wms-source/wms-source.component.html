@@ -1,0 +1,55 @@
+<div mat-dialog-title>{{ i18n.get('editWmsSources') }}</div>
+<div mat-dialog-content>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('layerSource') }}</mat-label>
+    <mat-select [value]="selectedSource" (selectionChange)="onSelectionChange($event)">
+      <mat-option value="_GeoAdmin_" disabled>GeoAdmin</mat-option>
+      <mat-option value="__NEW__">{{ i18n.get('addLayerSource') }}</mat-option>
+      <mat-option *ngFor="let item of sources" [value]="item">
+        {{item.label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div *ngIf="selectedSource !== undefined">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ i18n.get('label') }}</mat-label>
+      <input matInput type="text" [(ngModel)]="selectedSource.label"/>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ i18n.get('layerSourceUrl') }}</mat-label>
+      <input matInput type="text" [(ngModel)]="selectedSource.url" (change)="updateFullUrl($event)"/>
+    </mat-form-field>
+    <div class="fullUrl">{{ fullUrl }}</div>
+    <fieldset class="like-mat-form-field-outline">
+      <legend>{{ i18n.get('mapLayerType') }}</legend>
+      <mat-radio-group [(ngModel)]="selectedSource.type" (change)="updateFullUrl($event)">
+        <mat-radio-button value="wms">WMS</mat-radio-button>
+        <mat-radio-button value="wmts">WMTS</mat-radio-button>
+      </mat-radio-group>
+    </fieldset>
+    <fieldset class="like-mat-form-field-outline">
+      <legend>{{ i18n.get('sourceAttribution') }}</legend>
+      <ng-container *ngIf="selectedSource.attribution">
+        <div class="attributionTitle">
+          <div class="attr-title">{{ i18n.get('label') }} *</div>
+          <div class="attr-url">URL</div>
+        </div>
+        <div class="attribution" *ngFor="let attr of selectedSource.attribution; index as i">
+          <input class="attr-title" matInput type="text" [(ngModel)]="attr[0]"/>
+          <input class="attr-url" matInput type="url" [(ngModel)]="attr[1]"/>
+          <mat-icon class="attr-remove" (click)="removeAttribution(i)">remove</mat-icon>
+        </div>
+      </ng-container>
+      <mat-icon class="attr-add" (click)="addAttribution()">add</mat-icon>
+    </fieldset>
+    <div class="buttons">
+      <button class="buttonMargin" mat-raised-button color="warn" (click)="removeSource()" [innerText]="i18n.get('removeSource')"></button>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button [mat-dialog-close]="null" [innerText]="i18n.get('cancel')"></button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="sources">
+    {{ i18n.get('ok') }}
+  </button>
+</div>

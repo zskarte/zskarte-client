@@ -25,7 +25,7 @@ import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual, toggleInArray } from '../helper/array';
-import { MapLayer } from '../core/entity/map-layer-interface';
+import { MapLayer, WmsSource } from '../map-layer/map-layer-interface';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
@@ -81,6 +81,7 @@ export class ZsMapStateService {
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
+      expertView: false,
       positionFlag: { coordinates: DEFAULT_COORDINATES, isVisible: false },
       mapCenter: DEFAULT_COORDINATES,
       mapZoom: DEFAULT_ZOOM,
@@ -93,6 +94,7 @@ export class ZsMapStateService {
       elementVisibility: {},
       elementOpacity: {},
       layers: [],
+      wmsSources: [],
       hiddenSymbols: [],
       hiddenFeatureTypes: [],
       hiddenCategories: [],
@@ -240,6 +242,34 @@ export class ZsMapStateService {
 
   public isHistoryMode(): boolean {
     return this._display.value?.displayMode === ZsMapDisplayMode.HISTORY;
+  }
+
+  public toggleExpertView() {
+    this.updateDisplayState((draft) => {
+      draft.expertView = !draft.expertView;
+      if (draft.expertView) {
+        this._snackBar.open(this.i18n.get('toastExpertView'), 'OK', {
+          duration: 2000,
+        });
+      } else {
+        this._snackBar.open(this.i18n.get('toastDefaultView'), 'OK', {
+          duration: 2000,
+        });
+      }
+    });
+  }
+
+  public observeIsExpertView(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => {
+        return o.expertView;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public isExpertView(): boolean {
+    return this._display.value?.expertView;
   }
 
   public observeDisplayState(): Observable<IZsMapDisplayState> {
@@ -483,10 +513,10 @@ export class ZsMapStateService {
     );
   }
 
-  public observeMapLayers$(serverLayerName: string): Observable<MapLayer | undefined> {
+  public observeMapLayers$(fullId: string): Observable<MapLayer | undefined> {
     return this._display.pipe(
       map((o) => {
-        return o?.layers?.find((layer) => layer.serverLayerName === serverLayerName);
+        return o?.layers?.find((layer) => layer.fullId === fullId);
       }),
       distinctUntilChanged((x, y) => x === y),
       takeWhile((layer) => Boolean(layer)),
@@ -525,6 +555,33 @@ export class ZsMapStateService {
       draft.layers[index - 1].zIndex = currentZIndex;
       layer.zIndex = currentZIndex + 1;
       draft.layers.sort((a, b) => b.zIndex - a.zIndex);
+    });
+  }
+
+  public reloadAllMapLayers() {
+    const layers = [...this._display.value.layers];
+    this.updateDisplayState((draft) => {
+      draft.layers = [];
+    });
+    this.updateDisplayState((draft) => {
+      for (let i = 0; i < layers.length; i++) {
+        const layer = layers[i];
+        //update source object
+        const source = draft.wmsSources?.find((s) => s.url === layer.source?.url);
+        if (source) {
+          layers[i] = { ...layer, source };
+        }
+      }
+      draft.layers = layers;
+    });
+  }
+
+  public replaceMapLayer(item: MapLayer, index: number) {
+    this.updateDisplayState((draft) => {
+      draft.layers.splice(index, 1);
+    });
+    this.updateDisplayState((draft) => {
+      draft.layers.splice(index, 0, item);
     });
   }
 
@@ -577,6 +634,42 @@ export class ZsMapStateService {
 
   public getActiveLayerState(): ZsMapLayerState | undefined {
     return this._map.value.layers?.find((layer) => layer.id === this._display.value.activeLayer);
+  }
+
+  public addWmsSource(source: WmsSource) {
+    this.updateDisplayState((draft) => {
+      if (!draft.wmsSources) {
+        draft.wmsSources = [];
+      }
+      draft.wmsSources.push(source);
+    });
+  }
+
+  public removeWmsSource(source: WmsSource) {
+    const index = this._display.value.wmsSources?.findIndex((o) => o === source) ?? -1;
+    if (index === -1) {
+      throw new Error('source to remove not found');
+    }
+    this.updateDisplayState((draft) => {
+      if (draft.wmsSources) {
+        draft.wmsSources.splice(index, 1);
+      }
+    });
+  }
+
+  public setWmsSources(sources: WmsSource[]) {
+    this.updateDisplayState((draft) => {
+      draft.wmsSources = sources;
+    });
+  }
+
+  public observeWmsSources$() {
+    return this._display.pipe(
+      map((o) => {
+        return o?.wmsSources;
+      }),
+      distinctUntilChanged((x, y) => x === y && x?.length === y?.length),
+    );
   }
 
   public addDrawElement(element: ZsMapDrawElementState): ZsMapDrawElementState | null {

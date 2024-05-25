@@ -60,6 +60,7 @@
             <div class="titleRow">
               <div class="title">{{ item.label }}</div>
               <i (click)="showLegend(item)" class="material-icons">info</i>
+              <i (click)="showWmsLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'wms' || item.type === 'wms_custom')" class="material-icons">settings</i>
               <i (click)="mapState.toggleMapLayer(item, index)" *ngIf="!item.hidden" class="material-icons">visibility_off</i>
               <i (click)="mapState.toggleMapLayer(item, index)" *ngIf="item.hidden" class="material-icons">visibility_on</i>
               <i (click)="mapState.removeMapLayer(index)" class="material-icons">remove_circle_outline</i>
@@ -73,6 +74,7 @@
             </div>
             <mat-divider *ngIf="!last"></mat-divider>
           </div>
+          <button mat-raised-button class="expertButton" color="primary" *ngIf="mapState.isExpertView()" (click)="addNewLayer()" [innerText]="i18n.get('addNewLayer')"></button>
         </div>
       </ng-template>
     </mat-expansion-panel>
@@ -91,7 +93,7 @@
             *ngFor="let item of favouriteLayers"
             mat-list-item
             (click)="selectLayer(item)"
-            title="{{ item.label }}"
+            title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}})"
           >
             {{ item.label }}
           </button>
@@ -106,6 +108,19 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
+      <div class="sourceControl">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ i18n.get('layerSource') }}</mat-label>
+          <mat-select [formControl]="sourceFilter">
+            <mat-option value="ALL">{{ i18n.get('allSources') }}</mat-option>
+            <mat-option value="_GeoAdmin_">GeoAdmin</mat-option>
+            <mat-option *ngFor="let item of mapState.observeWmsSources$() | async" [value]="item.url">
+              {{item.label}} <mat-icon class="wmsSourceError" *ngIf="wmsSourceLoadErrors[item.url]" [title]="wmsSourceLoadErrors[item.url]">warning</mat-icon>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-icon-button *ngIf="mapState.isExpertView()" (click)="editWmsSources()"><mat-icon [attr.aria-label]="i18n.get('editWmsSources')">edit</mat-icon></button>
+      </div>
       <mat-form-field appearance="outline">
         <mat-label> {{ i18n.get('filter') }}</mat-label>
         <input type="text" matInput [formControl]="layerFilter"
@@ -115,7 +130,7 @@
           *ngFor="let item of filteredAvailableLayers$ | async"
           mat-list-item
           (click)="selectLayer(item)"
-          title="{{ item.label }}"
+          title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}})"
         >
           {{ item.label }}
         </button>
