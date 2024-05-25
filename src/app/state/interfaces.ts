@@ -1,4 +1,4 @@
-import { GeoFeature } from '../core/entity/geoFeature';
+import { MapLayer } from '../core/entity/map-layer-interface';
 import { FillStyle } from '../core/entity/sign';
 
 export enum ZsMapStateSource {
@@ -51,7 +51,7 @@ export interface IZsMapDisplayState {
   source: ZsMapStateSource;
   elementOpacity: Record<string, number>;
   elementVisibility: Record<string, boolean>;
-  features: GeoFeature[];
+  layers: MapLayer[];
   positionFlag: IPositionFlag;
   hiddenSymbols: number[];
   hiddenFeatureTypes: string[];

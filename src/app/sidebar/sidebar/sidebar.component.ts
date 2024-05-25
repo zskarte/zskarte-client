@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
-import { ZsMapStateService } from 'src/app/state/state.service';
-import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from 'src/app/state/interfaces';
-import { GeoadminService } from 'src/app/core/geoadmin.service';
-import { GeoFeature } from '../../core/entity/geoFeature';
+import { ZsMapStateService } from '../../state/state.service';
+import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from '../../state/interfaces';
+import { GeoadminService } from '../../core/geoadmin.service';
+import { MapLayer } from '../../core/entity/map-layer-interface';
 import { combineLatest, lastValueFrom, map, Observable, share, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
@@ -25,9 +25,10 @@ export class SidebarComponent {
       downloadable: this.isDownloadableMap(key),
     }))
     .sort((a, b) => a.translation.localeCompare(b.translation));
-  filteredAvailableFeatures$: Observable<GeoFeature[]>;
-  favouriteFeatures$: Observable<GeoFeature[]>;
-  favouriteFeaturesList = [
+  filteredAvailableLayers$: Observable<MapLayer[]>;
+  allLayers$: Observable<MapLayer[]>;
+  favouriteLayers$: Observable<MapLayer[]>;
+  favouriteLayerList = [
     'auengebiete',
     'gemeindegrenzen',
     'gewässer swisstlm3d',
@@ -47,12 +48,13 @@ export class SidebarComponent {
     public dialog: MatDialog,
     private http: HttpClient,
   ) {
-    const allFeatures$ = geoAdminService.getFeatures().pipe(
-      map((features) => Object.values(features)),
-      map((features) => features.filter((f) => !f['parentLayerId'])),
+    const geoAdminLayers$ = geoAdminService.getLayers().pipe(
+      map((layers) => Object.values(layers)),
+      map((layers) => layers.filter((f) => !f['parentLayerId'] && f['type'] !== 'geojson')),
       share(),
     );
-    const availableFeatures$: Observable<GeoFeature[]> = combineLatest([allFeatures$, mapState.observeSelectedFeatures$()]).pipe(
+    this.allLayers$ = geoAdminLayers$;
+    const availableLayers$: Observable<MapLayer[]> = combineLatest([this.allLayers$, mapState.observeSelectedMapLayers$()]).pipe(
       map(([source, selected]) => {
         const selectedNames = selected.map((f) => f.serverLayerName);
         return source.filter((s) => !selectedNames.includes(s.serverLayerName));
@@ -60,17 +62,18 @@ export class SidebarComponent {
     );
     const filter$ = this.layerFilter.valueChanges.pipe(startWith(''));
 
-    this.filteredAvailableFeatures$ = combineLatest([availableFeatures$, filter$]).pipe(
-      map(([features, filter]) => {
-        features = features.sort((a: GeoFeature, b: GeoFeature) => a.label.localeCompare(b.label));
-        return filter === '' ? features : features.filter((f) => f.label.toLowerCase().includes(filter?.toLowerCase() ?? ''));
+    this.filteredAvailableLayers$ = combineLatest([availableLayers$, filter$]).pipe(
+      map(([layers, filter]) => {
+        layers = layers.sort((a: MapLayer, b: MapLayer) => a.label.localeCompare(b.label));
+        return filter === '' ? layers : layers.filter((f) => f.label.toLowerCase().includes(filter?.toLowerCase() ?? ''));
       }),
     );
-    this.favouriteFeatures$ = availableFeatures$.pipe(
-      map((features) =>
-        features
-          .filter((feature: GeoFeature) => this.favouriteFeaturesList.includes(feature.label.toLowerCase()))
-          .sort((a: GeoFeature, b: GeoFeature) => a.label.localeCompare(b.label)),
+
+    this.favouriteLayers$ = availableLayers$.pipe(
+      map((layers) =>
+        layers
+          .filter((layer: MapLayer) => this.favouriteLayerList.includes(layer.label.toLowerCase()))
+          .sort((a: MapLayer, b: MapLayer) => a.label.localeCompare(b.label)),
       ),
     );
 
@@ -93,18 +96,18 @@ export class SidebarComponent {
       .subscribe();
   }
 
-  switchLayer(layer: ZsMapStateSource) {
+  switchMapSource(layer: ZsMapStateSource) {
     this.mapState.setMapSource(layer);
   }
 
-  showLegend(item: GeoFeature) {
+  showLegend(item: MapLayer) {
     this.dialog.open(MapLegendDisplayComponent, {
       data: item.serverLayerName,
     });
   }
 
-  selectFeature(feature: GeoFeature) {
-    this.mapState.addFeature(feature);
+  selectLayer(layer: MapLayer) {
+    this.mapState.addMapLayer(layer);
   }
 
   // skipcq: JS-0105

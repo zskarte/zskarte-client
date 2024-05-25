@@ -25,7 +25,7 @@ import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual, toggleInArray } from '../helper/array';
-import { GeoFeature } from '../core/entity/geoFeature';
+import { MapLayer } from '../core/entity/map-layer-interface';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
@@ -92,7 +92,7 @@ export class ZsMapStateService {
       layerOrder: [],
       elementVisibility: {},
       elementOpacity: {},
-      features: [],
+      layers: [],
       hiddenSymbols: [],
       hiddenFeatureTypes: [],
       hiddenCategories: [],
@@ -370,8 +370,7 @@ export class ZsMapStateService {
     });
   }
 
-  // layers
-
+  // draw layers
   public getLayer(layer: string): ZsMapBaseLayer {
     return this._layerCache[layer];
   }
@@ -474,23 +473,23 @@ export class ZsMapStateService {
     }
   }
 
-  // features
-  public observeSelectedFeatures$(): Observable<GeoFeature[]> {
+  // layers
+  public observeSelectedMapLayers$(): Observable<MapLayer[]> {
     return this._display.pipe(
       map((o) => {
-        return o?.features?.filter((feature) => !feature.deleted);
+        return o?.layers?.filter((feature) => !feature.deleted);
       }),
-      distinctUntilChanged((x, y) => x === y),
+      distinctUntilChanged((x, y) => x.length === y.length && x.map((l, i) => l === y[i]).filter((l) => l).length === x.length),
     );
   }
 
-  public observeFeature$(serverLayerName: string): Observable<GeoFeature | undefined> {
+  public observeMapLayers$(serverLayerName: string): Observable<MapLayer | undefined> {
     return this._display.pipe(
       map((o) => {
-        return o?.features?.find((feature) => feature.serverLayerName === serverLayerName);
+        return o?.layers?.find((layer) => layer.serverLayerName === serverLayerName);
       }),
       distinctUntilChanged((x, y) => x === y),
-      takeWhile((feature) => Boolean(feature)),
+      takeWhile((layer) => Boolean(layer)),
     );
   }
 
@@ -504,28 +503,28 @@ export class ZsMapStateService {
     );
   }
 
-  public addFeature(feature: GeoFeature) {
+  public addMapLayer(layer: MapLayer) {
     this.updateDisplayState((draft) => {
-      let maxIndex = Math.max(...(draft.features.map((f) => f.zIndex).filter(Boolean) as number[]));
+      let maxIndex = Math.max(...draft.layers.map((f) => f.zIndex));
       maxIndex = Number.isInteger(maxIndex) ? maxIndex + 1 : 0;
-      draft.features.unshift({ ...feature, deleted: false, zIndex: maxIndex });
+      draft.layers.unshift({ ...layer, deleted: false, zIndex: maxIndex });
     });
   }
 
-  public removeFeature(index: number) {
+  public removeMapLayer(index: number) {
     this.updateDisplayState((draft) => {
-      draft.features.splice(index, 1);
+      draft.layers.splice(index, 1);
     });
   }
 
-  public sortFeatureUp(index: number) {
+  public sortMapLayerUp(index: number) {
     this.updateDisplayState((draft) => {
-      const feature = draft.features[index];
-      const currentZIndex = feature.zIndex;
+      const layer = draft.layers[index];
+      const currentZIndex = layer.zIndex;
 
-      draft.features[index - 1].zIndex = currentZIndex;
-      feature.zIndex = currentZIndex + 1;
-      draft.features.sort((a, b) => b.zIndex - a.zIndex);
+      draft.layers[index - 1].zIndex = currentZIndex;
+      layer.zIndex = currentZIndex + 1;
+      draft.layers.sort((a, b) => b.zIndex - a.zIndex);
     });
   }
 
@@ -552,27 +551,27 @@ export class ZsMapStateService {
     this._currentMapCenter.next(coordinates);
   }
 
-  public sortFeatureDown(index: number) {
+  public sortMapLayerDown(index: number) {
     this.updateDisplayState((draft) => {
-      const feature = draft.features[index];
-      const currentZIndex = feature.zIndex;
+      const layer = draft.layers[index];
+      const currentZIndex = layer.zIndex;
 
-      draft.features[index + 1].zIndex = currentZIndex;
-      feature.zIndex = currentZIndex - 1;
-      draft.features.sort((a, b) => b.zIndex - a.zIndex);
+      draft.layers[index + 1].zIndex = currentZIndex;
+      layer.zIndex = currentZIndex - 1;
+      draft.layers.sort((a, b) => b.zIndex - a.zIndex);
     });
   }
 
-  public setFeatureOpacity(index: number, opacity: number | null) {
+  public setMapLayerOpacity(index: number, opacity: number | null) {
     this.updateDisplayState((draft) => {
-      draft.features[index].opacity = opacity ?? 0;
+      draft.layers[index].opacity = opacity ?? 0;
     });
   }
 
-  public toggleFeature(item: GeoFeature, index: number) {
+  public toggleMapLayer(item: MapLayer, index: number) {
     const hidden = !item.hidden;
     this.updateDisplayState((draft) => {
-      draft.features[index].hidden = hidden;
+      draft.layers[index].hidden = hidden;
     });
   }
 

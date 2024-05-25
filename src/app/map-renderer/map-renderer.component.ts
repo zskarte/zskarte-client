@@ -3,7 +3,7 @@ import { defaults, Draw, Modify, Select, Translate } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil, concatMap } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -37,7 +37,7 @@ import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { Layer } from 'ol/layer';
-import { OlTileLayer, OlTileLayerType } from './utils';
+import { GeoAdminMapLayer } from '../core/entity/map-layer-interface';
 
 @Component({
   selector: 'app-map-renderer',
@@ -65,7 +65,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _view!: OlView;
   private _geolocation!: OlGeolocation;
   private _modify!: Modify;
-  private _mapLayer: Layer = new OlTileLayer({
+  private _mapLayer: Layer = new Layer({
     zIndex: 0,
   });
   private _navigationLayer!: VectorLayer<VectorSource>;
@@ -79,7 +79,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _allLayers: VectorLayer<VectorSource>[] = [];
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
-  private _featureLayerCache: Map<string, OlTileLayerType> = new Map();
+  private _mapLayerCache: Map<string, Layer> = new Map();
   private _modifyCache = new Collection<Feature>([]);
   private _currentSketch: FeatureLike | undefined;
   private _rotating = false;
@@ -657,37 +657,39 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
-      .observeSelectedFeatures$()
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((features) => {
-        // removed features
-        const cacheNames = Array.from(this._featureLayerCache.keys());
-        features
-          .filter((el) => !cacheNames.includes(el.serverLayerName))
-          .forEach(async (feature) => {
-            const layers = await this.geoAdminService.createGeoAdminLayer(feature);
-            layers.forEach((layer, index) => {
-              this._map.addLayer(layer);
-              const name = index > 0 ? `${feature.serverLayerName}:${index}` : feature.serverLayerName;
-              // @ts-expect-error "we know the type is correct"
-              this._featureLayerCache.set(name, layer);
+      .observeSelectedMapLayers$()
+      .pipe(
+        takeUntil(this._ngUnsubscribe),
+        concatMap(async (mapLayers) => {
+          const cacheNames = Array.from(this._mapLayerCache.keys());
+          mapLayers = mapLayers.filter((el) => !cacheNames.includes(el.serverLayerName));
+          for (const mapLayer of mapLayers) {
+            const olLayers = await this.geoAdminService.createGeoAdminLayer(mapLayer as GeoAdminMapLayer);
+            olLayers.forEach((olLayer, index) => {
+              this._map.addLayer(olLayer);
+              const name = index > 0 ? `${mapLayer.serverLayerName}:${index}` : mapLayer.serverLayerName;
+              this._mapLayerCache.set(name, olLayer);
 
-              // observe feature changes
-              this._state.observeFeature$(feature.serverLayerName).subscribe({
-                next: (updatedFeature) => {
-                  if (updatedFeature) {
-                    layer.setZIndex(updatedFeature.zIndex);
-                    layer.setOpacity(updatedFeature.opacity);
-                    layer.setVisible(!updatedFeature.hidden && updatedFeature.opacity !== 0);
+              // observe mapLayer changes
+              this._state.observeMapLayers$(mapLayer.serverLayerName).subscribe({
+                next: (updatedLayer) => {
+                  if (updatedLayer) {
+                    olLayer.setZIndex(updatedLayer.zIndex);
+                    olLayer.setOpacity(updatedLayer.opacity);
+                    olLayer.setVisible(!updatedLayer.hidden && updatedLayer.opacity !== 0);
                   }
                 },
                 complete: () => {
-                  this._map.removeLayer(layer);
-                  this._featureLayerCache.delete(name);
+                  this._map.removeLayer(olLayer);
+                  this._mapLayerCache.delete(name);
                 },
               });
             });
-          });
+          }
+        }),
+      )
+      .subscribe(() => {
+        //real handling is done in concatMap as this can handle async correctly (wait for finish before next is started)
       });
 
     this._state

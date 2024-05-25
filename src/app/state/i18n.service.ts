@@ -844,9 +844,9 @@ export class I18NService {
       fr: 'Catégories',
     },
     navigateOperations: {
-      de: 'Zurück zu Operationen',
-      en: 'Back to Operations',
-      fr: 'Retour aux opérations',
+      de: 'Zurück zu Ereignisse',
+      en: 'Back to events',
+      fr: 'Retour aux événements',
     },
     expand: {
       de: 'Ansicht wechseln',

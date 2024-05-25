@@ -1,7 +1,3 @@
-.features {
-  margin-left: 1em;
-}
-
 .selectedLayer {
   margin-top: 1em;
   margin-bottom: 1em;
@@ -45,7 +41,7 @@ mat-slider {
 }
 
 .button-download {
-  margin-bottom: 1rem;
+  margin-left: 40px;
 }
 
 .material-icons {
