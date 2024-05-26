@@ -1,0 +1,18 @@
+.sectionTitle {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.availableSources, .favoriteLayers, .selectedLayers, .availableLayers {
+  max-height: 300px;
+  overflow: auto;
+}
+
+.sourceControl mat-form-field {
+  margin-bottom: 5px;
+}

@@ -1,3 +1,4 @@
+<button mat-raised-button class="organisationSettings" *ngIf="mapState.isExpertView()" (click)="editLayerSettings()" [innerText]="i18n.get('organisationSettings')"></button>
 <mat-accordion multi displayMode="flat">
   <mat-expansion-panel class="mat-elevation-z0">
     <mat-expansion-panel-header>
@@ -75,6 +76,7 @@
             <mat-divider *ngIf="!last"></mat-divider>
           </div>
           <button mat-raised-button class="expertButton" color="primary" *ngIf="mapState.isExpertView()" (click)="addNewLayer()" [innerText]="i18n.get('addNewLayer')"></button>
+          <button mat-raised-button class="expertButton" color="primary" *ngIf="mapState.isExpertView()" (click)="persistLayers()" [innerText]="i18n.get('persistLayers')"></button>
         </div>
       </ng-template>
     </mat-expansion-panel>
@@ -93,7 +95,7 @@
             *ngFor="let item of favouriteLayers"
             mat-list-item
             (click)="selectLayer(item)"
-            title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}})"
+            title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}}{{item.id ? '; ' + i18n.get('globalMapLayerTitleSuffix') : ''}})"
           >
             {{ item.label }}
           </button>
@@ -114,6 +116,7 @@
           <mat-select [formControl]="sourceFilter">
             <mat-option value="ALL">{{ i18n.get('allSources') }}</mat-option>
             <mat-option value="_GeoAdmin_">GeoAdmin</mat-option>
+            <mat-option value="_GlobalMapLayers_">{{ i18n.get('globalMapLayers') }}</mat-option>
             <mat-option *ngFor="let item of mapState.observeWmsSources$() | async" [value]="item.url">
               {{item.label}} <mat-icon class="wmsSourceError" *ngIf="wmsSourceLoadErrors[item.url]" [title]="wmsSourceLoadErrors[item.url]">warning</mat-icon>
             </mat-option>
@@ -130,7 +133,7 @@
           *ngFor="let item of filteredAvailableLayers$ | async"
           mat-list-item
           (click)="selectLayer(item)"
-          title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}})"
+          title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}}{{item.id ? '; ' + i18n.get('globalMapLayerTitleSuffix') : ''}})"
         >
           {{ item.label }}
         </button>

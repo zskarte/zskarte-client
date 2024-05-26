@@ -14,7 +14,10 @@ import { WmsService } from '../../map-layer/wms/wms.service';
 import { WmsSourceComponent } from '../../map-layer/wms/wms-source/wms-source.component';
 import { WmsLayerOptionsComponent } from '../../map-layer/wms/wms-layer-options/wms-layer-options.component';
 import { SessionService } from '../../session/session.service';
+import { isEqual } from 'lodash';
 import { OperationService } from '../../session/operations/operation.service';
+import { OrganisationLayerSettingsComponent } from '../../map-layer/organisation-layer-settings/organisation-layer-settings.component';
+import { IZsMapOrganizationMapLayerSettings } from '../../session/operations/operation.interfaces';
 
 @Component({
   selector: 'app-sidebar',
@@ -88,9 +91,11 @@ export class SidebarComponent {
       }),
     );
 
-    this.allLayers$ = combineLatest([geoAdminLayers$, wmsLayers$]).pipe(
-      map(([geo, wms]) => {
-        return [...geo, ...wms];
+    const globalMapLayers$ = mapState.observeGlobalMapLayers$();
+
+    this.allLayers$ = combineLatest([geoAdminLayers$, wmsLayers$, globalMapLayers$]).pipe(
+      map(([geo, wms, globalMapLayers]) => {
+        return [...geo, ...wms, ...globalMapLayers];
       }),
     );
 
@@ -107,19 +112,32 @@ export class SidebarComponent {
       map(([layers, filter, source]) => {
         layers = layers.sort((a: MapLayer, b: MapLayer) => a.label.localeCompare(b.label));
         if (source !== 'ALL') {
-          const sourceFilter = source === '_GeoAdmin_' ? undefined : source;
-          layers = layers.filter((f) => f.source?.url === sourceFilter);
+          if (source === '_GlobalMapLayers_') {
+            layers = layers.filter((f) => f.id !== undefined);
+          } else {
+            const sourceFilter = source === '_GeoAdmin_' ? undefined : source;
+            layers = layers.filter((f) => f.source?.url === sourceFilter);
+          }
         }
         return filter === '' ? layers : layers.filter((f) => f.label.toLowerCase().includes(filter?.toLowerCase() ?? ''));
       }),
     );
 
-    this.favouriteLayers$ = availableLayers$.pipe(
-      map((layers) =>
-        layers
-          .filter((layer: MapLayer) => this.favouriteLayerList.includes(layer.fullId))
-          .sort((a: MapLayer, b: MapLayer) => a.label.localeCompare(b.label)),
-      ),
+    this.favouriteLayers$ = combineLatest([_session.observeFavoriteLayers$(), mapState.observeSelectedMapLayers$(), availableLayers$]).pipe(
+      map(([favoriteLayers, selectedLayers, availableLayers]) => {
+        if (favoriteLayers?.length) {
+          const selectedIds = selectedLayers.map((l: MapLayer) => l.id);
+          return mapState
+            .getGlobalMapLayers()
+            .filter((l) => l.id && favoriteLayers.includes(l.id))
+            .filter((l) => !l.id || !selectedIds.includes(l.id))
+            .sort((a: MapLayer, b: MapLayer) => a.label.localeCompare(b.label));
+        } else {
+          return availableLayers
+            .filter((layer: MapLayer) => this.favouriteLayerList.includes(layer.fullId))
+            .sort((a: MapLayer, b: MapLayer) => a.label.localeCompare(b.label));
+        }
+      }),
     );
 
     db.localMapMeta.toArray().then((downloadedMaps) => {
@@ -155,13 +173,55 @@ export class SidebarComponent {
     this.mapState.addMapLayer(layer);
   }
 
+  async editLayerSettings() {
+    const wmsSources = this.mapState.getGlobalWmsSources();
+    const globalMapLayers = this.mapState.getGlobalMapLayers();
+    const allLayers = await firstValueFrom(this.allLayers$);
+    const selectedLayers = [...(await firstValueFrom(this.mapState.observeSelectedMapLayers$()))];
+    const selectedSources = (await firstValueFrom(this.mapState.observeWmsSources$())) || [];
+    const organization = this._session.getOrganization();
+    const settingsDialog = this.dialog.open(OrganisationLayerSettingsComponent, {
+      data: { wmsSources, globalMapLayers, allLayers, selectedLayers, selectedSources, organization },
+    });
+    settingsDialog.afterClosed().subscribe((result: IZsMapOrganizationMapLayerSettings) => {
+      if (result) {
+        //set selectedLayers on state, to make sure now saved layers have the new id information available.
+        this.mapState.updateDisplayState((draft) => {
+          draft.layers = selectedLayers;
+        });
+        //persist organisation settings
+        this._session.saveOrganizationMapLayerSettings(result);
+      }
+    });
+  }
+
   async editWmsSources() {
     const sources = (await firstValueFrom(this.mapState.observeWmsSources$())) || [];
     const sourceDialog = this.dialog.open(WmsSourceComponent, {
       data: sources,
     });
-    sourceDialog.afterClosed().subscribe((changedSources: WmsSource[]) => {
+    sourceDialog.afterClosed().subscribe(async (changedSources: WmsSource[]) => {
       if (changedSources) {
+        const ownSources = changedSources.filter((s) => s.owner);
+        const changedOwnSources = ownSources.filter((ownSource) => {
+          let source = sources.find((s) => s.owner && s.id === ownSource.id);
+          if (!source) {
+            source = sources.find((s) => s.owner && s.url === ownSource.url);
+          }
+          return !source || !isEqual(ownSource, source);
+        });
+        const organizationId = this._session.getOrganizationId();
+        if (organizationId) {
+          for (const changedOwnSource of changedOwnSources) {
+            const updatedSource = await this.wmsService.saveGlobalWMSSource(changedOwnSource, organizationId);
+            if (updatedSource) {
+              const index = changedSources.indexOf(changedOwnSource);
+              if (index !== -1) {
+                changedSources[index] = updatedSource;
+              }
+            }
+          }
+        }
         this.mapState.setWmsSources(changedSources);
         this.mapState.reloadAllMapLayers();
       }
@@ -185,6 +245,26 @@ export class SidebarComponent {
 
   addNewLayer() {
     this.showWmsLayerOptions({ type: 'wms_custom', serverLayerName: '' } as WMSMapLayer, -1);
+  }
+
+  async persistLayers() {
+    const operationId = this._session.getOperationId();
+    if (operationId) {
+      const mapSource = await firstValueFrom(this.mapState.observeMapSource());
+      const selectedLayers = await firstValueFrom(this.mapState.observeSelectedMapLayers$());
+
+      //only save difference to globalMapLayer informations
+      //if this is saved like that it's clean but complicated to rehydrate the required informations on loading...
+      //const allLayers = await firstValueFrom(this.allLayers$);
+      //const layerConfigs = selectedLayers.map((layer) => MapLayerService.extractMapLayerDiffs(layer, allLayers));
+      const layerConfigs = selectedLayers;
+      const mapLayers = { baseLayer: mapSource, layerConfigs };
+      const operation = this._session.getOperation();
+      if (operation) {
+        operation.mapLayers = mapLayers;
+      }
+      this.operationService.updateMapLayers(operationId, mapLayers);
+    }
   }
 
   // skipcq: JS-0105

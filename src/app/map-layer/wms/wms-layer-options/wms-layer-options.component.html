@@ -26,6 +26,10 @@
     <mat-label>{{ i18n.get('wmsLayerName') }}</mat-label>
     <input matInput type="text" [(ngModel)]="layer.serverLayerName" [disabled]="layer.type !== 'wms_custom'"/>
   </mat-form-field>
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('publicSource') }}</legend>
+    <mat-checkbox [checked]="layer.public" (change)="layer.public = $event.checked">{{ i18n.get('publicSourceInfo') }}</mat-checkbox>
+  </fieldset>
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('label') }}</mat-label>
     <input matInput type="text" [(ngModel)]="layer.label" />

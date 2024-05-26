@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from, of, tap } from 'rxjs';
 import { Coordinate } from 'ol/coordinate';
 import { mercatorProjection, swissProjection } from '../../helper/projections';
-import { MapLayer, WMSMapLayer, WmsSource } from '../map-layer-interface';
+import { MapLayer, WMSMapLayer, WmsSource, WmsSourceApi } from '../map-layer-interface';
 import WMTSCapabilities from 'ol/format/WMTSCapabilities';
 import OlTileWMTS, { optionsFromCapabilities } from 'ol/source/WMTS';
 import WMSCapabilities from 'ol/format/WMSCapabilities';
@@ -12,6 +12,7 @@ import OlTileLayer from '../../map-renderer/utils';
 import ImageLayer from 'ol/layer/Image';
 import ImageWMS from 'ol/source/ImageWMS';
 import { LOG2_ZOOM_0_RESOLUTION, DEFAULT_RESOLUTION } from '../../session/default-map-values';
+import { ApiResponse, ApiService } from '../../api/api.service';
 import TileGrid, { Options as TileGridOptions } from 'ol/tilegrid/TileGrid';
 import { getForProjection } from 'ol/tilegrid';
 import { MapLayerService } from '../map-layer.service';
@@ -30,7 +31,10 @@ export class WmsService {
   private _legendCache: Map<string, Map<string, string | null>> = new Map();
   private _sourceAttributionCache: Map<string, string[]> = new Map();
 
-  constructor(private _mapLayerService: MapLayerService) {}
+  constructor(
+    private _api: ApiService,
+    private _mapLayerService: MapLayerService,
+  ) {}
 
   public invalidateCache(capaUrl: string) {
     this._capabilitiesCache.delete(capaUrl);
@@ -499,5 +503,42 @@ export class WmsService {
         mapLayer.tileFormat,
       ),
     ];
+  }
+
+  static mapWmsSourceResponse(source: WmsSourceApi, organizationId: number) {
+    source.owner = source.organization?.id === organizationId;
+    delete source.organization;
+    delete source.createdAt;
+    delete source.updatedAt;
+    return source as WmsSource;
+  }
+
+  async readGlobalWMSSources(organizationId: number) {
+    const { error, result: sources } = await this._api.get<WmsSourceApi[]>('/api/wms-sources');
+    if (error || !sources) {
+      return [];
+    }
+    return sources.map((source) => WmsService.mapWmsSourceResponse(source, organizationId));
+  }
+
+  async saveGlobalWMSSource(source: WmsSource, organizationId: number) {
+    if (!source.owner) {
+      return null;
+    }
+    let response: ApiResponse<WmsSourceApi>;
+    if (source.id) {
+      response = await this._api.put(`/api/wms-sources/${source.id}`, {
+        data: { ...source, organization: organizationId },
+      });
+    } else {
+      response = await this._api.post('/api/wms-sources', { data: { ...source, organization: organizationId } });
+    }
+    const { error, result } = response;
+    if (error) {
+      console.error('saveGlobalWMSSource', error);
+    } else if (result) {
+      return WmsService.mapWmsSourceResponse(result, organizationId);
+    }
+    return null;
   }
 }

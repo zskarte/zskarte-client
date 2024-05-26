@@ -3,6 +3,7 @@ import { ZsMapStateService } from 'src/app/state/state.service';
 import { I18NService } from '../../../state/i18n.service';
 import { WmsSource } from '../../map-layer-interface';
 import { WmsService } from '../wms.service';
+import { BehaviorSubject } from 'rxjs';
 import { MatSelectChange } from '@angular/material/select';
 import { MatRadioChange } from '@angular/material/radio';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -15,12 +16,18 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class WmsSourceComponent {
   selectedSource?: WmsSource;
   fullUrl = '';
+  selectGlobalSourceMode = false;
+  globalSources: WmsSource[];
+  globalSource?: WmsSource;
+  filteredGlobalSources$: BehaviorSubject<WmsSource[]>;
   constructor(
     @Inject(MAT_DIALOG_DATA) public sources: WmsSource[],
     public mapState: ZsMapStateService,
     public wmsService: WmsService,
     public i18n: I18NService,
   ) {
+    this.globalSources = mapState.getGlobalWmsSources();
+    this.filteredGlobalSources$ = new BehaviorSubject(this.globalSources);
     //read sources and create local copy from them
     this.sources = [...sources].map((item) => {
       const clone = { ...item };
@@ -29,6 +36,8 @@ export class WmsSourceComponent {
       }
       return clone;
     });
+    const sourceIds = this.sources.map((s) => s.id);
+    this.filteredGlobalSources$.next(this.globalSources.filter((s) => !s.id || !sourceIds.includes(s.id)));
   }
 
   updateFullUrl($event: MatRadioChange | Event | null) {
@@ -64,9 +73,12 @@ export class WmsSourceComponent {
 
   onSelectionChange($event: MatSelectChange) {
     if ($event.value === '__NEW__') {
-      const newSource: WmsSource = { type: 'wms', url: 'https://', label: '' };
+      const newSource: WmsSource = { type: 'wms', url: 'https://', label: '', owner: true, public: false };
       this.selectedSource = newSource;
       this.sources.push(newSource);
+    } else if ($event.value === '__SELECT__') {
+      this.selectedSource = undefined;
+      this.selectGlobalSourceMode = true;
     } else if ($event.value) {
       this.selectedSource = $event.value;
       this.updateFullUrl(null);
@@ -79,6 +91,22 @@ export class WmsSourceComponent {
       this.sources.splice(index, 1);
       this.selectedSource = undefined;
       this.fullUrl = '';
+
+      const sourceIds = this.sources.map((s) => s.id);
+      this.filteredGlobalSources$.next(this.globalSources.filter((s) => !s.id || !sourceIds.includes(s.id)));
+    }
+  }
+
+  addSource() {
+    if (this.globalSource) {
+      this.selectGlobalSourceMode = false;
+      this.sources.push(this.globalSource);
+      this.selectedSource = this.globalSource;
+      this.updateFullUrl(null);
+      this.globalSource = undefined;
+
+      const sourceIds = this.sources.map((s) => s.id);
+      this.filteredGlobalSources$.next(this.globalSources.filter((s) => !s.id || !sourceIds.includes(s.id)));
     }
   }
 }

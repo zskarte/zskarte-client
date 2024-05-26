@@ -63,7 +63,7 @@ mat-slider {
   color:red;
 }
 
-.expertButton {
+.organisationSettings, .expertButton {
   transform: translateX(-50%);
   left: 50%;
   margin-bottom: 5px;

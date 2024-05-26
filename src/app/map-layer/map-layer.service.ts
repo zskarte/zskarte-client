@@ -1,14 +1,28 @@
 import { Injectable, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Coordinate } from 'ol/coordinate';
+import {
+  MapLayerOptionsApi,
+  MapLayerApi,
+  WmsSource,
+  MapLayerSourceApi,
+  MapSource,
+  MapLayer,
+  MapLayerAllFields,
+} from './map-layer-interface';
 import { LOG2_ZOOM_0_RESOLUTION, DEFAULT_RESOLUTION } from '../session/default-map-values';
+import { ApiResponse, ApiService } from '../api/api.service';
+import { getPropertyDifferences } from '../helper/diff';
 import TileGrid, { Options as TileGridOptions } from 'ol/tilegrid/TileGrid';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MapLayerService {
-  constructor(private _domSanitizer: DomSanitizer) {}
+  constructor(
+    private _domSanitizer: DomSanitizer,
+    private _api: ApiService,
+  ) {}
 
   public sanitizeHTML(html: string) {
     return this._domSanitizer.sanitize(SecurityContext.HTML, html) ?? '';
@@ -67,5 +81,130 @@ export class MapLayerService {
     }
     //no idea why the * 0.97 is required to make value match more accurate
     return (LOG2_ZOOM_0_RESOLUTION - Math.log2(scaleDenominator / DEFAULT_RESOLUTION)) * 0.97;
+  }
+
+  static getMapSource(layerSource: MapLayerSourceApi, sources: (WmsSource | MapSource)[]) {
+    let source: WmsSource | MapSource | undefined;
+    if (Number.isFinite(layerSource.wms_source)) {
+      source = sources.find((source) => source.id === layerSource.wms_source);
+    } else if (layerSource.wms_source instanceof Object && layerSource.wms_source.id) {
+      const sourceId = layerSource.wms_source.id;
+      source = sources.find((source) => source.id === sourceId);
+    } else if (layerSource.custom_source) {
+      source = { url: layerSource.custom_source };
+    }
+    return source;
+  }
+
+  static convertMapLayerFromApi(mapLayerApi: MapLayerApi, sources: (WmsSource | MapSource)[], organizationId: number) {
+    const source = MapLayerService.getMapSource(mapLayerApi, sources);
+    const layer: MapLayer = {
+      id: mapLayerApi.id,
+      label: mapLayerApi.label,
+      serverLayerName: mapLayerApi.serverLayerName,
+      type: mapLayerApi.type,
+      public: mapLayerApi.public,
+      source,
+      ...mapLayerApi.options,
+      opacity: mapLayerApi.options.opacity ?? 0.75,
+      owner: false,
+      fullId: `${source?.url}|${mapLayerApi.serverLayerName}|${mapLayerApi.id}`,
+      hidden: false,
+      zIndex: 0,
+    };
+    layer.owner = mapLayerApi.organization?.id === organizationId;
+    return layer;
+  }
+
+  async readGlobalMapLayers(sources: WmsSource[], organizationId: number) {
+    const { error, result: mapLayers } = await this._api.get<MapLayerApi[]>('/api/map-layers');
+    if (error || !mapLayers) {
+      return [];
+    }
+    return mapLayers.map((layer) => MapLayerService.convertMapLayerFromApi(layer, sources, organizationId));
+  }
+
+  static convertMapLayerToApi(mapLayer: MapLayer): MapLayerApi {
+    const cleanedOptions: MapLayerAllFields = { ...mapLayer };
+    // delete values for main object / from PresistedSettings
+    delete cleanedOptions.id;
+    delete cleanedOptions.owner;
+    delete cleanedOptions.public;
+    // delete values for main object & from MapLayerGeneralSettings
+    delete cleanedOptions.label;
+    delete cleanedOptions.serverLayerName;
+    delete cleanedOptions.type;
+    // delete values for main object & from MapLayer
+    delete cleanedOptions.source;
+    delete cleanedOptions.fullId;
+    // delete display specific values / from SelectedMapLayerSettings
+    delete cleanedOptions.deleted;
+    delete cleanedOptions.zIndex;
+    const options: MapLayerOptionsApi = cleanedOptions;
+    return {
+      id: mapLayer.id,
+      public: mapLayer.public,
+      label: mapLayer.label,
+      serverLayerName: mapLayer.serverLayerName,
+      type: mapLayer.type,
+      wms_source: mapLayer.source?.id,
+      custom_source: !mapLayer.source?.id ? mapLayer.source?.url : undefined,
+      options,
+    };
+  }
+
+  async saveGlobalMapLayer(mapLayer: MapLayer, organizationId: number) {
+    if (!mapLayer.owner) {
+      return null;
+    }
+    let response: ApiResponse<MapLayerApi>;
+    const layerApi = MapLayerService.convertMapLayerToApi(mapLayer);
+    if (mapLayer.id) {
+      response = await this._api.put(`/api/map-layers/${mapLayer.id}`, {
+        data: { ...layerApi, organization: organizationId },
+      });
+    } else {
+      response = await this._api.post('/api/map-layers', { data: { ...layerApi, organization: organizationId } });
+    }
+    const { error, result } = response;
+    if (error) {
+      console.error('saveGlobalMapLayer', error);
+    } else if (result) {
+      const mapped = MapLayerService.convertMapLayerFromApi(result, mapLayer.source ? [mapLayer.source] : [], organizationId);
+      mapped.source = mapLayer.source;
+      mapped.owner = mapLayer.owner;
+      mapped.fullId = `${mapped?.source?.url}|${mapped.serverLayerName}|${mapped.id}`;
+      return mapped;
+    }
+    return null;
+  }
+
+  static extractMapLayerDiffs(mapLayer: MapLayer, allLayers: MapLayer[]) {
+    let reducedFeature: Partial<MapLayer> & MapLayerSourceApi;
+    if (!mapLayer.source || mapLayer.type === 'wmts') {
+      //no detail comparison for GeoAdmin and WMTS layers needed
+      reducedFeature = {
+        serverLayerName: mapLayer.serverLayerName,
+        opacity: mapLayer.opacity,
+        hidden: mapLayer.hidden,
+        zIndex: mapLayer.zIndex,
+        source: mapLayer.source,
+      };
+    } else {
+      const defaultLayer = allLayers.find((g) => g.fullId === mapLayer.fullId);
+      if (defaultLayer) {
+        reducedFeature = getPropertyDifferences(defaultLayer, mapLayer, ['id', 'serverLayerName', 'source'], { source: ['id', 'url'] });
+      } else {
+        reducedFeature = { ...mapLayer };
+      }
+      delete reducedFeature.deleted;
+    }
+    if (reducedFeature.source?.id) {
+      reducedFeature.wms_source = reducedFeature.source.id;
+    } else if (reducedFeature.source?.url) {
+      reducedFeature.custom_source = reducedFeature.source.url;
+    }
+    delete reducedFeature.source;
+    return reducedFeature;
   }
 }
