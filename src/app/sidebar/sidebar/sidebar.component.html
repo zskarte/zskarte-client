@@ -60,9 +60,9 @@
           >
             <div class="titleRow">
               <div class="title">{{ item.label }}</div>
-              <i (click)="showLegend(item)" *ngIf="item.type !== 'geojson'" class="material-icons">info</i>
+              <i (click)="showLegend(item)" *ngIf="item.type !== 'geojson' && item.type !== 'csv'" class="material-icons">info</i>
               <i (click)="showWmsLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'wms' || item.type === 'wms_custom')" class="material-icons">settings</i>
-              <i (click)="showGeoJSONLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'geojson')" class="material-icons">settings</i>
+              <i (click)="showGeoJSONLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'geojson' || item.type === 'csv')" class="material-icons">settings</i>
               <i (click)="mapState.toggleMapLayer(item, index)" *ngIf="!item.hidden" class="material-icons">visibility_off</i>
               <i (click)="mapState.toggleMapLayer(item, index)" *ngIf="item.hidden" class="material-icons">visibility_on</i>
               <i (click)="mapState.removeMapLayer(index)" class="material-icons">remove_circle_outline</i>
@@ -84,6 +84,7 @@
                 <mat-radio-group [(ngModel)]="newLayerType">
                   <mat-radio-button value="wms_custom">WMS (custom)</mat-radio-button>
                   <mat-radio-button value="geojson">GeoJSON</mat-radio-button>
+                  <mat-radio-button value="csv">CSV</mat-radio-button>
                 </mat-radio-group>
               </fieldset>
             </div>

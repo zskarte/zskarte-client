@@ -267,7 +267,7 @@ export class SidebarComponent {
     optionsDialog.afterClosed().subscribe((type: string) => {
       if (type === 'wms_custom') {
         this.showWmsLayerOptions({ type, serverLayerName: '' } as WMSMapLayer, -1);
-      } else if (type === 'geojson') {
+      } else if (type === 'geojson' || type === 'csv') {
         this.showGeoJSONLayerOptions({ type, opacity: 1.0, serverLayerName: null } as GeoJSONMapLayer, -1);
       }
     });

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { GeoJSONMapLayer } from '../map-layer-interface';
+import { GeoJSONMapLayer, CsvMapLayer } from '../map-layer-interface';
 import { Feature } from 'ol';
 import { Coordinate } from 'ol/coordinate';
 import { Geometry, LineString, Point } from 'ol/geom';
-import { containsExtent, getCenter } from 'ol/extent';
+import { Extent, containsExtent, getCenter } from 'ol/extent';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -12,7 +12,8 @@ import { MapLayerService } from '../map-layer.service';
 import { stylefunction } from 'ol-mapbox-style';
 import { StyleLike } from 'ol/style/Style';
 import { IZsMapSearchResult } from '../../state/interfaces';
-import { transformExtent } from 'ol/proj';
+import { transformExtent, transform } from 'ol/proj';
+import { inferSchema, initParser, SchemaColumnType } from 'udsv';
 
 const NumberSortCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 @Injectable({
@@ -52,12 +53,79 @@ export class GeoJSONService {
       });
   }
 
+  static async fetchCsvData(layer: CsvMapLayer) {
+    if (!layer.source) {
+      return [];
+    }
+
+    const regexPatterns = layer.filterRegExPattern?.map((re) => ({
+      field: re[0],
+      regex: new RegExp(`^${re[1]}$`, re[2]),
+    }));
+    return await fetch(layer.source?.url)
+      .then((response) => response.text())
+      .then((csvContent) => {
+        //force defined delimiter
+        const schema = inferSchema(csvContent, { col: layer.delimiter });
+        //force number type for coord fields
+        schema.cols.filter((c) => c.name === layer.fieldX || c.name === layer.fieldY).forEach((c) => (c.type = SchemaColumnType.Number));
+        const parser = initParser(schema);
+        const csvLines = parser.typedObjs(csvContent, (rows, append) => {
+          rows = rows.filter((row) => {
+            if (isNaN(row[layer.fieldX]) || isNaN(row[layer.fieldY]) || (row[layer.fieldX] === 0 && row[layer.fieldY] === 0)) {
+              return false;
+            }
+            if (regexPatterns?.length) {
+              const matches = regexPatterns
+                .map((pattern) => row[pattern.field].match(pattern.regex))
+                .filter((match) => match) as RegExpMatchArray[];
+              if (!matches || matches.length !== regexPatterns.length) {
+                return false;
+              }
+            }
+            return true;
+          });
+          append(rows);
+        });
+
+        if (csvLines?.length && mercatorProjection) {
+          let insideExtent: Extent;
+          if (layer.extent) {
+            insideExtent = transformExtent(layer.extent, layer.dataProjection, mercatorProjection);
+          } else {
+            insideExtent = transformExtent(swissProjection.getExtent(), swissProjection, mercatorProjection);
+          }
+          const destProjection = mercatorProjection;
+          const features = csvLines
+            .map(
+              (csvLine) =>
+                new Feature({
+                  ...csvLine,
+                  geometry: new Point(transform([csvLine[layer.fieldX], csvLine[layer.fieldY]], layer.dataProjection, destProjection)),
+                }),
+            )
+            .filter((f) => {
+              //filter data not in desired extent
+              const extent = f.getGeometry()?.getExtent();
+              return extent && containsExtent(insideExtent, extent);
+            });
+          return features;
+        }
+        return [];
+      });
+  }
+
   async createGeoJSONLayer(layer: GeoJSONMapLayer) {
     const features = await GeoJSONService.fetchGeoJSONData(layer);
     return this.createLayerForFeatures(layer, features);
   }
 
-  async createLayerForFeatures(layer: GeoJSONMapLayer, features: Feature[]): Promise<VectorLayer<VectorSource<Feature>>[]> {
+  async createCsvLayer(layer: CsvMapLayer) {
+    const features = await GeoJSONService.fetchCsvData(layer);
+    return this.createLayerForFeatures(layer, features);
+  }
+
+  async createLayerForFeatures(layer: GeoJSONMapLayer | CsvMapLayer, features: Feature[]): Promise<VectorLayer<VectorSource<Feature>>[]> {
     if (!layer.source) {
       return [];
     }

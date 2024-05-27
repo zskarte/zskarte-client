@@ -1495,9 +1495,64 @@ export class I18NService {
       fr: "Dénominateur d'échelle maximum",
     },
     geojsonLayerSettings: {
-      de: 'Einstellungen der GeoJSON-Ebene',
-      en: 'GeoJSON layer settings',
-      fr: 'Paramètres de calque GeoJSON',
+      de: 'Einstellungen der GeoJSON/CSV-Ebene',
+      en: 'GeoJSON/CSV layer settings',
+      fr: 'Paramètres de calque GeoJSON/CSV',
+    },
+    delimiter: {
+      de: 'Trennzeichen',
+      en: 'delimiter',
+      fr: 'délimiteur',
+    },
+    fieldX: {
+      de: 'Feldname der X-Koordinate',
+      en: 'field name of the X coordinate ',
+      fr: 'nom du champ de la coordonnée X',
+    },
+    fieldY: {
+      de: 'Feldname der Y-Koordinate',
+      en: 'field name of the Y coordinate ',
+      fr: 'nom du champ de la coordonnée Y',
+    },
+    dataProjection: {
+      de: 'Konfigurationscode für die Datenprojektion',
+      en: 'Data projection configuration code',
+      fr: 'Code de configuration de la projection de données',
+    },
+    filterRegExPattern: {
+      de: 'RegEx Muster für Daten Filter',
+      en: 'RegEx pattern for data filters',
+      fr: 'Modèle RegEx pour les filtres de données',
+    },
+    filterRegExPatternInfo: {
+      de: 'Mehrere Werte als Wertegruppe zulassen, z.B.',
+      en: 'Allow multiple values be value group e.g.',
+      fr: 'Autoriser plusieurs valeurs à être un groupe de valeurs, par ex.',
+    },
+    filterRegExPatternInfo2: {
+      de: 'Werte durch negatives Lookbehind ausschliessen, z.B.',
+      en: 'Exclude values by negative lookbehind e.g.',
+      fr: 'Exclure les valeurs par lookbehind négatif, par ex.',
+    },
+    Field: {
+      de: 'Feld',
+      en: 'Field',
+      fr: 'Champ',
+    },
+    extent: {
+      de: 'Gültiger Bereich',
+      en: 'Valid area extent',
+      fr: 'Ètendue de zone valide',
+    },
+    limitExtent: {
+      de: 'Beschränken Sie die Daten auf einen bestimmten Bereich.',
+      en: 'Limit the data to a specific area.',
+      fr: 'Limitez les données à une zone spécifique.',
+    },
+    extentInfo: {
+      de: 'Der Bereich muss in Datenprojektion angegeben werden. Wenn kein Bereich definiert ist, wird es auf die Schweiz beschränkt.',
+      en: 'The area must be specified in dataProjection. If no area is defined, it will be limited to Switzerland.',
+      fr: "La zone doit être spécifiée dans projection de données. Si aucune zone n'est définie, le champ d'application est limité à la Suisse.",
     },
     styleSourceType: {
       de: 'Stilquellentyp',

@@ -1,9 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { I18NService } from '../../../state/i18n.service';
-import { GeoJSONMapLayer, WmsSource } from '../../map-layer-interface';
+import { CsvMapLayer, WmsSource } from '../../map-layer-interface';
 import { ZsMapStateService } from '../../../state/state.service';
 import { GeoJSONService } from '../geojson.service';
+import { Extent } from 'ol/extent';
 import { NgModel } from '@angular/forms';
 
 @Component({
@@ -13,8 +14,9 @@ import { NgModel } from '@angular/forms';
 })
 export class GeoJSONLayerOptionsComponent {
   sourceUrl = '';
+  lastExtent: Extent = [0, 0, 0, 0];
   constructor(
-    @Inject(MAT_DIALOG_DATA) public layer: GeoJSONMapLayer,
+    @Inject(MAT_DIALOG_DATA) public layer: CsvMapLayer,
     public dialogRef: MatDialogRef<GeoJSONLayerOptionsComponent>,
     public i18n: I18NService,
     public mapState: ZsMapStateService,
@@ -30,6 +32,12 @@ export class GeoJSONLayerOptionsComponent {
     if (layer.searchResultGroupingFilterFields) {
       layer.searchResultGroupingFilterFields = [...layer.searchResultGroupingFilterFields];
     }
+    if (layer.filterRegExPattern) {
+      layer.filterRegExPattern = layer.filterRegExPattern.map((a) => [...a]);
+    }
+    if (layer.extent) {
+      layer.extent = [...layer.extent];
+    }
 
     if (this.layer.source) {
       this.sourceUrl = this.layer.source.url;
@@ -42,6 +50,32 @@ export class GeoJSONLayerOptionsComponent {
     }
     if (this.layer.searchable === undefined) {
       this.layer.searchable = false;
+    }
+  }
+
+  toggleExtent(newVal: boolean) {
+    if (newVal) {
+      this.layer.extent = this.lastExtent;
+    } else {
+      if (this.layer.extent) {
+        this.lastExtent = this.layer.extent;
+      }
+      this.layer.extent = undefined;
+    }
+  }
+
+  removeFilterPattern(index: number) {
+    if (this.layer?.filterRegExPattern && this.layer.filterRegExPattern.length > index) {
+      this.layer.filterRegExPattern.splice(index, 1);
+    }
+  }
+
+  addFilterPattern() {
+    if (this.layer) {
+      if (!this.layer.filterRegExPattern) {
+        this.layer.filterRegExPattern = [];
+      }
+      this.layer.filterRegExPattern.push(['', '', '']);
     }
   }
 

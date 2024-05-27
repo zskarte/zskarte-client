@@ -1,3 +1,5 @@
+import { Extent } from 'ol/extent';
+
 interface PresistedSettings {
   id?: number;
   owner: boolean;
@@ -70,6 +72,15 @@ export interface GeoJSONMapLayer extends MapLayer, GenericOptionalMapLayerOption
   searchMaxResultCount?: number;
 }
 
+export interface CsvMapLayer extends GeoJSONMapLayer {
+  delimiter: string;
+  fieldX: string;
+  fieldY: string;
+  dataProjection: string;
+  filterRegExPattern?: string[][];
+  extent?: Extent;
+}
+
 export interface GeoAdminMapLayer extends MapLayer {
   serverLayerName: string;
   attribution: string;
@@ -95,7 +106,7 @@ export interface GeoAdminMapLayers {
   [key: string]: GeoAdminMapLayer;
 }
 
-export type MapLayerAllFields = Omit<Partial<GeoAdminMapLayer & WMSMapLayer & GeoJSONMapLayer>, 'serverLayerName'> &
+export type MapLayerAllFields = Omit<Partial<GeoAdminMapLayer & WMSMapLayer & CsvMapLayer>, 'serverLayerName'> &
   Partial<MapLayerGeneralSettings>;
 export interface MapLayerOptionsApi extends Omit<MapLayerAllFields, keyof MapLayer> {
   opacity?: number;

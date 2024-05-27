@@ -14,16 +14,34 @@ mat-form-field {
   margin-bottom: 5px;
 }
 
-.regexTitle, .attributionTitle {
+.regexTitle, .attributionTitle, .extentTitle {
   line-height: 1em;
 }
-.regexTitle div, .attributionTitle div {
+.regexTitle div, .attributionTitle div, .extentTitle div {
   display: inline-block;
   font-size: 0.8em;
 }
 
 .mat-icon {
   vertical-align: bottom;
+}
+
+.extent-field {
+  box-sizing: border-box;
+  width: 25%;
+}
+
+.attr-filter-field {
+  box-sizing: border-box;
+  width: 30%;
+}
+.attr-filter-regex {
+  box-sizing: border-box;
+  width: 55%;
+}
+.attr-filter-options {
+  box-sizing: border-box;
+  width: calc( 15% - 24px );
 }
 
 .attr-search-regex {
