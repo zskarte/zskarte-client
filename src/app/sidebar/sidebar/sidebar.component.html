@@ -1,3 +1,4 @@
+<button mat-raised-button class="organisationSettings" *ngIf="mapState.isExpertView()" (click)="editLayerSettings()" [innerText]="i18n.get('organisationSettings')"></button>
 <mat-accordion multi displayMode="flat">
   <mat-expansion-panel class="mat-elevation-z0">
     <mat-expansion-panel-header>
@@ -15,34 +16,34 @@
             <input matSliderThumb [ngModel]="mapState.observeMapOpacity() | async" (ngModelChange)="mapState.setMapOpacity($event)" />
           </mat-slider>
         </div>
-        <mat-action-list *ngFor="let layer of mapSources">
-          @if (isDownloadableMap(layer.key)) {
+        <mat-action-list *ngFor="let mapSource of mapSources">
+          <mat-radio-group>
+            <mat-radio-button [value]="mapSource.key" (click)="switchMapSource(mapSource.key)" [checked]="mapSource.selected">
+              {{ mapSource.translation }}
+            </mat-radio-button>
+          </mat-radio-group>
+          @if (isDownloadableMap(mapSource.key)) {
             <div>
-              @switch (mapDownloadStates[layer.key]) {
+              @switch (mapDownloadStates[mapSource.key]) {
                 @case ('loading') {
                   <mat-progress-bar color="primary" mode="indeterminate" />
                 }
                 @case ('downloaded') {
-                  <button mat-flat-button color="warn" color="warn" class="buttonDownload" (click)="removeLocalMap(layer.key)">
+                  <button mat-flat-button color="warn" color="warn" class="button-download" (click)="removeLocalMap(mapSource.key)">
                     Remove
                   </button>
                 }
                 @default {
-                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(layer.key)">Download</button>
+                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(mapSource.key)">Download</button>
                 }
               }
             </div>
           }
-          <mat-radio-group>
-            <mat-radio-button [value]="layer.key" (click)="switchLayer(layer.key)" [checked]="layer.selected">
-              {{ layer.translation }}
-            </mat-radio-button>
-          </mat-radio-group>
         </mat-action-list>
       </div>
     </ng-template>
   </mat-expansion-panel>
-  <ng-container *ngIf="(mapState.observeSelectedFeatures$() | async)?.length ?? 0 > 0">
+  <ng-container *ngIf="(mapState.observeSelectedMapLayers$() | async)?.length ?? 0 > 0">
     <mat-divider></mat-divider>
     <mat-expansion-panel class="mat-elevation-z0">
       <mat-expansion-panel-header>
@@ -53,25 +54,47 @@
       <ng-template matExpansionPanelContent>
         <div class="allSelected">
           <div
-            *ngFor="let item of mapState.observeSelectedFeatures$() | async; let index = index; let first = first; let last = last"
+            *ngFor="let item of mapState.observeSelectedMapLayers$() | async; let index = index; let first = first; let last = last"
             title="{{ item.label }}"
             class="selectedLayer"
           >
             <div class="titleRow">
               <div class="title">{{ item.label }}</div>
-              <i (click)="showLegend(item)" class="material-icons">info</i>
-              <i (click)="mapState.toggleFeature(item, index)" class="material-icons">visibility_off</i>
-              <i (click)="mapState.removeFeature(index)" class="material-icons">remove_circle_outline</i>
-              <i (click)="mapState.sortFeatureUp(index)" *ngIf="!first" class="material-icons">arrow_upward</i>
-              <i (click)="mapState.sortFeatureDown(index)" *ngIf="!last" class="material-icons">arrow_downward</i>
+              <i (click)="showLegend(item)" *ngIf="item.type !== 'geojson' && item.type !== 'csv'" class="material-icons">info</i>
+              <i (click)="showWmsLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'wms' || item.type === 'wms_custom')" class="material-icons">settings</i>
+              <i (click)="showGeoJSONLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'geojson' || item.type === 'csv')" class="material-icons">settings</i>
+              <i (click)="mapState.toggleMapLayer(item, index)" *ngIf="!item.hidden" class="material-icons">visibility_off</i>
+              <i (click)="mapState.toggleMapLayer(item, index)" *ngIf="item.hidden" class="material-icons">visibility_on</i>
+              <i (click)="mapState.removeMapLayer(index)" class="material-icons">remove_circle_outline</i>
+              <i (click)="mapState.sortMapLayerUp(index)" *ngIf="!first" class="material-icons">arrow_upward</i>
+              <i (click)="mapState.sortMapLayerDown(index)" *ngIf="!last" class="material-icons">arrow_downward</i>
             </div>
             <div>
-              <mat-slider [max]="1" [min]="0" [step]="0.1">
-                <input matSliderThumb [ngModel]="item.opacity" (ngModelChange)="mapState.setFeatureOpacity(index, $event)" />
+              <mat-slider [max]="1" [min]="0" [step]="0.1" [disabled]="item.hidden">
+                <input matSliderThumb [ngModel]="item.opacity" (ngModelChange)="mapState.setMapLayerOpacity(index, $event)" />
               </mat-slider>
             </div>
             <mat-divider *ngIf="!last"></mat-divider>
           </div>
+          <ng-template #newLayerTypeTemplate>
+            <div mat-dialog-title>{{ i18n.get('newLayerType') }}</div>
+            <div mat-dialog-content>
+              <fieldset class="like-mat-form-field-outline">
+                <legend>{{ i18n.get('mapLayerType') }}</legend>
+                <mat-radio-group [(ngModel)]="newLayerType">
+                  <mat-radio-button value="wms_custom">WMS (custom)</mat-radio-button>
+                  <mat-radio-button value="geojson">GeoJSON</mat-radio-button>
+                  <mat-radio-button value="csv">CSV</mat-radio-button>
+                </mat-radio-group>
+              </fieldset>
+            </div>
+            <div mat-dialog-actions align="end">
+              <button mat-raised-button [mat-dialog-close]="null" [innerText]="i18n.get('cancel')"></button>
+              <button mat-raised-button color="primary" [mat-dialog-close]="newLayerType" [innerText]="i18n.get('ok')"></button>
+            </div>
+          </ng-template>
+          <button mat-raised-button class="expertButton" color="primary" *ngIf="mapState.isExpertView()" (click)="addNewLayer()" [innerText]="i18n.get('addNewLayer')"></button>
+          <button mat-raised-button class="expertButton" color="primary" *ngIf="mapState.isExpertView()" (click)="persistLayers()" [innerText]="i18n.get('persistLayers')"></button>
         </div>
       </ng-template>
     </mat-expansion-panel>
@@ -84,11 +107,16 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-      <mat-action-list class="availableLayers" *ngIf="favouriteFeatures$ | async as favouriteFeatures">
-        <span *ngIf="favouriteFeatures?.length === 0">{{ i18n.get('noMoreFavorites') }}</span>
-        <button *ngFor="let item of favouriteFeatures" mat-list-item (click)="selectFeature(item)" title="{{ item.label }}">
-          {{ item.label }}
-        </button>
+      <mat-action-list class="availableLayers" *ngIf="favouriteLayers$ | async as favouriteLayers">
+        <span *ngIf="favouriteLayers?.length === 0">{{ i18n.get('noMoreFavorites') }}</span>
+          <button
+            *ngFor="let item of favouriteLayers"
+            mat-list-item
+            (click)="selectLayer(item)"
+            title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}}{{item.id ? '; ' + i18n.get('globalMapLayerTitleSuffix') : ''}})"
+          >
+            {{ item.label }}
+          </button>
       </mat-action-list>
     </ng-template>
   </mat-expansion-panel>
@@ -100,16 +128,30 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
+      <div class="sourceControl">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ i18n.get('layerSource') }}</mat-label>
+          <mat-select [formControl]="sourceFilter">
+            <mat-option value="ALL">{{ i18n.get('allSources') }}</mat-option>
+            <mat-option value="_GeoAdmin_">GeoAdmin</mat-option>
+            <mat-option value="_GlobalMapLayers_">{{ i18n.get('globalMapLayers') }}</mat-option>
+            <mat-option *ngFor="let item of mapState.observeWmsSources$() | async" [value]="item.url">
+              {{item.label}} <mat-icon class="wmsSourceError" *ngIf="wmsSourceLoadErrors[item.url]" [title]="wmsSourceLoadErrors[item.url]">warning</mat-icon>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-icon-button *ngIf="mapState.isExpertView()" (click)="editWmsSources()"><mat-icon [attr.aria-label]="i18n.get('editWmsSources')">edit</mat-icon></button>
+      </div>
       <mat-form-field appearance="outline">
         <mat-label> {{ i18n.get('filter') }}</mat-label>
         <input type="text" matInput [formControl]="layerFilter"
       /></mat-form-field>
       <mat-action-list class="availableLayers">
         <button
-          *ngFor="let item of filteredAvailableFeatures$ | async"
+          *ngFor="let item of filteredAvailableLayers$ | async"
           mat-list-item
-          (click)="selectFeature(item)"
-          title="{{ item.label }}"
+          (click)="selectLayer(item)"
+          title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}}{{item.id ? '; ' + i18n.get('globalMapLayerTitleSuffix') : ''}})"
         >
           {{ item.label }}
         </button>

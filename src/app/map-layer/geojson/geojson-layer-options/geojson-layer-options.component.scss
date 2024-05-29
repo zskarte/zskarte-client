@@ -1,0 +1,72 @@
+.mat-mdc-dialog-content {
+  padding-top: 0.5rem;
+  min-width: 400px;
+  max-width: 500px;
+}
+mat-form-field {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.infoText {
+  font-size: 0.75em;
+  line-height: 1em;
+  margin-bottom: 5px;
+}
+
+.regexTitle, .attributionTitle, .extentTitle {
+  line-height: 1em;
+}
+.regexTitle div, .attributionTitle div, .extentTitle div {
+  display: inline-block;
+  font-size: 0.8em;
+}
+
+.mat-icon {
+  vertical-align: bottom;
+}
+
+.extent-field {
+  box-sizing: border-box;
+  width: 25%;
+}
+
+.attr-filter-field {
+  box-sizing: border-box;
+  width: 30%;
+}
+.attr-filter-regex {
+  box-sizing: border-box;
+  width: 55%;
+}
+.attr-filter-options {
+  box-sizing: border-box;
+  width: calc( 15% - 24px );
+}
+
+.attr-search-regex {
+  box-sizing: border-box;
+  width: 80%;
+}
+.attr-search-options {
+  box-sizing: border-box;
+  width: calc( 20% - 24px );
+}
+.ng-invalid:not(form) {
+  border-color: red;
+  border-radius: 2px;
+}
+.regexError {
+  line-height: 1em;
+  font-size: 0.7em;
+  color: red;
+}
+
+.attr-title {
+  box-sizing: border-box;
+  width: 30%;
+}
+.attr-url {
+  box-sizing: border-box;
+  width: calc( 70% - 24px );
+}
