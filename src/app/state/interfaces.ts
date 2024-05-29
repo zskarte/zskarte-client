@@ -1,5 +1,7 @@
 import { MapLayer, WmsSource } from '../map-layer/map-layer-interface';
 import { FillStyle } from '../core/entity/sign';
+import { Feature } from 'ol';
+import { Coordinate } from 'ol/coordinate';
 
 export enum ZsMapStateSource {
   OPEN_STREET_MAP = 'openStreetMap',
@@ -176,4 +178,22 @@ export interface IZsMapSymbolDrawElementParams extends IZsMapBaseDrawElementPara
 export interface IZsMapTextDrawElementParams extends IZsMapBaseDrawElementParams {
   type: ZsMapDrawElementStateType.TEXT;
   text: string;
+}
+
+export interface IZsMapSearchResult {
+  label: string;
+  mercatorCoordinates?: Coordinate;
+  lonLat?: Coordinate;
+  feature?: Feature;
+  internal?;
+}
+
+export type SearchFunction = (searchText: string, maxResultCount?: number) => Promise<IZsMapSearchResult[]>;
+
+export interface IZsMapSearchConfig {
+  label: string;
+  func: SearchFunction;
+  active: boolean;
+  maxResultCount: number;
+  resultOrder: number;
 }

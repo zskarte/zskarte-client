@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from '../../state/interfaces';
 import { GeoadminService } from '../../map-layer/geoadmin/geoadmin.service';
-import { MapLayer, WMSMapLayer, WmsSource } from '../../map-layer/map-layer-interface';
+import { GeoJSONMapLayer, MapLayer, WMSMapLayer, WmsSource } from '../../map-layer/map-layer-interface';
 import { combineLatest, firstValueFrom, lastValueFrom, map, mergeMap, Observable, of, share, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 import { WmsService } from '../../map-layer/wms/wms.service';
 import { WmsSourceComponent } from '../../map-layer/wms/wms-source/wms-source.component';
 import { WmsLayerOptionsComponent } from '../../map-layer/wms/wms-layer-options/wms-layer-options.component';
+import { GeoJSONLayerOptionsComponent } from '../../map-layer/geojson/geojson-layer-options/geojson-layer-options.component';
 import { SessionService } from '../../session/session.service';
 import { isEqual } from 'lodash';
 import { OperationService } from '../../session/operations/operation.service';
@@ -25,6 +26,9 @@ import { IZsMapOrganizationMapLayerSettings } from '../../session/operations/ope
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
+  @ViewChild('newLayerTypeTemplate') newLayerTypeTemplate!: TemplateRef<HTMLElement>;
+  newLayerType?: string;
+
   mapSources = Object.values(ZsMapStateSource)
     .map((key) => ({
       key,
@@ -228,9 +232,9 @@ export class SidebarComponent {
     });
   }
 
-  showWmsLayerOptions(item: WMSMapLayer, index: number) {
+  showWmsLayerOptions(item: MapLayer, index: number) {
     const optionsDialog = this.dialog.open(WmsLayerOptionsComponent, {
-      data: item,
+      data: item as WMSMapLayer,
     });
     optionsDialog.afterClosed().subscribe((layer: WMSMapLayer) => {
       if (layer) {
@@ -243,8 +247,30 @@ export class SidebarComponent {
     });
   }
 
+  showGeoJSONLayerOptions(item: MapLayer, index: number) {
+    const optionsDialog = this.dialog.open(GeoJSONLayerOptionsComponent, {
+      data: item as GeoJSONMapLayer,
+    });
+    optionsDialog.afterClosed().subscribe((layer: GeoJSONMapLayer) => {
+      if (layer) {
+        if (index === -1) {
+          this.mapState.addMapLayer(layer);
+        } else {
+          this.mapState.replaceMapLayer(layer, index);
+        }
+      }
+    });
+  }
+
   addNewLayer() {
-    this.showWmsLayerOptions({ type: 'wms_custom', serverLayerName: '' } as WMSMapLayer, -1);
+    const optionsDialog = this.dialog.open(this.newLayerTypeTemplate);
+    optionsDialog.afterClosed().subscribe((type: string) => {
+      if (type === 'wms_custom') {
+        this.showWmsLayerOptions({ type, serverLayerName: '' } as WMSMapLayer, -1);
+      } else if (type === 'geojson') {
+        this.showGeoJSONLayerOptions({ type, opacity: 1.0, serverLayerName: null } as GeoJSONMapLayer, -1);
+      }
+    });
   }
 
   async persistLayers() {

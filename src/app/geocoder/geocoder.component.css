@@ -10,3 +10,17 @@ mat-form-field {
   pointer-events: auto;
   overflow: hidden;
 }
+
+mat-optgroup {
+  cursor: pointer;
+}
+
+.hasMore {
+  cursor: pointer;
+  text-align: center;
+}
+
+/* invisible element to prevent autocomplete is closed/hidden if there are only mat-optgroups */
+.dummyOption {
+  display: none;
+}

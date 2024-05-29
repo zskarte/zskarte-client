@@ -1344,6 +1344,11 @@ export class I18NService {
       en: 'Create new layer',
       fr: 'Créer un nouveau couche',
     },
+    newLayerType: {
+      de: 'Wählen sie den Ebenentyp',
+      en: 'Choose layer type',
+      fr: 'Choisissez le type de calque',
+    },
     persistLayers: {
       de: 'Ebenen auf Ereignis speichern',
       en: 'Save layers to event',
@@ -1488,6 +1493,121 @@ export class I18NService {
       de: 'Max. Skalennenner',
       en: 'Max scale denominator',
       fr: "Dénominateur d'échelle maximum",
+    },
+    geojsonLayerSettings: {
+      de: 'Einstellungen der GeoJSON-Ebene',
+      en: 'GeoJSON layer settings',
+      fr: 'Paramètres de calque GeoJSON',
+    },
+    styleSourceType: {
+      de: 'Stilquellentyp',
+      en: 'Style source Type',
+      fr: 'Type de source de style',
+    },
+    styleSourceTypeUrl: {
+      de: 'URL',
+      en: 'URL',
+      fr: 'Url',
+    },
+    styleSourceTypeText: {
+      de: 'Text',
+      en: 'Text',
+      fr: 'Texte',
+    },
+    styleFormat: {
+      de: 'Stilformat',
+      en: 'Style format',
+      fr: 'Format des styles',
+    },
+    styleFormatMapBox: {
+      de: 'MapBox GL Style',
+      en: 'MapBox GL Style',
+      fr: 'MapBox GL Style',
+    },
+    styleFormatOlFlat: {
+      de: 'OpenLayers Flat',
+      en: 'OpenLayers Flat',
+      fr: 'OpenLayers Flat',
+    },
+    styleFormatSpec: {
+      de: 'Spezifikation',
+      en: 'Specification',
+      fr: 'Spécification',
+    },
+    styleSourceName: {
+      de: 'Name der Stilquelle',
+      en: 'Style source name',
+      fr: 'Nom de la source du style',
+    },
+    styleSourceUrl: {
+      de: 'Stil URL',
+      en: 'Style URL',
+      fr: 'URL du style',
+    },
+    styleSourceText: {
+      de: 'Stil Konfig',
+      en: 'style config',
+      fr: 'Configuration du style',
+    },
+    layerSearchable: {
+      de: 'Ist die Ebene durchsuchbar?',
+      en: 'Can the layer be searched?',
+      fr: 'La couche est-elle consultable?',
+    },
+    yes: {
+      de: 'Ja',
+      en: 'Yes',
+      fr: 'Oui',
+    },
+    no: {
+      de: 'Nein',
+      en: 'No',
+      fr: 'Non',
+    },
+    searchResultLabelMask: {
+      de: 'Suchergebnis Beschriftungs-Maske',
+      en: 'Search result label mask',
+      fr: "Masque d'étiquette de résultat de recherche",
+    },
+    searchResultLabelMaskInfo: {
+      de: 'Definieren Sie, was bei der Auswahl der Suchergebnisse angezeigt wird. Verwenden Sie Feature-Eigenschaftsfelder, z. B.',
+      en: "Define what's displayed on search result selection: Use feature property fields e.g.",
+      fr: 'Définissez ce qui est affiché dans la sélection des résultats de recherche. Utilisez les champs de propriété de fonctionnalité, par ex.',
+    },
+    searchRegExPattern: {
+      de: 'RegEx Muster für Suche',
+      en: 'RegEx pattern for search',
+      fr: 'Modèle RegEx pour la recherche',
+    },
+    searchRegExPatternInfo: {
+      de: 'Verwenden Sie Regex mit benannten Gruppen, um Sucheingabemuster zu definieren. Der Name muss der Eigenschaftsname sein, in dem gesucht werden soll, z.B.',
+      en: 'Use regex with named groups to define search input patterns, the name need to be the property name to search in e.g.',
+      fr: "Utilisez l'expression régulière avec des groupes nommés pour définir des modèles d'entrée de recherche, le nom doit être le nom de la propriété dans laquelle rechercher, par exemple",
+    },
+    searchRegExPatternFullMatch: {
+      de: 'Die RegEx werden so angepasst, dass sie nach vollständiger übereinstimmung Suchen',
+      en: 'The RegEx will be adjusted to match full search',
+      fr: 'Le RegEx sera ajusté pour correspondre à la recherche complète',
+    },
+    searchRegExPatternOptionsTitle: {
+      de: 'Optionen',
+      en: 'options',
+      fr: 'paramètres',
+    },
+    searchResultGrouping: {
+      de: 'Gruppierung der Ergebnisse',
+      en: 'Grouping of results',
+      fr: 'Groupement de résultats',
+    },
+    searchResultGroupingInfo: {
+      de: 'Gruppieren der Ergebnisse nach diesen Eigenschaften. Bei zu vielen Ergebnissen wird das erste Ergebnis jeder Gruppe (sortiert nach Beschriftung) angezeigt.',
+      en: 'Group results by these properties. If there are too many results, the first result of each group (sorted by label) is displayed.',
+      fr: "Regroupez les résultats par ces propriétés. S'il y a trop de résultats, le premier résultat de chaque groupe (trié par étiquette) est affiché.",
+    },
+    searchMaxResultCount: {
+      de: 'Max Anzahl Suchergebnisse',
+      en: 'Max number of search results',
+      fr: 'Nombre maximum de résultats de recherche',
     },
     organisationSettings: {
       de: 'Organisationseinstellungen',
