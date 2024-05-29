@@ -11,7 +11,8 @@
           "/index.html",
           "/manifest.webmanifest",
           "/*.css",
-          "/main.*.js"
+          "/main.*.js",
+          "/assets/map-style.json"
         ]
       }
     },
