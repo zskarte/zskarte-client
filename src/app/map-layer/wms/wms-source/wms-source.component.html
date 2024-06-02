@@ -1,9 +1,24 @@
 <div mat-dialog-title>{{ i18n.get('editWmsSources') }}</div>
-<div mat-dialog-content>
+<div mat-dialog-content *ngIf="selectGlobalSourceMode">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('layerSource') }}</mat-label>
+    <mat-select [(value)]="globalSource">
+      <mat-option *ngFor="let item of filteredGlobalSources$ | async" [value]="item">
+        {{item.label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="buttons">
+    <button class="buttonMargin" mat-raised-button color="primary" (click)="addSource()" [innerText]="i18n.get('addSource')"></button>
+    <button class="buttonMargin" mat-raised-button (click)="selectGlobalSourceMode = false" [innerText]="i18n.get('cancel')"></button>
+  </div>
+</div>
+<div mat-dialog-content *ngIf="!selectGlobalSourceMode">
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('layerSource') }}</mat-label>
     <mat-select [value]="selectedSource" (selectionChange)="onSelectionChange($event)">
       <mat-option value="_GeoAdmin_" disabled>GeoAdmin</mat-option>
+      <mat-option *ngIf="this.filteredGlobalSources$.value.length > 0" value="__SELECT__">{{ i18n.get('selectLayerSource') }}</mat-option>
       <mat-option value="__NEW__">{{ i18n.get('addLayerSource') }}</mat-option>
       <mat-option *ngFor="let item of sources" [value]="item">
         {{item.label}}
@@ -13,16 +28,20 @@
   <div *ngIf="selectedSource !== undefined">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ i18n.get('label') }}</mat-label>
-      <input matInput type="text" [(ngModel)]="selectedSource.label"/>
+      <input matInput type="text" [(ngModel)]="selectedSource.label" [disabled]="!selectedSource.owner"/>
     </mat-form-field>
+    <fieldset class="like-mat-form-field-outline">
+      <legend>{{ i18n.get('publicSource') }}</legend>
+      <mat-checkbox [checked]="selectedSource.public" (change)="selectedSource.public = $event.checked" [disabled]="!selectedSource.owner">{{ i18n.get('publicSourceInfo') }}</mat-checkbox>
+    </fieldset>
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ i18n.get('layerSourceUrl') }}</mat-label>
-      <input matInput type="text" [(ngModel)]="selectedSource.url" (change)="updateFullUrl($event)"/>
+      <input matInput type="text" [(ngModel)]="selectedSource.url" (change)="updateFullUrl($event)" [disabled]="!selectedSource.owner"/>
     </mat-form-field>
     <div class="fullUrl">{{ fullUrl }}</div>
     <fieldset class="like-mat-form-field-outline">
       <legend>{{ i18n.get('mapLayerType') }}</legend>
-      <mat-radio-group [(ngModel)]="selectedSource.type" (change)="updateFullUrl($event)">
+      <mat-radio-group [(ngModel)]="selectedSource.type" (change)="updateFullUrl($event)" [disabled]="!selectedSource.owner">
         <mat-radio-button value="wms">WMS</mat-radio-button>
         <mat-radio-button value="wmts">WMTS</mat-radio-button>
       </mat-radio-group>
@@ -35,19 +54,19 @@
           <div class="attr-url">URL</div>
         </div>
         <div class="attribution" *ngFor="let attr of selectedSource.attribution; index as i">
-          <input class="attr-title" matInput type="text" [(ngModel)]="attr[0]"/>
-          <input class="attr-url" matInput type="url" [(ngModel)]="attr[1]"/>
+          <input class="attr-title" matInput type="text" [(ngModel)]="attr[0]" [disabled]="!selectedSource.owner"/>
+          <input class="attr-url" matInput type="url" [(ngModel)]="attr[1]" [disabled]="!selectedSource.owner"/>
           <mat-icon class="attr-remove" (click)="removeAttribution(i)">remove</mat-icon>
         </div>
       </ng-container>
-      <mat-icon class="attr-add" (click)="addAttribution()">add</mat-icon>
+      <mat-icon class="attr-add" (click)="addAttribution()" *ngIf="selectedSource.owner">add</mat-icon>
     </fieldset>
     <div class="buttons">
       <button class="buttonMargin" mat-raised-button color="warn" (click)="removeSource()" [innerText]="i18n.get('removeSource')"></button>
     </div>
   </div>
 </div>
-<div mat-dialog-actions align="end">
+<div mat-dialog-actions align="end" *ngIf="!selectGlobalSourceMode">
   <button mat-raised-button [mat-dialog-close]="null" [innerText]="i18n.get('cancel')"></button>
   <button mat-raised-button color="primary" [mat-dialog-close]="sources">
     {{ i18n.get('ok') }}

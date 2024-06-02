@@ -20,12 +20,14 @@ import { ApiService } from '../api/api.service';
 import { ZsMapStateService } from '../state/state.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
-import { IZsMapOperation, IZsMapOrganization } from './operations/operation.interfaces';
+import { IZsMapOperation, IZsMapOrganization, IZsMapOrganizationMapLayerSettings } from './operations/operation.interfaces';
 import { transform } from 'ol/proj';
 import { coordinatesProjection, mercatorProjection } from '../helper/projections';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM, LOG2_ZOOM_0_RESOLUTION } from './default-map-values';
 import { decodeJWT } from '../helper/jwt';
 import { IZsMapDisplayState } from '../state/interfaces';
+import { WmsService } from '../map-layer/wms/wms.service';
+import { MapLayerService } from '../map-layer/map-layer.service';
 
 @Injectable({
   providedIn: 'root',
@@ -40,6 +42,8 @@ export class SessionService {
   constructor(
     private _router: Router,
     private _api: ApiService,
+    private _wms: WmsService,
+    private _mapLayerService: MapLayerService,
   ) {
     this._session.pipe(skip(1)).subscribe(async (session) => {
       this._clearOperation.next();
@@ -53,6 +57,42 @@ export class SessionService {
           if (queryParams) {
             this._state.updateDisplayState((draft) => SessionService.overrideDisplayStateFromQueryParams(draft, queryParams));
           }
+
+          const globalWmsSources = await this._wms.readGlobalWMSSources(session.organization?.id ?? 0);
+          this._state.setGlobalWmsSources(globalWmsSources);
+          const globalMapLayers = await this._mapLayerService.readGlobalMapLayers(globalWmsSources, session.organization?.id ?? 0);
+          this._state.setGlobalMapLayers(globalMapLayers);
+          if (!displayState && session.organization?.wms_sources && session.organization?.wms_sources.length > 0) {
+            //if no session state, fill default wms sources from organisation settings
+            const selectedSources = globalWmsSources.filter((s) => s.id && session.organization?.wms_sources.includes(s.id));
+            this._state.setWmsSources(selectedSources);
+          }
+          if (!displayState && session.operation?.mapLayers) {
+            //if no session state, fill mapLayers from operation settings
+            this._state.setMapSource(session.operation?.mapLayers.baseLayer);
+            /*
+            //rehydrate mapLayer informations
+            const layers = session.operation?.mapLayers.layerConfigs.map((layer) => {
+              if (!layer.source) {
+                layer.source = MapLayerService.getMapSource(layer, globalWmsSources);
+                //need to adjust IZSMapOperationMapLayers.layerConfigs to: (Partial<MapLayer> & MapLayerSourceApi)[];
+                delete layer.wms_source;
+                delete layer.custom_source;
+              }
+              //here need to have "allFeatures$" from SidebarComponent...
+              //the corresponding logic need to be extracted to a service if extractMapLayerDiff and rehyrdarte should be used
+              const allLayers: MapLayer[] = [];
+              const defaultLayer = allLayers.find((g) => g.fullId === layer.fullId);
+              return { ...defaultLayer, ...layer } as MapLayer;
+            });
+            */
+            const layers = session.operation?.mapLayers.layerConfigs;
+            this._state.updateDisplayState((draft) => {
+              draft.layers = layers;
+            });
+          }
+          //make sure layerFeature source information are up to date
+          this._state.reloadAllMapLayers();
 
           this._state
             .observeDisplayState()
@@ -139,6 +179,10 @@ export class SessionService {
     this._state = state;
   }
 
+  public getOrganization() {
+    return this._session.value?.organization;
+  }
+
   public getOrganizationId(): number | undefined {
     return this._session.value?.organization?.id;
   }
@@ -148,6 +192,26 @@ export class SessionService {
       return [this._session.value?.organization?.mapLongitude, this._session.value?.organization?.mapLatitude];
     }
     return [0, 0];
+  }
+
+  public observeFavoriteLayers$(): Observable<number[] | undefined> {
+    return this._session.pipe(map((session) => session?.organization?.map_layer_favorites));
+  }
+
+  public async saveOrganizationMapLayerSettings(data: IZsMapOrganizationMapLayerSettings) {
+    const organization = this.getOrganization();
+    if (organization?.id) {
+      await this._api.put(`/api/organizations/${organization?.id}/layer-settings`, { data });
+
+      organization.wms_sources = data.wms_sources;
+      organization.map_layer_favorites = data.map_layer_favorites;
+      //update session object
+      const currentSession = this._session.value;
+      if (currentSession) {
+        currentSession.organization = organization;
+        this._session.next(currentSession);
+      }
+    }
   }
 
   public getLabel(): string | undefined {

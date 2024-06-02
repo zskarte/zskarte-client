@@ -75,6 +75,8 @@ export class ZsMapStateService {
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
   private _currentMapCenter: BehaviorSubject<number[]> | undefined;
+  private _globalWmsSources = new BehaviorSubject<WmsSource[]>([]);
+  private _globalMapLayers = new BehaviorSubject<MapLayer[]>([]);
 
   constructor(
     public i18n: I18NService,
@@ -658,7 +660,10 @@ export class ZsMapStateService {
       for (let i = 0; i < layers.length; i++) {
         const layer = layers[i];
         //update source object
-        const source = draft.wmsSources?.find((s) => s.url === layer.source?.url);
+        let source = draft.wmsSources?.find((s) => s.id === layer.source?.id);
+        if (!source) {
+          source = draft.wmsSources?.find((s) => s.url === layer.source?.url);
+        }
         if (source) {
           layers[i] = { ...layer, source };
         }
@@ -725,6 +730,26 @@ export class ZsMapStateService {
 
   public getActiveLayerState(): ZsMapLayerState | undefined {
     return this._map.value.layers?.find((layer) => layer.id === this._display.value.activeLayer);
+  }
+
+  public setGlobalWmsSources(sources: WmsSource[]) {
+    this._globalWmsSources.next(sources);
+  }
+
+  public getGlobalWmsSources() {
+    return this._globalWmsSources.value;
+  }
+
+  public setGlobalMapLayers(mapLayers: MapLayer[]) {
+    this._globalMapLayers.next(mapLayers);
+  }
+
+  public getGlobalMapLayers() {
+    return this._globalMapLayers.value;
+  }
+
+  public observeGlobalMapLayers$() {
+    return this._globalMapLayers.asObservable();
   }
 
   public addWmsSource(source: WmsSource) {

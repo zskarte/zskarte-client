@@ -1,4 +1,10 @@
-export interface WmsSource {
+interface PresistedSettings {
+  id?: number;
+  owner: boolean;
+  public: boolean;
+}
+
+export interface WmsSource extends PresistedSettings {
   url: string;
   label: string;
   type: 'wmts' | 'wms';
@@ -8,6 +14,12 @@ export interface WmsSource {
 //use the partial part to prevent need to use type guards in template
 export interface MapSource extends Partial<WmsSource> {
   url: string;
+}
+
+export interface WmsSourceApi extends WmsSource {
+  organization?: { id: number };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface SelectedMapLayerSettings {
@@ -29,7 +41,7 @@ export interface GenericOptionalMapLayerOptions {
   attribution?: [string, string][];
 }
 
-export interface MapLayer extends SelectedMapLayerSettings, MapLayerGeneralSettings {
+export interface MapLayer extends PresistedSettings, SelectedMapLayerSettings, MapLayerGeneralSettings {
   source?: MapSource | WmsSource;
   fullId: string;
 }
@@ -66,4 +78,20 @@ export interface GeoAdminMapLayer extends MapLayer {
 
 export interface GeoAdminMapLayers {
   [key: string]: GeoAdminMapLayer;
+}
+
+export type MapLayerAllFields = Partial<WMSMapLayer>;
+export interface MapLayerOptionsApi extends Omit<MapLayerAllFields, keyof MapLayer> {
+  opacity?: number;
+}
+
+export interface MapLayerSourceApi {
+  wms_source?: WmsSource | number;
+  custom_source?: string;
+}
+
+export interface MapLayerApi extends Partial<PresistedSettings>, MapLayerGeneralSettings, MapLayerSourceApi {
+  options: MapLayerOptionsApi;
+  organization?: { id: number };
+  public: boolean;
 }

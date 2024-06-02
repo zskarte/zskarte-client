@@ -1444,6 +1444,11 @@ export class I18NService {
       en: 'Create new layer',
       fr: 'Créer un nouveau couche',
     },
+    persistLayers: {
+      de: 'Ebenen auf Ereignis speichern',
+      en: 'Save layers to event',
+      fr: "Enregistrer les couches dans l'événement",
+    },
     layerSource: {
       de: 'Ebenen Quelle',
       en: 'Layer Source',
@@ -1454,6 +1459,16 @@ export class I18NService {
       en: 'all sources',
       fr: 'toutes les sources',
     },
+    globalMapLayers: {
+      de: 'Geteilte Ebenen',
+      en: 'Shared layers',
+      fr: 'Couche partagées',
+    },
+    globalMapLayerTitleSuffix: {
+      de: 'geteilt',
+      en: 'shared',
+      fr: 'partagée',
+    },
     editWmsSources: {
       de: 'WMS/WMTS Quellen Bearbeiten',
       en: 'Edit WMS/WMTS Sources',
@@ -1463,6 +1478,21 @@ export class I18NService {
       de: 'Neue Quelle Hinzufügen',
       en: 'Add new source',
       fr: 'Ajouter une nouvelle source',
+    },
+    selectLayerSource: {
+      de: 'Quelle auswählen',
+      en: 'select source',
+      fr: 'sélectionner la source',
+    },
+    publicSource: {
+      de: 'Öffentliche Quelle',
+      en: 'public source',
+      fr: 'source publique',
+    },
+    publicSourceInfo: {
+      de: 'Quelle darf von anderen Organisationen verwendet werden.',
+      en: 'Source may be used by other organizations.',
+      fr: "La source peut être utilisée par d'autres organisations.",
     },
     layerSourceUrl: {
       de: 'Quell-URL',
@@ -1558,6 +1588,51 @@ export class I18NService {
       de: 'Max. Skalennenner',
       en: 'Max scale denominator',
       fr: "Dénominateur d'échelle maximum",
+    },
+    organisationSettings: {
+      de: 'Organisationseinstellungen',
+      en: 'Organization settings',
+      fr: "Paramètres de l'organisation",
+    },
+    organisationLayerSettings: {
+      de: 'Organisationseinstellungen für Map-Layer',
+      en: 'Organizational settings for map layers',
+      fr: "Paramètres d'organisation de la couche de carte",
+    },
+    preSelectedWmsSources: {
+      de: 'Vorab ausgewählte WMS-Quellen',
+      en: 'Pre-selected WMS sources',
+      fr: 'Sources WMS présélectionnées',
+    },
+    favoriteLayersSettings: {
+      de: 'Ebenen favoriten',
+      en: 'Favorite layers',
+      fr: 'Calques favoris',
+    },
+    addFromActive: {
+      de: 'Von aktiven hinzufügen',
+      en: 'Add from active',
+      fr: 'Ajouter depuis actif',
+    },
+    addFromList: {
+      de: 'Aus Liste hinzufügen',
+      en: 'Add from list',
+      fr: 'Ajouter à partir de la liste',
+    },
+    useCurrentSources: {
+      de: 'aktuelle Quellen nutzen',
+      en: 'use current sources',
+      fr: 'utiliser les sources actuelles',
+    },
+    addAllActiveOnes: {
+      de: 'Alle aktiven hinzufügen',
+      en: 'Add all active ones',
+      fr: 'Ajouter tous les actifs',
+    },
+    askReplaceExistingLayerSettings: {
+      de: 'Ebene {0} existiert bereits. Bestehende Einstellung aktualisieren (OK) oder neue hinzufügen (Abbrechen)?',
+      en: 'Layer {0} already exist. Update existing setting (ok) or add new one (cancel)?',
+      fr: 'La calque {0} existe déjà. Mettre à jour le paramètre existant (ok) ou en ajouter un nouveau (annuler)?',
     },
   };
 

@@ -117,6 +117,9 @@ export class WmsLayerOptionsComponent {
     if (this.layer.type === 'wms') {
       if (this.hasSublayers) {
         this.layer.hiddenSubLayers = this.sublayerHidden.filter((sublayer) => sublayer.hidden).map((sublayer) => sublayer.name);
+        if (this.layer.hiddenSubLayers.length === 0) {
+          delete this.layer.hiddenSubLayers;
+        }
       }
       delete this.layer.originalServerLayerName;
     } else if (this.layer.type === 'wms_custom') {
@@ -125,6 +128,9 @@ export class WmsLayerOptionsComponent {
         this.layer.hiddenSubLayers = this.sublayerHidden
           .filter((sublayer) => !visibleLayers.includes(sublayer.name))
           .map((sublayer) => sublayer.name);
+        if (this.layer.hiddenSubLayers.length === 0) {
+          delete this.layer.hiddenSubLayers;
+        }
       }
       if (this.custom_source) {
         this.layer.source = this.custom_source;

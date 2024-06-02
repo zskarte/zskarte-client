@@ -78,6 +78,7 @@ import { IncidentSelectComponent } from './incident-select/incident-select.compo
 import { ProjectionSelectionComponent } from './projection-selection/projection-selection.component';
 import { WmsSourceComponent } from './map-layer/wms/wms-source/wms-source.component';
 import { WmsLayerOptionsComponent } from './map-layer/wms/wms-layer-options/wms-layer-options.component';
+import { OrganisationLayerSettingsComponent } from './map-layer/organisation-layer-settings/organisation-layer-settings.component';
 
 registerLocaleData(localeCH);
 
@@ -133,6 +134,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     ProjectionSelectionComponent,
     WmsSourceComponent,
     WmsLayerOptionsComponent,
+    OrganisationLayerSettingsComponent,
   ],
   imports: [
     BrowserModule,

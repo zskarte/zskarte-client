@@ -4,7 +4,19 @@ import { createBox } from 'ol/interaction/Draw';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil, skip,concatMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  firstValueFrom,
+  map,
+  Observable,
+  Subject,
+  switchMap,
+  takeUntil,
+  skip,
+  concatMap,
+} from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -38,7 +50,9 @@ import { DEFAULT_COORDINATES, DEFAULT_RESOLUTION, DEFAULT_ZOOM, MM_PER_INCHES } 
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { Layer } from 'ol/layer';
-
+import TileSource from 'ol/source/Tile';
+import { GeoAdminMapLayer, WMSMapLayer } from '../map-layer/map-layer-interface';
+import { WmsService } from '../map-layer/wms/wms.service';
 
 const LAYER_Z_INDEX_CURRENT_LOCATION = 1000000;
 const LAYER_Z_INDEX_NAVIGATION_LAYER = 1000001;
