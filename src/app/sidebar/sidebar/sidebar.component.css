@@ -47,3 +47,8 @@ mat-slider {
 .button-download {
   margin-bottom: 1rem;
 }
+
+.material-icons {
+  /*needed as not match for 'visibility_on'*/
+  width: 24px;
+}
