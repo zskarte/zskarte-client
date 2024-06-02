@@ -1,0 +1,14 @@
+.scaleSelection {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 10px;
+}
+
+.mat-mdc-dialog-content.scaleSelection {
+  padding: 8px;
+}
+
+.scaleSelection > mat-form-field {
+  width: 200px;
+  flex-grow: 1;
+}

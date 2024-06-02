@@ -63,6 +63,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _ngUnsubscribe = new Subject<void>();
   private _map!: OlMap;
   private _view!: OlView;
+  private _scaleLine!: ScaleLine;
   private _geolocation!: OlGeolocation;
   private _modify!: Modify;
   private _mapLayer: Layer = new OlTileLayer({
@@ -396,18 +397,18 @@ export class MapRendererComponent implements AfterViewInit {
       zoom: DEFAULT_ZOOM, // will be overwritten once session is loaded via display state
     });
 
+    this._scaleLine = new ScaleLine({
+      units: 'metric',
+      bar: true,
+      steps: 4,
+      text: true,
+      minWidth: 140,
+    });
+
     this._map = new OlMap({
       target: this.mapElement.nativeElement,
       view: this._view,
-      controls: [
-        new ScaleLine({
-          units: 'metric',
-          bar: true,
-          steps: 4,
-          text: true,
-          minWidth: 140,
-        }),
-      ],
+      controls: [this._scaleLine],
       interactions: defaults({
         doubleClickZoom: false,
         pinchRotate: true,
@@ -543,6 +544,13 @@ export class MapRendererComponent implements AfterViewInit {
           }
           this._view.setZoom(zoom);
         }
+      });
+
+    this._state
+      .observeDPI()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((dpi) => {
+        this._scaleLine.setDpi(dpi);
       });
 
     this._map.addLayer(this._mapLayer);

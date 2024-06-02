@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
 import { SidebarContext } from '../sidebar/sidebar.interfaces';
 import { SidebarService } from '../sidebar/sidebar.service';
+import { ScaleSelectionComponent } from '../scale-selection/scale-selection.component';
 
 @Component({
   selector: 'app-floating-ui',
@@ -83,6 +84,21 @@ export class FloatingUIComponent {
 
   zoomIn() {
     this._state.updateMapZoom(1);
+  }
+
+  zoomToScale() {
+    const projectionDialog = this._dialog.open(ScaleSelectionComponent, {
+      width: '500px',
+      data: {
+        scale: undefined,
+        dpi: this._state.getDPI(),
+      },
+    });
+    projectionDialog.afterClosed().subscribe((result) => {
+      if (result) {
+        this._state.setMapZoomScale(result.scale, result.dpi);
+      }
+    });
   }
 
   zoomOut() {
