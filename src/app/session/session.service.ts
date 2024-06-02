@@ -1,8 +1,21 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, retry, skip, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  filter,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  retry,
+  skip,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { db } from '../db/db';
 import { AccessTokenType, IAuthResult, IZsMapSession, PermissionType } from './session.interfaces';
-import { Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
 import { ZsMapStateService } from '../state/state.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -10,8 +23,9 @@ import { DEFAULT_LOCALE, Locale } from '../state/i18n.service';
 import { IZsMapOperation, IZsMapOrganization } from './operations/operation.interfaces';
 import { transform } from 'ol/proj';
 import { coordinatesProjection, mercatorProjection } from '../helper/projections';
-import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from './default-map-values';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM, LOG2_ZOOM_0_RESOLUTION } from './default-map-values';
 import { decodeJWT } from '../helper/jwt';
+import { IZsMapDisplayState } from '../state/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +48,11 @@ export class SessionService {
         if (session.operation?.id) {
           await this._state?.refreshMapState();
           const displayState = await db.displayStates.get({ id: session.operation?.id });
+          const queryParams = await firstValueFrom(this._router.routerState.root.queryParams);
           this._state.setDisplayState(displayState);
+          if (queryParams) {
+            this._state.updateDisplayState((draft) => SessionService.overrideDisplayStateFromQueryParams(draft, queryParams));
+          }
 
           this._state
             .observeDisplayState()
@@ -45,9 +63,16 @@ export class SessionService {
               }
             });
 
-          await this._router.navigateByUrl('/map');
+          await this._router.navigate(['map'], {
+            queryParams: {
+              center: null, //handled in overrideDisplayStateFromQueryParams
+              size: null, //handled in overrideDisplayStateFromQueryParams
+              operationId: null, //handled in updateJWT / OperationsComponent
+            },
+            queryParamsHandling: 'merge',
+          });
         } else {
-          await this._router.navigateByUrl('/operations');
+          await this._router.navigate(['operations'], { queryParamsHandling: 'preserve' });
           this._state.setMapState(undefined);
           this._state.setDisplayState(undefined);
         }
@@ -86,6 +111,28 @@ export class SessionService {
             },
           });
       });
+  }
+
+  private static overrideDisplayStateFromQueryParams(displayState: IZsMapDisplayState, queryParams: Params) {
+    if (queryParams['center']) {
+      try {
+        const mapCenter = queryParams['center'].split(',').map(parseFloat);
+        displayState.mapCenter = mapCenter;
+      } catch (ex) {
+        //ignoring invalid center infos
+      }
+    }
+    if (queryParams['size']) {
+      try {
+        const size = queryParams['size'].split(',').map(parseFloat);
+        //use window.inner.. as have no access to map.getSize()
+        const xResolution = size[0] / window.innerWidth;
+        const yResolution = size[1] / window.innerHeight;
+        displayState.mapZoom = LOG2_ZOOM_0_RESOLUTION - Math.log2(Math.max(xResolution, yResolution));
+      } catch (ex) {
+        //ignoring invalid size infos
+      }
+    }
   }
 
   public setStateService(state: ZsMapStateService): void {
@@ -183,7 +230,7 @@ export class SessionService {
     const { result, error: authError } = await this._api.post<IAuthResult>('/api/auth/local', params);
     this._authError.next(authError);
     if (authError || !result) {
-      await this._router.navigateByUrl('/login');
+      await this._router.navigate(['login'], { queryParamsHandling: 'preserve' });
       return;
     }
     await this.updateJWT(result.jwt);
@@ -227,16 +274,21 @@ export class SessionService {
     newSession.defaultLatitude = newSession.organization?.mapLatitude;
 
     // update operation values
-    const operationId = decoded.operationId || currentSession?.operation?.id;
+    const queryParams = await firstValueFrom(this._router.routerState.root.queryParams);
+    let queryOperationId;
+    if (queryParams['operationId']) {
+      try {
+        queryOperationId = parseInt(queryParams['operationId']);
+      } catch (ex) {
+        //ignore invalid operationId param
+      }
+    }
+    const operationId = decoded.operationId || queryOperationId || currentSession?.operation?.id;
     if (operationId) {
       const { result: operation } = await this._api.get<IZsMapOperation>(`/api/operations/${operationId}`, { token: jwt });
       if (operation) {
         newSession.operation = operation;
       }
-    }
-
-    if (meResult.organization) {
-      newSession.organization = meResult.organization;
     }
 
     this._session.next(newSession);
