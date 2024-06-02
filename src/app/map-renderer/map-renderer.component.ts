@@ -52,7 +52,7 @@ import { SessionService } from '../session/session.service';
 import { Layer } from 'ol/layer';
 import TileSource from 'ol/source/Tile';
 import { WmsService } from '../map-layer/wms/wms.service';
-import { GeoAdminMapLayer, WMSMapLayer, GeoJSONMapLayer } from '../map-layer/map-layer-interface';
+import { GeoAdminMapLayer, WMSMapLayer, GeoJSONMapLayer, CsvMapLayer } from '../map-layer/map-layer-interface';
 import { GeoJSONService } from '../map-layer/geojson/geojson.service';
 
 const LAYER_Z_INDEX_CURRENT_LOCATION = 1000000;
@@ -728,6 +728,8 @@ export class MapRendererComponent implements AfterViewInit {
               olLayers = await this.wmsService.createWMSCustomLayer(mapLayer as WMSMapLayer);
             } else if (mapLayer.type === 'geojson') {
               olLayers = await this.geoJSONService.createGeoJSONLayer(mapLayer as GeoJSONMapLayer);
+            } else if (mapLayer.type === 'csv') {
+              olLayers = await this.geoJSONService.createCsvLayer(mapLayer as CsvMapLayer);
             } else {
               console.error('unknown layer type', mapLayer.type, 'for source', mapLayer.source, mapLayer);
               return;

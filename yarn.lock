@@ -9447,6 +9447,11 @@ ua-parser-js@^0.7.30:
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.37.tgz#e464e66dac2d33a7a1251d7d7a99d6157ec27832"
   integrity sha512-xV8kqRKM+jhMvcHWUKthV9fNebIzrNy//2O9ZwWcfiBFR5f25XVZPLlEajk/sf3Ra15V92isyQqnIEXRDaZWEA==
 
+udsv@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/udsv/-/udsv-0.5.3.tgz#b6bf405e1f9e3c6c79e1d2ed75d59592aed27e39"
+  integrity sha512-A4WSOXDgyu3ZlQnMZu9lVtuAhke9X5XG9RZFGbO3urSiCjwYKfy96XV/+BWnm1Y1lKKaBInU0e98Moy6TOiVYA==
+
 unbox-primitive@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.2.tgz#29032021057d5e6cdbd08c5129c226dff8ed6f9e"

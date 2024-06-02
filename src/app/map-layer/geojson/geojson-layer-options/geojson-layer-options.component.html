@@ -1,5 +1,12 @@
 <div mat-dialog-title>{{ i18n.get('geojsonLayerSettings') }}</div>
 <div mat-dialog-content>
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('mapLayerType') }}</legend>
+    <mat-radio-group [(ngModel)]="layer.type">
+      <mat-radio-button value="geojson">GeoJSON</mat-radio-button>
+      <mat-radio-button value="csv">CSV</mat-radio-button>
+    </mat-radio-group>
+  </fieldset>
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('label') }}</mat-label>
     <input matInput type="text" [(ngModel)]="layer.label" />
@@ -8,6 +15,67 @@
     <mat-label>{{ i18n.get('layerSourceUrl') }}</mat-label>
     <input matInput type="url" [(ngModel)]="sourceUrl"/>
   </mat-form-field>
+  <div *ngIf="layer.type === 'csv'">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ i18n.get('delimiter') }}</mat-label>
+      <input matInput type="text" maxlength="1" [(ngModel)]="layer.delimiter"/>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ i18n.get('fieldX') }}</mat-label>
+      <input matInput type="text" [(ngModel)]="layer.fieldX"/>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ i18n.get('fieldY') }}</mat-label>
+      <input matInput type="text" [(ngModel)]="layer.fieldY"/>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ i18n.get('dataProjection') }}</mat-label>
+      <input matInput type="text" [(ngModel)]="layer.dataProjection"/>
+      <div class="infoText">swiss: 'EPSG:2056', GPS: 'EPSG:4326', mercator: 'EPSG:3857' <a target="_blank" href="https://epsg.io/">epsg.io</a></div>
+    </mat-form-field>
+    <fieldset class="like-mat-form-field-outline">
+      <legend>{{ i18n.get('filterRegExPattern') }}</legend>
+      <div class="infoText">{{ i18n.get('filterRegExPatternInfo') }}<br><code [innerText]="'(val1|val2|prefix.*|.*suffix)'"></code></div>
+      <div class="infoText">{{ i18n.get('filterRegExPatternInfo2') }}<br><code [innerText]="'.*(?<!val1)(?<!val2)'"></code></div>
+      <div class="infoText">{{ i18n.get('searchRegExPatternFullMatch') }} <code>^...$</code></div>
+      <ng-container *ngIf="layer.filterRegExPattern">
+        <div class="regexTitle">
+          <div class="attr-filter-field">{{ i18n.get('Field') }}</div>
+          <div class="attr-filter-regex">RegEx</div>
+          <div class="attr-filter-options">{{ i18n.get('searchRegExPatternOptionsTitle') }}</div>
+        </div>
+        <div class="filterRegExPattern" *ngFor="let regex of layer.filterRegExPattern; index as i">
+          <input class="attr-filter-field" matInput type="text" [(ngModel)]="regex[0]"/>
+          <input class="attr-filter-regex" matInput [appRegexValidator]="regex[2]" #validInfo="ngModel" type="text" [(ngModel)]="regex[1]"/>
+          <input class="attr-filter-options" matInput type="text" [(ngModel)]="regex[2]" (input)="deferredRevalidate(validInfo)" (blur)="validInfo.control.updateValueAndValidity()"/>
+          <mat-icon class="attr-remove" (click)="removeFilterPattern(i)">remove</mat-icon>
+          <div class="regexError" *ngIf="validInfo.errors?.['regex']">
+            {{validInfo.errors?.['regex']}}
+          </div>
+        </div>
+      </ng-container>
+      <mat-icon class="attr-add" (click)="addFilterPattern()">add</mat-icon>
+    </fieldset>
+    <fieldset class="like-mat-form-field-outline">
+      <legend>{{ i18n.get('extent') }}</legend>
+      <mat-checkbox [checked]="layer.extent" (change)="toggleExtent($event.checked)">{{ i18n.get('limitExtent') }}</mat-checkbox>
+      <div class="infoText">{{ i18n.get('extentInfo') }}</div>
+      <div *ngIf="layer.extent">
+        <div class="extentTitle">
+          <div class="extent-field">min x</div>
+          <div class="extent-field">min y</div>
+          <div class="extent-field">max x</div>
+          <div class="extent-field">max y</div>
+        </div>
+        <div class="extenValue">
+          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[0]"/>
+          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[1]"/>
+          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[2]"/>
+          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[3]"/>
+        </div>
+      </div>
+    </fieldset>
+  </div>
 
   <fieldset class="like-mat-form-field-outline">
     <legend>{{ i18n.get('styleSourceType') }}</legend>
@@ -35,6 +103,7 @@
     <mat-label>{{ i18n.get('styleSourceText') }}</mat-label>
     <textarea matInput [(ngModel)]="layer.styleText"></textarea>
   </mat-form-field>
+
   <fieldset class="like-mat-form-field-outline">
     <legend>{{ i18n.get('layerSearchable') }}</legend>
     <mat-radio-group [(ngModel)]="layer.searchable">
