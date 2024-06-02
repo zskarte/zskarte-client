@@ -21,6 +21,8 @@ import {
   ZsMapLayerStateType,
   ZsMapPolygonDrawElementState,
   ZsMapStateSource,
+  SearchFunction,
+  IZsMapSearchConfig,
 } from './interfaces';
 import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
@@ -77,6 +79,7 @@ export class ZsMapStateService {
   private _currentMapCenter: BehaviorSubject<number[]> | undefined;
   private _globalWmsSources = new BehaviorSubject<WmsSource[]>([]);
   private _globalMapLayers = new BehaviorSubject<MapLayer[]>([]);
+  private _searchConfigs = new BehaviorSubject<IZsMapSearchConfig[]>([]);
 
   constructor(
     public i18n: I18NService,
@@ -1134,5 +1137,32 @@ export class ZsMapStateService {
         return !hasWritePermission || isHistoryMode;
       }),
     );
+  }
+
+  public addSearch(
+    searchFunc: SearchFunction,
+    searchName: string,
+    maxResultCount: number | undefined = undefined,
+    resultOrder: number | undefined = undefined,
+  ) {
+    const configs = this._searchConfigs.value;
+    const config: IZsMapSearchConfig = {
+      label: searchName,
+      func: searchFunc,
+      active: true,
+      maxResultCount: maxResultCount ?? 50,
+      resultOrder: resultOrder ?? 0,
+    };
+    configs.push(config);
+    this._searchConfigs.next(configs);
+  }
+
+  public removeSearch(searchFunc: SearchFunction) {
+    const configs = this._searchConfigs.value.filter((conf) => conf.func !== searchFunc);
+    this._searchConfigs.next(configs);
+  }
+
+  public getSearchConfigs(): IZsMapSearchConfig[] {
+    return this._searchConfigs.value;
   }
 }

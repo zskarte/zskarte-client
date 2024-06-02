@@ -60,8 +60,9 @@
           >
             <div class="titleRow">
               <div class="title">{{ item.label }}</div>
-              <i (click)="showLegend(item)" class="material-icons">info</i>
+              <i (click)="showLegend(item)" *ngIf="item.type !== 'geojson'" class="material-icons">info</i>
               <i (click)="showWmsLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'wms' || item.type === 'wms_custom')" class="material-icons">settings</i>
+              <i (click)="showGeoJSONLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'geojson')" class="material-icons">settings</i>
               <i (click)="mapState.toggleMapLayer(item, index)" *ngIf="!item.hidden" class="material-icons">visibility_off</i>
               <i (click)="mapState.toggleMapLayer(item, index)" *ngIf="item.hidden" class="material-icons">visibility_on</i>
               <i (click)="mapState.removeMapLayer(index)" class="material-icons">remove_circle_outline</i>
@@ -75,6 +76,22 @@
             </div>
             <mat-divider *ngIf="!last"></mat-divider>
           </div>
+          <ng-template #newLayerTypeTemplate>
+            <div mat-dialog-title>{{ i18n.get('newLayerType') }}</div>
+            <div mat-dialog-content>
+              <fieldset class="like-mat-form-field-outline">
+                <legend>{{ i18n.get('mapLayerType') }}</legend>
+                <mat-radio-group [(ngModel)]="newLayerType">
+                  <mat-radio-button value="wms_custom">WMS (custom)</mat-radio-button>
+                  <mat-radio-button value="geojson">GeoJSON</mat-radio-button>
+                </mat-radio-group>
+              </fieldset>
+            </div>
+            <div mat-dialog-actions align="end">
+              <button mat-raised-button [mat-dialog-close]="null" [innerText]="i18n.get('cancel')"></button>
+              <button mat-raised-button color="primary" [mat-dialog-close]="newLayerType" [innerText]="i18n.get('ok')"></button>
+            </div>
+          </ng-template>
           <button mat-raised-button class="expertButton" color="primary" *ngIf="mapState.isExpertView()" (click)="addNewLayer()" [innerText]="i18n.get('addNewLayer')"></button>
           <button mat-raised-button class="expertButton" color="primary" *ngIf="mapState.isExpertView()" (click)="persistLayers()" [innerText]="i18n.get('persistLayers')"></button>
         </div>

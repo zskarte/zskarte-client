@@ -25,7 +25,7 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { ZsMapDrawElementStateType, IZsMapPrintState } from '../state/interfaces';
+import { ZsMapDrawElementStateType, IZsMapPrintState, SearchFunction } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
@@ -51,8 +51,9 @@ import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { Layer } from 'ol/layer';
 import TileSource from 'ol/source/Tile';
-import { GeoAdminMapLayer, WMSMapLayer } from '../map-layer/map-layer-interface';
 import { WmsService } from '../map-layer/wms/wms.service';
+import { GeoAdminMapLayer, WMSMapLayer, GeoJSONMapLayer } from '../map-layer/map-layer-interface';
+import { GeoJSONService } from '../map-layer/geojson/geojson.service';
 
 const LAYER_Z_INDEX_CURRENT_LOCATION = 1000000;
 const LAYER_Z_INDEX_NAVIGATION_LAYER = 1000001;
@@ -139,6 +140,7 @@ export class MapRendererComponent implements AfterViewInit {
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
     private wmsService: WmsService,
+    private geoJSONService: GeoJSONService,
   ) {
     _state
       .observeSelectedElement$()
@@ -724,6 +726,8 @@ export class MapRendererComponent implements AfterViewInit {
               olLayers = await this.wmsService.createWMSLayer(mapLayer as WMSMapLayer);
             } else if (mapLayer.type === 'wms_custom') {
               olLayers = await this.wmsService.createWMSCustomLayer(mapLayer as WMSMapLayer);
+            } else if (mapLayer.type === 'geojson') {
+              olLayers = await this.geoJSONService.createGeoJSONLayer(mapLayer as GeoJSONMapLayer);
             } else {
               console.error('unknown layer type', mapLayer.type, 'for source', mapLayer.source, mapLayer);
               return;
@@ -732,6 +736,20 @@ export class MapRendererComponent implements AfterViewInit {
               this._map.addLayer(olLayer);
               const name = index > 0 ? `${mapLayer.fullId}:${index}` : mapLayer.fullId;
               this._mapLayerCache.set(name, olLayer);
+              let searchFunc: SearchFunction;
+              if ((mapLayer.type === 'geojson' || mapLayer.type === 'csv') && (mapLayer as GeoJSONMapLayer).searchable) {
+                searchFunc = (searchText: string, maxResultCount?: number) => {
+                  return Promise.resolve(
+                    this.geoJSONService.search(
+                      searchText,
+                      mapLayer as GeoJSONMapLayer,
+                      (olLayer.getSource() as VectorSource).getFeatures(),
+                      maxResultCount,
+                    ),
+                  );
+                };
+                this._state.addSearch(searchFunc, mapLayer.label, (mapLayer as GeoJSONMapLayer).searchMaxResultCount);
+              }
 
               // observe mapLayer changes
               this._state.observeMapLayers$(mapLayer.fullId).subscribe({
@@ -744,6 +762,9 @@ export class MapRendererComponent implements AfterViewInit {
                 },
                 complete: () => {
                   this._map.removeLayer(olLayer);
+                  if (searchFunc) {
+                    this._state.removeSearch(searchFunc);
+                  }
                   this._mapLayerCache.delete(name);
                 },
               });

@@ -31,7 +31,7 @@ interface SelectedMapLayerSettings {
 
 interface MapLayerGeneralSettings {
   label: string;
-  serverLayerName: string;
+  serverLayerName: string | null;
   type: string;
 }
 
@@ -47,6 +47,7 @@ export interface MapLayer extends PresistedSettings, SelectedMapLayerSettings, M
 }
 
 export interface WMSMapLayer extends MapLayer, GenericOptionalMapLayerOptions {
+  serverLayerName: string;
   noneTiled?: boolean;
   subLayersNames?: string[];
   hiddenSubLayers?: string[];
@@ -56,7 +57,21 @@ export interface WMSMapLayer extends MapLayer, GenericOptionalMapLayerOptions {
   tileFormat?: string;
 }
 
+export interface GeoJSONMapLayer extends MapLayer, GenericOptionalMapLayerOptions {
+  styleSourceType: 'url' | 'text';
+  styleUrl?: string;
+  styleText?: string;
+  styleFormat: 'mapbox' | 'olFlat';
+  styleSourceName?: string;
+  searchable?: boolean;
+  searchRegExPatterns?: string[][];
+  searchResultGroupingFilterFields?: string[];
+  searchResultLabelMask?: string;
+  searchMaxResultCount?: number;
+}
+
 export interface GeoAdminMapLayer extends MapLayer {
+  serverLayerName: string;
   attribution: string;
   attributionUrl: string;
   background: boolean;
@@ -80,7 +95,8 @@ export interface GeoAdminMapLayers {
   [key: string]: GeoAdminMapLayer;
 }
 
-export type MapLayerAllFields = Partial<WMSMapLayer>;
+export type MapLayerAllFields = Omit<Partial<GeoAdminMapLayer & WMSMapLayer & GeoJSONMapLayer>, 'serverLayerName'> &
+  Partial<MapLayerGeneralSettings>;
 export interface MapLayerOptionsApi extends Omit<MapLayerAllFields, keyof MapLayer> {
   opacity?: number;
 }

@@ -79,6 +79,8 @@ import { ProjectionSelectionComponent } from './projection-selection/projection-
 import { WmsSourceComponent } from './map-layer/wms/wms-source/wms-source.component';
 import { WmsLayerOptionsComponent } from './map-layer/wms/wms-layer-options/wms-layer-options.component';
 import { OrganisationLayerSettingsComponent } from './map-layer/organisation-layer-settings/organisation-layer-settings.component';
+import { GeoJSONLayerOptionsComponent } from './map-layer/geojson/geojson-layer-options/geojson-layer-options.component';
+import { RegexValidatorDirective } from './map-layer/regex-validator.directive';
 
 registerLocaleData(localeCH);
 
@@ -135,6 +137,8 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     WmsSourceComponent,
     WmsLayerOptionsComponent,
     OrganisationLayerSettingsComponent,
+    GeoJSONLayerOptionsComponent,
+    RegexValidatorDirective,
   ],
   imports: [
     BrowserModule,
