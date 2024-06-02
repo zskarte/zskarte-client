@@ -122,3 +122,37 @@ mat-accordion mat-expansion-panel {
     }
   }
 }
+
+fieldset.like-mat-form-field-outline {
+  margin: 0;
+  border-style: solid;
+  border-width: var(--mdc-outlined-text-field-outline-width);
+  border-color: var(--mdc-outlined-text-field-outline-color);
+  border-radius:  var(--mdc-outlined-text-field-container-shape);
+}
+fieldset.like-mat-form-field-outline > legend {
+  font-size: calc(var(--mat-form-field-outlined-label-text-populated-size) * var(--mat-mdc-form-field-floating-label-scale, 0.75));
+  color: var(--mdc-outlined-text-field-label-text-color);
+  font-family: var(--mdc-outlined-text-field-label-text-font);
+  font-weight: var(--mdc-outlined-text-field-label-text-weight);
+  letter-spacing: var(--mdc-outlined-text-field-label-text-tracking);
+  white-space: nowrap;
+}
+
+.ol-scale-bar.scale-print {
+  padding: 20px 20px 2px 10px;
+}
+.ol-scale-bar.scale-print .ol-scale-bar-inner {
+  position: relative;
+}
+
+#map .ol-attribution {
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, 0);
+  border-radius: 4px 4px 0 0;
+}
+#map .ol-attribution li:not(:first-child) {
+  border-left: 1px solid var(--ol-foreground-color);
+  padding-left: 2px;
+}

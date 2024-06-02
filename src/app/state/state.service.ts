@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
+import { isEqual } from 'lodash';
 import {
   getDefaultIZsMapState,
   IPositionFlag,
   IZsMapDisplayState,
+  PaperDimensions,
+  IZsMapPrintExtent,
+  IZsMapPrintState,
   IZsMapState,
   IZsMapSymbolDrawElementParams,
   IZsMapTextDrawElementParams,
@@ -39,23 +43,26 @@ import { I18NService } from './i18n.service';
 import { ApiService } from '../api/api.service';
 import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { Feature } from 'ol';
-import { DEFAULT_COORDINATES, DEFAULT_ZOOM, DEFAULT_DPI, LOG2_ZOOM_0_RESOLUTION } from '../session/default-map-values';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM, DEFAULT_DPI, LOG2_ZOOM_0_RESOLUTION, INCHES_PER_METER } from '../session/default-map-values';
 import { Coordinate } from 'ol/coordinate';
 import { getPointResolution } from 'ol/proj';
 import { mercatorProjection } from '../helper/projections';
+import { PermissionType } from '../session/session.interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ZsMapStateService {
-  private _map = new BehaviorSubject<IZsMapState>(produce<IZsMapState>(getDefaultIZsMapState(), (draft) => draft));
+  private _map = new BehaviorSubject<IZsMapState>(getDefaultIZsMapState());
   private _mapPatches = new BehaviorSubject<Patch[]>([]);
   private _mapInversePatches = new BehaviorSubject<Patch[]>([]);
   private _undoStackPointer = new BehaviorSubject<number>(0);
 
-  private _display = new BehaviorSubject<IZsMapDisplayState>(produce<IZsMapDisplayState>(this._getDefaultDisplayState(), (draft) => draft));
+  private _display = new BehaviorSubject<IZsMapDisplayState>(this._getDefaultDisplayState());
   private _displayPatches = new BehaviorSubject<Patch[]>([]);
   private _displayInversePatches = new BehaviorSubject<Patch[]>([]);
+
+  private _print = new BehaviorSubject<IZsMapPrintState>(ZsMapStateService._getDefaultIZsMapPrintState());
 
   private _cursor = new BehaviorSubject<Coordinate>([0, 0]);
 
@@ -117,6 +124,26 @@ export class ZsMapStateService {
       }
     }
     return state;
+  }
+
+  private static _getDefaultIZsMapPrintState(): IZsMapPrintState {
+    return {
+      printView: false,
+      format: 'A4',
+      orientation: 'landscape',
+      printMargin: 10,
+      dpi: 150,
+      scale: undefined,
+      autoScaleVal: 10,
+      printScale: true,
+      emptyMap: false,
+      qrCode: true,
+      shareLink: false,
+      sharePermission: PermissionType.READ,
+      dimensions: PaperDimensions['A4'].map((s) => s - 15 * 2) as [number, number],
+      generateCallback: undefined,
+      tileEventCallback: undefined,
+    };
   }
 
   public copySymbol(symbolId: number, layer?: string) {
@@ -249,6 +276,14 @@ export class ZsMapStateService {
     return this._display.asObservable();
   }
 
+  public observePrintState(): Observable<IZsMapPrintState> {
+    return this._print.asObservable();
+  }
+
+  public getPrintCenter(): Coordinate | undefined {
+    return this._print.value.printCenter;
+  }
+
   // zoom
   public observeMapZoom(): Observable<number> {
     return this._display.pipe(
@@ -260,6 +295,10 @@ export class ZsMapStateService {
       }),
       distinctUntilChanged((x, y) => x === y),
     );
+  }
+
+  public getMapZoom(): number {
+    return this._display.value.mapZoom;
   }
 
   // dpi
@@ -277,6 +316,18 @@ export class ZsMapStateService {
 
   public getDPI(): number {
     return this._display.value.dpi ?? DEFAULT_DPI;
+  }
+
+  public observePrintExtent(): Observable<IZsMapPrintExtent> {
+    return this._print.pipe(
+      map((o) => ({
+        dimensions: o.dimensions,
+        dpi: o.dpi,
+        scale: o.scale,
+        autoScaleVal: o.autoScaleVal,
+      })),
+      distinctUntilChanged((x, y) => isEqual(x, y)),
+    );
   }
 
   public observePositionFlag(): Observable<IPositionFlag> {
@@ -339,8 +390,7 @@ export class ZsMapStateService {
         } else {
           dpi = this._display.value.dpi ?? DEFAULT_DPI;
         }
-        const inchesPerMeter = 1000 / 25.4;
-        const desiredResolution = getPointResolution(mercatorProjection, inchesPerMeter * dpi, draft.mapCenter, 'm');
+        const desiredResolution = getPointResolution(mercatorProjection, INCHES_PER_METER * dpi, draft.mapCenter, 'm');
         draft.mapZoom = LOG2_ZOOM_0_RESOLUTION - Math.log2(scale / desiredResolution);
       }
     });
@@ -831,6 +881,11 @@ export class ZsMapStateService {
       this._displayInversePatches.next(this._displayInversePatches.value);
     });
     this._display.next(newState);
+  }
+
+  public updatePrintState(fn: (draft: IZsMapPrintState) => void): void {
+    const newState = produce<IZsMapPrintState>(this._print.value || {}, fn);
+    this._print.next(newState);
   }
 
   public filterAll(active: boolean, featureTypes: string[], categoryNames: string[]) {

@@ -5,7 +5,6 @@ import { HelpComponent } from '../../help/help.component';
 import { ZsMapStateService } from '../../state/state.service';
 import { BehaviorSubject } from 'rxjs';
 import { SessionService } from '../../session/session.service';
-import { MatMenuTrigger } from '@angular/material/menu';
 import { ZsMapBaseDrawElement } from '../../map-renderer/elements/base/base-draw-element';
 import { DatePipe } from '@angular/common';
 import { exportProtocolExcel, mapProtocolEntry, ProtocolEntry } from '../../helper/protocolEntry';
@@ -16,6 +15,8 @@ import { RevokeShareDialogComponent } from '../../session/revoke-share-dialog/re
 import { OperationService } from '../../session/operations/operation.service';
 import { first } from 'rxjs/operators';
 import { ChangeType } from '../../projection-selection/projection-selection.component';
+import { SidebarContext } from '../sidebar.interfaces';
+import { SidebarService } from '../sidebar.service';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -23,7 +24,6 @@ import { ChangeType } from '../../projection-selection/projection-selection.comp
   styleUrl: './sidebar-menu.component.scss',
 })
 export class SidebarMenuComponent {
-  @ViewChild(MatMenuTrigger) menu!: MatMenuTrigger;
   @ViewChild('projectionSelectionTemplate') projectionSelectionTemplate!: TemplateRef<unknown>;
 
   locales: Locale[] = LOCALES;
@@ -39,6 +39,7 @@ export class SidebarMenuComponent {
     private datePipe: DatePipe,
     private _dialog: MatDialog,
     private _operation: OperationService,
+    public sidebar: SidebarService,
   ) {
     this.incidents.next(this.session.getOperationEventStates() || []);
   }
@@ -92,10 +93,7 @@ export class SidebarMenuComponent {
   }
 
   print(): void {
-    this.menu.closeMenu();
-    setTimeout(() => {
-      window.print();
-    }, 0);
+    this.sidebar.toggle(SidebarContext.Print);
   }
 
   setLocale(locale: Locale) {

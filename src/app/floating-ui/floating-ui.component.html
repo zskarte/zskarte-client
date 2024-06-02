@@ -26,6 +26,9 @@
       @case (SidebarContext.SelectedFeature) {
         <app-selected-feature></app-selected-feature>
       }
+      @case (SidebarContext.Print) {
+        <app-sidebar-print></app-sidebar-print>
+      }
     }
   </mat-sidenav>
   <mat-sidenav-content>
@@ -114,8 +117,8 @@
           <button mat-icon-button class="toggle-button" (click)="zoomIn()" [attr.aria-label]="i18n.get('zoomIn')">
             <mat-icon>zoom_in</mat-icon>
           </button>
-          <mat-divider class="divider"></mat-divider>
-          <button mat-icon-button class="toggle-button" (click)="zoomToScale()" [attr.aria-label]="i18n.get('zoomToScale')">
+          <mat-divider *ngIf="!printView" class="divider"></mat-divider>
+          <button mat-icon-button *ngIf="!printView" class="toggle-button" (click)="zoomToScale()" [attr.aria-label]="i18n.get('zoomToScale')">
             <mat-icon>linear_scale</mat-icon>
           </button>
           <mat-divider class="divider"></mat-divider>
