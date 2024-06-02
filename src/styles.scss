@@ -156,3 +156,8 @@ fieldset.like-mat-form-field-outline > legend {
   border-left: 1px solid var(--ol-foreground-color);
   padding-left: 2px;
 }
+
+/*for any reason the one in map-legend-display.component.css are not applied*/
+.legend-img {
+  display: block;
+}

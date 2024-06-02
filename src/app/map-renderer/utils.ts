@@ -1,5 +1,6 @@
 import CPUTileLayer from 'ol/layer/Tile';
 import GPUTileLayer from 'ol/layer/WebGLTile';
+import TileWMS from 'ol/source/TileWMS';
 import TileWMTS from 'ol/source/WMTS';
 import { Subject } from 'rxjs';
 
@@ -20,7 +21,7 @@ export function isWebGLSupported(): boolean {
   }
 }
 
-export type OlTileLayerType = typeof CPUTileLayer<TileWMTS> | typeof GPUTileLayer;
+export type OlTileLayerType = typeof CPUTileLayer<TileWMTS | TileWMS> | typeof GPUTileLayer;
 
 function getOlTileLayer(): OlTileLayerType {
   if (isWebGLSupported()) {
@@ -30,7 +31,7 @@ function getOlTileLayer(): OlTileLayerType {
   } else {
     console.info('Using Fallback Tile Layer');
     renderStrategy$.next('default');
-    return CPUTileLayer<TileWMTS>;
+    return CPUTileLayer<TileWMTS | TileWMS>;
   }
 }
 

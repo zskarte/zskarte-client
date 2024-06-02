@@ -4,7 +4,7 @@ import { createBox } from 'ol/interaction/Draw';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil, skip } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil, skip,concatMap } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -19,7 +19,7 @@ import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { Circle, Fill, Icon, Stroke, Style } from 'ol/style';
-import { GeoadminService } from '../core/geoadmin.service';
+import { GeoadminService } from '../map-layer/geoadmin/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
 import { FeatureLike } from 'ol/Feature';
@@ -38,8 +38,7 @@ import { DEFAULT_COORDINATES, DEFAULT_RESOLUTION, DEFAULT_ZOOM, MM_PER_INCHES } 
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { Layer } from 'ol/layer';
-import TileSource from 'ol/source/Tile';
-import { OlTileLayer, OlTileLayerType } from './utils';
+
 
 const LAYER_Z_INDEX_CURRENT_LOCATION = 1000000;
 const LAYER_Z_INDEX_NAVIGATION_LAYER = 1000001;
@@ -77,7 +76,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _translate!: Translate;
   private _modify!: Modify;
   private _mapInteractions!: Interaction[];
-  private _mapLayer: Layer = new OlTileLayer({
+  private _mapLayer: Layer = new Layer({
     zIndex: 0,
   });
   private _navigationLayer!: VectorLayer<VectorSource>;
@@ -95,7 +94,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _currentDrawInteraction: Draw | undefined;
   private _printAreaInteraction: Draw | undefined;
   private _printAreaPositionInteraction: Translate | undefined;
-  private _featureLayerCache: Map<string, OlTileLayerType> = new Map();
+  private _mapLayerCache: Map<string, Layer> = new Map();
   private _modifyCache = new Collection<Feature>([]);
   private _currentSketch: FeatureLike | undefined;
   private _rotating = false;
@@ -125,6 +124,7 @@ export class MapRendererComponent implements AfterViewInit {
     public i18n: I18NService,
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
+    private wmsService: WmsService,
   ) {
     _state
       .observeSelectedElement$()
@@ -694,37 +694,51 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
-      .observeSelectedFeatures$()
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((features) => {
-        // removed features
-        const cacheNames = Array.from(this._featureLayerCache.keys());
-        features
-          .filter((el) => !cacheNames.includes(el.serverLayerName))
-          .forEach(async (feature) => {
-            const layers = await this.geoAdminService.createGeoAdminLayer(feature);
-            layers.forEach((layer, index) => {
-              this._map.addLayer(layer);
-              const name = index > 0 ? `${feature.serverLayerName}:${index}` : feature.serverLayerName;
-              // @ts-expect-error "we know the type is correct"
-              this._featureLayerCache.set(name, layer);
+      .observeSelectedMapLayers$()
+      .pipe(
+        takeUntil(this._ngUnsubscribe),
+        concatMap(async (mapLayers) => {
+          const cacheNames = Array.from(this._mapLayerCache.keys());
+          mapLayers = mapLayers.filter((el) => !cacheNames.includes(el.fullId));
+          for (const mapLayer of mapLayers) {
+            let olLayers: Layer[];
+            if (!mapLayer.source) {
+              olLayers = await this.geoAdminService.createGeoAdminLayer(mapLayer as GeoAdminMapLayer);
+            } else if (mapLayer.type === 'wmts') {
+              olLayers = await this.wmsService.createWMTSLayer(mapLayer);
+            } else if (mapLayer.type === 'wms') {
+              olLayers = await this.wmsService.createWMSLayer(mapLayer as WMSMapLayer);
+            } else if (mapLayer.type === 'wms_custom') {
+              olLayers = await this.wmsService.createWMSCustomLayer(mapLayer as WMSMapLayer);
+            } else {
+              console.error('unknown layer type', mapLayer.type, 'for source', mapLayer.source, mapLayer);
+              return;
+            }
+            olLayers.forEach((olLayer, index) => {
+              this._map.addLayer(olLayer);
+              const name = index > 0 ? `${mapLayer.fullId}:${index}` : mapLayer.fullId;
+              this._mapLayerCache.set(name, olLayer);
 
-              // observe feature changes
-              this._state.observeFeature$(feature.serverLayerName).subscribe({
-                next: (updatedFeature) => {
-                  if (updatedFeature) {
-                    layer.setZIndex(updatedFeature.zIndex);
-                    layer.setOpacity(updatedFeature.opacity);
-                    layer.setVisible(!updatedFeature.hidden && updatedFeature.opacity !== 0);
+              // observe mapLayer changes
+              this._state.observeMapLayers$(mapLayer.fullId).subscribe({
+                next: (updatedLayer) => {
+                  if (updatedLayer) {
+                    olLayer.setZIndex(updatedLayer.zIndex);
+                    olLayer.setOpacity(updatedLayer.opacity);
+                    olLayer.setVisible(!updatedLayer.hidden && updatedLayer.opacity !== 0);
                   }
                 },
                 complete: () => {
-                  this._map.removeLayer(layer);
-                  this._featureLayerCache.delete(name);
+                  this._map.removeLayer(olLayer);
+                  this._mapLayerCache.delete(name);
                 },
               });
             });
-          });
+          }
+        }),
+      )
+      .subscribe(() => {
+        //real handling is done in concatMap as this can handle async correctly (wait for finish before next is started)
       });
 
     this._state

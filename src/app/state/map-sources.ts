@@ -86,6 +86,10 @@ export const ZsMapSources = {
 
         return layer;
       }
+      case ZsMapStateSource.NONE:
+        return new OlTileLayer({
+          zIndex: 0,
+        });
       case ZsMapStateSource.OPEN_STREET_MAP:
       case undefined:
         return this.getOlTileLayer(
