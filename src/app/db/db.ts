@@ -5,10 +5,13 @@ import { Patch } from 'immer';
 
 export type LocalMapState = 'loading' | 'downloaded' | 'missing';
 
-export type LocalMapMeta = {
+export type BlobMeta = {
   url: string;
   mapStatus: LocalMapState;
   objectUrl: string | undefined;
+};
+
+export type LocalMapMeta = BlobMeta & {
   map: ZsMapStateSource;
   mapStyle: string | undefined;
 };

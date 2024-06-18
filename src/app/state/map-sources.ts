@@ -6,6 +6,7 @@ import VectorTile from 'ol/layer/VectorTile';
 import { Layer } from 'ol/layer';
 import { stylefunction } from 'ol-mapbox-style';
 import { db } from '../db/db';
+import { BlobService } from '../db/blob.service';
 
 export const ZsMapSources = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,32 +43,18 @@ export const ZsMapSources = {
           }),
         );
       case ZsMapStateSource.LOCAL: {
+        const downloadUrl = zsMapStateSourceToDownloadUrl[source];
         const blobMeta = await db.localMapMeta.where('map').equals(source).first();
-        let mapUrl: string = zsMapStateSourceToDownloadUrl[source];
+        const mapUrl = await BlobService.getBlobOrRealUrl(downloadUrl, blobMeta);
         let mapStyle: string | undefined = blobMeta?.mapStyle;
-        if (blobMeta) {
-          if (blobMeta.objectUrl) {
-            // There is no way to check if an object url is a valid reference
-            // without making a request.
-            // Because revoking and creating a new one is pretty fast,
-            // we revoke and create a new url every time.
-            // This prevents memory leaks and makes the laptops not crash :)
-            URL.revokeObjectURL(blobMeta.objectUrl);
-            blobMeta.objectUrl = undefined;
-          }
-          const blob = await db.localMapBlobs.get(blobMeta.url);
-          if (blob) {
-            mapUrl = URL.createObjectURL(blob.data);
-            blobMeta.objectUrl = mapUrl;
-          }
-          await db.localMapMeta.put(blobMeta);
-        }
         if (!mapStyle) {
           mapStyle = await fetch('/assets/map-style.json').then((res) => res.text());
           if (blobMeta) {
             blobMeta.mapStyle = mapStyle;
             await db.localMapMeta.put(blobMeta);
           }
+        } else if (blobMeta) {
+          await db.localMapMeta.put(blobMeta);
         }
         const layer = new VectorTile({
           declutter: true,
