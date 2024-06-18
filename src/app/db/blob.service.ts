@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subscriber, Subscription } from 'rxjs';
-import { BlobMeta, LocalMapState, db } from './db';
+import { LocalBlob, LocalBlobMeta, db } from './db';
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 
 export type BlobEventType = 'mapProgress' | 'done' | 'cancel' | 'error' | 'removed';
 export type UpdateCallback = (eventType: BlobEventType, blobOperation: BlobOperation) => Promise<void>;
 export interface BlobOperation {
-  url: string;
+  localBlobMeta: LocalBlobMeta;
   mapProgress: number;
   fileReader?: FileReader;
   fileReadAborted: boolean;
-  state: LocalMapState;
   updateCallback?: UpdateCallback;
   subscription?: Subscription;
 }
@@ -23,17 +22,39 @@ export class BlobService {
 
   constructor(private http: HttpClient) {}
 
-  public async downloadBlob(url: string, updateCallback?: UpdateCallback) {
-    const localMapBlob = await db.localMapBlobs.get(url);
+  public async downloadBlob(url: string, blobId?: number, updateCallback?: UpdateCallback) {
+    let localBlobMeta: LocalBlobMeta | undefined;
+    if (blobId) {
+      localBlobMeta = await db.localBlobMeta.get(blobId);
+    }
+    if (!localBlobMeta) {
+      localBlobMeta = await db.localBlobMeta.where('url').equals(url).first();
+    }
+    let localBlob: LocalBlob | undefined;
+    if (!localBlobMeta) {
+      localBlobMeta = {
+        url,
+        blobState: 'missing',
+        objectUrl: undefined,
+        lastModified: undefined,
+      } as LocalBlobMeta;
+      await db.localBlobMeta.add(localBlobMeta).then((id) => {
+        if (localBlobMeta) {
+          localBlobMeta.id = id;
+        }
+      });
+    } else {
+      localBlob = await db.localBlob.get(localBlobMeta.id);
+    }
+
     const operation: BlobOperation = {
-      url,
+      localBlobMeta,
       mapProgress: 0,
       fileReadAborted: false,
-      state: 'missing',
       updateCallback,
     };
-    if (!localMapBlob) {
-      operation.state = 'loading';
+    if (!localBlob) {
+      operation.localBlobMeta.blobState = 'loading';
       const mapRequest = this.http
         .get(url, {
           responseType: 'blob',
@@ -48,15 +69,24 @@ export class BlobService {
                 await operation.updateCallback('mapProgress', operation);
               }
             } else if (event instanceof HttpResponse) {
+              const response: HttpResponse<Blob> = event;
+              const header = response.headers.get('last-modified');
+              if (header) {
+                operation.localBlobMeta.lastModified = Date.parse(header).valueOf();
+              } else {
+                operation.localBlobMeta.lastModified = new Date().valueOf();
+              }
               operation.subscription?.unsubscribe();
               const blob = event.body as Blob;
-              await BlobService.blobToStorage(url, blob, operation);
+              await BlobService.blobToStorage(blob, operation);
             }
           },
           error: async () => {
             operation.subscription?.unsubscribe();
-            operation.state = 'missing';
+            operation.localBlobMeta.blobState = 'missing';
+            operation.localBlobMeta.lastModified = undefined;
             operation.mapProgress = 0;
+            await db.localBlobMeta.put(operation.localBlobMeta);
             if (operation.updateCallback) {
               await operation.updateCallback('error', operation);
             }
@@ -67,7 +97,8 @@ export class BlobService {
       operation.subscription = mapRequest;
       this.operations.set(url, operation);
     } else {
-      operation.state = 'downloaded';
+      operation.localBlobMeta.blobState = 'downloaded';
+      await db.localBlobMeta.put(operation.localBlobMeta);
       if (operation.updateCallback) {
         await operation.updateCallback('done', operation);
       }
@@ -80,27 +111,40 @@ export class BlobService {
     if (operation) {
       operation.subscription?.unsubscribe();
       operation.mapProgress = 0;
-      operation.state = 'missing';
+      operation.localBlobMeta.blobState = 'missing';
+      operation.localBlobMeta.lastModified = undefined;
+      await db.localBlobMeta.put(operation.localBlobMeta);
       if (operation.updateCallback) {
         await operation.updateCallback('cancel', operation);
       }
     }
   }
 
-  public uploadBlob(event: Event, url: string, updateCallback?: UpdateCallback) {
+  public async uploadBlob(event: Event, origUrl: string, updateCallback?: UpdateCallback) {
     if (!event.target) return null;
 
-    this.operations.get(url)?.subscription?.unsubscribe();
+    this.operations.get(origUrl)?.subscription?.unsubscribe();
+
+    const file = event.target['files'][0] as File;
+
+    const localBlobMeta: LocalBlobMeta = {
+      url: file.path ?? file.name,
+      blobState: 'missing',
+      objectUrl: undefined,
+      lastModified: file.lastModified,
+    } as LocalBlobMeta;
+    await db.localBlobMeta.add(localBlobMeta).then((id) => {
+      localBlobMeta.id = id;
+    });
 
     const operation: BlobOperation = {
-      url,
+      localBlobMeta,
       mapProgress: 0,
       fileReadAborted: false,
-      state: 'loading',
       updateCallback,
     };
-
-    const file = event.target['files'][0] as Blob;
+    operation.localBlobMeta.blobState = 'loading';
+    await db.localBlobMeta.put(operation.localBlobMeta);
 
     const mapRequest = BlobService.readFile(file, operation).subscribe({
       next: async (percentDone) => {
@@ -113,29 +157,33 @@ export class BlobService {
         operation.subscription?.unsubscribe();
         if (operation.fileReadAborted || !operation.fileReader) {
           operation.mapProgress = 0;
-          operation.state = 'missing';
+          operation.localBlobMeta.blobState = 'missing';
+          operation.localBlobMeta.lastModified = undefined;
+          await db.localBlobMeta.put(operation.localBlobMeta);
           if (operation.updateCallback) {
             await operation.updateCallback('cancel', operation);
           }
           return;
         }
-        const blob = new Blob([operation.fileReader.result as ArrayBuffer]);
-        await BlobService.blobToStorage(url, blob, operation);
+        const blob = new Blob([operation.fileReader.result as ArrayBuffer], { type: file.type });
+        await BlobService.blobToStorage(blob, operation);
       },
       error: async () => {
         operation.subscription?.unsubscribe();
-        operation.state = 'missing';
+        operation.localBlobMeta.blobState = 'missing';
+        operation.localBlobMeta.lastModified = undefined;
+        await db.localBlobMeta.put(operation.localBlobMeta);
         if (operation.updateCallback) {
           await operation.updateCallback('error', operation);
         }
       },
     });
     operation.subscription = mapRequest;
-    this.operations.set(url, operation);
+    this.operations.set(origUrl, operation);
     return operation;
   }
 
-  private static readFile(file: Blob, operation: BlobOperation): Observable<number> {
+  private static readFile(file: File, operation: BlobOperation): Observable<number> {
     return new Observable((subscriber: Subscriber<number>) => {
       operation.fileReader = new FileReader();
       operation.fileReadAborted = false;
@@ -167,18 +215,20 @@ export class BlobService {
     });
   }
 
-  private static async blobToStorage(url: string, blob: Blob, operation: BlobOperation) {
+  private static async blobToStorage(blob: Blob, operation: BlobOperation) {
     try {
-      await db.localMapBlobs.add({
-        url,
+      await db.localBlob.add({
+        id: operation.localBlobMeta.id,
         data: blob,
       });
-      operation.state = 'downloaded';
+      operation.localBlobMeta.blobState = 'downloaded';
+      await db.localBlobMeta.put(operation.localBlobMeta);
       if (operation.updateCallback) {
         await operation.updateCallback('done', operation);
       }
     } catch (e) {
-      operation.state = 'missing';
+      operation.localBlobMeta.blobState = 'missing';
+      await db.localBlobMeta.put(operation.localBlobMeta);
       operation.mapProgress = 0;
       if (operation.updateCallback) {
         await operation.updateCallback('error', operation);
@@ -186,38 +236,47 @@ export class BlobService {
     }
   }
 
-  public static async removeBlob(url: string, meta?: BlobMeta) {
-    await db.localMapBlobs.delete(url);
+  public static async removeBlob(blobId: number) {
+    await db.localBlob.delete(blobId);
+    const meta = await db.localBlobMeta.get(blobId);
     if (meta) {
-      await db.localMapBlobs.delete(meta.url);
       if (meta.objectUrl) {
         URL.revokeObjectURL(meta.objectUrl);
         meta.objectUrl = undefined;
       }
+      meta.blobState = 'missing';
+      await db.localBlobMeta.put(meta);
     }
   }
 
-  public static async getBlobOrRealUrl(url: string, meta?: BlobMeta) {
-    if (meta) {
-      if (meta.objectUrl) {
-        // There is no way to check if an object url is a valid reference
-        // without making a request.
-        // Because revoking and creating a new one is pretty fast,
-        // we revoke and create a new url every time.
-        // This prevents memory leaks and makes the laptops not crash :)
-        URL.revokeObjectURL(meta.objectUrl);
-        meta.objectUrl = undefined;
-      }
-      //if there is a meta the url will be the one saved there for sure.
-      url = meta.url;
-    }
-    const blob = await db.localMapBlobs.get(url);
-    if (blob) {
-      const objectUrl = URL.createObjectURL(blob.data);
+  public static async getBlobOrRealUrl(url: string, blobId?: number) {
+    if (blobId) {
+      const meta = await db.localBlobMeta.get(blobId);
       if (meta) {
-        meta.objectUrl = objectUrl;
+        if (meta.objectUrl) {
+          // There is no way to check if an object url is a valid reference
+          // without making a request.
+          // Because revoking and creating a new one is pretty fast,
+          // we revoke and create a new url every time.
+          // This prevents memory leaks and makes the laptops not crash :)
+          URL.revokeObjectURL(meta.objectUrl);
+          meta.objectUrl = undefined;
+          await db.localBlobMeta.put(meta);
+        }
+        //if there is a meta the url will be the one saved there.
+        if (url.startsWith('http')) {
+          url = meta.url;
+        }
       }
-      return objectUrl;
+      const blob = await db.localBlob.get(blobId);
+      if (blob) {
+        const objectUrl = URL.createObjectURL(blob.data);
+        if (meta) {
+          meta.objectUrl = objectUrl;
+          await db.localBlobMeta.put(meta);
+        }
+        return objectUrl;
+      }
     }
     return url;
   }

@@ -44,18 +44,10 @@ export const ZsMapSources = {
         );
       case ZsMapStateSource.LOCAL: {
         const downloadUrl = zsMapStateSourceToDownloadUrl[source];
-        const blobMeta = await db.localMapMeta.where('map').equals(source).first();
-        const mapUrl = await BlobService.getBlobOrRealUrl(downloadUrl, blobMeta);
-        let mapStyle: string | undefined = blobMeta?.mapStyle;
-        if (!mapStyle) {
-          mapStyle = await fetch('/assets/map-style.json').then((res) => res.text());
-          if (blobMeta) {
-            blobMeta.mapStyle = mapStyle;
-            await db.localMapMeta.put(blobMeta);
-          }
-        } else if (blobMeta) {
-          await db.localMapMeta.put(blobMeta);
-        }
+        const mapMeta = await db.localMapInfo.get(source);
+        const mapUrl = await BlobService.getBlobOrRealUrl(downloadUrl, mapMeta?.mapBlobId);
+        const styleUrl = await BlobService.getBlobOrRealUrl('/assets/map-style.json', mapMeta?.styleBlobId);
+        const mapStyle = await fetch(styleUrl).then((res) => res.text());
         const layer = new VectorTile({
           declutter: true,
           source: new PMTilesVectorSource({
@@ -64,7 +56,7 @@ export const ZsMapSources = {
           style: null,
         });
 
-        layer.setStyle(stylefunction(layer, mapStyle, 'protomaps'));
+        layer.setStyle(stylefunction(layer, mapStyle, mapMeta?.styleSourceName ?? 'protomaps'));
 
         return layer;
       }

@@ -8,7 +8,7 @@ import { GeoFeature } from '../../core/entity/geoFeature';
 import { combineLatest, map, Observable, share, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
-import { db, LocalMapMeta, LocalMapState } from '../../db/db';
+import { db, LocalBlobState } from '../../db/db';
 import { BlobEventType, BlobOperation, BlobService } from 'src/app/db/blob.service';
 
 @Component({
@@ -40,7 +40,7 @@ export class SidebarComponent {
 
   layerFilter = new FormControl('');
 
-  mapDownloadStates: { [key: string]: LocalMapState } = {};
+  mapDownloadStates: { [key: string]: LocalBlobState } = {};
 
   constructor(
     public mapState: ZsMapStateService,
@@ -76,11 +76,18 @@ export class SidebarComponent {
       ),
     );
 
-    db.localMapMeta.toArray().then((downloadedMaps) => {
-      this.mapDownloadStates = downloadedMaps.reduce((acc, val) => {
-        acc[val.map] = val.mapStatus;
-        return acc;
-      }, {});
+    db.localMapInfo.toArray().then(async (downloadedMaps) => {
+      this.mapDownloadStates = {};
+      for (const val of downloadedMaps) {
+        if (val.mapBlobId) {
+          const meta = await db.localBlobMeta.get(val.mapBlobId);
+          if (meta) {
+            this.mapDownloadStates[val.map] = meta?.blobState;
+            continue;
+          }
+        }
+        this.mapDownloadStates[val.map] = 'missing';
+      }
     });
 
     mapState
@@ -114,19 +121,10 @@ export class SidebarComponent {
     return map in zsMapStateSourceToDownloadUrl;
   }
 
-  private updateMapCallback(map: ZsMapStateSource, localMapMeta: LocalMapMeta) {
+  private updateMapCallback(map: ZsMapStateSource) {
+    // skipcq: JS-0116
     return async (eventType: BlobEventType, infos: BlobOperation) => {
-      if (eventType === 'done') {
-        const mapStyleResponse = await fetch('/assets/map-style.json');
-        const mapStyle = await mapStyleResponse.json();
-        localMapMeta.mapStyle = mapStyle;
-        localMapMeta.objectUrl = undefined;
-      }
-      if (localMapMeta.mapStatus !== infos.state) {
-        localMapMeta.mapStatus = infos.state;
-        await db.localMapMeta.put(localMapMeta);
-        this.mapDownloadStates[map] = infos.state;
-      }
+      this.mapDownloadStates[map] = infos.localBlobMeta.blobState;
       this.mapProgress = infos.mapProgress;
       this.cdRef.detectChanges();
     };
@@ -134,14 +132,15 @@ export class SidebarComponent {
 
   async downloadMap(map: ZsMapStateSource) {
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    const localMapMeta = (await db.localMapMeta.get(downloadUrl)) || {
-      url: downloadUrl,
-      map,
-      mapStatus: 'missing',
-      objectUrl: undefined,
-      mapStyle: undefined,
-    };
-    this._blobService.downloadBlob(downloadUrl, this.updateMapCallback(map, localMapMeta));
+    const localMapInfo = (await db.localMapInfo.get(map)) || { map };
+
+    let operation = await this._blobService.downloadBlob(downloadUrl, localMapInfo.mapBlobId, this.updateMapCallback(map));
+    localMapInfo.mapBlobId = operation.localBlobMeta.id;
+    await db.localMapInfo.put(localMapInfo);
+
+    operation = await this._blobService.downloadBlob('/assets/map-style.json', localMapInfo.styleBlobId);
+    localMapInfo.styleBlobId = operation.localBlobMeta.id;
+    await db.localMapInfo.put(localMapInfo);
   }
 
   async cancelDownloadMap(map: ZsMapStateSource) {
@@ -154,26 +153,34 @@ export class SidebarComponent {
 
     this.mapDownloadStates[map] = 'loading';
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    const localMapMeta = (await db.localMapMeta.get(downloadUrl)) || {
-      url: downloadUrl,
-      map,
-      mapStatus: 'missing',
-      objectUrl: undefined,
-      mapStyle: undefined,
-    };
+    const localMapInfo = (await db.localMapInfo.get(map)) || { map };
 
-    this._blobService.uploadBlob(event, downloadUrl, this.updateMapCallback(map, localMapMeta));
+    let operation = await this._blobService.uploadBlob(event, downloadUrl, this.updateMapCallback(map));
+    if (operation) {
+      localMapInfo.mapBlobId = operation.localBlobMeta.id;
+      await db.localMapInfo.put(localMapInfo);
+
+      operation = await this._blobService.downloadBlob('/assets/map-style.json', localMapInfo.styleBlobId);
+      localMapInfo.styleBlobId = operation.localBlobMeta.id;
+      await db.localMapInfo.put(localMapInfo);
+    }
   }
 
   async removeLocalMap(map: ZsMapStateSource): Promise<void> {
-    const blobMeta = await db.localMapMeta.where('map').equals(map).first();
-    if (!blobMeta) return;
-    await BlobService.removeBlob(blobMeta.url, blobMeta);
-    await db.localMapMeta.delete(blobMeta.url);
-    if ((await db.localMapMeta.where('map').equals(map).count()) === 0) {
-      this.mapDownloadStates[map] = 'missing';
-      this.mapProgress = 0;
-      this.cdRef.detectChanges();
+    const blobMeta = await db.localMapInfo.get(map);
+    if (!blobMeta || (!blobMeta.mapBlobId && !blobMeta.styleBlobId)) return;
+    if (blobMeta.mapBlobId) {
+      await BlobService.removeBlob(blobMeta.mapBlobId);
+      blobMeta.mapBlobId = undefined;
+      await db.localMapInfo.put(blobMeta);
     }
+    if (blobMeta.styleBlobId) {
+      await BlobService.removeBlob(blobMeta.styleBlobId);
+      blobMeta.styleBlobId = undefined;
+      await db.localMapInfo.put(blobMeta);
+    }
+    this.mapDownloadStates[map] = 'missing';
+    this.mapProgress = 0;
+    this.cdRef.detectChanges();
   }
 }
