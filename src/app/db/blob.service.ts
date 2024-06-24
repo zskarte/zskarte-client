@@ -51,6 +51,7 @@ export class BlobService {
     } else {
       localBlob = await db.localBlob.get(localBlobMeta.id);
     }
+    localBlobMeta.source = 'download';
 
     const operation: BlobOperation = {
       localBlobMeta,
@@ -141,6 +142,7 @@ export class BlobService {
     if (!localBlobMeta) {
       localBlobMeta = await BlobService._newBloblMeta(url, file.lastModified);
     }
+    localBlobMeta.source = 'upload';
 
     const operation: BlobOperation = {
       localBlobMeta,
@@ -224,5 +226,45 @@ export class BlobService {
       }
     }
     return url;
+  }
+
+  public static async getBlobContentAsText(bloblId?: number) {
+    if (!bloblId) {
+      return null;
+    }
+    const blob = await db.localBlob.get(bloblId);
+    if (!blob) {
+      return null;
+    }
+    return await blob.data.text();
+  }
+
+  public static async saveTextAsBlobContent(text: string, type: string, bloblId?: number, url?: string) {
+    let localBlobMeta: LocalBlobMeta | undefined;
+    if (bloblId) {
+      localBlobMeta = await db.localBlobMeta.get(bloblId);
+      if (localBlobMeta?.objectUrl) {
+        URL.revokeObjectURL(localBlobMeta.objectUrl);
+      }
+    }
+    if (!localBlobMeta) {
+      localBlobMeta = await BlobService._newBloblMeta(url ?? '', new Date().valueOf());
+    } else {
+      if (url) {
+        localBlobMeta.url = url;
+      }
+      localBlobMeta.lastModified = new Date().valueOf();
+    }
+    localBlobMeta.source = 'text';
+    const blob = new Blob([text], { type });
+
+    const operation: BlobOperation = {
+      localBlobMeta,
+      mapProgress: 0,
+      finished: new Subject<LocalBlobMeta>(),
+    };
+    const finishedPromise = lastValueFrom(operation.finished.asObservable());
+    await BlobService._blobToStorage(blob, operation);
+    return await finishedPromise;
   }
 }

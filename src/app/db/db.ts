@@ -16,6 +16,7 @@ export type LocalBlobMeta = {
   blobState: LocalBlobState;
   objectUrl: string | undefined;
   lastModified: number | undefined;
+  source: 'download' | 'upload' | 'text';
 };
 
 export type LocalMapInfo = {
@@ -63,6 +64,7 @@ export class AppDB extends Dexie {
             blobState: meta?.mapStatus ?? 'missing',
             objectUrl: meta?.objectUrl,
             lastModified: meta?.mapStatus === 'downloaded' ? new Date().valueOf() : undefined,
+            source: 'download',
           } as LocalBlobMeta;
           await trans
             .table('localBlobMeta')
@@ -83,6 +85,7 @@ export class AppDB extends Dexie {
               blobState: 'downloaded',
               objectUrl: undefined,
               lastModified: new Date().valueOf(),
+              source: 'download',
             } as LocalBlobMeta;
             const blob = new Blob([JSON.stringify(localMapMeta.mapStyle)], { type: 'application/json' });
             await trans
