@@ -73,6 +73,8 @@ import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { IncidentSelectComponent } from './incident-select/incident-select.component';
+import { OfflineDialogComponent } from './offline-dialog/offline-dialog.component';
+
 
 registerLocaleData(localeCH);
 
@@ -123,6 +125,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     SidebarMenuComponent,
     DrawDialogComponent,
     IncidentSelectComponent,
+    OfflineDialogComponent,
   ],
   imports: [
     BrowserModule,
