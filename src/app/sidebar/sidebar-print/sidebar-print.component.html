@@ -1,0 +1,85 @@
+<h2>{{ i18n.get('print') }}</h2>
+
+<div class="printingOptions">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('paperFormat') }}</mat-label>
+    <mat-select [(value)]="format" (selectionChange)="updateDimension()">
+      @for (format of paperDimensions; track format) {
+        <mat-option [value]="format">{{format}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('orientation') }}</legend>
+    <mat-radio-group [(ngModel)]="orientation" (change)="updateDimension()">
+      <mat-radio-button value="landscape">{{ i18n.get('landscape') }}</mat-radio-button>
+      <mat-radio-button value="portrait">{{ i18n.get('portrait') }}</mat-radio-button>
+    </mat-radio-group>
+  </fieldset>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('printMargin') }}</mat-label>
+    <input matInput min="0" type="number" [(ngModel)]="printMargin" (change)="updateDimension()"/>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('resolution') }}</mat-label>
+    <mat-select [(value)]="dpi" (selectionChange)="updatePrintSize()">
+      <mat-option [value]="72">72 dpi</mat-option>
+      <mat-option [value]="100">100 dpi</mat-option>
+      <mat-option [value]="150">150 dpi</mat-option>
+      <mat-option [value]="200">200 dpi</mat-option>
+      <mat-option [value]="250">250 dpi</mat-option>
+      <mat-option [value]="300">300 dpi</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('scale') }}{{ !scale && autoScaleHint ? autoScaleHint : '' }}</mat-label>
+    <mat-select [(value)]="scale" (selectionChange)="updatePrintSize()">
+      <mat-option>{{ i18n.get('autoScale') }}</mat-option>
+      <mat-option [value]="500">1:500000</mat-option>
+      <mat-option [value]="250">1:250000</mat-option>
+      <mat-option [value]="100">1:100000</mat-option>
+      <mat-option [value]="50">1:50000</mat-option>
+      <mat-option [value]="25">1:25000</mat-option>
+      <mat-option [value]="10">1:10000</mat-option>
+      <mat-option [value]="5">1:5000</mat-option>
+      <mat-option [value]="2.5">1:2500</mat-option>
+      <mat-option [value]="1">1:1000</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('printScale') }}</legend>
+    <mat-checkbox [checked]="printScale" (change)="updateSettings('printScale', $event.checked)">{{ i18n.get('printScale') }}</mat-checkbox>
+  </fieldset>
+
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('emptyMap') }}</legend>
+    <mat-checkbox [checked]="emptyMap" (change)="updateSettings('emptyMap', $event.checked)">{{ i18n.get('hideAllInfos') }}</mat-checkbox>
+  </fieldset>
+
+  <fieldset *ngIf="!emptyMap" class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('qrCode') }}</legend>
+    <mat-checkbox [checked]="qrCode" (change)="updateSettings('qrCode', $event.checked)">{{ i18n.get('addQRCode') }}</mat-checkbox>
+    <div *ngIf="qrCode">
+      <mat-checkbox [checked]="shareLink" (change)="updateSettings('shareLink', $event.checked)">{{ i18n.get('withShare') }}</mat-checkbox>
+      <fieldset *ngIf="shareLink" class="like-mat-form-field-outline">
+        <legend>{{ i18n.get('type') }}</legend>
+        <mat-radio-group [(ngModel)]="sharePermission" (change)="updateSettings('sharePermission')">
+          <mat-radio-button [value]="PermissionType.READ">{{ i18n.get('read') }}</mat-radio-button>
+          <mat-radio-button [value]="PermissionType.WRITE">{{ i18n.get('write') }}</mat-radio-button>
+        </mat-radio-group>
+      </fieldset>
+    </div>
+  </fieldset>
+
+  <div *ngIf="generateError" class="generate-error">{{ generateError }}</div>
+
+  <div *ngIf="generating" class="progress" [style.width]="generatingProgress" #progress></div>
+
+  <button mat-raised-button color="primary" (click)="generate()">
+    {{ i18n.get('generatePdf') }}
+  </button>
+</div>

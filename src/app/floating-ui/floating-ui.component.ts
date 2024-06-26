@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, Observable, Subject, takeUntil } from 'rxjs';
 
 import { ZsMapStateService } from '../state/state.service';
@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HelpComponent } from '../help/help.component';
 import { SidebarContext } from '../sidebar/sidebar.interfaces';
 import { SidebarService } from '../sidebar/sidebar.service';
+import { ScaleSelectionComponent } from '../scale-selection/scale-selection.component';
 
 @Component({
   selector: 'app-floating-ui',
@@ -29,6 +30,7 @@ export class FloatingUIComponent {
   activeLayer$: Observable<ZsMapBaseLayer | undefined>;
   public canUndo = new BehaviorSubject<boolean>(false);
   public canRedo = new BehaviorSubject<boolean>(false);
+  public printView = false;
 
   constructor(
     public i18n: I18NService,
@@ -69,6 +71,13 @@ export class FloatingUIComponent {
       });
 
     this.activeLayer$ = _state.observeActiveLayer();
+
+    this._state
+      .observePrintState()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((printState) => {
+        this.printView = printState.printView;
+      });
   }
 
   // skipcq:  JS-0105
@@ -83,6 +92,21 @@ export class FloatingUIComponent {
 
   zoomIn() {
     this._state.updateMapZoom(1);
+  }
+
+  zoomToScale() {
+    const projectionDialog = this._dialog.open(ScaleSelectionComponent, {
+      width: '500px',
+      data: {
+        scale: undefined,
+        dpi: this._state.getDPI(),
+      },
+    });
+    projectionDialog.afterClosed().subscribe((result) => {
+      if (result) {
+        this._state.setMapZoomScale(result.scale, result.dpi);
+      }
+    });
   }
 
   zoomOut() {
@@ -101,5 +125,19 @@ export class FloatingUIComponent {
     const layer = await firstValueFrom(this._state.observeActiveLayer());
     const ref = this._dialog.open(DrawDialogComponent);
     ref.componentRef?.instance.setLayer(layer);
+  }
+
+  @HostListener('window:keydown.Control.p', ['$event'])
+  @HostListener('window:keydown.Meta.p', ['$event'])
+  @HostListener('window:beforeprint', ['$event'])
+  onStartPrint(event: Event): void {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    this.sidebar.open(SidebarContext.Print);
+  }
+
+  @HostListener('window:keydown.Escape', ['$event'])
+  closeSidebareOnEsc(): void {
+    this.sidebar.close();
   }
 }
