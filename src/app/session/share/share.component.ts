@@ -31,7 +31,7 @@ export class ShareComponent {
         // do nothing
       }
 
-      await this._router.navigateByUrl('/map/login');
+      await this._router.navigate(['login'], { queryParamsHandling: 'preserve' });
     });
   }
 }
