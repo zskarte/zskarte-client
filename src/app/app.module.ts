@@ -73,6 +73,8 @@ import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { IncidentSelectComponent } from './incident-select/incident-select.component';
+import { WmsSourceComponent } from './map-layer/wms/wms-source/wms-source.component';
+import { WmsLayerOptionsComponent } from './map-layer/wms/wms-layer-options/wms-layer-options.component';
 
 registerLocaleData(localeCH);
 
@@ -123,6 +125,8 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     SidebarMenuComponent,
     DrawDialogComponent,
     IncidentSelectComponent,
+    WmsSourceComponent,
+    WmsLayerOptionsComponent,
   ],
   imports: [
     BrowserModule,

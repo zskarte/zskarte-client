@@ -1,4 +1,4 @@
-import { GeoFeature } from '../core/entity/geoFeature';
+import { MapLayer, WmsSource } from '../map-layer/map-layer-interface';
 import { FillStyle } from '../core/entity/sign';
 
 export enum ZsMapStateSource {
@@ -7,6 +7,7 @@ export enum ZsMapStateSource {
   GEO_ADMIN_PIXEL = 'geoAdminPixel',
   GEO_ADMIN_PIXEL_BW = 'geoAdminPixelBW',
   LOCAL = 'local',
+  NONE = 'noBaseMap',
 }
 
 export const zsMapStateSourceToDownloadUrl = {
@@ -40,6 +41,7 @@ export interface IZsMapDisplayState {
   id?: number;
   version: number;
   displayMode: ZsMapDisplayMode;
+  expertView: boolean;
   mapOpacity: number;
   mapCenter: number[];
   mapZoom: number;
@@ -51,7 +53,8 @@ export interface IZsMapDisplayState {
   source: ZsMapStateSource;
   elementOpacity: Record<string, number>;
   elementVisibility: Record<string, boolean>;
-  features: GeoFeature[];
+  layers: MapLayer[];
+  wmsSources?: WmsSource[];
   positionFlag: IPositionFlag;
   hiddenSymbols: number[];
   hiddenFeatureTypes: string[];
