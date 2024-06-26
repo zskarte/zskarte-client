@@ -1316,8 +1316,8 @@ export class I18NService {
     },
     offlineDialogTitle: {
       de: 'Offline-Warnung',
-      en: "Offline Warning",
-      fr: "Avertissement hors ligne",
+      en: 'Offline Warning',
+      fr: 'Avertissement hors ligne',
     },
     offlineDialogMain: {
       de: 'Sie sind derzeit offline. Wenn Sie die Seite aktualisieren oder verlassen, werden Sie abgemeldet und können sich erst wieder anmelden, wenn Sie eine Internetverbindung haben. Sind Sie sicher, dass Sie fortfahren möchten?',

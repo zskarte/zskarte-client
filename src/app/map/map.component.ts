@@ -9,28 +9,24 @@ import { OfflineDialogComponent } from '../offline-dialog/offline-dialog.compone
 })
 // skipcq: JS-0327
 export class MapComponent {
-
   constructor(private dialog: MatDialog) {
-    localStorage.setItem("TriedReloading", "FALSE")
+    localStorage.setItem('TriedReloading', 'FALSE');
   }
-
 
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: BeforeUnloadEvent): void {
-
-    if (!navigator.onLine && window.localStorage.getItem("TriedReloading") === "FALSE") {
+    if (!navigator.onLine && window.localStorage.getItem('TriedReloading') === 'FALSE') {
       event.preventDefault();
 
       const dialogRef = this.dialog.open(OfflineDialogComponent);
 
-      dialogRef.afterClosed().subscribe(confirmed => {
+      dialogRef.afterClosed().subscribe((confirmed) => {
         if (confirmed) {
-          localStorage.setItem("TriedReloading", "TRUE")
+          localStorage.setItem('TriedReloading', 'TRUE');
           window.removeEventListener('beforeunload', this.handleBeforeUnload.bind(this));
-          window.location.assign(window.location.href)
+          window.location.assign(window.location.href);
         }
       });
     }
   }
-
 }
