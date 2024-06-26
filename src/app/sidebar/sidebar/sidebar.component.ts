@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from 'src/app/state/interfaces';
 import { GeoadminService } from 'src/app/core/geoadmin.service';
 import { GeoFeature } from '../../core/entity/geoFeature';
-import { combineLatest, lastValueFrom, map, Observable, share, startWith } from 'rxjs';
+import { combineLatest, Subscription, Subscriber, map, Observable, share, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
-import { db, LocalMapState } from '../../db/db';
-import { HttpClient } from '@angular/common/http';
+import { db, LocalMapMeta, LocalMapState } from '../../db/db';
+import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,6 +17,11 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
+  mapProgress = 0;
+  private fileReader = new FileReader();
+  private fileReadAborted = false;
+  private subscriptions = new Map<ZsMapStateSource, Subscription>();
+
   mapSources = Object.values(ZsMapStateSource)
     .map((key) => ({
       key,
@@ -46,6 +51,7 @@ export class SidebarComponent {
     public i18n: I18NService,
     public dialog: MatDialog,
     private http: HttpClient,
+    private cdRef: ChangeDetectorRef,
   ) {
     const allFeatures$ = geoAdminService.getFeatures().pipe(
       share(),
@@ -114,38 +120,156 @@ export class SidebarComponent {
   async downloadMap(map: ZsMapStateSource) {
     this.mapDownloadStates[map] = 'loading';
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    let localMapMeta = await db.localMapMeta.get(downloadUrl);
-    if (!localMapMeta) {
-      localMapMeta = {
-        url: downloadUrl,
-        map,
-        mapStatus: this.mapDownloadStates[map],
-        objectUrl: undefined,
-        mapStyle: undefined,
-      };
-      await db.localMapMeta.put(localMapMeta);
-    }
-    let localMapBlob = await db.localMapBlobs.get(localMapMeta.url);
+    const localMapMeta = (await db.localMapMeta.get(downloadUrl)) || {
+      url: downloadUrl,
+      map,
+      mapStatus: 'missing',
+      objectUrl: undefined,
+      mapStyle: undefined,
+    };
+
+    await db.localMapMeta.put(localMapMeta);
+
+    const localMapBlob = await db.localMapBlobs.get(localMapMeta.url);
     if (!localMapBlob) {
-      try {
-        const [localMap, mapStyle] = await Promise.all([
-          lastValueFrom(this.http.get(downloadUrl, { responseType: 'blob' })),
-          fetch('/assets/map-style.json').then((res) => res.text()),
-        ]);
-        localMapBlob = {
-          url: localMapMeta.url,
-          data: localMap,
-        };
-        await db.localMapBlobs.add(localMapBlob);
-        localMapMeta.mapStyle = mapStyle;
-        localMapMeta.objectUrl = undefined;
-        localMapMeta.mapStatus = 'downloaded';
-      } catch (e) {
+      const mapRequest = this.http
+        .get(downloadUrl, {
+          responseType: 'blob',
+          reportProgress: true,
+          observe: 'events',
+        })
+        .subscribe({
+          next: async (event) => {
+            if (event.type === HttpEventType.DownloadProgress) {
+              this.mapProgress = Math.round((100 * event.loaded) / (event.total ?? 1));
+              this.cdRef.detectChanges();
+            } else if (event instanceof HttpResponse) {
+              this.subscriptions.get(map)?.unsubscribe();
+              const localMap = event.body as Blob;
+              await this.blobToStorage(map, localMap, localMapMeta);
+            }
+          },
+          error: async () => {
+            this.subscriptions.get(map)?.unsubscribe();
+            localMapMeta.mapStatus = 'missing';
+            this.mapProgress = 0;
+            this.mapDownloadStates[map] = localMapMeta.mapStatus;
+            await db.localMapMeta.put(localMapMeta);
+          },
+        });
+
+      // Store the subscription so it can be cancelled later
+      this.subscriptions.set(map, mapRequest);
+    }
+  }
+
+  async cancelDownloadMap(map: ZsMapStateSource) {
+    this.mapDownloadStates[map] = 'missing';
+    if (this.subscriptions.has(map)) {
+      this.subscriptions.get(map)?.unsubscribe();
+      this.subscriptions.delete(map);
+      this.mapProgress = 0;
+      const downloadUrl = zsMapStateSourceToDownloadUrl[map];
+      const localMapMeta = await db.localMapMeta.get(downloadUrl);
+      if (localMapMeta) {
         localMapMeta.mapStatus = 'missing';
+        await db.localMapMeta.put(localMapMeta);
       }
+    }
+  }
+
+  async uploadMap(event: Event, map: ZsMapStateSource) {
+    if (!event.target) return;
+
+    this.mapDownloadStates[map] = 'loading';
+    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
+    const localMapMeta = (await db.localMapMeta.get(downloadUrl)) || {
+      url: downloadUrl,
+      map,
+      mapStatus: 'missing',
+      objectUrl: undefined,
+      mapStyle: undefined,
+    };
+
+    await db.localMapMeta.put(localMapMeta);
+
+    const file = event.target['files'][0] as Blob;
+    this.subscriptions.get(map)?.unsubscribe();
+
+    const mapRequest = this.readFile(file).subscribe({
+      next: (percentDone) => {
+        this.mapProgress = percentDone;
+        this.cdRef.detectChanges();
+      },
+      complete: async () => {
+        this.subscriptions.get(map)?.unsubscribe();
+        if (this.fileReadAborted) {
+          this.mapProgress = 0;
+          return;
+        }
+        const blob = new Blob([this.fileReader.result as ArrayBuffer]);
+        await this.blobToStorage(map, blob, localMapMeta);
+      },
+      error: async () => {
+        this.subscriptions.get(map)?.unsubscribe();
+        localMapMeta.mapStatus = 'missing';
+        this.mapDownloadStates[map] = localMapMeta.mapStatus;
+        await db.localMapMeta.put(localMapMeta);
+      },
+    });
+    this.subscriptions.set(map, mapRequest);
+  }
+
+  readFile(file: Blob): Observable<number> {
+    return new Observable((subscriber: Subscriber<number>) => {
+      this.fileReader = new FileReader();
+      this.fileReadAborted = false;
+
+      this.fileReader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          subscriber.next(progress);
+        }
+      };
+
+      this.fileReader.onloadend = () => {
+        subscriber.complete();
+      };
+
+      this.fileReader.onerror = () => {
+        subscriber.error('Failed to read file.');
+      };
+
+      this.fileReader.readAsArrayBuffer(file);
+
+      // Return cleanup function
+      return () => {
+        if (this.fileReader.readyState === FileReader.LOADING) {
+          this.fileReader.abort();
+          this.fileReadAborted = true;
+        }
+      };
+    });
+  }
+
+  private async blobToStorage(map: ZsMapStateSource, blob: Blob, localMapMeta: LocalMapMeta) {
+    try {
+      const mapStyleResponse = await fetch('/assets/map-style.json');
+      const mapStyle = await mapStyleResponse.json();
+      await db.localMapBlobs.add({
+        url: localMapMeta.url,
+        data: blob,
+      });
+      localMapMeta.mapStatus = 'downloaded';
+      localMapMeta.mapStyle = mapStyle;
+      localMapMeta.objectUrl = undefined;
+    } catch (e) {
+      localMapMeta.mapStatus = 'missing';
+      this.mapProgress = 0;
     }
     this.mapDownloadStates[map] = localMapMeta.mapStatus;
     await db.localMapMeta.put(localMapMeta);
+    this.cdRef.detectChanges();
   }
 
   async removeLocalMap(map: ZsMapStateSource): Promise<void> {
@@ -159,5 +283,7 @@ export class SidebarComponent {
       URL.revokeObjectURL(objectUrl);
     }
     this.mapDownloadStates[map] = 'missing';
+    this.mapProgress = 0;
+    this.cdRef.detectChanges();
   }
 }
