@@ -8,10 +8,9 @@ describe('OfflineDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OfflineDialogComponent]
-    })
-    .compileComponents();
-    
+      imports: [OfflineDialogComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(OfflineDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
