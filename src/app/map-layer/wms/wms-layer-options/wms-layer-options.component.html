@@ -1,0 +1,100 @@
+<div mat-dialog-title>{{ i18n.get('wmsLayerSettings') }}</div>
+<div mat-dialog-content>
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('mapLayerType') }}</legend>
+    <mat-radio-group [ngModel]="layer.type" (change)="changeType($event)">
+      <mat-radio-button value="wms">WMS</mat-radio-button>
+      <mat-radio-button value="wms_custom">WMS (custom)</mat-radio-button>
+      <mat-radio-button value="wmts" disabled>WMTS</mat-radio-button>
+    </mat-radio-group>
+  </fieldset>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('layerSource') }}</mat-label>
+    <mat-select [value]="layer.source" (selectionChange)="onSelectionChange($event)" [disabled]="layer.type !== 'wms_custom'">
+      <mat-option value="_GeoAdmin_" disabled>GeoAdmin</mat-option>
+      <mat-option value="_CUSTOM_">custom</mat-option>
+      <mat-option *ngFor="let item of sources" [value]="item" [disabled]="item.type !== 'wms'">
+        {{item.label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field *ngIf="custom_source" appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('layerSourceUrl') }}</mat-label>
+    <input matInput type="url" [(ngModel)]="custom_source.url"/>
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('wmsLayerName') }}</mat-label>
+    <input matInput type="text" [(ngModel)]="layer.serverLayerName" [disabled]="layer.type !== 'wms_custom'"/>
+  </mat-form-field>
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('publicSource') }}</legend>
+    <mat-checkbox [checked]="layer.public" (change)="layer.public = $event.checked">{{ i18n.get('publicSourceInfo') }}</mat-checkbox>
+  </fieldset>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('label') }}</mat-label>
+    <input matInput type="text" [(ngModel)]="layer.label" />
+  </mat-form-field>
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('wmsLayerRenderType') }}</legend>
+    <mat-radio-group [(ngModel)]="layer.noneTiled">
+      <mat-radio-button [value]="false">{{ i18n.get('wmsLayerRenderTypeTiled') }}</mat-radio-button>
+      <mat-radio-button [value]="true">{{ i18n.get('wmsLayerRenderTypeFullImage') }}</mat-radio-button>
+    </mat-radio-group>
+  </fieldset>
+  <fieldset *ngIf="layer.subLayersNames != null && layer.type == 'wms'" class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('hideSubLayers') }}</legend>
+    <mat-checkbox *ngFor="let info of sublayerHidden" [checked]="info.hidden" (change)="info.hidden = $event.checked">{{ info.name }}</mat-checkbox>
+  </fieldset>
+  <fieldset *ngIf="layer.subLayersNames != null && layer.type == 'wms'" class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('wmsLayerDrawingMode') }}</legend>
+    <mat-radio-group [(ngModel)]="layer.splitIntoSubLayers">
+      <mat-radio-button [value]="false">{{ i18n.get('mergedLayers') }}</mat-radio-button>
+      <mat-radio-button [value]="true">{{ i18n.get('separatedLevels') }}</mat-radio-button>
+    </mat-radio-group>
+  </fieldset>
+  <mat-form-field *ngIf="!layer.noneTiled" appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('tileSize') }}</mat-label>
+    <input matInput min="256" max="undefined" type="number" [(ngModel)]="layer.tileSize" />
+  </mat-form-field>
+
+  <mat-form-field *ngIf="!custom_source" appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('tileFormat') }}</mat-label>
+    <mat-select [(value)]="layer.tileFormat">
+      <mat-option [value]="undefined"></mat-option>
+      <mat-option *ngFor="let item of tileFormats" [value]="item">{{item}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field *ngIf="custom_source" appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('tileFormat') }}</mat-label>
+    <input matInput type="text" [(ngModel)]="layer.tileFormat" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('MaxScaleDenominator') }}</mat-label>
+    <input matInput min="0" type="number" [(ngModel)]="layer.MaxScaleDenominator" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ i18n.get('MinScaleDenominator') }}</mat-label>
+    <input matInput min="0" type="number" [(ngModel)]="layer.MinScaleDenominator" />
+  </mat-form-field>
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('sourceAttribution') }}</legend>
+    <div class="infoText" *ngIf="!custom_source">{{ i18n.get('sourceAttributionInfo') }}</div>
+    <ng-container *ngIf="layer.attribution">
+      <div class="attributionTitle">
+        <div class="attr-title">{{ i18n.get('label') }} *</div>
+        <div class="attr-url">URL</div>
+      </div>
+      <div class="attribution" *ngFor="let attr of layer.attribution; index as i">
+        <input class="attr-title" matInput type="text" [(ngModel)]="attr[0]"/>
+        <input class="attr-url" matInput type="url" [(ngModel)]="attr[1]"/>
+        <mat-icon class="attr-remove" (click)="removeAttribution(i)">remove</mat-icon>
+      </div>
+    </ng-container>
+    <mat-icon class="attr-add" (click)="addAttribution()">add</mat-icon>
+  </fieldset>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="ok()">
+    {{ i18n.get('ok') }}
+  </button>
+</div>

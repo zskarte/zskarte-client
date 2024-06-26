@@ -3,7 +3,7 @@ import { defaults, Draw, Modify, Select, Translate } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil, concatMap } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -12,13 +12,13 @@ import { ZsMapSources } from '../state/map-sources';
 import { ZsMapStateService } from '../state/state.service';
 import { debounce } from '../helper/debounce';
 import { I18NService } from '../state/i18n.service';
-import { ZsMapDrawElementStateType } from '../state/interfaces';
+import { ZsMapDrawElementStateType, SearchFunction } from '../state/interfaces';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Collection, Feature, Geolocation as OlGeolocation, Overlay } from 'ol';
 import { LineString, Point, Polygon, SimpleGeometry } from 'ol/geom';
 import { Circle, Fill, Icon, Stroke, Style } from 'ol/style';
-import { GeoadminService } from '../core/geoadmin.service';
+import { GeoadminService } from '../map-layer/geoadmin/geoadmin.service';
 import { DrawStyle } from './draw-style';
 import { formatArea, formatLength, indexOfPointInCoordinateGroup } from '../helper/coordinates';
 import { FeatureLike } from 'ol/Feature';
@@ -37,7 +37,9 @@ import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from '../session/default-map-values
 import { SyncService } from '../sync/sync.service';
 import { SessionService } from '../session/session.service';
 import { Layer } from 'ol/layer';
-import { OlTileLayer, OlTileLayerType } from './utils';
+import { WmsService } from '../map-layer/wms/wms.service';
+import { GeoAdminMapLayer, WMSMapLayer, GeoJSONMapLayer } from '../map-layer/map-layer-interface';
+import { GeoJSONService } from '../map-layer/geojson/geojson.service';
 
 @Component({
   selector: 'app-map-renderer',
@@ -65,7 +67,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _view!: OlView;
   private _geolocation!: OlGeolocation;
   private _modify!: Modify;
-  private _mapLayer: Layer = new OlTileLayer({
+  private _mapLayer: Layer = new Layer({
     zIndex: 0,
   });
   private _navigationLayer!: VectorLayer<VectorSource>;
@@ -79,7 +81,7 @@ export class MapRendererComponent implements AfterViewInit {
   private _allLayers: VectorLayer<VectorSource>[] = [];
   private _drawElementCache: Record<string, { layer: string | undefined; element: ZsMapBaseDrawElement }> = {};
   private _currentDrawInteraction: Draw | undefined;
-  private _featureLayerCache: Map<string, OlTileLayerType> = new Map();
+  private _mapLayerCache: Map<string, Layer> = new Map();
   private _modifyCache = new Collection<Feature>([]);
   private _currentSketch: FeatureLike | undefined;
   private _rotating = false;
@@ -109,6 +111,8 @@ export class MapRendererComponent implements AfterViewInit {
     public i18n: I18NService,
     private geoAdminService: GeoadminService,
     private dialog: MatDialog,
+    private wmsService: WmsService,
+    private geoJSONService: GeoJSONService,
   ) {
     _state
       .observeSelectedElement$()
@@ -577,7 +581,7 @@ export class MapRendererComponent implements AfterViewInit {
       .subscribe(async (source) => {
         this._map.removeLayer(this._mapLayer);
         this._mapLayer = await ZsMapSources.get(source);
-        this._map.addLayer(this._mapLayer);
+        this._map.getLayers().insertAt(0, this._mapLayer);
       });
 
     this._state
@@ -657,38 +661,70 @@ export class MapRendererComponent implements AfterViewInit {
       });
 
     this._state
-      .observeSelectedFeatures$()
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((features) => {
-        // removed features
-        const cacheNames = Array.from(this._featureLayerCache.keys());
-        features
-          .filter((el) => !cacheNames.includes(el.serverLayerName))
-          .forEach((feature) => {
-            const layer = this.geoAdminService.createGeoAdminLayer(
-              feature.serverLayerName,
-              feature.timestamps[0],
-              feature.format,
-              feature.zIndex,
-            );
-            this._map.addLayer(layer);
-            // @ts-expect-error "we know the type is correct"
-            this._featureLayerCache.set(feature.serverLayerName, layer);
+      .observeSelectedMapLayers$()
+      .pipe(
+        takeUntil(this._ngUnsubscribe),
+        concatMap(async (mapLayers) => {
+          const cacheNames = Array.from(this._mapLayerCache.keys());
+          mapLayers = mapLayers.filter((el) => !cacheNames.includes(el.fullId));
+          for (const mapLayer of mapLayers) {
+            let olLayers: Layer[];
+            if (!mapLayer.source) {
+              olLayers = await this.geoAdminService.createGeoAdminLayer(mapLayer as GeoAdminMapLayer);
+            } else if (mapLayer.type === 'wmts') {
+              olLayers = await this.wmsService.createWMTSLayer(mapLayer);
+            } else if (mapLayer.type === 'wms') {
+              olLayers = await this.wmsService.createWMSLayer(mapLayer as WMSMapLayer);
+            } else if (mapLayer.type === 'wms_custom') {
+              olLayers = await this.wmsService.createWMSCustomLayer(mapLayer as WMSMapLayer);
+            } else if (mapLayer.type === 'geojson') {
+              olLayers = await this.geoJSONService.createGeoJSONLayer(mapLayer as GeoJSONMapLayer);
+            } else {
+              console.error('unknown layer type', mapLayer.type, 'for source', mapLayer.source, mapLayer);
+              return;
+            }
+            olLayers.forEach((olLayer, index) => {
+              this._map.addLayer(olLayer);
+              const name = index > 0 ? `${mapLayer.fullId}:${index}` : mapLayer.fullId;
+              this._mapLayerCache.set(name, olLayer);
+              let searchFunc: SearchFunction;
+              if ((mapLayer.type === 'geojson' || mapLayer.type === 'csv') && (mapLayer as GeoJSONMapLayer).searchable) {
+                searchFunc = (searchText: string, maxResultCount?: number) => {
+                  return Promise.resolve(
+                    this.geoJSONService.search(
+                      searchText,
+                      mapLayer as GeoJSONMapLayer,
+                      (olLayer.getSource() as VectorSource).getFeatures(),
+                      maxResultCount,
+                    ),
+                  );
+                };
+                this._state.addSearch(searchFunc, mapLayer.label, (mapLayer as GeoJSONMapLayer).searchMaxResultCount);
+              }
 
-            // observe feature changes
-            this._state.observeFeature$(feature.serverLayerName).subscribe({
-              next: (updatedFeature) => {
-                if (updatedFeature) {
-                  layer.setZIndex(updatedFeature.zIndex);
-                  layer.setOpacity(updatedFeature.opacity);
-                }
-              },
-              complete: () => {
-                this._map.removeLayer(layer);
-                this._featureLayerCache.delete(feature.serverLayerName);
-              },
+              // observe mapLayer changes
+              this._state.observeMapLayers$(mapLayer.fullId).subscribe({
+                next: (updatedLayer) => {
+                  if (updatedLayer) {
+                    olLayer.setZIndex(updatedLayer.zIndex);
+                    olLayer.setOpacity(updatedLayer.opacity);
+                    olLayer.setVisible(!updatedLayer.hidden && updatedLayer.opacity !== 0);
+                  }
+                },
+                complete: () => {
+                  this._map.removeLayer(olLayer);
+                  if (searchFunc) {
+                    this._state.removeSearch(searchFunc);
+                  }
+                  this._mapLayerCache.delete(name);
+                },
+              });
             });
-          });
+          }
+        }),
+      )
+      .subscribe(() => {
+        //real handling is done in concatMap as this can handle async correctly (wait for finish before next is started)
       });
 
     this._state

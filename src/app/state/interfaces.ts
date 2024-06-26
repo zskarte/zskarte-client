@@ -1,5 +1,7 @@
-import { GeoFeature } from '../core/entity/geoFeature';
+import { MapLayer, WmsSource } from '../map-layer/map-layer-interface';
 import { FillStyle } from '../core/entity/sign';
+import { Feature } from 'ol';
+import { Coordinate } from 'ol/coordinate';
 
 export enum ZsMapStateSource {
   OPEN_STREET_MAP = 'openStreetMap',
@@ -7,6 +9,7 @@ export enum ZsMapStateSource {
   GEO_ADMIN_PIXEL = 'geoAdminPixel',
   GEO_ADMIN_PIXEL_BW = 'geoAdminPixelBW',
   LOCAL = 'local',
+  NONE = 'noBaseMap',
 }
 
 export const zsMapStateSourceToDownloadUrl = {
@@ -40,6 +43,7 @@ export interface IZsMapDisplayState {
   id?: number;
   version: number;
   displayMode: ZsMapDisplayMode;
+  expertView: boolean;
   mapOpacity: number;
   mapCenter: number[];
   mapZoom: number;
@@ -51,7 +55,8 @@ export interface IZsMapDisplayState {
   source: ZsMapStateSource;
   elementOpacity: Record<string, number>;
   elementVisibility: Record<string, boolean>;
-  features: GeoFeature[];
+  layers: MapLayer[];
+  wmsSources?: WmsSource[];
   positionFlag: IPositionFlag;
   hiddenSymbols: number[];
   hiddenFeatureTypes: string[];
@@ -173,4 +178,22 @@ export interface IZsMapSymbolDrawElementParams extends IZsMapBaseDrawElementPara
 export interface IZsMapTextDrawElementParams extends IZsMapBaseDrawElementParams {
   type: ZsMapDrawElementStateType.TEXT;
   text: string;
+}
+
+export interface IZsMapSearchResult {
+  label: string;
+  mercatorCoordinates?: Coordinate;
+  lonLat?: Coordinate;
+  feature?: Feature;
+  internal?;
+}
+
+export type SearchFunction = (searchText: string, maxResultCount?: number) => Promise<IZsMapSearchResult[]>;
+
+export interface IZsMapSearchConfig {
+  label: string;
+  func: SearchFunction;
+  active: boolean;
+  maxResultCount: number;
+  resultOrder: number;
 }

@@ -122,3 +122,8 @@ mat-accordion mat-expansion-panel {
     }
   }
 }
+
+/*for any reason the one in map-legend-display.component.css are not applied*/
+.legend-img {
+  display: block;
+}
