@@ -1,4 +1,10 @@
-import { IZsMapState } from '../../state/interfaces';
+import { MapLayer } from '../../map-layer/map-layer-interface';
+import { IZsMapState, ZsMapStateSource } from '../../state/interfaces';
+
+export interface IZSMapOperationMapLayers {
+  baseLayer: ZsMapStateSource;
+  layerConfigs: MapLayer[];
+}
 
 export interface IZsMapOperation {
   id?: number;
@@ -7,9 +13,15 @@ export interface IZsMapOperation {
   mapState: IZsMapState;
   eventStates: number[];
   status: 'active' | 'archived';
+  mapLayers?: IZSMapOperationMapLayers;
 }
 
-export interface IZsMapOrganization {
+export interface IZsMapOrganizationMapLayerSettings {
+  wms_sources: number[];
+  map_layer_favorites: number[];
+}
+
+export interface IZsMapOrganization extends IZsMapOrganizationMapLayerSettings {
   id: number;
   name: string;
   mapLongitude: number;

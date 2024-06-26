@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ZsMapLayerStateType } from '../../state/interfaces';
-import { IZsMapOperation } from './operation.interfaces';
+import { IZSMapOperationMapLayers, IZsMapOperation } from './operation.interfaces';
 import { ApiService } from '../../api/api.service';
 import { SessionService } from '../session.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -69,6 +69,10 @@ export class OperationService {
     );
     if (error || !operations) return;
     this.operations.next(operations);
+  }
+
+  public async updateMapLayers(operationId: number, data: IZSMapOperationMapLayers) {
+    await this._api.put(`/api/operations/${operationId}/mapLayers`, { data });
   }
 
   public importOperation(): void {
