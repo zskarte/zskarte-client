@@ -577,7 +577,7 @@ export class MapRendererComponent implements AfterViewInit {
       .subscribe(async (source) => {
         this._map.removeLayer(this._mapLayer);
         this._mapLayer = await ZsMapSources.get(source);
-        this._map.addLayer(this._mapLayer);
+        this._map.getLayers().insertAt(0, this._mapLayer);
       });
 
     this._state
@@ -664,29 +664,28 @@ export class MapRendererComponent implements AfterViewInit {
         const cacheNames = Array.from(this._featureLayerCache.keys());
         features
           .filter((el) => !cacheNames.includes(el.serverLayerName))
-          .forEach((feature) => {
-            const layer = this.geoAdminService.createGeoAdminLayer(
-              feature.serverLayerName,
-              feature.timestamps[0],
-              feature.format,
-              feature.zIndex,
-            );
-            this._map.addLayer(layer);
-            // @ts-expect-error "we know the type is correct"
-            this._featureLayerCache.set(feature.serverLayerName, layer);
+          .forEach(async (feature) => {
+            const layers = await this.geoAdminService.createGeoAdminLayer(feature);
+            layers.forEach((layer, index) => {
+              this._map.addLayer(layer);
+              const name = index > 0 ? `${feature.serverLayerName}:${index}` : feature.serverLayerName;
+              // @ts-expect-error "we know the type is correct"
+              this._featureLayerCache.set(name, layer);
 
-            // observe feature changes
-            this._state.observeFeature$(feature.serverLayerName).subscribe({
-              next: (updatedFeature) => {
-                if (updatedFeature) {
-                  layer.setZIndex(updatedFeature.zIndex);
-                  layer.setOpacity(updatedFeature.opacity);
-                }
-              },
-              complete: () => {
-                this._map.removeLayer(layer);
-                this._featureLayerCache.delete(feature.serverLayerName);
-              },
+              // observe feature changes
+              this._state.observeFeature$(feature.serverLayerName).subscribe({
+                next: (updatedFeature) => {
+                  if (updatedFeature) {
+                    layer.setZIndex(updatedFeature.zIndex);
+                    layer.setOpacity(updatedFeature.opacity);
+                    layer.setVisible(!updatedFeature.hidden && updatedFeature.opacity !== 0);
+                  }
+                },
+                complete: () => {
+                  this._map.removeLayer(layer);
+                  this._featureLayerCache.delete(name);
+                },
+              });
             });
           });
       });

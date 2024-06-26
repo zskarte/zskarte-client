@@ -15,7 +15,12 @@ export interface GeoFeature {
   tooltip: boolean;
   topics: string;
   type: string;
-  // should be OlTileLayer<OlTileWMTS> but TS does not allow it somehow
+  wmsLayers: string;
+  wmsUrl?: string;
+  subLayersIds?: string[];
+  maxResolution?: number;
+  minResolution?: number;
+  hidden: boolean;
   deleted?: boolean;
   zIndex: number;
 }

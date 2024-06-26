@@ -48,8 +48,9 @@ export class SidebarComponent {
     private http: HttpClient,
   ) {
     const allFeatures$ = geoAdminService.getFeatures().pipe(
-      share(),
       map((features) => Object.values(features)),
+      map((features) => features.filter((f) => !f['parentLayerId'])),
+      share(),
     );
     const availableFeatures$: Observable<GeoFeature[]> = combineLatest([allFeatures$, mapState.observeSelectedFeatures$()]).pipe(
       map(([source, selected]) => {
