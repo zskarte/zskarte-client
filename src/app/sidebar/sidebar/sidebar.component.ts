@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
 import { ZsMapStateService } from 'src/app/state/state.service';
 import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from 'src/app/state/interfaces';
 import { GeoadminService } from 'src/app/core/geoadmin.service';
 import { GeoFeature } from '../../core/entity/geoFeature';
-import { combineLatest, lastValueFrom, map, Observable, share, startWith } from 'rxjs';
+import { combineLatest, map, Observable, share, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
-import { db, LocalMapState } from '../../db/db';
-import { HttpClient } from '@angular/common/http';
+import { db, LocalBlobMeta, LocalBlobState, LocalMapInfo } from '../../db/db';
+import { BlobEventType, BlobOperation, BlobService } from 'src/app/db/blob.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,6 +17,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent {
+  mapProgress = 0;
+
   mapSources = Object.values(ZsMapStateSource)
     .map((key) => ({
       key,
@@ -38,14 +40,15 @@ export class SidebarComponent {
 
   layerFilter = new FormControl('');
 
-  mapDownloadStates: { [key: string]: LocalMapState } = {};
+  mapDownloadStates: { [key: string]: LocalBlobState } = {};
 
   constructor(
     public mapState: ZsMapStateService,
     geoAdminService: GeoadminService,
     public i18n: I18NService,
     public dialog: MatDialog,
-    private http: HttpClient,
+    private _blobService: BlobService,
+    private cdRef: ChangeDetectorRef,
   ) {
     const allFeatures$ = geoAdminService.getFeatures().pipe(
       share(),
@@ -73,11 +76,18 @@ export class SidebarComponent {
       ),
     );
 
-    db.localMapMeta.toArray().then((downloadedMaps) => {
-      this.mapDownloadStates = downloadedMaps.reduce((acc, val) => {
-        acc[val.map] = val.mapStatus;
-        return acc;
-      }, {});
+    db.localMapInfo.toArray().then(async (downloadedMaps) => {
+      this.mapDownloadStates = {};
+      for (const val of downloadedMaps) {
+        if (val.mapBlobId) {
+          const meta = await db.localBlobMeta.get(val.mapBlobId);
+          if (meta) {
+            this.mapDownloadStates[val.map] = meta?.blobState;
+            continue;
+          }
+        }
+        this.mapDownloadStates[val.map] = 'missing';
+      }
     });
 
     mapState
@@ -111,53 +121,78 @@ export class SidebarComponent {
     return map in zsMapStateSourceToDownloadUrl;
   }
 
+  private updateMapCallback(map: ZsMapStateSource) {
+    // skipcq: JS-0116
+    return async (eventType: BlobEventType, infos: BlobOperation) => {
+      this.mapDownloadStates[map] = infos.localBlobMeta.blobState;
+      this.mapProgress = infos.mapProgress;
+      this.cdRef.detectChanges();
+    };
+  }
+
+  private reloadSourceIfLocal() {
+    if (this.mapSources.find((m) => m.selected && m.key === ZsMapStateSource.LOCAL)) {
+      //it's the active one reload it to use new location
+      this.mapState.setMapSource(ZsMapStateSource.OPEN_STREET_MAP);
+      this.mapState.setMapSource(ZsMapStateSource.LOCAL);
+    }
+  }
+
   async downloadMap(map: ZsMapStateSource) {
+    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
+    const localMapInfo = (await db.localMapInfo.get(map)) || { map };
+
+    const localBlobMeta = await this._blobService.downloadBlob(downloadUrl, localMapInfo.mapBlobId, this.updateMapCallback(map));
+    this.handleBlobOperationResult(localBlobMeta, localMapInfo);
+  }
+
+  async cancelDownloadMap(map: ZsMapStateSource) {
+    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
+    await this._blobService.cancelDownload(downloadUrl);
+  }
+
+  async uploadMap(event: Event, map: ZsMapStateSource) {
+    if (!event.target) return;
+
     this.mapDownloadStates[map] = 'loading';
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    let localMapMeta = await db.localMapMeta.get(downloadUrl);
-    if (!localMapMeta) {
-      localMapMeta = {
-        url: downloadUrl,
-        map,
-        mapStatus: this.mapDownloadStates[map],
-        objectUrl: undefined,
-        mapStyle: undefined,
-      };
-      await db.localMapMeta.put(localMapMeta);
+    const localMapInfo = (await db.localMapInfo.get(map)) || { map };
+
+    const localBlobMeta = await this._blobService.uploadBlob(event, downloadUrl, this.updateMapCallback(map));
+    if (localBlobMeta) {
+      this.handleBlobOperationResult(localBlobMeta, localMapInfo);
     }
-    let localMapBlob = await db.localMapBlobs.get(localMapMeta.url);
-    if (!localMapBlob) {
-      try {
-        const [localMap, mapStyle] = await Promise.all([
-          lastValueFrom(this.http.get(downloadUrl, { responseType: 'blob' })),
-          fetch('/assets/map-style.json').then((res) => res.text()),
-        ]);
-        localMapBlob = {
-          url: localMapMeta.url,
-          data: localMap,
-        };
-        await db.localMapBlobs.add(localMapBlob);
-        localMapMeta.mapStyle = mapStyle;
-        localMapMeta.objectUrl = undefined;
-        localMapMeta.mapStatus = 'downloaded';
-      } catch (e) {
-        localMapMeta.mapStatus = 'missing';
-      }
+  }
+
+  async handleBlobOperationResult(localBlobMeta: LocalBlobMeta, localMapInfo: LocalMapInfo) {
+    localMapInfo.mapBlobId = localBlobMeta.id;
+    await db.localMapInfo.put(localMapInfo);
+
+    if (localBlobMeta.blobState === 'downloaded') {
+      localBlobMeta = await this._blobService.downloadBlob('/assets/map-style.json', localMapInfo.styleBlobId);
+      localMapInfo.styleBlobId = localBlobMeta.id;
+      await db.localMapInfo.put(localMapInfo);
+
+      this.reloadSourceIfLocal();
     }
-    this.mapDownloadStates[map] = localMapMeta.mapStatus;
-    await db.localMapMeta.put(localMapMeta);
   }
 
   async removeLocalMap(map: ZsMapStateSource): Promise<void> {
-    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    const blobMeta = await db.localMapMeta.get(downloadUrl);
-    if (!blobMeta) return;
-    const objectUrl = blobMeta.objectUrl;
-    await db.localMapBlobs.delete(downloadUrl);
-    await db.localMapMeta.delete(downloadUrl);
-    if (objectUrl) {
-      URL.revokeObjectURL(objectUrl);
+    const blobMeta = await db.localMapInfo.get(map);
+    if (!blobMeta || (!blobMeta.mapBlobId && !blobMeta.styleBlobId)) return;
+    if (blobMeta.mapBlobId) {
+      await BlobService.removeBlob(blobMeta.mapBlobId);
+      blobMeta.mapBlobId = undefined;
+      await db.localMapInfo.put(blobMeta);
+    }
+    if (blobMeta.styleBlobId) {
+      await BlobService.removeBlob(blobMeta.styleBlobId);
+      blobMeta.styleBlobId = undefined;
+      await db.localMapInfo.put(blobMeta);
     }
     this.mapDownloadStates[map] = 'missing';
+    this.mapProgress = 0;
+    this.cdRef.detectChanges();
+    this.reloadSourceIfLocal();
   }
 }

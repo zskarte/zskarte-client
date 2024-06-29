@@ -1,0 +1,16 @@
+{
+  "name": "Node.js & TypeScript",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20",
+  "mounts": ["source=${localWorkspaceFolder}/node_modules,target=/app/node_modules,type=bind"],
+  "postCreateCommand": "yarn install --none-interactive",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": ["angular.ng-template", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  },
+  "appPort": [4300],
+  "forwardPorts": [4300]
+}

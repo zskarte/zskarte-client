@@ -3,7 +3,7 @@ import { defaults, Draw, Modify, Select, Translate } from 'ol/interaction';
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 import DrawHole from 'ol-ext/interaction/DrawHole';
-import { BehaviorSubject, combineLatest, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, concatMap, filter, firstValueFrom, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ZsMapBaseDrawElement } from './elements/base/base-draw-element';
 import { areArraysEqual } from '../helper/array';
 import { DrawElementHelper } from '../helper/draw-element-helper';
@@ -573,11 +573,16 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._state
       .observeMapSource()
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(async (source) => {
-        this._map.removeLayer(this._mapLayer);
-        this._mapLayer = await ZsMapSources.get(source);
-        this._map.addLayer(this._mapLayer);
+      .pipe(
+        takeUntil(this._ngUnsubscribe),
+        concatMap(async (source) => {
+          this._map.removeLayer(this._mapLayer);
+          this._mapLayer = await ZsMapSources.get(source);
+          this._map.addLayer(this._mapLayer);
+        }),
+      )
+      .subscribe(() => {
+        //real handling is done in concatMap as this can handle async correctly (wait for finish before next is started)
       });
 
     this._state

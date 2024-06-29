@@ -11,7 +11,7 @@
           <div class="title">{{ layer.observeName() | async }}</div>
         </div>
         <div>
-          <mat-slider [max]="1" [min]="0" [step]="0.1" style="width: 100%">
+          <mat-slider [max]="1" [min]="0" [step]="0.1" class="layer-slider" >
             <input matSliderThumb [ngModel]="mapState.observeMapOpacity() | async" (ngModelChange)="mapState.setMapOpacity($event)" />
           </mat-slider>
         </div>
@@ -20,15 +20,18 @@
             <div>
               @switch (mapDownloadStates[layer.key]) {
                 @case ('loading') {
-                  <mat-progress-bar color="primary" mode="indeterminate" />
+                  <button mat-flat-button color="warn" class="button-cancel" (click)="cancelDownloadMap(layer.key)" >{{ i18n.get('cancel') }}</button>
+                  <mat-progress-bar color="primary" class="map-progress" mode="determinate" [value]="mapProgress" />
                 }
                 @case ('downloaded') {
-                  <button mat-flat-button color="warn" color="warn" class="buttonDownload" (click)="removeLocalMap(layer.key)">
-                    Remove
+                  <button mat-flat-button color="warn" class="button-remove" (click)="removeLocalMap(layer.key)">
+                    {{ i18n.get('removeSymbol') }}
                   </button>
                 }
                 @default {
-                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(layer.key)">Download</button>
+                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(layer.key)">{{ i18n.get('download') }}</button>
+                  <button mat-flat-button color="primary" class="button-upload" (click)="mapUpload.click()">{{ i18n.get('upload') }}</button>
+                  <input type="file" class="mapfile-input" accept=".pmtiles" (change)="uploadMap($event, layer.key)" #mapUpload>
                 }
               }
             </div>
