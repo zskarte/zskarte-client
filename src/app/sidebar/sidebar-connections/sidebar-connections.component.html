@@ -1,16 +1,16 @@
-<div *ngIf="isOnline | async" class="connections-container">
-  <div class="flex-label">
-    <mat-form-field appearance="outline" *ngIf="labelEdit$ | async" style="margin-bottom: -1.25em">
-      <mat-label>{{ i18n.get('myName') }}</mat-label>
-      <input type="text" matInput [ngModel]="session.getLabel()" (ngModelChange)="label$.next($event)" />
-    </mat-form-field>
-    <span *ngIf="!(labelEdit$ | async)">{{ session.getLabel() }}</span>
-    <button mat-icon-button color="basic" (click)="toggleEditLabel()">
-      <mat-icon *ngIf="!(labelEdit$ | async)">edit</mat-icon>
-      <mat-icon *ngIf="labelEdit$ | async">save</mat-icon>
-    </button>
-  </div>
-  <hr />
+<div class="flex-label">
+  <mat-form-field appearance="outline" *ngIf="labelEdit" style="margin-bottom: -1.25em">
+    <mat-label>{{ i18n.get('myName') }}</mat-label>
+    <input type="text" matInput [ngModel]="session.getLabel()" (ngModelChange)="label$.next($event)" />
+  </mat-form-field>
+  <span *ngIf="!labelEdit">{{ session.getLabel() }}</span>
+  <button mat-icon-button color="basic" (click)="toggleEditLabel()">
+    <mat-icon *ngIf="!labelEdit">edit</mat-icon>
+    <mat-icon *ngIf="labelEdit">save</mat-icon>
+  </button>
+</div>
+<hr />
+<div *ngIf="!isWorkLocal && (isOnline | async)" class="connections-container">
   <mat-slide-toggle color="primary" [ngModel]="showCurrentLocation$ | async" (change)="state.updateShowCurrentLocation($event.checked)">
     <mat-label>{{ i18n.get('shareLocation') }}</mat-label>
   </mat-slide-toggle>
@@ -33,4 +33,15 @@
 <div class="offline-container" *ngIf="!(isOnline | async)">
   <mat-icon>cloud_off</mat-icon>
   <mat-label class="font-gray">{{ i18n.get('youAreOffline') }}</mat-label>
+</div>
+<div class="local-container" *ngIf="isWorkLocal">
+  <div>{{ i18n.get('localAvailabilityStepsIntro') }}</div>
+  <fieldset class="like-mat-form-field-outline">
+    <legend>{{ i18n.get('localAvailabilitySteps') }}</legend>
+    <mat-checkbox [checked]="useLocalBaseMap" [disabled]="useLocalBaseMap" (click)="changeToLocalMap()">{{ i18n.get('useLocalBaseMap') }}</mat-checkbox>
+    <mat-checkbox [checked]="downloadLocalBaseMap" [disabled]="downloadLocalBaseMap" (click)="downloadLocalMap()">{{ i18n.get('downloadLocalBaseMap') }}</mat-checkbox>
+    <mat-checkbox [checked]="hideUnavailableLayers" [disabled]="hideUnavailableLayers" (click)="hideUnavailable()">{{ i18n.get('hideUnavailableLayers') }}</mat-checkbox>
+    <mat-checkbox [checked]="downloadAvailableLayers" [disabled]="downloadAvailableLayers" (click)="downloadAvailable()">{{ i18n.get('downloadAvailableLayers') }}</mat-checkbox>
+    <mat-checkbox [checked]="haveSearchCapability" [disabled]="haveSearchCapability" (click)="showSearchInfo($event)">{{ i18n.get('haveSearchCapability') }}</mat-checkbox>
+  </fieldset>
 </div>

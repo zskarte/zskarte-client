@@ -1394,6 +1394,11 @@ export class I18NService {
       en: 'shared',
       fr: 'partagée',
     },
+    searchableLayer: {
+      de: 'offline durchsuchbar',
+      en: 'offline searchable',
+      fr: 'recherche hors ligne',
+    },
     editWmsSources: {
       de: 'WMS/WMTS Quellen Bearbeiten',
       en: 'Edit WMS/WMTS Sources',
@@ -1788,6 +1793,46 @@ export class I18NService {
       de: 'Diese Basiskarte kann nicht offline zugänglich gemacht werden.',
       en: 'This base map cannot be made offline accessible.',
       fr: 'Cette carte de base ne peut pas être rendue accessible hors ligne.',
+    },
+    localAvailabilityStepsIntro: {
+      de: 'Um vollständig offline arbeiten zu können, müssen folgende Dinge überprüft werden.',
+      en: 'To allow working fully offline the following things have to be verified.',
+      fr: 'Pour permettre de travailler entièrement hors ligne, les éléments suivants doivent être vérifiés.',
+    },
+    localAvailabilitySteps: {
+      de: 'Schritte zum Offline-Arbeiten.',
+      en: 'Steps to work offline.',
+      fr: 'Étapes pour travailler hors ligne.',
+    },
+    useLocalBaseMap: {
+      de: '"Lokal" Basiskarte vewenden.',
+      en: 'Use "Local" base map.',
+      fr: 'Utiliser la carte de base "Local".',
+    },
+    downloadLocalBaseMap: {
+      de: '"Lokal" Basiskarte herunterladen.',
+      en: 'Download "local" base map.',
+      fr: 'Télécharger la carte de base "locale".',
+    },
+    hideUnavailableLayers: {
+      de: 'Alle Kartenebenen ohne Offline-Funktion ausblenden (/entfernen).',
+      en: 'Hide(/remove) all map layers without offline capability.',
+      fr: 'Masquer (/supprimer) toutes les couches de carte sans fonctionnalité hors ligne.',
+    },
+    downloadAvailableLayers: {
+      de: 'Daten aller aktiven Kartenebenen mit Offline-Funktion herunterladen.',
+      en: 'Download data from all active map layers with offline capability.',
+      fr: 'Téléchargez les données de toutes les couches de carte actives avec une fonctionnalité hors ligne.',
+    },
+    haveSearchCapability: {
+      de: 'Verwenden von Kartenebene(n) mit Offline-Suchfunktion.',
+      en: 'Use map layer(s) with offline search capability.',
+      fr: 'Utilisez des couches de carte avec une fonctionnalité de recherche hors ligne.',
+    },
+    howtoFindSearchCapability: {
+      de: 'Kartenebene(n) mit Offline-Suchfunktion zeigen in der Liste der „Verfügbaren Ebenen“ ein Lupensymbol an und gehören zur Ebenenquelle „Freigegebene Ebenen“.',
+      en: 'Map layer(s) with offline search capability show a Magnifying glass symbol on the list of "Available layers" and they are of "Shared layers" Layer Source.',
+      fr: 'Les couches de carte avec capacité de recherche hors ligne affichent un symbole de loupe sur la liste des "Couches cartographiques disponibles" et elles appartiennent à la source de couche "Couches partagées".',
     },
   };
 

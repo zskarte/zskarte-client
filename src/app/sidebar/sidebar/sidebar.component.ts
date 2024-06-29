@@ -356,6 +356,11 @@ export class SidebarComponent {
     return map in zsMapStateSourceToDownloadUrl;
   }
 
+  // skipcq: JS-0105
+  isSearchable(item: MapLayer) {
+    return (item.type === 'geojson' || item.type === 'csv') && ((item as GeoJSONMapLayer)?.searchable || false);
+  }
+
   private updateMapCallback(map: ZsMapStateSource) {
     // skipcq: JS-0116
     return async (eventType: BlobEventType, infos: BlobOperation) => {

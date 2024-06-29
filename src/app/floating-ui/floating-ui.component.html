@@ -55,8 +55,17 @@
           (click)="sidebar.toggle(SidebarContext.Connections)"
           [attr.aria-label]="i18n.get('connections')"
         >
+        @if(workLocal) {
+          @if(canWorkOffline | async) {
+            <mat-icon>cloud_done</mat-icon>
+          } @else {
+            <mat-icon *ngIf="isOnline | async">cloud_queue</mat-icon>
+            <mat-icon *ngIf="!(isOnline | async)">cloud_off</mat-icon>
+          }
+        } @else {
           <mat-icon *ngIf="isOnline | async" [matBadge]="connectionCount | async" matBadgePosition="after">people</mat-icon>
           <mat-icon *ngIf="!(isOnline | async)" [matBadge]="0" matBadgeColor="warn" matBadgePosition="after">cloud_off</mat-icon>
+        }
         </button>
         <button
           class="sidebar-button mat-elevation-z3"

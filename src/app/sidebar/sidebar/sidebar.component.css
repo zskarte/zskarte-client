@@ -92,3 +92,8 @@ mat-slider {
 .mapSourceAvailable i {
   vertical-align: middle;
 }
+
+.availableLayers button mat-icon {
+  vertical-align: bottom;
+  margin-right: 5px;
+}

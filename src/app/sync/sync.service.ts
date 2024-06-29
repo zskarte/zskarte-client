@@ -125,6 +125,7 @@ export class SyncService {
   }
 
   private _disconnect(): void {
+    this._connections.next([]);
     if (!this._socket) {
       return;
     }

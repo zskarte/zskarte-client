@@ -135,7 +135,7 @@
             (click)="selectLayer(item)"
             title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}}{{item.id ? '; ' + i18n.get('globalMapLayerTitleSuffix') : ''}})"
           >
-            {{ item.label }}
+            <mat-icon *ngIf="isSearchable(item)" [title]="i18n.get('searchableLayer')">search</mat-icon>{{ item.label }}
           </button>
       </mat-action-list>
     </ng-template>
@@ -173,7 +173,7 @@
           (click)="selectLayer(item)"
           title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}}{{item.id ? '; ' + i18n.get('globalMapLayerTitleSuffix') : ''}})"
         >
-          {{ item.label }}
+          <mat-icon *ngIf="isSearchable(item)" [title]="i18n.get('searchableLayer')">search</mat-icon>{{ item.label }}
         </button>
       </mat-action-list>
     </ng-template>

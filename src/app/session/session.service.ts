@@ -50,6 +50,10 @@ export class SessionService {
     //"solve" circular dependency between OperationService and SessionService
     _operationService.setSessionService(this);
 
+    if (!navigator.onLine) {
+      this._isOnline.next(false);
+    }
+
     this._session.pipe(skip(1)).subscribe(async (session) => {
       this._clearOperation.next();
       if (session?.jwt || session?.workLocal) {
@@ -461,7 +465,7 @@ export class SessionService {
   }
 
   public observeIsOnline(): Observable<boolean> {
-    return this._isOnline.pipe(skip(1), distinctUntilChanged());
+    return this._isOnline.pipe(distinctUntilChanged());
   }
 
   public isOnline(): boolean {
