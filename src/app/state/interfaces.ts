@@ -22,7 +22,7 @@ export interface IZsMapState {
   name?: string;
   layers?: ZsMapLayerState[];
   drawElements?: ZsMapDrawElementState[];
-  center: [number, number];
+  center: Coordinate;
 }
 
 export const getDefaultIZsMapState = (): IZsMapState => {
@@ -45,7 +45,7 @@ export interface IZsMapDisplayState {
   displayMode: ZsMapDisplayMode;
   expertView: boolean;
   mapOpacity: number;
-  mapCenter: number[];
+  mapCenter: Coordinate;
   mapZoom: number;
   showMyLocation: boolean;
   activeLayer: string | undefined;

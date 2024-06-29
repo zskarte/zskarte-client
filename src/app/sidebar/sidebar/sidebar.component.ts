@@ -5,7 +5,7 @@ import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from '../../state/interfaces';
 import { GeoadminService } from '../../map-layer/geoadmin/geoadmin.service';
 import { GeoJSONMapLayer, MapLayer, WMSMapLayer, WmsSource } from '../../map-layer/map-layer-interface';
-import { combineLatest, firstValueFrom, map, mergeMap, Observable, of, share, startWith } from 'rxjs';
+import { combineLatest, firstValueFrom, map, mergeMap, Observable, of, share, startWith, catchError, tap } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
 import { db, LocalBlobMeta, LocalBlobState, LocalMapInfo } from '../../db/db';
@@ -19,6 +19,7 @@ import { isEqual } from 'lodash';
 import { OperationService } from '../../session/operations/operation.service';
 import { OrganisationLayerSettingsComponent } from '../../map-layer/organisation-layer-settings/organisation-layer-settings.component';
 import { IZsMapOrganizationMapLayerSettings } from '../../session/operations/operation.interfaces';
+import { MapLayerService } from 'src/app/map-layer/map-layer.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -57,6 +58,7 @@ export class SidebarComponent {
   mapDownloadStates: { [key: string]: LocalBlobState } = {};
   wmsSourceLoadErrors: { [key: string]: string } = {};
   availableWmsService: WmsSource[] = [];
+  geoAdminLayerError: string | undefined;
 
   constructor(
     public mapState: ZsMapStateService,
@@ -72,6 +74,14 @@ export class SidebarComponent {
     const geoAdminLayers$ = geoAdminService.getLayers().pipe(
       map((layers) => Object.values(layers)),
       map((layers) => layers.filter((f) => !f['parentLayerId'] && f['type'] !== 'geojson')),
+      tap(() => {
+        delete this.geoAdminLayerError;
+      }),
+      catchError((err) => {
+        console.error('get geoAdminLayers failed with error', err);
+        this.geoAdminLayerError = err.message;
+        return of([]);
+      }),
       share(),
     );
 
@@ -193,8 +203,9 @@ export class SidebarComponent {
     const selectedLayers = [...(await firstValueFrom(this.mapState.observeSelectedMapLayers$()))];
     const selectedSources = (await firstValueFrom(this.mapState.observeWmsSources$())) || [];
     const organization = this._session.getOrganization();
+    const localMapLayerSettings = await MapLayerService.loadLocalMapLayerSettings();
     const settingsDialog = this.dialog.open(OrganisationLayerSettingsComponent, {
-      data: { wmsSources, globalMapLayers, allLayers, selectedLayers, selectedSources, organization },
+      data: { wmsSources, globalMapLayers, allLayers, selectedLayers, selectedSources, organization, localMapLayerSettings },
     });
     settingsDialog.afterClosed().subscribe((result: IZsMapOrganizationMapLayerSettings) => {
       if (result) {

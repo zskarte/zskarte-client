@@ -51,13 +51,13 @@ mat-slider {
   width: 100%;
 }
 
-.button-download {
-  margin-bottom: 1rem;
-  margin-right: 1rem;
+.buttons {
+  margin-left: 40px;
 }
 
-.button-cancel, .button-upload, .button-remove {
-  margin-bottom: 1rem;
+.button-download {
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .mapfile-input {

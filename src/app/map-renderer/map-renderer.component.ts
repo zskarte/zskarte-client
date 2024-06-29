@@ -688,7 +688,7 @@ export class MapRendererComponent implements AfterViewInit {
               olLayers = await this.geoJSONService.createCsvLayer(mapLayer as CsvMapLayer);
             } else {
               console.error('unknown layer type', mapLayer.type, 'for source', mapLayer.source, mapLayer);
-              return;
+              continue;
             }
             olLayers.forEach((olLayer, index) => {
               this._map.addLayer(olLayer);

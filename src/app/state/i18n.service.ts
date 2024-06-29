@@ -1053,6 +1053,16 @@ export class I18NService {
       en: 'Login with code',
       fr: 'Connexion avec code',
     },
+    workLocal: {
+      de: 'Offline/lokal arbeiten',
+      en: 'Work offline/locally',
+      fr: 'Travailler hors ligne/localement',
+    },
+    localNotification: {
+      de: 'Die erfassten Daten sind nur im Browser gespeichert, bitte exportiert sie um sie zu sichern.',
+      en: 'The collected data is only stored in the browser, please export it to save it.',
+      fr: 'Les données collectées sont uniquement enregistrées dans le navigateur, veuillez les exporter pour les enregistrer.',
+    },
     addSignatureManually: {
       de: 'Bitte fügen Sie die Signatur manuell ein',
       en: 'Please add the signature manually',
@@ -1315,14 +1325,19 @@ export class I18NService {
       fr: 'Retour',
     },
     newScenario: {
-      de: 'Neues Ereigniss',
+      de: 'Neues Ereignis',
       en: 'New Scenario',
       fr: 'Nouvel Événement',
     },
     importScenario: {
-      de: 'Ereigniss importieren',
+      de: 'Ereignis importieren',
       en: 'Import Scenario',
       fr: 'Importer événement',
+    },
+    localOperation: {
+      de: 'Ereignis nur lokal verfügbar',
+      en: 'Scenario available locally only',
+      fr: 'Événement disponible localement uniquement',
     },
     featureClustering: {
       de: 'Symbole Gruppieren',

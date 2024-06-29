@@ -10,6 +10,7 @@ import { SessionService } from '../session/session.service';
 export class CreditsComponent {
   public operationName = '';
   public logo = '';
+  public workLocal = false;
 
   constructor(
     public i18n: I18NService,
@@ -17,5 +18,6 @@ export class CreditsComponent {
   ) {
     this.operationName = session.getOperationName() ?? '';
     this.logo = session.getLogo() ?? '';
+    this.workLocal = session.isWorkLocal();
   }
 }

@@ -136,7 +136,7 @@
           <mat-label>{{ i18n.get('layerSource') }}</mat-label>
           <mat-select [formControl]="sourceFilter">
             <mat-option value="ALL">{{ i18n.get('allSources') }}</mat-option>
-            <mat-option value="_GeoAdmin_">GeoAdmin</mat-option>
+            <mat-option value="_GeoAdmin_">GeoAdmin <mat-icon class="wmsSourceError" *ngIf="geoAdminLayerError" [title]="geoAdminLayerError">warning</mat-icon></mat-option>
             <mat-option value="_GlobalMapLayers_">{{ i18n.get('globalMapLayers') }}</mat-option>
             <mat-option *ngFor="let item of mapState.observeWmsSources$() | async" [value]="item.url">
               {{item.label}} <mat-icon class="wmsSourceError" *ngIf="wmsSourceLoadErrors[item.url]" [title]="wmsSourceLoadErrors[item.url]">warning</mat-icon>

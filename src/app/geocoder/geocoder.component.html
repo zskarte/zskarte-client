@@ -25,6 +25,7 @@
       <ng-container *ngFor="let location of foundLocations[0].results" [ngTemplateOutlet]="option" [ngTemplateOutletContext]="{location: location}"></ng-container>
     } @else {
       <mat-optgroup *ngFor="let group of foundLocations" [label]="group.config.label + ' (' + group.results.length + ')'" (mousedown)="expandGroup(group, $event)">
+        <ng-container>
         @if(group.collapsed === 'peek') {
           <ng-container *ngFor="let location of group.results | slice:0:3;" [ngTemplateOutlet]="option" [ngTemplateOutletContext]="{location: location}"></ng-container>
           <div class="hasMore" *ngIf="group.results.length > 3">...</div>
@@ -33,6 +34,7 @@
         } @else {
           <mat-option class="dummyOption"></mat-option>
         }
+        </ng-container>
       </mat-optgroup>
     }
   </mat-autocomplete>

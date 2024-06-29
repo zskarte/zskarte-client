@@ -2,6 +2,8 @@ import { Dexie, Table } from 'dexie';
 import { IZsMapSession } from '../session/session.interfaces';
 import { IZsMapDisplayState, ZsMapStateSource } from '../state/interfaces';
 import { Patch } from 'immer';
+import { MapLayer, WmsSource } from '../map-layer/map-layer-interface';
+import { IZsMapOperation, IZsMapOrganizationMapLayerSettings } from '../session/operations/operation.interfaces';
 
 export type LocalBlobState = 'loading' | 'downloaded' | 'missing';
 
@@ -26,6 +28,16 @@ export type LocalMapInfo = {
   styleSourceName?: string;
 };
 
+export type LocalMapLayerMeta = {
+  sourceBlobId?: number;
+  styleBlobId?: number;
+};
+export type LocalMapLayer = MapLayer & LocalMapLayerMeta;
+
+export type LocalMapLayerSettings = IZsMapOrganizationMapLayerSettings & {
+  id: string;
+};
+
 export class AppDB extends Dexie {
   sessions!: Table<IZsMapSession, string>;
   displayStates!: Table<IZsMapDisplayState, string>;
@@ -33,6 +45,10 @@ export class AppDB extends Dexie {
   localMapInfo!: Table<LocalMapInfo, string>;
   localBlob!: Table<LocalBlob, number>;
   localBlobMeta!: Table<LocalBlobMeta, number>;
+  localOperation!: Table<IZsMapOperation, number>;
+  localWmsSource!: Table<WmsSource, number>;
+  localMapLayer!: Table<LocalMapLayer, string>;
+  localMapLayerSettings!: Table<LocalMapLayerSettings, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
@@ -107,9 +123,13 @@ export class AppDB extends Dexie {
         }
       });
     //new modifications can be done here with only modify version number(or adding new version block), but 'localMapBlobs: null,' and 'localMapMeta: null,' need to stay here (to remove old table).
-    this.version(6).stores({
+    this.version(7).stores({
       localMapBlobs: null,
       localMapMeta: null,
+      localOperation: 'id,status',
+      localWmsSource: 'id',
+      localMapLayer: 'fullId,id',
+      localMapLayerSettings: 'id',
     });
   }
 }

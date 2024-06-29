@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Component, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { getResponsiveImageSource } from 'src/app/helper/strapi-utils';
 import { ApiService } from '../../api/api.service';
 import { IZsMapOrganization } from '../operations/operation.interfaces';
@@ -18,13 +18,16 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   public selectedOrganization?: IZso = undefined;
   public password = '';
   public organizations = new BehaviorSubject<IZso[]>([]);
   public filteredOrganizations = new BehaviorSubject<IZso[]>([]);
   public isLoginWithCodeEnabled = false;
   public joinCode = '';
+  public isOnline = true;
+  public hasGuestUser = false;
+  private _ngUnsubscribe = new Subject<void>();
 
   constructor(
     public session: SessionService,
@@ -32,7 +35,14 @@ export class LoginComponent {
     private _api: ApiService,
     private _dialog: MatDialog,
     private router: Router,
-  ) {}
+  ) {
+    this.session
+      .observeIsOnline()
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((isOnline) => {
+        this.isOnline = isOnline;
+      });
+  }
 
   async ngOnInit() {
     const { error, result } = await this._api.get<IZsMapOrganization[]>(
@@ -42,22 +52,28 @@ export class LoginComponent {
     const orgs: IZso[] = [];
     for (const org of result) {
       if (org.users?.length > 0 && org.users[0]?.username) {
+        if (org.users[0].username === 'zso_guest') {
+          this.hasGuestUser = true;
+          continue;
+        }
         const responsiveImageSource = getResponsiveImageSource(org.logo);
         const newOrg: IZso = {
           name: org.name,
-          identifier: org.users[0]?.username,
+          identifier: org.users[0].username,
           logoSrc: responsiveImageSource?.src,
           logoSrcSet: responsiveImageSource?.srcSet,
         };
-        if (newOrg.identifier === 'zso_guest') {
-          continue;
-        }
         orgs.push(newOrg);
         if (this.selectedOrganization) continue;
       }
       this.organizations.next(orgs);
       this.filteredOrganizations.next(orgs);
     }
+  }
+
+  ngOnDestroy(): void {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   filterControl = new FormControl();
@@ -103,6 +119,17 @@ export class LoginComponent {
     confirmation.afterClosed().subscribe(async (res) => {
       if (res) {
         await this.session.login({ identifier: GUEST_USER_IDENTIFIER, password: GUEST_USER_PASSWORD });
+      }
+    });
+  }
+
+  public workLocal(): void {
+    const confirmation = this._dialog.open(ConfirmationDialogComponent, {
+      data: this.i18n.get('localNotification'),
+    });
+    confirmation.afterClosed().subscribe(async (res) => {
+      if (res) {
+        await this.session.startWorkLocal();
       }
     });
   }
