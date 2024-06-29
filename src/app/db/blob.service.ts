@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subscriber, Subscription } from 'rxjs';
-import { LocalBlob, LocalBlobMeta, db } from './db';
+import { Subject, Subscription, lastValueFrom } from 'rxjs';
+import { LocalBlob, LocalBlobMeta, LocalBlobState, db } from './db';
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 
 export type BlobEventType = 'mapProgress' | 'done' | 'cancel' | 'error' | 'removed';
@@ -8,10 +8,9 @@ export type UpdateCallback = (eventType: BlobEventType, blobOperation: BlobOpera
 export interface BlobOperation {
   localBlobMeta: LocalBlobMeta;
   mapProgress: number;
-  fileReader?: FileReader;
-  fileReadAborted: boolean;
   updateCallback?: UpdateCallback;
   subscription?: Subscription;
+  finished: Subject<LocalBlobMeta>;
 }
 
 @Injectable({
@@ -22,27 +21,33 @@ export class BlobService {
 
   constructor(private http: HttpClient) {}
 
+  private static async _newBloblMeta(url: string, lastModified?: number) {
+    const localBlobMeta = {
+      url,
+      blobState: 'missing',
+      objectUrl: undefined,
+      lastModified,
+    } as LocalBlobMeta;
+    await db.localBlobMeta.add(localBlobMeta).then((id) => {
+      localBlobMeta.id = id;
+    });
+    return localBlobMeta;
+  }
+
   public async downloadBlob(url: string, blobId?: number, updateCallback?: UpdateCallback) {
     let localBlobMeta: LocalBlobMeta | undefined;
     if (blobId) {
       localBlobMeta = await db.localBlobMeta.get(blobId);
+      if (localBlobMeta) {
+        localBlobMeta.url = url;
+      }
     }
     if (!localBlobMeta) {
       localBlobMeta = await db.localBlobMeta.where('url').equals(url).first();
     }
     let localBlob: LocalBlob | undefined;
     if (!localBlobMeta) {
-      localBlobMeta = {
-        url,
-        blobState: 'missing',
-        objectUrl: undefined,
-        lastModified: undefined,
-      } as LocalBlobMeta;
-      await db.localBlobMeta.add(localBlobMeta).then((id) => {
-        if (localBlobMeta) {
-          localBlobMeta.id = id;
-        }
-      });
+      localBlobMeta = await BlobService._newBloblMeta(url);
     } else {
       localBlob = await db.localBlob.get(localBlobMeta.id);
     }
@@ -50,9 +55,10 @@ export class BlobService {
     const operation: BlobOperation = {
       localBlobMeta,
       mapProgress: 0,
-      fileReadAborted: false,
       updateCallback,
+      finished: new Subject<LocalBlobMeta>(),
     };
+    const finishedPromise = lastValueFrom(operation.finished.asObservable());
     if (!localBlob) {
       operation.localBlobMeta.blobState = 'loading';
       const mapRequest = this.http
@@ -78,18 +84,11 @@ export class BlobService {
               }
               operation.subscription?.unsubscribe();
               const blob = event.body as Blob;
-              await BlobService.blobToStorage(blob, operation);
+              await BlobService._blobToStorage(blob, operation);
             }
           },
           error: async () => {
-            operation.subscription?.unsubscribe();
-            operation.localBlobMeta.blobState = 'missing';
-            operation.localBlobMeta.lastModified = undefined;
-            operation.mapProgress = 0;
-            await db.localBlobMeta.put(operation.localBlobMeta);
-            if (operation.updateCallback) {
-              await operation.updateCallback('error', operation);
-            }
+            await BlobService._cancelOrError('error', operation);
           },
         });
 
@@ -97,142 +96,79 @@ export class BlobService {
       operation.subscription = mapRequest;
       this.operations.set(url, operation);
     } else {
-      operation.localBlobMeta.blobState = 'downloaded';
-      await db.localBlobMeta.put(operation.localBlobMeta);
-      if (operation.updateCallback) {
-        await operation.updateCallback('done', operation);
-      }
+      await BlobService._finish('downloaded', 'done', operation);
     }
-    return operation;
+    return await finishedPromise;
   }
 
   public async cancelDownload(url: string) {
     const operation = this.operations.get(url);
     if (operation) {
-      operation.subscription?.unsubscribe();
-      operation.mapProgress = 0;
-      operation.localBlobMeta.blobState = 'missing';
-      operation.localBlobMeta.lastModified = undefined;
-      await db.localBlobMeta.put(operation.localBlobMeta);
-      if (operation.updateCallback) {
-        await operation.updateCallback('cancel', operation);
-      }
+      await BlobService._cancelOrError('cancel', operation);
     }
   }
 
-  public async uploadBlob(event: Event, origUrl: string, updateCallback?: UpdateCallback) {
+  private static async _cancelOrError(eventType: BlobEventType, operation: BlobOperation) {
+    operation.subscription?.unsubscribe();
+    operation.mapProgress = 0;
+    operation.localBlobMeta.lastModified = undefined;
+    await BlobService._finish('missing', eventType, operation);
+  }
+
+  private static async _finish(state: LocalBlobState, eventType: BlobEventType, operation: BlobOperation) {
+    operation.localBlobMeta.blobState = state;
+    await db.localBlobMeta.put(operation.localBlobMeta);
+    if (operation.updateCallback) {
+      await operation.updateCallback(eventType, operation);
+    }
+    operation.finished.next(operation.localBlobMeta);
+    operation.finished.complete();
+  }
+
+  public async uploadBlob(event: Event, origUrl?: string, updateCallback?: UpdateCallback) {
     if (!event.target) return null;
 
-    this.operations.get(origUrl)?.subscription?.unsubscribe();
+    if (origUrl) {
+      this.operations.get(origUrl)?.subscription?.unsubscribe();
+    }
 
     const file = event.target['files'][0] as File;
 
-    const localBlobMeta: LocalBlobMeta = {
-      url: file.path ?? file.name,
-      blobState: 'missing',
-      objectUrl: undefined,
-      lastModified: file.lastModified,
-    } as LocalBlobMeta;
-    await db.localBlobMeta.add(localBlobMeta).then((id) => {
-      localBlobMeta.id = id;
-    });
+    const url = file.path ?? file.name;
+    let localBlobMeta: LocalBlobMeta | undefined;
+    //check if an entry with same name and modify timestamp already exist.
+    localBlobMeta = (await db.localBlobMeta.where('url').equals(url).toArray()).find((meta) => meta.lastModified === file.lastModified);
+    if (!localBlobMeta) {
+      localBlobMeta = await BlobService._newBloblMeta(url, file.lastModified);
+    }
 
     const operation: BlobOperation = {
       localBlobMeta,
       mapProgress: 0,
-      fileReadAborted: false,
       updateCallback,
+      finished: new Subject<LocalBlobMeta>(),
     };
-    operation.localBlobMeta.blobState = 'loading';
-    await db.localBlobMeta.put(operation.localBlobMeta);
-
-    const mapRequest = BlobService.readFile(file, operation).subscribe({
-      next: async (percentDone) => {
-        operation.mapProgress = percentDone;
-        if (operation.updateCallback) {
-          await operation.updateCallback('mapProgress', operation);
-        }
-      },
-      complete: async () => {
-        operation.subscription?.unsubscribe();
-        if (operation.fileReadAborted || !operation.fileReader) {
-          operation.mapProgress = 0;
-          operation.localBlobMeta.blobState = 'missing';
-          operation.localBlobMeta.lastModified = undefined;
-          await db.localBlobMeta.put(operation.localBlobMeta);
-          if (operation.updateCallback) {
-            await operation.updateCallback('cancel', operation);
-          }
-          return;
-        }
-        const blob = new Blob([operation.fileReader.result as ArrayBuffer], { type: file.type });
-        await BlobService.blobToStorage(blob, operation);
-      },
-      error: async () => {
-        operation.subscription?.unsubscribe();
-        operation.localBlobMeta.blobState = 'missing';
-        operation.localBlobMeta.lastModified = undefined;
-        await db.localBlobMeta.put(operation.localBlobMeta);
-        if (operation.updateCallback) {
-          await operation.updateCallback('error', operation);
-        }
-      },
-    });
-    operation.subscription = mapRequest;
-    this.operations.set(origUrl, operation);
-    return operation;
+    const finishedPromise = lastValueFrom(operation.finished.asObservable());
+    if (localBlobMeta.blobState === 'downloaded') {
+      //same saved file, no need to update
+      await BlobService._finish('downloaded', 'done', operation);
+    } else {
+      //it is already an File/Blob object, so directly save it to DB
+      await BlobService._blobToStorage(file, operation);
+    }
+    return await finishedPromise;
   }
 
-  private static readFile(file: File, operation: BlobOperation): Observable<number> {
-    return new Observable((subscriber: Subscriber<number>) => {
-      operation.fileReader = new FileReader();
-      operation.fileReadAborted = false;
-
-      operation.fileReader.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const progress = Math.round((event.loaded / event.total) * 100);
-          subscriber.next(progress);
-        }
-      };
-
-      operation.fileReader.onloadend = () => {
-        subscriber.complete();
-      };
-
-      operation.fileReader.onerror = () => {
-        subscriber.error('Failed to read file.');
-      };
-
-      operation.fileReader.readAsArrayBuffer(file);
-
-      // Return cleanup function
-      return () => {
-        if (operation.fileReader && operation.fileReader.readyState === FileReader.LOADING) {
-          operation.fileReadAborted = true;
-          operation.fileReader.abort();
-        }
-      };
-    });
-  }
-
-  private static async blobToStorage(blob: Blob, operation: BlobOperation) {
+  private static async _blobToStorage(blob: Blob, operation: BlobOperation) {
     try {
-      await db.localBlob.add({
+      await db.localBlob.put({
         id: operation.localBlobMeta.id,
         data: blob,
       });
-      operation.localBlobMeta.blobState = 'downloaded';
-      await db.localBlobMeta.put(operation.localBlobMeta);
-      if (operation.updateCallback) {
-        await operation.updateCallback('done', operation);
-      }
+      await BlobService._finish('downloaded', 'done', operation);
     } catch (e) {
-      operation.localBlobMeta.blobState = 'missing';
-      await db.localBlobMeta.put(operation.localBlobMeta);
       operation.mapProgress = 0;
-      if (operation.updateCallback) {
-        await operation.updateCallback('error', operation);
-      }
+      await BlobService._finish('missing', 'error', operation);
     }
   }
 
@@ -247,6 +183,15 @@ export class BlobService {
       meta.blobState = 'missing';
       await db.localBlobMeta.put(meta);
     }
+    return meta;
+  }
+
+  public static async isDownloaded(blobId?: number) {
+    if (blobId) {
+      const meta = await db.localBlobMeta.get(blobId);
+      return meta?.blobState === 'downloaded';
+    }
+    return false;
   }
 
   public static async getBlobOrRealUrl(url: string, blobId?: number) {

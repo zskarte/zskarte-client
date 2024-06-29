@@ -8,7 +8,7 @@ import { GeoFeature } from '../../core/entity/geoFeature';
 import { combineLatest, map, Observable, share, startWith } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
-import { db, LocalBlobState } from '../../db/db';
+import { db, LocalBlobMeta, LocalBlobState, LocalMapInfo } from '../../db/db';
 import { BlobEventType, BlobOperation, BlobService } from 'src/app/db/blob.service';
 
 @Component({
@@ -130,17 +130,20 @@ export class SidebarComponent {
     };
   }
 
+  private reloadSourceIfLocal() {
+    if (this.mapSources.find((m) => m.selected && m.key === ZsMapStateSource.LOCAL)) {
+      //it's the active one reload it to use new location
+      this.mapState.setMapSource(ZsMapStateSource.OPEN_STREET_MAP);
+      this.mapState.setMapSource(ZsMapStateSource.LOCAL);
+    }
+  }
+
   async downloadMap(map: ZsMapStateSource) {
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
     const localMapInfo = (await db.localMapInfo.get(map)) || { map };
 
-    let operation = await this._blobService.downloadBlob(downloadUrl, localMapInfo.mapBlobId, this.updateMapCallback(map));
-    localMapInfo.mapBlobId = operation.localBlobMeta.id;
-    await db.localMapInfo.put(localMapInfo);
-
-    operation = await this._blobService.downloadBlob('/assets/map-style.json', localMapInfo.styleBlobId);
-    localMapInfo.styleBlobId = operation.localBlobMeta.id;
-    await db.localMapInfo.put(localMapInfo);
+    const localBlobMeta = await this._blobService.downloadBlob(downloadUrl, localMapInfo.mapBlobId, this.updateMapCallback(map));
+    this.handleBlobOperationResult(localBlobMeta, localMapInfo);
   }
 
   async cancelDownloadMap(map: ZsMapStateSource) {
@@ -155,14 +158,22 @@ export class SidebarComponent {
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
     const localMapInfo = (await db.localMapInfo.get(map)) || { map };
 
-    let operation = await this._blobService.uploadBlob(event, downloadUrl, this.updateMapCallback(map));
-    if (operation) {
-      localMapInfo.mapBlobId = operation.localBlobMeta.id;
+    const localBlobMeta = await this._blobService.uploadBlob(event, downloadUrl, this.updateMapCallback(map));
+    if (localBlobMeta) {
+      this.handleBlobOperationResult(localBlobMeta, localMapInfo);
+    }
+  }
+
+  async handleBlobOperationResult(localBlobMeta: LocalBlobMeta, localMapInfo: LocalMapInfo) {
+    localMapInfo.mapBlobId = localBlobMeta.id;
+    await db.localMapInfo.put(localMapInfo);
+
+    if (localBlobMeta.blobState === 'downloaded') {
+      localBlobMeta = await this._blobService.downloadBlob('/assets/map-style.json', localMapInfo.styleBlobId);
+      localMapInfo.styleBlobId = localBlobMeta.id;
       await db.localMapInfo.put(localMapInfo);
 
-      operation = await this._blobService.downloadBlob('/assets/map-style.json', localMapInfo.styleBlobId);
-      localMapInfo.styleBlobId = operation.localBlobMeta.id;
-      await db.localMapInfo.put(localMapInfo);
+      this.reloadSourceIfLocal();
     }
   }
 
@@ -182,5 +193,6 @@ export class SidebarComponent {
     this.mapDownloadStates[map] = 'missing';
     this.mapProgress = 0;
     this.cdRef.detectChanges();
+    this.reloadSourceIfLocal();
   }
 }
