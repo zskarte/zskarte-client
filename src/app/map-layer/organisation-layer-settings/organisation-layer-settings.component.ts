@@ -136,6 +136,7 @@ export class OrganisationLayerSettingsComponent {
         fullId: savedLayer.fullId,
         owner: savedLayer.owner,
         public: savedLayer.public,
+        offlineAvailable: savedLayer.offlineAvailable,
         sourceBlobId: savedLayer.sourceBlobId,
         styleBlobId: savedLayer.styleBlobId,
       };

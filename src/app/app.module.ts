@@ -78,6 +78,7 @@ import { WmsLayerOptionsComponent } from './map-layer/wms/wms-layer-options/wms-
 import { OrganisationLayerSettingsComponent } from './map-layer/organisation-layer-settings/organisation-layer-settings.component';
 import { GeoJSONLayerOptionsComponent } from './map-layer/geojson/geojson-layer-options/geojson-layer-options.component';
 import { RegexValidatorDirective } from './map-layer/regex-validator.directive';
+import { BlobMetaOptionsComponent } from './map-layer/blob-meta-options/blob-meta-options.component';
 
 registerLocaleData(localeCH);
 
@@ -132,6 +133,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     WmsLayerOptionsComponent,
     OrganisationLayerSettingsComponent,
     GeoJSONLayerOptionsComponent,
+    BlobMetaOptionsComponent,
     RegexValidatorDirective,
   ],
   imports: [

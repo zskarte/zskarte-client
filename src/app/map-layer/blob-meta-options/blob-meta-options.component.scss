@@ -1,0 +1,30 @@
+.layerLabel {
+  font-size:  1.1em;
+  color: black;
+}
+
+mat-form-field {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.buttons {
+  margin: 10px 0;
+}
+
+.mapfile-input {
+  display: none;
+}
+
+.button-download, .button-remove {
+  margin-right: 10px;
+}
+
+.source {
+  float: right;
+  margin-left: 10px;
+}
+
+textarea {
+  min-height: 300px;
+}

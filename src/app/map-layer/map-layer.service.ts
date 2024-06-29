@@ -142,6 +142,7 @@ export class MapLayerService {
     // delete values for main object & from MapLayer
     delete cleanedOptions.source;
     delete cleanedOptions.fullId;
+    delete cleanedOptions.offlineAvailable;
     // delete display specific values / from SelectedMapLayerSettings
     delete cleanedOptions.deleted;
     delete cleanedOptions.zIndex;
@@ -190,7 +191,7 @@ export class MapLayerService {
     return null;
   }
 
-  public async saveLocalMapLayer(mapLayer: MapLayer) {
+  public async saveLocalMapLayer(mapLayer: MapLayer, downloadMissingBlobs = true) {
     if (!mapLayer.id) {
       const minId = Math.min(0, ...(await db.localMapLayer.toArray()).map((o) => o.id ?? 0));
       mapLayer.id = minId - 1;
@@ -198,7 +199,7 @@ export class MapLayerService {
     }
     const localMapLayer = mapLayer as LocalMapLayer;
     await db.localMapLayer.put(localMapLayer);
-    if (mapLayer.type === 'geojson' || mapLayer.type === 'csv') {
+    if ((mapLayer.type === 'geojson' || mapLayer.type === 'csv') && downloadMissingBlobs) {
       const geoMapLayer = mapLayer as GeoJSONMapLayer;
       let sourceDownloaded = await BlobService.isDownloaded(localMapLayer.sourceBlobId);
       if (geoMapLayer.source?.url && !sourceDownloaded) {
@@ -221,6 +222,8 @@ export class MapLayerService {
         await db.localMapLayer.put(localMapLayer);
         styleDownloaded = true;
       }
+      localMapLayer.offlineAvailable = sourceDownloaded && styleDownloaded;
+      await db.localMapLayer.put(localMapLayer);
     }
     return mapLayer;
   }

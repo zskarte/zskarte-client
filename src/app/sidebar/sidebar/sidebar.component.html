@@ -16,14 +16,22 @@
             <input matSliderThumb [ngModel]="mapState.observeMapOpacity() | async" (ngModelChange)="mapState.setMapOpacity($event)" />
           </mat-slider>
         </div>
-        <mat-action-list *ngFor="let mapSource of mapSources">
+        <mat-action-list *ngFor="let mapSource of mapSources; let index = index">
           <mat-radio-group>
             <mat-radio-button [value]="mapSource.key" (click)="switchMapSource(mapSource.key)" [checked]="mapSource.selected">
               {{ mapSource.translation }}
             </mat-radio-button>
           </mat-radio-group>
+          <span class="mapSourceAvailable" *ngIf="workLocal && mapSource.key !== 'noBaseMap'" (click)="showLocalInfoMap(mapSource.key, index)">
+            @if (isDownloadableMap(mapSource.key)) {
+              <i class="material-icons" *ngIf="mapSource.offlineAvailable">cloud_done</i>
+              <i class="material-icons" *ngIf="!mapSource.offlineAvailable">cloud</i>
+            } @else {
+              <i class="material-icons">cloud_off</i>
+            }
+          </span>
           @if (isDownloadableMap(mapSource.key)) {
-            <div>
+            <div class="buttons">
               @switch (mapDownloadStates[mapSource.key]) {
                 @case ('loading') {
                   <button mat-flat-button color="warn" class="button-cancel" (click)="cancelDownloadMap(mapSource.key)" >{{ i18n.get('cancel') }}</button>
@@ -31,12 +39,13 @@
                 }
                 @case ('downloaded') {
                   <button mat-flat-button color="warn" class="button-remove" (click)="removeLocalMap(mapSource.key)">
+                    <mat-icon>file_download</mat-icon>
                     {{ i18n.get('removeSymbol') }}
                   </button>
                 }
                 @default {
-                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(mapSource.key)">{{ i18n.get('download') }}</button>
-                  <button mat-flat-button color="primary" class="button-upload" (click)="mapUpload.click()">{{ i18n.get('upload') }}</button>
+                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(mapSource.key)"><mat-icon>file_download</mat-icon>{{ i18n.get('download') }}</button>
+                  <button mat-flat-button color="primary" class="button-upload" (click)="mapUpload.click()"><mat-icon>file_upload</mat-icon>{{ i18n.get('upload') }}</button>
                   <input type="file" class="mapfile-input" accept=".pmtiles" (change)="uploadMap($event, mapSource.key)" #mapUpload>
                 }
               }
@@ -63,6 +72,14 @@
           >
             <div class="titleRow">
               <div class="title">{{ item.label }}</div>
+              <div *ngIf="workLocal" (click)="showLocalInfo(item, index)">
+                @if (item.type === 'geojson' || item.type === 'csv') {
+                  <i class="material-icons" *ngIf="item.offlineAvailable">cloud_done</i>
+                  <i class="material-icons" *ngIf="!item.offlineAvailable">cloud</i>
+                } @else {
+                  <i class="material-icons">cloud_off</i>
+                }
+              </div>
               <i (click)="showLegend(item)" *ngIf="item.type !== 'geojson' && item.type !== 'csv'" class="material-icons">info</i>
               <i (click)="showWmsLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'wms' || item.type === 'wms_custom')" class="material-icons">settings</i>
               <i (click)="showGeoJSONLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'geojson' || item.type === 'csv')" class="material-icons">settings</i>

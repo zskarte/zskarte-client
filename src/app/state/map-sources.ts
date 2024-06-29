@@ -7,6 +7,7 @@ import { Layer } from 'ol/layer';
 import { stylefunction } from 'ol-mapbox-style';
 import { db } from '../db/db';
 import { BlobService } from '../db/blob.service';
+import { LOCAL_MAP_STYLE_PATH, LOCAL_MAP_STYLE_SOURCE } from '../session/default-map-values';
 
 export const ZsMapSources = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,7 +47,7 @@ export const ZsMapSources = {
         const downloadUrl = zsMapStateSourceToDownloadUrl[source];
         const mapMeta = await db.localMapInfo.get(source);
         const mapUrl = await BlobService.getBlobOrRealUrl(downloadUrl, mapMeta?.mapBlobId);
-        const styleUrl = await BlobService.getBlobOrRealUrl('/assets/map-style.json', mapMeta?.styleBlobId);
+        const styleUrl = await BlobService.getBlobOrRealUrl(LOCAL_MAP_STYLE_PATH, mapMeta?.styleBlobId);
         const mapStyle = await fetch(styleUrl).then((res) => res.text());
         const layer = new VectorTile({
           declutter: true,
@@ -56,7 +57,7 @@ export const ZsMapSources = {
           style: null,
         });
 
-        layer.setStyle(stylefunction(layer, mapStyle, mapMeta?.styleSourceName ?? 'protomaps'));
+        layer.setStyle(stylefunction(layer, mapStyle, mapMeta?.styleSourceName ?? LOCAL_MAP_STYLE_SOURCE));
 
         return layer;
       }

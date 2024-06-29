@@ -1729,6 +1729,66 @@ export class I18NService {
       en: 'Layer {0} already exist. Update existing setting (ok) or add new one (cancel)?',
       fr: 'La calque {0} existe déjà. Mettre à jour le paramètre existant (ok) ou en ajouter un nouveau (annuler)?',
     },
+    blobMetaTitle: {
+      de: 'Offlineverfügbarkeit des Map-Layers',
+      en: 'Offline availability of the map layer',
+      fr: 'Disponibilité hors ligne de la couche de carte',
+    },
+    blobMetaDataTitle: {
+      de: 'Karten Daten',
+      en: 'Map data',
+      fr: 'Données de la carte',
+    },
+    blobMetaDataDefaultUrl: {
+      de: 'Karten Daten URL aus der Konfiguration',
+      en: 'Map data URL from config',
+      fr: 'URL des données de la carte à partir de la configuration',
+    },
+    blobMetaDataUrl: {
+      de: 'Karten Daten URL lokaler Daten',
+      en: 'Map data URL of local data',
+      fr: 'URL des données de la carte des données locales',
+    },
+    blobMetaBlobSource: {
+      de: 'lokale Datenquelle:',
+      en: 'local data source:',
+      fr: 'source de données locale:',
+    },
+    blobMetaStyleTitle: {
+      de: 'Stil',
+      en: 'Style',
+      fr: 'Style',
+    },
+    blobMetaStyleLayerSetting: {
+      de: '',
+      en: 'This layer have text style, pleace adjust in the layer settings (possibly activate expert mode needed)',
+      fr: '',
+    },
+    blobMetaStyleDefaultUrl: {
+      de: 'Stil-URL aus der Konfiguration',
+      en: 'Style url from config',
+      fr: 'URL de style à partir de la configuration',
+    },
+    blobMetaStyleUrl: {
+      de: 'Stil-URL lokaler Daten',
+      en: 'Style URL of local data',
+      fr: 'URL de style des données locales',
+    },
+    blobMetaStyleText: {
+      de: 'Stil Konfig',
+      en: 'style config',
+      fr: 'Configuration du style',
+    },
+    blobMetaNotOfflineLayer: {
+      de: 'Diese Ebene kann nicht offline zugänglich gemacht werden.',
+      en: 'This layer cannot be made offline accessible.',
+      fr: 'Cette Couches cartographiques ne peut pas être rendue accessible hors ligne.',
+    },
+    blobMetaNotOfflineMap: {
+      de: 'Diese Basiskarte kann nicht offline zugänglich gemacht werden.',
+      en: 'This base map cannot be made offline accessible.',
+      fr: 'Cette carte de base ne peut pas être rendue accessible hors ligne.',
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

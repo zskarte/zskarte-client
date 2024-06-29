@@ -13,3 +13,7 @@ export const LOG2_ZOOM_0_RESOLUTION = Math.log2(ZOOM_0_RESOLUTION);
 export const INCHES_PER_METER = 1000 / MM_PER_INCHES;
 
 export const DEFAULT_RESOLUTION = INCHES_PER_METER * DEFAULT_DPI;
+
+export const LOCAL_MAP_STYLE_PATH = '/assets/map-style.json';
+
+export const LOCAL_MAP_STYLE_SOURCE = 'protomaps';

@@ -4,6 +4,7 @@ import { IZsMapDisplayState, ZsMapStateSource } from '../state/interfaces';
 import { Patch } from 'immer';
 import { MapLayer, WmsSource } from '../map-layer/map-layer-interface';
 import { IZsMapOperation, IZsMapOrganizationMapLayerSettings } from '../session/operations/operation.interfaces';
+import { LOCAL_MAP_STYLE_PATH, LOCAL_MAP_STYLE_SOURCE } from '../session/default-map-values';
 
 export type LocalBlobState = 'loading' | 'downloaded' | 'missing';
 
@@ -26,6 +27,7 @@ export type LocalMapInfo = {
   mapBlobId?: number;
   styleBlobId?: number;
   styleSourceName?: string;
+  offlineAvailable?: boolean;
 };
 
 export type LocalMapLayerMeta = {
@@ -97,7 +99,7 @@ export class AppDB extends Dexie {
           let styleBlobId: number | undefined;
           if (localMapMeta.mapStyle) {
             const styleMeta: LocalBlobMeta = {
-              url: '/assets/map-style.json',
+              url: LOCAL_MAP_STYLE_PATH,
               blobState: 'downloaded',
               objectUrl: undefined,
               lastModified: new Date().valueOf(),
@@ -117,7 +119,7 @@ export class AppDB extends Dexie {
             map: localMapMeta.map,
             mapBlobId: mapping.get(localMapMeta.url),
             styleBlobId,
-            styleSourceName: styleBlobId ? 'protomaps' : undefined,
+            styleSourceName: styleBlobId ? LOCAL_MAP_STYLE_SOURCE : undefined,
           };
           await trans.table('localMapInfo').add(localMapInfo);
         }

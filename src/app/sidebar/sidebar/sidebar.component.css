@@ -88,3 +88,7 @@ mat-slider {
   left: 50%;
   margin-bottom: 5px;
 }
+
+.mapSourceAvailable i {
+  vertical-align: middle;
+}

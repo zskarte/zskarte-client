@@ -46,6 +46,7 @@ export interface GenericOptionalMapLayerOptions {
 export interface MapLayer extends PresistedSettings, SelectedMapLayerSettings, MapLayerGeneralSettings {
   source?: MapSource | WmsSource;
   fullId: string;
+  offlineAvailable?: boolean;
 }
 
 export interface WMSMapLayer extends MapLayer, GenericOptionalMapLayerOptions {
