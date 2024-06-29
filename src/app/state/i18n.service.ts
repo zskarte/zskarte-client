@@ -183,6 +183,11 @@ export class I18NService {
       en: 'Download',
       fr: 'Télécharger',
     },
+    upload: {
+      de: 'Hochladen',
+      en: 'Upload',
+      fr: 'Uploader',
+    },
     exportOperation: {
       de: 'Ereignis exportieren',
       en: 'Export event',

@@ -577,11 +577,16 @@ export class MapRendererComponent implements AfterViewInit {
 
     this._state
       .observeMapSource()
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(async (source) => {
-        this._map.removeLayer(this._mapLayer);
-        this._mapLayer = await ZsMapSources.get(source);
-        this._map.getLayers().insertAt(0, this._mapLayer);
+      .pipe(
+        takeUntil(this._ngUnsubscribe),
+        concatMap(async (source) => {
+          this._map.removeLayer(this._mapLayer);
+          this._mapLayer = await ZsMapSources.get(source);
+          this._map.getLayers().insertAt(0, this._mapLayer);
+        }),
+      )
+      .subscribe(() => {
+        //real handling is done in concatMap as this can handle async correctly (wait for finish before next is started)
       });
 
     this._state
