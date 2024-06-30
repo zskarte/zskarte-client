@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable, Subject } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import { isEqual } from 'lodash';
 import {
@@ -24,7 +24,7 @@ import {
   SearchFunction,
   IZsMapSearchConfig,
 } from './interfaces';
-import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, takeUntil, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
@@ -42,14 +42,13 @@ import { SessionService } from '../session/session.service';
 import { SimpleGeometry } from 'ol/geom';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { I18NService } from './i18n.service';
-import { ApiService } from '../api/api.service';
-import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { Feature } from 'ol';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM, DEFAULT_DPI, LOG2_ZOOM_0_RESOLUTION, INCHES_PER_METER } from '../session/default-map-values';
 import { Coordinate } from 'ol/coordinate';
-import { getPointResolution } from 'ol/proj';
-import { mercatorProjection } from '../helper/projections';
+import { getPointResolution, transform } from 'ol/proj';
+import { coordinatesProjection, mercatorProjection } from '../helper/projections';
 import { PermissionType } from '../session/session.interfaces';
+import { OperationService } from '../session/operations/operation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -87,8 +86,25 @@ export class ZsMapStateService {
     private _sync: SyncService,
     private _session: SessionService,
     private _snackBar: MatSnackBar,
-    private _api: ApiService,
-  ) {}
+    private _operationService: OperationService,
+  ) {
+    const _changeOperationId = new Subject<void>();
+    _session.observeOperationId().subscribe((operationId) => {
+      _changeOperationId.next();
+      if (operationId && operationId < 0) {
+        this.observeMapState()
+          .pipe(debounceTime(250), takeUntil(_changeOperationId))
+          .subscribe((mapState) => {
+            if (!this.isHistoryMode() && mapState && mapState.layers) {
+              if (coordinatesProjection && mercatorProjection) {
+                mapState = { ...mapState, center: transform(this._display.value.mapCenter, mercatorProjection, coordinatesProjection) };
+              }
+              _operationService.updateLocalMapState(mapState);
+            }
+          });
+      }
+    });
+  }
 
   private _getDefaultDisplayState(mapState?: IZsMapState): IZsMapDisplayState {
     const state: IZsMapDisplayState = {
@@ -605,7 +621,7 @@ export class ZsMapStateService {
       map((o) => {
         return o?.layers?.filter((feature) => !feature.deleted);
       }),
-      distinctUntilChanged((x, y) => x.length === y.length && x.map((l, i) => l === y[i]).filter((l) => l).length === x.length),
+      distinctUntilChanged((x, y) => x && y && x.length === y.length && x.map((l, i) => l === y[i]).filter((l) => l).length === x.length),
     );
   }
 
@@ -1099,7 +1115,8 @@ export class ZsMapStateService {
   }
 
   public async refreshMapState(): Promise<void> {
-    if (this._session.getOperationId()) {
+    const operationId = this._session.getOperationId();
+    if (operationId) {
       if (!this.isHistoryMode()) {
         await this._sync.sendCachedMapStatePatches();
       }
@@ -1107,15 +1124,14 @@ export class ZsMapStateService {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
         return Array.prototype.map.call(new Uint8Array(buf), (x) => `00${(x as number).toString(16)}`.slice(-2)).join('');
       };
-      const { error, result } = await this._api.get<IZsMapOperation>(`/api/operations/${this._session.getOperationId()}`);
-      if (error || !result) return;
-      if (result.mapState) {
+      const operation = await this._operationService.getOperation(operationId);
+      if (operation?.mapState) {
         const [oldDigest, newDigest] = await Promise.all([
           sha256(JSON.stringify(this._map.value)),
-          sha256(JSON.stringify(result.mapState)),
+          sha256(JSON.stringify(operation.mapState)),
         ]);
         if (oldDigest !== newDigest) {
-          this.setMapState(result.mapState);
+          this.setMapState(operation.mapState);
         }
       }
     }

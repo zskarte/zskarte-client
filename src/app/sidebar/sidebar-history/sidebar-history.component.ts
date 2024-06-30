@@ -54,9 +54,9 @@ export class SidebarHistoryComponent implements AfterViewInit {
   }
 
   async setHistory(snapshot: Snapshot) {
-    const fullSnapshot = await this.apiService.get(`${this.apiPath}/${snapshot.id}`);
+    const { result } = await this.apiService.get(`${this.apiPath}/${snapshot.id}`);
 
-    this.stateService.setMapState(fullSnapshot.result.mapState);
+    this.stateService.setMapState(result.mapState);
 
     this.snackBarService.open(`${this.i18n.get('toastSnapshotApplied')}: ${snapshot.attributes.createdAt.toLocaleString()}`, 'OK', {
       duration: 2000,

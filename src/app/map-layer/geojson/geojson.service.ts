@@ -14,6 +14,8 @@ import { StyleLike } from 'ol/style/Style';
 import { IZsMapSearchResult } from '../../state/interfaces';
 import { transformExtent, transform } from 'ol/proj';
 import { inferSchema, initParser, SchemaColumnType } from 'udsv';
+import { LocalMapLayerMeta } from 'src/app/db/db';
+import { BlobService } from 'src/app/db/blob.service';
 
 const NumberSortCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 @Injectable({
@@ -27,11 +29,15 @@ export class GeoJSONService {
     this._searchRegExPatternsCache.delete(url);
   }
 
-  static async fetchGeoJSONData(layer: GeoJSONMapLayer) {
+  static async fetchGeoJSONData(layer: GeoJSONMapLayer & LocalMapLayerMeta) {
     if (!layer.source) {
       return [];
     }
-    return await fetch(layer.source?.url)
+    let url = layer.source?.url;
+    if (layer.sourceBlobId) {
+      url = await BlobService.getBlobOrRealUrl(url, layer.sourceBlobId);
+    }
+    return fetch(url)
       .then((response) => response.json())
       .then((geojsonObject) => {
         if (mercatorProjection) {
@@ -53,7 +59,7 @@ export class GeoJSONService {
       });
   }
 
-  static async fetchCsvData(layer: CsvMapLayer) {
+  static async fetchCsvData(layer: CsvMapLayer & LocalMapLayerMeta) {
     if (!layer.source) {
       return [];
     }
@@ -62,7 +68,12 @@ export class GeoJSONService {
       field: re[0],
       regex: new RegExp(`^${re[1]}$`, re[2]),
     }));
-    return await fetch(layer.source?.url)
+
+    let url = layer.source?.url;
+    if (layer.sourceBlobId) {
+      url = await BlobService.getBlobOrRealUrl(url, layer.sourceBlobId);
+    }
+    return fetch(url)
       .then((response) => response.text())
       .then((csvContent) => {
         //force defined delimiter
@@ -116,16 +127,29 @@ export class GeoJSONService {
   }
 
   async createGeoJSONLayer(layer: GeoJSONMapLayer) {
-    const features = await GeoJSONService.fetchGeoJSONData(layer);
-    return this.createLayerForFeatures(layer, features);
+    try {
+      const features = await GeoJSONService.fetchGeoJSONData(layer);
+      return this.createLayerForFeatures(layer, features);
+    } catch (err) {
+      console.error('Error on creating GeoJSON Layer', layer, err);
+      return [];
+    }
   }
 
   async createCsvLayer(layer: CsvMapLayer) {
-    const features = await GeoJSONService.fetchCsvData(layer);
-    return this.createLayerForFeatures(layer, features);
+    try {
+      const features = await GeoJSONService.fetchCsvData(layer);
+      return this.createLayerForFeatures(layer, features);
+    } catch (err) {
+      console.error('Error on creating Csv Layer', layer, err);
+      return [];
+    }
   }
 
-  async createLayerForFeatures(layer: GeoJSONMapLayer | CsvMapLayer, features: Feature[]): Promise<VectorLayer<VectorSource<Feature>>[]> {
+  async createLayerForFeatures(
+    layer: (GeoJSONMapLayer | CsvMapLayer) & LocalMapLayerMeta,
+    features: Feature[],
+  ): Promise<VectorLayer<VectorSource<Feature>>[]> {
     if (!layer.source) {
       return [];
     }
@@ -145,7 +169,11 @@ export class GeoJSONService {
     }
     let styleJson: StyleLike | null;
     if (layer.styleSourceType === 'url' && layer.styleUrl) {
-      styleJson = await fetch(layer.styleUrl).then((response) => response.json());
+      let url = layer.styleUrl;
+      if (layer.styleBlobId) {
+        url = await BlobService.getBlobOrRealUrl(url, layer.styleBlobId);
+      }
+      styleJson = await fetch(url).then((response) => response.json());
     } else {
       styleJson = layer.styleText ? JSON.parse(layer.styleText) : null;
     }

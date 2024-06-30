@@ -5,7 +5,7 @@
       <img style="border-radius: 10px" mat-card-sm-image src="/assets/img/favicon/zskarte-logo.png" />
     </mat-card-header>
 
-    <mat-card-content>
+    <mat-card-content *ngIf="isOnline">
       <mat-form-field class="full-width" appearance="outline" *ngIf="!isLoginWithCodeEnabled">
         <mat-label>ZSO</mat-label>
         <input
@@ -66,11 +66,18 @@
           <span *ngIf="!isLoginWithCodeEnabled">{{ i18n.get('codeLogin') }}</span>
           <span *ngIf="isLoginWithCodeEnabled">{{ i18n.get('cancel') }}</span>
         </button>
-        <text-divider *ngIf="!isLoginWithCodeEnabled">{{ i18n.get('or') }}</text-divider>
-        <button class="alternative-login-button" *ngIf="!isLoginWithCodeEnabled" mat-raised-button (click)="guestLogin()">
+        <text-divider *ngIf="!isLoginWithCodeEnabled && hasGuestUser">{{ i18n.get('or') }}</text-divider>
+        <button class="alternative-login-button" *ngIf="!isLoginWithCodeEnabled && hasGuestUser" mat-raised-button (click)="guestLogin()">
           {{ i18n.get('guestLogin') }}
+        </button>
+        <text-divider *ngIf="!isLoginWithCodeEnabled">{{ i18n.get('or') }}</text-divider>
+        <button class="alternative-login-button" *ngIf="!isLoginWithCodeEnabled" mat-raised-button (click)="workLocal()">
+          {{ i18n.get('workLocal') }}
         </button>
       </stack>
     </mat-card-content>
+    <button class="alternative-login-button" *ngIf="!isOnline" mat-raised-button (click)="workLocal()">
+      {{ i18n.get('workLocal') }}
+    </button>
   </mat-card>
 </form>

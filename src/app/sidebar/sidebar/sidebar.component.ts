@@ -1,15 +1,15 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MapLegendDisplayComponent } from '../map-legend-display/map-legend-display.component';
 import { ZsMapStateService } from '../../state/state.service';
 import { ZsMapStateSource, zsMapStateSourceToDownloadUrl } from '../../state/interfaces';
 import { GeoadminService } from '../../map-layer/geoadmin/geoadmin.service';
 import { GeoJSONMapLayer, MapLayer, WMSMapLayer, WmsSource } from '../../map-layer/map-layer-interface';
-import { combineLatest, firstValueFrom, lastValueFrom, map, mergeMap, Observable, of, share, startWith } from 'rxjs';
+import { combineLatest, firstValueFrom, map, mergeMap, Observable, of, share, startWith, catchError, tap } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { I18NService } from '../../state/i18n.service';
-import { db, LocalMapState } from '../../db/db';
-import { HttpClient } from '@angular/common/http';
+import { db, LocalBlobMeta, LocalBlobState, LocalMapInfo } from '../../db/db';
+import { BlobEventType, BlobOperation, BlobService } from 'src/app/db/blob.service';
 import { WmsService } from '../../map-layer/wms/wms.service';
 import { WmsSourceComponent } from '../../map-layer/wms/wms-source/wms-source.component';
 import { WmsLayerOptionsComponent } from '../../map-layer/wms/wms-layer-options/wms-layer-options.component';
@@ -19,6 +19,9 @@ import { isEqual } from 'lodash';
 import { OperationService } from '../../session/operations/operation.service';
 import { OrganisationLayerSettingsComponent } from '../../map-layer/organisation-layer-settings/organisation-layer-settings.component';
 import { IZsMapOrganizationMapLayerSettings } from '../../session/operations/operation.interfaces';
+import { MapLayerService } from 'src/app/map-layer/map-layer.service';
+import { BlobMetaOptionsComponent } from 'src/app/map-layer/blob-meta-options/blob-meta-options.component';
+import { LOCAL_MAP_STYLE_PATH } from 'src/app/session/default-map-values';
 
 @Component({
   selector: 'app-sidebar',
@@ -28,6 +31,7 @@ import { IZsMapOrganizationMapLayerSettings } from '../../session/operations/ope
 export class SidebarComponent {
   @ViewChild('newLayerTypeTemplate') newLayerTypeTemplate!: TemplateRef<HTMLElement>;
   newLayerType?: string;
+  mapProgress = 0;
 
   mapSources = Object.values(ZsMapStateSource)
     .map((key) => ({
@@ -35,6 +39,7 @@ export class SidebarComponent {
       translation: this.i18n.get(key),
       selected: false,
       downloadable: this.isDownloadableMap(key),
+      offlineAvailable: false,
     }))
     .sort((a, b) => a.translation.localeCompare(b.translation));
   filteredAvailableLayers$: Observable<MapLayer[]>;
@@ -53,9 +58,11 @@ export class SidebarComponent {
   layerFilter = new FormControl('');
   sourceFilter = new FormControl('ALL');
 
-  mapDownloadStates: { [key: string]: LocalMapState } = {};
+  mapDownloadStates: { [key: string]: LocalBlobState } = {};
   wmsSourceLoadErrors: { [key: string]: string } = {};
   availableWmsService: WmsSource[] = [];
+  geoAdminLayerError: string | undefined;
+  workLocal: boolean;
 
   constructor(
     public mapState: ZsMapStateService,
@@ -65,11 +72,22 @@ export class SidebarComponent {
     private _session: SessionService,
     public i18n: I18NService,
     public dialog: MatDialog,
-    private http: HttpClient,
+    private _blobService: BlobService,
+    private cdRef: ChangeDetectorRef,
+    private _mapLayerService: MapLayerService,
   ) {
+    this.workLocal = _session.isWorkLocal();
     const geoAdminLayers$ = geoAdminService.getLayers().pipe(
       map((layers) => Object.values(layers)),
       map((layers) => layers.filter((f) => !f['parentLayerId'] && f['type'] !== 'geojson')),
+      tap(() => {
+        delete this.geoAdminLayerError;
+      }),
+      catchError((err) => {
+        console.error('get geoAdminLayers failed with error', err);
+        this.geoAdminLayerError = err.message;
+        return of([]);
+      }),
       share(),
     );
 
@@ -144,11 +162,22 @@ export class SidebarComponent {
       }),
     );
 
-    db.localMapMeta.toArray().then((downloadedMaps) => {
-      this.mapDownloadStates = downloadedMaps.reduce((acc, val) => {
-        acc[val.map] = val.mapStatus;
-        return acc;
-      }, {});
+    db.localMapInfo.toArray().then(async (downloadedMaps) => {
+      this.mapDownloadStates = {};
+      for (const val of downloadedMaps) {
+        const mapSourceInfos = this.mapSources.find((m) => m.key === val.map);
+        if (mapSourceInfos) {
+          mapSourceInfos.offlineAvailable = val.offlineAvailable ?? false;
+        }
+        if (val.mapBlobId) {
+          const meta = await db.localBlobMeta.get(val.mapBlobId);
+          if (meta) {
+            this.mapDownloadStates[val.map] = meta?.blobState;
+            continue;
+          }
+        }
+        this.mapDownloadStates[val.map] = 'missing';
+      }
     });
 
     mapState
@@ -184,8 +213,9 @@ export class SidebarComponent {
     const selectedLayers = [...(await firstValueFrom(this.mapState.observeSelectedMapLayers$()))];
     const selectedSources = (await firstValueFrom(this.mapState.observeWmsSources$())) || [];
     const organization = this._session.getOrganization();
+    const localMapLayerSettings = await MapLayerService.loadLocalMapLayerSettings();
     const settingsDialog = this.dialog.open(OrganisationLayerSettingsComponent, {
-      data: { wmsSources, globalMapLayers, allLayers, selectedLayers, selectedSources, organization },
+      data: { wmsSources, globalMapLayers, allLayers, selectedLayers, selectedSources, organization, localMapLayerSettings },
     });
     settingsDialog.afterClosed().subscribe((result: IZsMapOrganizationMapLayerSettings) => {
       if (result) {
@@ -249,7 +279,7 @@ export class SidebarComponent {
 
   showGeoJSONLayerOptions(item: MapLayer, index: number) {
     const optionsDialog = this.dialog.open(GeoJSONLayerOptionsComponent, {
-      data: item as GeoJSONMapLayer,
+      data: item,
     });
     optionsDialog.afterClosed().subscribe((layer: GeoJSONMapLayer) => {
       if (layer) {
@@ -258,6 +288,34 @@ export class SidebarComponent {
         } else {
           this.mapState.replaceMapLayer(layer, index);
         }
+      }
+    });
+  }
+
+  showLocalInfo(item: MapLayer, index: number) {
+    const localDialog = this.dialog.open(BlobMetaOptionsComponent, {
+      data: { mapLayer: item },
+      disableClose: true,
+    });
+    localDialog.afterClosed().subscribe(async (layer: MapLayer | undefined) => {
+      if (layer) {
+        await this._mapLayerService.saveLocalMapLayer(layer, false);
+        this.mapState.replaceMapLayer(layer, index);
+      }
+    });
+  }
+
+  async showLocalInfoMap(map: ZsMapStateSource, index: number) {
+    const localMapInfo = await db.localMapInfo.get(map);
+    const localDialog = this.dialog.open(BlobMetaOptionsComponent, {
+      data: { localMap: localMapInfo || { map } },
+      disableClose: true,
+    });
+    localDialog.afterClosed().subscribe(async (localMapInfo: LocalMapInfo | undefined) => {
+      if (localMapInfo) {
+        await db.localMapInfo.put(localMapInfo);
+        this.mapSources[index].offlineAvailable = localMapInfo.offlineAvailable ?? false;
+        this.reloadSourceIfLocal();
       }
     });
   }
@@ -298,53 +356,96 @@ export class SidebarComponent {
     return map in zsMapStateSourceToDownloadUrl;
   }
 
+  // skipcq: JS-0105
+  isSearchable(item: MapLayer) {
+    return (item.type === 'geojson' || item.type === 'csv') && ((item as GeoJSONMapLayer)?.searchable || false);
+  }
+
+  private updateMapCallback(map: ZsMapStateSource) {
+    // skipcq: JS-0116
+    return async (eventType: BlobEventType, infos: BlobOperation) => {
+      this.mapDownloadStates[map] = infos.localBlobMeta.blobState;
+      this.mapProgress = infos.mapProgress;
+      this.cdRef.detectChanges();
+    };
+  }
+
+  private reloadSourceIfLocal() {
+    if (this.mapSources.find((m) => m.selected && m.key === ZsMapStateSource.LOCAL)) {
+      //it's the active one reload it to use new location
+      this.mapState.setMapSource(ZsMapStateSource.OPEN_STREET_MAP);
+      this.mapState.setMapSource(ZsMapStateSource.LOCAL);
+    }
+  }
+
   async downloadMap(map: ZsMapStateSource) {
+    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
+    const localMapInfo = (await db.localMapInfo.get(map)) || { map };
+
+    const localBlobMeta = await this._blobService.downloadBlob(downloadUrl, localMapInfo.mapBlobId, this.updateMapCallback(map));
+    this.handleBlobOperationResult(localBlobMeta, localMapInfo);
+  }
+
+  async cancelDownloadMap(map: ZsMapStateSource) {
+    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
+    await this._blobService.cancelDownload(downloadUrl);
+  }
+
+  async uploadMap(event: Event, map: ZsMapStateSource) {
+    if (!event.target) return;
+
     this.mapDownloadStates[map] = 'loading';
     const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    let localMapMeta = await db.localMapMeta.get(downloadUrl);
-    if (!localMapMeta) {
-      localMapMeta = {
-        url: downloadUrl,
-        map,
-        mapStatus: this.mapDownloadStates[map],
-        objectUrl: undefined,
-        mapStyle: undefined,
-      };
-      await db.localMapMeta.put(localMapMeta);
+    const localMapInfo = (await db.localMapInfo.get(map)) || { map };
+
+    const localBlobMeta = await this._blobService.uploadBlob(event, downloadUrl, this.updateMapCallback(map));
+    if (localBlobMeta) {
+      this.handleBlobOperationResult(localBlobMeta, localMapInfo);
     }
-    let localMapBlob = await db.localMapBlobs.get(localMapMeta.url);
-    if (!localMapBlob) {
-      try {
-        const [localMap, mapStyle] = await Promise.all([
-          lastValueFrom(this.http.get(downloadUrl, { responseType: 'blob' })),
-          fetch('/assets/map-style.json').then((res) => res.text()),
-        ]);
-        localMapBlob = {
-          url: localMapMeta.url,
-          data: localMap,
-        };
-        await db.localMapBlobs.add(localMapBlob);
-        localMapMeta.mapStyle = mapStyle;
-        localMapMeta.objectUrl = undefined;
-        localMapMeta.mapStatus = 'downloaded';
-      } catch (e) {
-        localMapMeta.mapStatus = 'missing';
+  }
+
+  async handleBlobOperationResult(localBlobMeta: LocalBlobMeta, localMapInfo: LocalMapInfo) {
+    localMapInfo.mapBlobId = localBlobMeta.id;
+    localMapInfo.offlineAvailable = localBlobMeta.blobState === 'downloaded';
+    await db.localMapInfo.put(localMapInfo);
+
+    if (localMapInfo.offlineAvailable) {
+      localBlobMeta = await this._blobService.downloadBlob(LOCAL_MAP_STYLE_PATH, localMapInfo.styleBlobId);
+      localMapInfo.styleBlobId = localBlobMeta.id;
+      localMapInfo.offlineAvailable = localBlobMeta.blobState === 'downloaded';
+      await db.localMapInfo.put(localMapInfo);
+
+      if (localMapInfo.offlineAvailable) {
+        this.reloadSourceIfLocal();
       }
     }
-    this.mapDownloadStates[map] = localMapMeta.mapStatus;
-    await db.localMapMeta.put(localMapMeta);
+    const mapSource = this.mapSources.find((m) => m.key === localMapInfo.map);
+    if (mapSource) {
+      mapSource.offlineAvailable = localMapInfo.offlineAvailable;
+    }
   }
 
   async removeLocalMap(map: ZsMapStateSource): Promise<void> {
-    const downloadUrl = zsMapStateSourceToDownloadUrl[map];
-    const blobMeta = await db.localMapMeta.get(downloadUrl);
-    if (!blobMeta) return;
-    const objectUrl = blobMeta.objectUrl;
-    await db.localMapBlobs.delete(downloadUrl);
-    await db.localMapMeta.delete(downloadUrl);
-    if (objectUrl) {
-      URL.revokeObjectURL(objectUrl);
+    const blobMeta = await db.localMapInfo.get(map);
+    if (!blobMeta || (!blobMeta.mapBlobId && !blobMeta.styleBlobId)) return;
+    blobMeta.offlineAvailable = false;
+    if (blobMeta.mapBlobId) {
+      await BlobService.removeBlob(blobMeta.mapBlobId);
+      blobMeta.mapBlobId = undefined;
+      await db.localMapInfo.put(blobMeta);
+    }
+    if (blobMeta.styleBlobId) {
+      await BlobService.removeBlob(blobMeta.styleBlobId);
+      blobMeta.styleBlobId = undefined;
+      await db.localMapInfo.put(blobMeta);
     }
     this.mapDownloadStates[map] = 'missing';
+    const mapSource = this.mapSources.find((m) => m.key === map);
+    if (mapSource) {
+      mapSource.offlineAvailable = false;
+    }
+    this.mapProgress = 0;
+    this.cdRef.detectChanges();
+    this.reloadSourceIfLocal();
   }
 }

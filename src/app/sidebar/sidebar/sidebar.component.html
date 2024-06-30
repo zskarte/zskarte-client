@@ -12,29 +12,41 @@
           <div class="title">{{ layer.observeName() | async }}</div>
         </div>
         <div>
-          <mat-slider [max]="1" [min]="0" [step]="0.1" style="width: 100%">
+          <mat-slider [max]="1" [min]="0" [step]="0.1" class="layer-slider" >
             <input matSliderThumb [ngModel]="mapState.observeMapOpacity() | async" (ngModelChange)="mapState.setMapOpacity($event)" />
           </mat-slider>
         </div>
-        <mat-action-list *ngFor="let mapSource of mapSources">
+        <mat-action-list *ngFor="let mapSource of mapSources; let index = index">
           <mat-radio-group>
             <mat-radio-button [value]="mapSource.key" (click)="switchMapSource(mapSource.key)" [checked]="mapSource.selected">
               {{ mapSource.translation }}
             </mat-radio-button>
           </mat-radio-group>
+          <span class="mapSourceAvailable" *ngIf="workLocal && mapSource.key !== 'noBaseMap'" (click)="showLocalInfoMap(mapSource.key, index)">
+            @if (isDownloadableMap(mapSource.key)) {
+              <i class="material-icons" *ngIf="mapSource.offlineAvailable">cloud_done</i>
+              <i class="material-icons" *ngIf="!mapSource.offlineAvailable">cloud</i>
+            } @else {
+              <i class="material-icons">cloud_off</i>
+            }
+          </span>
           @if (isDownloadableMap(mapSource.key)) {
-            <div>
+            <div class="buttons">
               @switch (mapDownloadStates[mapSource.key]) {
                 @case ('loading') {
-                  <mat-progress-bar color="primary" mode="indeterminate" />
+                  <button mat-flat-button color="warn" class="button-cancel" (click)="cancelDownloadMap(mapSource.key)" >{{ i18n.get('cancel') }}</button>
+                  <mat-progress-bar color="primary" class="map-progress" mode="determinate" [value]="mapProgress" />
                 }
                 @case ('downloaded') {
-                  <button mat-flat-button color="warn" color="warn" class="button-download" (click)="removeLocalMap(mapSource.key)">
-                    Remove
+                  <button mat-flat-button color="warn" class="button-remove" (click)="removeLocalMap(mapSource.key)">
+                    <mat-icon>file_download</mat-icon>
+                    {{ i18n.get('removeSymbol') }}
                   </button>
                 }
                 @default {
-                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(mapSource.key)">Download</button>
+                  <button mat-flat-button color="primary" class="button-download" (click)="downloadMap(mapSource.key)"><mat-icon>file_download</mat-icon>{{ i18n.get('download') }}</button>
+                  <button mat-flat-button color="primary" class="button-upload" (click)="mapUpload.click()"><mat-icon>file_upload</mat-icon>{{ i18n.get('upload') }}</button>
+                  <input type="file" class="mapfile-input" accept=".pmtiles" (change)="uploadMap($event, mapSource.key)" #mapUpload>
                 }
               }
             </div>
@@ -60,6 +72,14 @@
           >
             <div class="titleRow">
               <div class="title">{{ item.label }}</div>
+              <div *ngIf="workLocal" (click)="showLocalInfo(item, index)">
+                @if (item.type === 'geojson' || item.type === 'csv') {
+                  <i class="material-icons" *ngIf="item.offlineAvailable">cloud_done</i>
+                  <i class="material-icons" *ngIf="!item.offlineAvailable">cloud</i>
+                } @else {
+                  <i class="material-icons">cloud_off</i>
+                }
+              </div>
               <i (click)="showLegend(item)" *ngIf="item.type !== 'geojson' && item.type !== 'csv'" class="material-icons">info</i>
               <i (click)="showWmsLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'wms' || item.type === 'wms_custom')" class="material-icons">settings</i>
               <i (click)="showGeoJSONLayerOptions(item, index)" *ngIf="mapState.isExpertView() && item.source && (item.type === 'geojson' || item.type === 'csv')" class="material-icons">settings</i>
@@ -115,7 +135,7 @@
             (click)="selectLayer(item)"
             title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}}{{item.id ? '; ' + i18n.get('globalMapLayerTitleSuffix') : ''}})"
           >
-            {{ item.label }}
+            <mat-icon *ngIf="isSearchable(item)" [title]="i18n.get('searchableLayer')">search</mat-icon>{{ item.label }}
           </button>
       </mat-action-list>
     </ng-template>
@@ -133,7 +153,7 @@
           <mat-label>{{ i18n.get('layerSource') }}</mat-label>
           <mat-select [formControl]="sourceFilter">
             <mat-option value="ALL">{{ i18n.get('allSources') }}</mat-option>
-            <mat-option value="_GeoAdmin_">GeoAdmin</mat-option>
+            <mat-option value="_GeoAdmin_">GeoAdmin <mat-icon class="wmsSourceError" *ngIf="geoAdminLayerError" [title]="geoAdminLayerError">warning</mat-icon></mat-option>
             <mat-option value="_GlobalMapLayers_">{{ i18n.get('globalMapLayers') }}</mat-option>
             <mat-option *ngFor="let item of mapState.observeWmsSources$() | async" [value]="item.url">
               {{item.label}} <mat-icon class="wmsSourceError" *ngIf="wmsSourceLoadErrors[item.url]" [title]="wmsSourceLoadErrors[item.url]">warning</mat-icon>
@@ -153,7 +173,7 @@
           (click)="selectLayer(item)"
           title="{{ item.label }} ({{item.source ? (item.source.label ?? item.source.url) : 'GeoAdmin'}}{{item.id ? '; ' + i18n.get('globalMapLayerTitleSuffix') : ''}})"
         >
-          {{ item.label }}
+          <mat-icon *ngIf="isSearchable(item)" [title]="i18n.get('searchableLayer')">search</mat-icon>{{ item.label }}
         </button>
       </mat-action-list>
     </ng-template>

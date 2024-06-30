@@ -29,6 +29,7 @@ export interface IZsMapSession {
   defaultLatitude?: number;
   defaultLongitude?: number;
   defaultZoomLevel?: number;
+  workLocal?: boolean;
 }
 
 export interface IZso {

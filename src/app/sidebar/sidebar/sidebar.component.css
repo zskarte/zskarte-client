@@ -40,8 +40,28 @@ mat-slider {
   width: 100%;
 }
 
-.button-download {
+.layer-slider {
+  margin-left: 0;
+  width: 100%;
+}
+
+.map-progress {
+  margin-top:  1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.buttons {
   margin-left: 40px;
+}
+
+.button-download {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.mapfile-input {
+  display: none;
 }
 
 .sourceControl {
@@ -67,4 +87,13 @@ mat-slider {
   transform: translateX(-50%);
   left: 50%;
   margin-bottom: 5px;
+}
+
+.mapSourceAvailable i {
+  vertical-align: middle;
+}
+
+.availableLayers button mat-icon {
+  vertical-align: bottom;
+  margin-right: 5px;
 }

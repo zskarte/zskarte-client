@@ -48,7 +48,8 @@ export class SyncService {
         const operationId = this._session.getOperationId();
         const isOnline = this._session.isOnline();
         const label = this._session.getLabel();
-        if (!isOnline || !operationId || !label) {
+        const isWorkLocal = this._session.isWorkLocal();
+        if (isWorkLocal || !isOnline || !operationId || !label) {
           this._disconnect();
           return;
         }
@@ -124,6 +125,7 @@ export class SyncService {
   }
 
   private _disconnect(): void {
+    this._connections.next([]);
     if (!this._socket) {
       return;
     }
@@ -137,7 +139,9 @@ export class SyncService {
   }
 
   public publishMapStatePatches(patches: Patch[]): void {
-    db.patchSyncQueue.bulkPut(patches).then(() => this._publishMapStatePatchesDebounced());
+    if (!this._session.isWorkLocal()) {
+      db.patchSyncQueue.bulkPut(patches).then(() => this._publishMapStatePatchesDebounced());
+    }
   }
 
   public async sendCachedMapStatePatches(): Promise<void> {

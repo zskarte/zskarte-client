@@ -183,6 +183,11 @@ export class I18NService {
       en: 'Download',
       fr: 'Télécharger',
     },
+    upload: {
+      de: 'Hochladen',
+      en: 'Upload',
+      fr: 'Uploader',
+    },
     exportOperation: {
       de: 'Ereignis exportieren',
       en: 'Export event',
@@ -1148,6 +1153,16 @@ export class I18NService {
       en: 'Login with code',
       fr: 'Connexion avec code',
     },
+    workLocal: {
+      de: 'Offline/lokal arbeiten',
+      en: 'Work offline/locally',
+      fr: 'Travailler hors ligne/localement',
+    },
+    localNotification: {
+      de: 'Die erfassten Daten sind nur im Browser gespeichert, bitte exportiert sie um sie zu sichern.',
+      en: 'The collected data is only stored in the browser, please export it to save it.',
+      fr: 'Les données collectées sont uniquement enregistrées dans le navigateur, veuillez les exporter pour les enregistrer.',
+    },
     addSignatureManually: {
       de: 'Bitte fügen Sie die Signatur manuell ein',
       en: 'Please add the signature manually',
@@ -1410,14 +1425,19 @@ export class I18NService {
       fr: 'Retour',
     },
     newScenario: {
-      de: 'Neues Ereigniss',
+      de: 'Neues Ereignis',
       en: 'New Scenario',
       fr: 'Nouvel Événement',
     },
     importScenario: {
-      de: 'Ereigniss importieren',
+      de: 'Ereignis importieren',
       en: 'Import Scenario',
       fr: 'Importer événement',
+    },
+    localOperation: {
+      de: 'Ereignis nur lokal verfügbar',
+      en: 'Scenario available locally only',
+      fr: 'Événement disponible localement uniquement',
     },
     featureClustering: {
       de: 'Symbole Gruppieren',
@@ -1473,6 +1493,11 @@ export class I18NService {
       de: 'geteilt',
       en: 'shared',
       fr: 'partagée',
+    },
+    searchableLayer: {
+      de: 'offline durchsuchbar',
+      en: 'offline searchable',
+      fr: 'recherche hors ligne',
     },
     editWmsSources: {
       de: 'WMS/WMTS Quellen Bearbeiten',
@@ -1808,6 +1833,106 @@ export class I18NService {
       de: 'Ebene {0} existiert bereits. Bestehende Einstellung aktualisieren (OK) oder neue hinzufügen (Abbrechen)?',
       en: 'Layer {0} already exist. Update existing setting (ok) or add new one (cancel)?',
       fr: 'La calque {0} existe déjà. Mettre à jour le paramètre existant (ok) ou en ajouter un nouveau (annuler)?',
+    },
+    blobMetaTitle: {
+      de: 'Offlineverfügbarkeit des Map-Layers',
+      en: 'Offline availability of the map layer',
+      fr: 'Disponibilité hors ligne de la couche de carte',
+    },
+    blobMetaDataTitle: {
+      de: 'Karten Daten',
+      en: 'Map data',
+      fr: 'Données de la carte',
+    },
+    blobMetaDataDefaultUrl: {
+      de: 'Karten Daten URL aus der Konfiguration',
+      en: 'Map data URL from config',
+      fr: 'URL des données de la carte à partir de la configuration',
+    },
+    blobMetaDataUrl: {
+      de: 'Karten Daten URL lokaler Daten',
+      en: 'Map data URL of local data',
+      fr: 'URL des données de la carte des données locales',
+    },
+    blobMetaBlobSource: {
+      de: 'lokale Datenquelle:',
+      en: 'local data source:',
+      fr: 'source de données locale:',
+    },
+    blobMetaStyleTitle: {
+      de: 'Stil',
+      en: 'Style',
+      fr: 'Style',
+    },
+    blobMetaStyleLayerSetting: {
+      de: '',
+      en: 'This layer have text style, pleace adjust in the layer settings (possibly activate expert mode needed)',
+      fr: '',
+    },
+    blobMetaStyleDefaultUrl: {
+      de: 'Stil-URL aus der Konfiguration',
+      en: 'Style url from config',
+      fr: 'URL de style à partir de la configuration',
+    },
+    blobMetaStyleUrl: {
+      de: 'Stil-URL lokaler Daten',
+      en: 'Style URL of local data',
+      fr: 'URL de style des données locales',
+    },
+    blobMetaStyleText: {
+      de: 'Stil Konfig',
+      en: 'style config',
+      fr: 'Configuration du style',
+    },
+    blobMetaNotOfflineLayer: {
+      de: 'Diese Ebene kann nicht offline zugänglich gemacht werden.',
+      en: 'This layer cannot be made offline accessible.',
+      fr: 'Cette Couches cartographiques ne peut pas être rendue accessible hors ligne.',
+    },
+    blobMetaNotOfflineMap: {
+      de: 'Diese Basiskarte kann nicht offline zugänglich gemacht werden.',
+      en: 'This base map cannot be made offline accessible.',
+      fr: 'Cette carte de base ne peut pas être rendue accessible hors ligne.',
+    },
+    localAvailabilityStepsIntro: {
+      de: 'Um vollständig offline arbeiten zu können, müssen folgende Dinge überprüft werden.',
+      en: 'To allow working fully offline the following things have to be verified.',
+      fr: 'Pour permettre de travailler entièrement hors ligne, les éléments suivants doivent être vérifiés.',
+    },
+    localAvailabilitySteps: {
+      de: 'Schritte zum Offline-Arbeiten.',
+      en: 'Steps to work offline.',
+      fr: 'Étapes pour travailler hors ligne.',
+    },
+    useLocalBaseMap: {
+      de: '"Lokal" Basiskarte vewenden.',
+      en: 'Use "Local" base map.',
+      fr: 'Utiliser la carte de base "Local".',
+    },
+    downloadLocalBaseMap: {
+      de: '"Lokal" Basiskarte herunterladen.',
+      en: 'Download "local" base map.',
+      fr: 'Télécharger la carte de base "locale".',
+    },
+    hideUnavailableLayers: {
+      de: 'Alle Kartenebenen ohne Offline-Funktion ausblenden (/entfernen).',
+      en: 'Hide(/remove) all map layers without offline capability.',
+      fr: 'Masquer (/supprimer) toutes les couches de carte sans fonctionnalité hors ligne.',
+    },
+    downloadAvailableLayers: {
+      de: 'Daten aller aktiven Kartenebenen mit Offline-Funktion herunterladen.',
+      en: 'Download data from all active map layers with offline capability.',
+      fr: 'Téléchargez les données de toutes les couches de carte actives avec une fonctionnalité hors ligne.',
+    },
+    haveSearchCapability: {
+      de: 'Verwenden von Kartenebene(n) mit Offline-Suchfunktion.',
+      en: 'Use map layer(s) with offline search capability.',
+      fr: 'Utilisez des couches de carte avec une fonctionnalité de recherche hors ligne.',
+    },
+    howtoFindSearchCapability: {
+      de: 'Kartenebene(n) mit Offline-Suchfunktion zeigen in der Liste der „Verfügbaren Ebenen“ ein Lupensymbol an und gehören zur Ebenenquelle „Freigegebene Ebenen“.',
+      en: 'Map layer(s) with offline search capability show a Magnifying glass symbol on the list of "Available layers" and they are of "Shared layers" Layer Source.',
+      fr: 'Les couches de carte avec capacité de recherche hors ligne affichent un symbole de loupe sur la liste des "Couches cartographiques disponibles" et elles appartiennent à la source de couche "Couches partagées".',
     },
   };
 

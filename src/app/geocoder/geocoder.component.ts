@@ -57,6 +57,9 @@ export class GeocoderComponent implements OnDestroy {
   }
 
   async geoAdminLocationSearch(text: string, maxResultCount?: number) {
+    if (!navigator.onLine) {
+      return [];
+    }
     let url = this.geocoderUrl + encodeURIComponent(text);
     if (maxResultCount !== undefined) {
       url = `${url}&limit=${maxResultCount}`;
@@ -83,9 +86,13 @@ export class GeocoderComponent implements OnDestroy {
           // break handling if input changes
           return;
         }
-        const results = await config.func(originalInput, config.maxResultCount);
-        if (results.length > 0) {
-          newResultSets.push({ config, results, collapsed: 'peek' });
+        try {
+          const results = await config.func(originalInput, config.maxResultCount);
+          if (results.length > 0) {
+            newResultSets.push({ config, results, collapsed: 'peek' });
+          }
+        } catch (error) {
+          console.error(error);
         }
       }
       if (this.inputText === originalInput) {

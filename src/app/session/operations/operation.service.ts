@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ZsMapLayerStateType, IZsMapState } from '../../state/interfaces';
 import { IZSMapOperationMapLayers, IZsMapOperation } from './operation.interfaces';
-import { ApiService } from '../../api/api.service';
+import { ApiService, IApiRequestOptions } from '../../api/api.service';
 import { SessionService } from '../session.service';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTime } from 'luxon';
@@ -10,27 +10,37 @@ import { ImportDialogComponent } from '../../import-dialog/import-dialog.compone
 import { BehaviorSubject } from 'rxjs';
 import { IpcService } from '../../ipc/ipc.service';
 import { MatDialog } from '@angular/material/dialog';
+import { db } from '../../db/db';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OperationService {
+  private _session!: SessionService;
   public operations = new BehaviorSubject<IZsMapOperation[]>([]);
   public operationToEdit = new BehaviorSubject<IZsMapOperation | undefined>(undefined);
 
+  public setSessionService(sessionService: SessionService): void {
+    this._session = sessionService;
+  }
+
   constructor(
     private _api: ApiService,
-    private _session: SessionService,
     public _ipc: IpcService,
     private _dialog: MatDialog,
   ) {}
 
   public async deleteOperation(operation: IZsMapOperation): Promise<void> {
-    if (!operation) {
+    if (!operation || !operation?.id) {
       return;
     }
 
-    await this._api.put(`/api/operations/${operation.id}/archive`, null);
+    operation.status = 'archived';
+    if (operation?.id < 0) {
+      await OperationService.persistLocalOpertaion(operation);
+    } else {
+      await this._api.put(`/api/operations/${operation.id}/archive`, null);
+    }
     await this.reload();
   }
 
@@ -52,23 +62,86 @@ export class OperationService {
       operation.status = 'active';
     }
 
-    await this._api.post('/api/operations', { data: { ...operation, organization: this._session.getOrganizationId() } });
+    if (this._session.isWorkLocal()) {
+      const minId = Math.min(0, ...(await db.localOperation.toArray()).map((o) => o.id ?? 0));
+      operation.id = minId - 1;
+      await db.localOperation.add(operation);
+    } else {
+      await this._api.post('/api/operations', { data: { ...operation, organization: this._session.getOrganizationId() } });
+    }
   }
 
   public async updateMeta(operation: IZsMapOperation): Promise<void> {
-    await this._api.put(`/api/operations/${operation.id}/meta`, {
-      data: { name: operation.name, description: operation.description, eventStates: operation.eventStates },
-    });
+    if ((operation.id ?? 0) < 0) {
+      await OperationService.persistLocalOpertaion(operation);
+    } else {
+      await this._api.put(`/api/operations/${operation.id}/meta`, {
+        data: { name: operation.name, description: operation.description, eventStates: operation.eventStates },
+      });
+    }
+  }
+
+  public async getOperation(operationId: number, options?: IApiRequestOptions) {
+    if (operationId < 0) {
+      return db.localOperation.get(operationId);
+    } else {
+      const { error, result } = await this._api.get<IZsMapOperation>(`/api/operations/${operationId}`, options);
+      if (error || !result) return null;
+      return result;
+    }
+  }
+
+  public static async persistLocalOpertaion(operation: IZsMapOperation) {
+    await db.localOperation.put(operation);
+  }
+
+  private static getLocalOperations() {
+    return db.localOperation.where('status').equals('active').toArray();
+  }
+
+  public async loadLocal(): Promise<void> {
+    const localOperations = await OperationService.getLocalOperations();
+    if (!localOperations) return;
+    this.operations.next(localOperations);
   }
 
   public async reload(): Promise<void> {
-    const { error, result: operations } = await this._api.get<IZsMapOperation[]>('/api/operations/overview?status=active');
-    if (error || !operations) return;
-    this.operations.next(operations);
+    let operations: IZsMapOperation[] = [];
+    const localOperations = await OperationService.getLocalOperations();
+    if (localOperations) {
+      operations = localOperations;
+    }
+    if (!this._session.isWorkLocal()) {
+      const { error, result: savedOperations } = await this._api.get<IZsMapOperation[]>('/api/operations/overview?status=active');
+      if (!error && savedOperations) {
+        operations = [...operations, ...savedOperations];
+      }
+      if (operations.length > 0) {
+        this.operations.next(operations);
+      }
+    } else {
+      this.operations.next(operations);
+    }
   }
 
   public async updateMapLayers(operationId: number, data: IZSMapOperationMapLayers) {
-    await this._api.put(`/api/operations/${operationId}/mapLayers`, { data });
+    if (operationId < 0) {
+      const operation = this._session.getOperation();
+      if (operation) {
+        operation.mapLayers = data;
+        await OperationService.persistLocalOpertaion(operation);
+      }
+    } else {
+      await this._api.put(`/api/operations/${operationId}/mapLayers`, { data });
+    }
+  }
+
+  public async updateLocalMapState(mapState: IZsMapState) {
+    const operation = this._session.getOperation();
+    if (operation) {
+      operation.mapState = mapState;
+      await OperationService.persistLocalOpertaion(operation);
+    }
   }
 
   public importOperation(): void {
@@ -84,6 +157,7 @@ export class OperationService {
           status: 'active',
           eventStates: result.eventStates,
           mapState,
+          mapLayers: result.mapLayers,
         };
         await this.insertOperation(operation);
       }
@@ -95,13 +169,14 @@ export class OperationService {
       return;
     }
     const fileName = `Ereignis_${DateTime.now().toFormat('yyyy_LL_dd_hh_mm')}.zsjson`;
-    const { result: operation } = await this._api.get<IZsMapOperation>(`/api/operations/${operationId}`);
+    const operation = await this.getOperation(operationId);
     const saveFile = {
       name: operation?.name,
       description: operation?.description,
       version: OperationExportFileVersion.V2,
       mapState: operation?.mapState,
       eventStates: operation?.eventStates,
+      mapLayers: operation?.mapLayers,
     };
     await this._ipc.saveFile({
       data: JSON.stringify(saveFile),

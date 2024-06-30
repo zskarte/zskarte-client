@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  concatMap,
   distinctUntilChanged,
   filter,
   firstValueFrom,
@@ -28,6 +29,8 @@ import { decodeJWT } from '../helper/jwt';
 import { IZsMapDisplayState } from '../state/interfaces';
 import { WmsService } from '../map-layer/wms/wms.service';
 import { MapLayerService } from '../map-layer/map-layer.service';
+import { OperationService } from './operations/operation.service';
+import { OrganisationLayerSettingsComponent } from '../map-layer/organisation-layer-settings/organisation-layer-settings.component';
 
 @Injectable({
   providedIn: 'root',
@@ -44,10 +47,18 @@ export class SessionService {
     private _api: ApiService,
     private _wms: WmsService,
     private _mapLayerService: MapLayerService,
+    private _operationService: OperationService,
   ) {
+    //"solve" circular dependency between OperationService and SessionService
+    _operationService.setSessionService(this);
+
+    if (!navigator.onLine) {
+      this._isOnline.next(false);
+    }
+
     this._session.pipe(skip(1)).subscribe(async (session) => {
       this._clearOperation.next();
-      if (session?.jwt) {
+      if (session?.jwt || session?.workLocal) {
         await db.sessions.put(session);
         if (session.operation?.id) {
           await this._state?.refreshMapState();
@@ -59,13 +70,59 @@ export class SessionService {
           }
 
           const globalWmsSources = await this._wms.readGlobalWMSSources(session.organization?.id ?? 0);
-          this._state.setGlobalWmsSources(globalWmsSources);
+          if (session?.workLocal) {
+            const localWmsSources = await MapLayerService.getLocalWmsSources();
+            if (globalWmsSources.length > 0) {
+              //use local copy if available
+              const localWmsIds = localWmsSources.map((s) => s.id);
+              const wmsSources = [...localWmsSources, ...globalWmsSources.filter((s) => !localWmsIds.includes(s.id))];
+              this._state.setGlobalWmsSources(wmsSources);
+            } else {
+              this._state.setGlobalWmsSources(localWmsSources);
+            }
+          } else {
+            this._state.setGlobalWmsSources(globalWmsSources);
+          }
           const globalMapLayers = await this._mapLayerService.readGlobalMapLayers(globalWmsSources, session.organization?.id ?? 0);
-          this._state.setGlobalMapLayers(globalMapLayers);
-          if (!displayState && session.organization?.wms_sources && session.organization?.wms_sources.length > 0) {
-            //if no session state, fill default wms sources from organisation settings
-            const selectedSources = globalWmsSources.filter((s) => s.id && session.organization?.wms_sources.includes(s.id));
-            this._state.setWmsSources(selectedSources);
+          if (session?.workLocal) {
+            const localMapLayers = await MapLayerService.getLocalMapLayers();
+            if (globalMapLayers.length > 0) {
+              //use local copy if available, keep both if different settings
+              const mapLayers = [
+                ...localMapLayers,
+                ...globalMapLayers.filter((l) => {
+                  const orig = localMapLayers.find((ll) => ll.fullId === l.fullId);
+                  if (!orig) {
+                    return true;
+                  }
+                  return !OrganisationLayerSettingsComponent.sameOptions(orig, l, [
+                    'mapStatus',
+                    'sourceBlobId',
+                    'styleBlobId',
+                    'offlineAvailable',
+                  ]);
+                }),
+              ];
+              this._state.setGlobalMapLayers(mapLayers);
+            } else {
+              this._state.setGlobalMapLayers(localMapLayers);
+            }
+          } else {
+            this._state.setGlobalMapLayers(globalMapLayers);
+          }
+          if (!displayState) {
+            if (session.organization?.wms_sources && session.organization?.wms_sources.length > 0) {
+              //if no session state, fill default wms sources from organisation settings
+              const selectedSources = globalWmsSources.filter((s) => s.id && session.organization?.wms_sources.includes(s.id));
+              this._state.setWmsSources(selectedSources);
+            } else {
+              //if no session state, fill default wms sources from local settings
+              const localMapLayerSettings = await MapLayerService.loadLocalMapLayerSettings();
+              if (localMapLayerSettings?.wms_sources && localMapLayerSettings?.wms_sources.length > 0) {
+                const selectedSources = globalWmsSources.filter((s) => s.id && localMapLayerSettings?.wms_sources.includes(s.id));
+                this._state.setWmsSources(selectedSources);
+              }
+            }
           }
           if (!displayState && session.operation?.mapLayers) {
             //if no session state, fill mapLayers from operation settings
@@ -87,9 +144,11 @@ export class SessionService {
             });
             */
             const layers = session.operation?.mapLayers.layerConfigs;
-            this._state.updateDisplayState((draft) => {
-              draft.layers = layers;
-            });
+            if (layers) {
+              this._state.updateDisplayState((draft) => {
+                draft.layers = layers;
+              });
+            }
           }
           //make sure layerFeature source information are up to date
           this._state.reloadAllMapLayers();
@@ -195,7 +254,13 @@ export class SessionService {
   }
 
   public observeFavoriteLayers$(): Observable<number[] | undefined> {
-    return this._session.pipe(map((session) => session?.organization?.map_layer_favorites));
+    return this._session.pipe(
+      concatMap(
+        async (session) =>
+          session?.organization?.map_layer_favorites ??
+          (this.isWorkLocal() ? (await MapLayerService.loadLocalMapLayerSettings())?.map_layer_favorites : undefined),
+      ),
+    );
   }
 
   public async saveOrganizationMapLayerSettings(data: IZsMapOrganizationMapLayerSettings) {
@@ -211,6 +276,9 @@ export class SessionService {
         currentSession.organization = organization;
         this._session.next(currentSession);
       }
+    } else if (this.isWorkLocal()) {
+      await MapLayerService.saveLocalMapLayerSettings(data);
+      this._session.next(this._session.value);
     }
   }
 
@@ -276,7 +344,11 @@ export class SessionService {
       return sessions[0];
     }
     if (sessions.length > 1) {
-      await db.sessions.clear();
+      if (this.isOnline()) {
+        return db.sessions.get('current');
+      } else {
+        return db.sessions.get('local');
+      }
     }
     return undefined;
   }
@@ -285,6 +357,9 @@ export class SessionService {
     const session = await this.getSavedSession();
     if (session?.jwt) {
       await this.updateJWT(session?.jwt);
+      return;
+    } else if (session?.workLocal) {
+      this._session.next(session);
       return;
     }
     this._session.next(undefined);
@@ -316,7 +391,7 @@ export class SessionService {
     const currentSession = await this.getSavedSession();
     let newSession: IZsMapSession;
 
-    if (currentSession) {
+    if (currentSession && !currentSession.workLocal) {
       newSession = currentSession;
     } else {
       newSession = {
@@ -349,11 +424,27 @@ export class SessionService {
     }
     const operationId = decoded.operationId || queryOperationId || currentSession?.operation?.id;
     if (operationId) {
-      const { result: operation } = await this._api.get<IZsMapOperation>(`/api/operations/${operationId}`, { token: jwt });
+      const operation = await this._operationService.getOperation(operationId, { token: jwt });
       if (operation) {
         newSession.operation = operation;
       }
     }
+
+    this._session.next(newSession);
+  }
+
+  public isWorkLocal() {
+    return this._session.value?.workLocal === true;
+  }
+
+  public startWorkLocal() {
+    const newSession: IZsMapSession = {
+      id: 'local',
+      locale: DEFAULT_LOCALE,
+      workLocal: true,
+      permission: PermissionType.ALL,
+      label: 'local',
+    };
 
     this._session.next(newSession);
   }
@@ -364,6 +455,9 @@ export class SessionService {
   }
 
   public async refreshToken(): Promise<void> {
+    if (this.isWorkLocal()) {
+      return;
+    }
     const currentToken = this._session.value?.jwt;
     if (!currentToken) {
       await this.logout();
@@ -389,6 +483,9 @@ export class SessionService {
   public observeAuthenticated(): Observable<boolean> {
     return this._session.pipe(
       map((session) => {
+        if (session?.workLocal) {
+          return true;
+        }
         if (!session?.jwt) {
           return false;
         }
@@ -414,7 +511,7 @@ export class SessionService {
   }
 
   public observeIsOnline(): Observable<boolean> {
-    return this._isOnline.pipe(skip(1), distinctUntilChanged());
+    return this._isOnline.pipe(distinctUntilChanged());
   }
 
   public isOnline(): boolean {
@@ -449,12 +546,16 @@ export class SessionService {
   }
 
   public getDefaultMapCenter(): number[] {
-    if (coordinatesProjection && mercatorProjection && this._session.value?.defaultLatitude && this._session.value?.defaultLongitude) {
-      return transform(
-        [this._session.value?.defaultLongitude, this._session.value?.defaultLatitude],
-        coordinatesProjection,
-        mercatorProjection,
-      );
+    if (coordinatesProjection && mercatorProjection) {
+      if (this._session.value?.defaultLatitude && this._session.value?.defaultLongitude) {
+        return transform(
+          [this._session.value?.defaultLongitude, this._session.value?.defaultLatitude],
+          coordinatesProjection,
+          mercatorProjection,
+        );
+      } else if (this._session.value?.operation?.mapState?.center[0] && this._session.value?.operation?.mapState?.center[1]) {
+        return transform(this._session.value.operation.mapState.center, coordinatesProjection, mercatorProjection);
+      }
     }
     return DEFAULT_COORDINATES;
   }

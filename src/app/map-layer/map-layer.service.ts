@@ -9,11 +9,15 @@ import {
   MapSource,
   MapLayer,
   MapLayerAllFields,
+  GeoJSONMapLayer,
 } from './map-layer-interface';
 import { LOG2_ZOOM_0_RESOLUTION, DEFAULT_RESOLUTION } from '../session/default-map-values';
 import { ApiResponse, ApiService } from '../api/api.service';
 import { getPropertyDifferences } from '../helper/diff';
 import TileGrid, { Options as TileGridOptions } from 'ol/tilegrid/TileGrid';
+import { LocalMapLayer, LocalMapLayerMeta, db } from '../db/db';
+import { IZsMapOrganizationMapLayerSettings } from '../session/operations/operation.interfaces';
+import { BlobService } from '../db/blob.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +26,7 @@ export class MapLayerService {
   constructor(
     private _domSanitizer: DomSanitizer,
     private _api: ApiService,
+    private _blobService: BlobService,
   ) {}
 
   public sanitizeHTML(html: string) {
@@ -124,8 +129,8 @@ export class MapLayerService {
     return mapLayers.map((layer) => MapLayerService.convertMapLayerFromApi(layer, sources, organizationId));
   }
 
-  static convertMapLayerToApi(mapLayer: MapLayer): MapLayerApi {
-    const cleanedOptions: MapLayerAllFields = { ...mapLayer };
+  static convertMapLayerToApi(mapLayer: MapLayer & LocalMapLayerMeta): MapLayerApi {
+    const cleanedOptions: MapLayerAllFields & LocalMapLayerMeta = { ...mapLayer };
     // delete values for main object / from PresistedSettings
     delete cleanedOptions.id;
     delete cleanedOptions.owner;
@@ -137,9 +142,13 @@ export class MapLayerService {
     // delete values for main object & from MapLayer
     delete cleanedOptions.source;
     delete cleanedOptions.fullId;
+    delete cleanedOptions.offlineAvailable;
     // delete display specific values / from SelectedMapLayerSettings
     delete cleanedOptions.deleted;
     delete cleanedOptions.zIndex;
+    // delete local cache specific values / from LocalMapLayerMeta
+    delete cleanedOptions.sourceBlobId;
+    delete cleanedOptions.styleBlobId;
     const options: MapLayerOptionsApi = cleanedOptions;
     return {
       id: mapLayer.id,
@@ -153,9 +162,12 @@ export class MapLayerService {
     };
   }
 
-  async saveGlobalMapLayer(mapLayer: MapLayer, organizationId: number) {
+  async saveGlobalMapLayer(mapLayer: MapLayer, organizationId: number | undefined) {
     if (!mapLayer.owner) {
       return null;
+    }
+    if (!organizationId) {
+      return this.saveLocalMapLayer(mapLayer);
     }
     let response: ApiResponse<MapLayerApi>;
     const layerApi = MapLayerService.convertMapLayerToApi(mapLayer);
@@ -177,6 +189,67 @@ export class MapLayerService {
       return mapped;
     }
     return null;
+  }
+
+  public async saveLocalMapLayer(mapLayer: MapLayer, downloadMissingBlobs = true) {
+    if (!mapLayer.id) {
+      const minId = Math.min(0, ...(await db.localMapLayer.toArray()).map((o) => o.id ?? 0));
+      mapLayer.id = minId - 1;
+      mapLayer.fullId = `${mapLayer.source?.url}|${mapLayer.serverLayerName}|${mapLayer.id}`;
+    }
+    const localMapLayer = mapLayer as LocalMapLayer;
+    await db.localMapLayer.put(localMapLayer);
+    if ((mapLayer.type === 'geojson' || mapLayer.type === 'csv') && downloadMissingBlobs) {
+      const geoMapLayer = mapLayer as GeoJSONMapLayer;
+      let sourceDownloaded = await BlobService.isDownloaded(localMapLayer.sourceBlobId);
+      if (geoMapLayer.source?.url && !sourceDownloaded) {
+        const localBlobMeta = await this._blobService.downloadBlob(geoMapLayer.source.url, localMapLayer.sourceBlobId);
+        localMapLayer.sourceBlobId = localBlobMeta.id;
+        await db.localMapLayer.put(localMapLayer);
+        sourceDownloaded = localBlobMeta.blobState === 'downloaded';
+      }
+      let styleDownloaded: boolean;
+      if (geoMapLayer.styleSourceType === 'url' && geoMapLayer.styleUrl) {
+        styleDownloaded = await BlobService.isDownloaded(localMapLayer.styleBlobId);
+        if (!styleDownloaded) {
+          const localBlobMeta = await this._blobService.downloadBlob(geoMapLayer.styleUrl, localMapLayer.styleBlobId);
+          localMapLayer.styleBlobId = localBlobMeta.id;
+          await db.localMapLayer.put(localMapLayer);
+          styleDownloaded = localBlobMeta.blobState === 'downloaded';
+        }
+      } else {
+        localMapLayer.styleBlobId = undefined;
+        await db.localMapLayer.put(localMapLayer);
+        styleDownloaded = true;
+      }
+      localMapLayer.offlineAvailable = sourceDownloaded && styleDownloaded;
+      await db.localMapLayer.put(localMapLayer);
+    }
+    return mapLayer;
+  }
+
+  public static getLocalMapLayers() {
+    return db.localMapLayer.toArray();
+  }
+
+  public static async saveLocalWmsSource(wmsSource: WmsSource) {
+    if (!wmsSource.id) {
+      const minId = Math.min(0, ...(await db.localWmsSource.toArray()).map((o) => o.id ?? 0));
+      wmsSource.id = minId - 1;
+    }
+    await db.localWmsSource.put(wmsSource);
+  }
+
+  public static getLocalWmsSources() {
+    return db.localWmsSource.toArray();
+  }
+
+  public static async saveLocalMapLayerSettings(data: IZsMapOrganizationMapLayerSettings) {
+    await db.localMapLayerSettings.put({ ...data, id: 'local' });
+  }
+
+  public static async loadLocalMapLayerSettings() {
+    return await db.localMapLayerSettings.get('local');
   }
 
   static extractMapLayerDiffs(mapLayer: MapLayer, allLayers: MapLayer[]) {
