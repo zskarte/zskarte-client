@@ -863,6 +863,16 @@ export class I18NService {
       en: 'Zoom in',
       fr: 'Zoom in',
     },
+    zoomToScale: {
+      de: 'massstabsgetreu vergrössern',
+      en: 'zoom to scale',
+      fr: "zoomer à l'échelle",
+    },
+    scaleToUse: {
+      de: 'Massstab (1:xxx)',
+      en: 'scale (1:xxx)',
+      fr: 'échelle (1:xxx)',
+    },
     filters: {
       de: 'Filter',
       en: 'Filters',
@@ -1313,6 +1323,16 @@ export class I18NService {
       de: 'Betroffene Personen',
       en: 'Affected Persons',
       fr: 'Persones affectés',
+    },
+    offlineDialogTitle: {
+      de: 'Offline-Warnung',
+      en: 'Offline Warning',
+      fr: 'Avertissement hors ligne',
+    },
+    offlineDialogMain: {
+      de: 'Sie sind derzeit offline. Wenn Sie die Seite aktualisieren oder verlassen, werden Sie abgemeldet und können sich erst wieder anmelden, wenn Sie eine Internetverbindung haben. Sind Sie sicher, dass Sie fortfahren möchten?',
+      en: "You are currently offline. Refreshing or exiting the page will log you out and you won't be able to log back in until you have an internet connection. Are you sure you want to proceed?",
+      fr: "Vous êtes actuellement hors ligne. Actualiser ou quitter la page vous déconnectera et vous ne pourrez pas vous reconnecter tant que vous ne disposerez pas d'une connexion internet. Êtes-vous sûr de vouloir continuer ?",
     },
   };
 

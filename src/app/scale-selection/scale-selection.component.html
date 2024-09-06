@@ -1,0 +1,30 @@
+<div mat-dialog-content class="scaleSelection">
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>{{ i18n.get('scaleToUse') }}</mat-label>
+    <input matInput type="text" [(ngModel)]="scale" name="scale" cdkFocusInitial/>
+  </mat-form-field>
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>screenDimension (in ")</mat-label>
+    <input matInput type="text" [(ngModel)]="screenDimension" name="screenDimension" (change)="updateDpi()"/>
+  </mat-form-field>
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>screenWidth (in px)</mat-label>
+    <input matInput type="text" [(ngModel)]="screenWidth" name="screenWidth" disabled/>
+  </mat-form-field>
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>screenHeight (in px)</mat-label>
+    <input matInput type="text" [(ngModel)]="screenHeight" name="screenHeight" disabled/>
+  </mat-form-field>
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>devicePixelRatio</mat-label>
+    <input matInput type="text" [(ngModel)]="devicePixelRatio" name="devicePixelRatio" disabled/>
+  </mat-form-field>
+  <mat-form-field class="full-width" appearance="outline">
+    <mat-label>DPI</mat-label>
+    <input matInput type="text" [(ngModel)]="dpi" name="dpi" disabled/>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button (click)="cancel()">{{ i18n.get('cancel') }}</button>
+  <button mat-raised-button (click)="ok()" color="primary">{{ i18n.get('ok') }}</button>
+</div>

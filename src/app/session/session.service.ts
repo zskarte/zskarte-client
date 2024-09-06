@@ -268,6 +268,9 @@ export class SessionService {
     newSession.organizationLogo = meResult.organization?.logo?.url;
     newSession.organization = meResult.organization;
 
+    newSession.defaultLongitude = newSession.organization?.mapLongitude;
+    newSession.defaultLatitude = newSession.organization?.mapLatitude;
+
     // update operation values
     const queryParams = await firstValueFrom(this._router.routerState.root.queryParams);
     let queryOperationId;

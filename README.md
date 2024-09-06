@@ -25,7 +25,11 @@ Please note, that this application integrates several different map provider ser
 
 ### Development server
 
-Run `yarn start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `yarn install` to install dependencies.
+
+Run `yarn start` for a dev server. The Angular server will announce itself, usually at `http://localhost:4200/`.
+
+The app will automatically reload if you change any of the source files.
 
 To use your own local backend (https://github.com/zskarte/zskarte-server) run `yarn start:local`.
 
