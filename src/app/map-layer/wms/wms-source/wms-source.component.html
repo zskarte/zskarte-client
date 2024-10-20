@@ -4,7 +4,7 @@
     <mat-label>{{ i18n.get('layerSource') }}</mat-label>
     <mat-select [(value)]="globalSource">
       <mat-option *ngFor="let item of filteredGlobalSources$ | async" [value]="item">
-        {{item.label}}
+        {{ item.label }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -21,22 +21,27 @@
       <mat-option *ngIf="this.filteredGlobalSources$.value.length > 0" value="__SELECT__">{{ i18n.get('selectLayerSource') }}</mat-option>
       <mat-option value="__NEW__">{{ i18n.get('addLayerSource') }}</mat-option>
       <mat-option *ngFor="let item of sources" [value]="item">
-        {{item.label}}
+        {{ item.label }}
       </mat-option>
     </mat-select>
   </mat-form-field>
   <div *ngIf="selectedSource !== undefined">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ i18n.get('label') }}</mat-label>
-      <input matInput type="text" [(ngModel)]="selectedSource.label" [disabled]="!selectedSource.owner"/>
+      <input matInput type="text" [(ngModel)]="selectedSource.label" [disabled]="!selectedSource.owner" />
     </mat-form-field>
     <fieldset class="like-mat-form-field-outline">
       <legend>{{ i18n.get('publicSource') }}</legend>
-      <mat-checkbox [checked]="selectedSource.public" (change)="selectedSource.public = $event.checked" [disabled]="!selectedSource.owner">{{ i18n.get('publicSourceInfo') }}</mat-checkbox>
+      <mat-checkbox
+        [checked]="selectedSource.public"
+        (change)="selectedSource.public = $event.checked"
+        [disabled]="!selectedSource.owner"
+        >{{ i18n.get('publicSourceInfo') }}</mat-checkbox
+      >
     </fieldset>
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ i18n.get('layerSourceUrl') }}</mat-label>
-      <input matInput type="text" [(ngModel)]="selectedSource.url" (change)="updateFullUrl($event)" [disabled]="!selectedSource.owner"/>
+      <input matInput type="text" [(ngModel)]="selectedSource.url" (change)="updateFullUrl($event)" [disabled]="!selectedSource.owner" />
     </mat-form-field>
     <div class="fullUrl">{{ fullUrl }}</div>
     <fieldset class="like-mat-form-field-outline">
@@ -54,8 +59,8 @@
           <div class="attr-url">URL</div>
         </div>
         <div class="attribution" *ngFor="let attr of selectedSource.attribution; index as i">
-          <input class="attr-title" matInput type="text" [(ngModel)]="attr[0]" [disabled]="!selectedSource.owner"/>
-          <input class="attr-url" matInput type="url" [(ngModel)]="attr[1]" [disabled]="!selectedSource.owner"/>
+          <input class="attr-title" matInput type="text" [(ngModel)]="attr[0]" [disabled]="!selectedSource.owner" />
+          <input class="attr-url" matInput type="url" [(ngModel)]="attr[1]" [disabled]="!selectedSource.owner" />
           <mat-icon class="attr-remove" (click)="removeAttribution(i)">remove</mat-icon>
         </div>
       </ng-container>

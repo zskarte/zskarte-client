@@ -128,7 +128,7 @@ fieldset.like-mat-form-field-outline {
   border-style: solid;
   border-width: var(--mdc-outlined-text-field-outline-width);
   border-color: var(--mdc-outlined-text-field-outline-color);
-  border-radius:  var(--mdc-outlined-text-field-container-shape);
+  border-radius: var(--mdc-outlined-text-field-container-shape);
 }
 fieldset.like-mat-form-field-outline > legend {
   font-size: calc(var(--mat-form-field-outlined-label-text-populated-size) * var(--mat-mdc-form-field-floating-label-scale, 0.75));

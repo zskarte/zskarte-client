@@ -14,10 +14,14 @@ mat-form-field {
   margin-bottom: 5px;
 }
 
-.regexTitle, .attributionTitle, .extentTitle {
+.regexTitle,
+.attributionTitle,
+.extentTitle {
   line-height: 1em;
 }
-.regexTitle div, .attributionTitle div, .extentTitle div {
+.regexTitle div,
+.attributionTitle div,
+.extentTitle div {
   display: inline-block;
   font-size: 0.8em;
 }
@@ -41,7 +45,7 @@ mat-form-field {
 }
 .attr-filter-options {
   box-sizing: border-box;
-  width: calc( 15% - 24px );
+  width: calc(15% - 24px);
 }
 
 .attr-search-regex {
@@ -50,7 +54,7 @@ mat-form-field {
 }
 .attr-search-options {
   box-sizing: border-box;
-  width: calc( 20% - 24px );
+  width: calc(20% - 24px);
 }
 .ng-invalid:not(form) {
   border-color: red;
@@ -68,5 +72,5 @@ mat-form-field {
 }
 .attr-url {
   box-sizing: border-box;
-  width: calc( 70% - 24px );
+  width: calc(70% - 24px);
 }

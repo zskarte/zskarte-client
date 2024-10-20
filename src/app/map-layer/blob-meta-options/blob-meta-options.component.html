@@ -8,16 +8,16 @@
   <div class="sectionTitle">{{ i18n.get('blobMetaDataTitle') }}</div>
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('blobMetaDataDefaultUrl') }}</mat-label>
-    <input matInput type="text" [(ngModel)]="dataUrlDefault" disabled/>
+    <input matInput type="text" [(ngModel)]="dataUrlDefault" disabled />
   </mat-form-field>
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('blobMetaDataUrl') }}</mat-label>
-    <input matInput type="text" [(ngModel)]="dataUrl"/>
+    <input matInput type="text" [(ngModel)]="dataUrl" />
   </mat-form-field>
   <div class="buttons">
     @switch (dataBlobMeta?.blobState) {
       @case ('loading') {
-        <button mat-flat-button color="warn" class="button-cancel" (click)="cancelDownloadData()" >{{ i18n.get('cancel') }}</button>
+        <button mat-flat-button color="warn" class="button-cancel" (click)="cancelDownloadData()">{{ i18n.get('cancel') }}</button>
         <mat-progress-bar color="primary" class="map-progress" mode="determinate" [value]="dataProgress" />
       }
       @case ('downloaded') {
@@ -25,12 +25,16 @@
           <mat-icon>file_download</mat-icon>
           {{ i18n.get('removeSymbol') }}
         </button>
-        <div class="source">{{ i18n.get('blobMetaBlobSource') }} {{dataBlobMeta?.source}}</div>
+        <div class="source">{{ i18n.get('blobMetaBlobSource') }} {{ dataBlobMeta?.source }}</div>
       }
       @default {
-        <button mat-flat-button color="primary" class="button-download" (click)="downloadData()"><mat-icon>file_download</mat-icon>{{ i18n.get('download') }}</button>
-        <button mat-flat-button color="primary" class="button-upload" (click)="dataUpload.click()"><mat-icon>file_upload</mat-icon>{{ i18n.get('upload') }}</button>
-        <input type="file" class="mapfile-input" accept=".pmtiles" (change)="uploadData($event)" #dataUpload>
+        <button mat-flat-button color="primary" class="button-download" (click)="downloadData()">
+          <mat-icon>file_download</mat-icon>{{ i18n.get('download') }}
+        </button>
+        <button mat-flat-button color="primary" class="button-upload" (click)="dataUpload.click()">
+          <mat-icon>file_upload</mat-icon>{{ i18n.get('upload') }}
+        </button>
+        <input type="file" class="mapfile-input" accept=".pmtiles" (change)="uploadData($event)" #dataUpload />
       }
     }
   </div>
@@ -39,51 +43,57 @@
   @if (layerConfigStyle) {
     <div>{{ i18n.get('blobMetaStyleLayerSetting') }}</div>
   } @else {
-  <mat-form-field appearance="outline" subscriptSizing="dynamic">
-    <mat-label>{{ i18n.get('blobMetaStyleDefaultUrl') }}</mat-label>
-    <input matInput type="text" [(ngModel)]="styleUrlDefault" disabled/>
-  </mat-form-field>
-  <mat-form-field appearance="outline" subscriptSizing="dynamic">
-    <mat-label>{{ i18n.get('blobMetaStyleUrl') }}</mat-label>
-    <input matInput type="text" [(ngModel)]="styleUrl"/>
-  </mat-form-field>
-  <div class="buttons">
-    @switch (styleBlobMeta?.blobState) {
-      @case ('loading') {
-        <button mat-flat-button color="warn" class="button-cancel" (click)="cancelDownloadStyle()" >{{ i18n.get('cancel') }}</button>
-        <mat-progress-bar color="primary" class="map-progress" mode="determinate" [value]="styleProgress" />
-      }
-      @case ('downloaded') {
-        <button mat-flat-button color="warn" class="button-remove" (click)="removeStyle()">
-          <mat-icon>file_download</mat-icon>
-          {{ i18n.get('removeSymbol') }}
-        </button>
-        <button *ngIf="styleText === null" mat-flat-button color="primary" class="button-editStyle" (click)="startEditStyle()"><mat-icon>edit</mat-icon>{{ i18n.get('edit') }}</button>
-        <div class="source">{{ i18n.get('blobMetaBlobSource') }} {{styleBlobMeta?.source}}</div>
-      }
-      @default {
-        <button mat-flat-button color="primary" class="button-download" (click)="downloadStyle()"><mat-icon>file_download</mat-icon>{{ i18n.get('download') }}</button>
-        <button mat-flat-button color="primary" class="button-upload" (click)="styleUpload.click()"><mat-icon>file_upload</mat-icon>{{ i18n.get('upload') }}</button>
-        <input type="file" class="mapfile-input" accept=".pmtiles" (change)="uploadStyle($event)" #styleUpload>
-      }
-    }
-  </div>
-  <div *ngIf="styleText !== null">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>{{ i18n.get('blobMetaStyleText') }}</mat-label>
-      <textarea matInput [(ngModel)]="styleText"></textarea>
+      <mat-label>{{ i18n.get('blobMetaStyleDefaultUrl') }}</mat-label>
+      <input matInput type="text" [(ngModel)]="styleUrlDefault" disabled />
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ i18n.get('blobMetaStyleUrl') }}</mat-label>
+      <input matInput type="text" [(ngModel)]="styleUrl" />
     </mat-form-field>
     <div class="buttons">
-      <button mat-flat-button color="primary" class="button-editStyle" (click)="endEditStyle()">{{ i18n.get('ok') }}</button>
-      <button mat-flat-button class="button-editStyle" (click)="cancelEditStyle()">{{ i18n.get('cancel') }}</button>
+      @switch (styleBlobMeta?.blobState) {
+        @case ('loading') {
+          <button mat-flat-button color="warn" class="button-cancel" (click)="cancelDownloadStyle()">{{ i18n.get('cancel') }}</button>
+          <mat-progress-bar color="primary" class="map-progress" mode="determinate" [value]="styleProgress" />
+        }
+        @case ('downloaded') {
+          <button mat-flat-button color="warn" class="button-remove" (click)="removeStyle()">
+            <mat-icon>file_download</mat-icon>
+            {{ i18n.get('removeSymbol') }}
+          </button>
+          <button *ngIf="styleText === null" mat-flat-button color="primary" class="button-editStyle" (click)="startEditStyle()">
+            <mat-icon>edit</mat-icon>{{ i18n.get('edit') }}
+          </button>
+          <div class="source">{{ i18n.get('blobMetaBlobSource') }} {{ styleBlobMeta?.source }}</div>
+        }
+        @default {
+          <button mat-flat-button color="primary" class="button-download" (click)="downloadStyle()">
+            <mat-icon>file_download</mat-icon>{{ i18n.get('download') }}
+          </button>
+          <button mat-flat-button color="primary" class="button-upload" (click)="styleUpload.click()">
+            <mat-icon>file_upload</mat-icon>{{ i18n.get('upload') }}
+          </button>
+          <input type="file" class="mapfile-input" accept=".pmtiles" (change)="uploadStyle($event)" #styleUpload />
+        }
+      }
     </div>
-  </div>
-  <div *ngIf="data.localMap">
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>{{ i18n.get('styleSourceName') }}</mat-label>
-      <input matInput type="text" [(ngModel)]="styleSourceName"/>
-    </mat-form-field>
-  </div>
+    <div *ngIf="styleText !== null">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ i18n.get('blobMetaStyleText') }}</mat-label>
+        <textarea matInput [(ngModel)]="styleText"></textarea>
+      </mat-form-field>
+      <div class="buttons">
+        <button mat-flat-button color="primary" class="button-editStyle" (click)="endEditStyle()">{{ i18n.get('ok') }}</button>
+        <button mat-flat-button class="button-editStyle" (click)="cancelEditStyle()">{{ i18n.get('cancel') }}</button>
+      </div>
+    </div>
+    <div *ngIf="data.localMap">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ i18n.get('styleSourceName') }}</mat-label>
+        <input matInput type="text" [(ngModel)]="styleSourceName" />
+      </mat-form-field>
+    </div>
   }
 </div>
 <div mat-dialog-actions align="end">

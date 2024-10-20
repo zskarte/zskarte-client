@@ -46,7 +46,7 @@ mat-slider {
 }
 
 .map-progress {
-  margin-top:  1rem;
+  margin-top: 1rem;
   margin-bottom: 2rem;
   width: 100%;
 }
@@ -71,7 +71,7 @@ mat-slider {
   margin-bottom: 5px;
 }
 .sourceControl button {
-  margin-left: 15px
+  margin-left: 15px;
 }
 
 .material-icons {
@@ -80,10 +80,11 @@ mat-slider {
 }
 
 .wmsSourceError {
-  color:red;
+  color: red;
 }
 
-.organisationSettings, .expertButton {
+.organisationSettings,
+.expertButton {
   transform: translateX(-50%);
   left: 50%;
   margin-bottom: 5px;

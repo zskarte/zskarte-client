@@ -38,10 +38,20 @@
   <div>{{ i18n.get('localAvailabilityStepsIntro') }}</div>
   <fieldset class="like-mat-form-field-outline">
     <legend>{{ i18n.get('localAvailabilitySteps') }}</legend>
-    <mat-checkbox [checked]="useLocalBaseMap" [disabled]="useLocalBaseMap" (click)="changeToLocalMap()">{{ i18n.get('useLocalBaseMap') }}</mat-checkbox>
-    <mat-checkbox [checked]="downloadLocalBaseMap" [disabled]="downloadLocalBaseMap" (click)="downloadLocalMap()">{{ i18n.get('downloadLocalBaseMap') }}</mat-checkbox>
-    <mat-checkbox [checked]="hideUnavailableLayers" [disabled]="hideUnavailableLayers" (click)="hideUnavailable()">{{ i18n.get('hideUnavailableLayers') }}</mat-checkbox>
-    <mat-checkbox [checked]="downloadAvailableLayers" [disabled]="downloadAvailableLayers" (click)="downloadAvailable()">{{ i18n.get('downloadAvailableLayers') }}</mat-checkbox>
-    <mat-checkbox [checked]="haveSearchCapability" [disabled]="haveSearchCapability" (click)="showSearchInfo($event)">{{ i18n.get('haveSearchCapability') }}</mat-checkbox>
+    <mat-checkbox [checked]="useLocalBaseMap" [disabled]="useLocalBaseMap" (click)="changeToLocalMap()">{{
+      i18n.get('useLocalBaseMap')
+    }}</mat-checkbox>
+    <mat-checkbox [checked]="downloadLocalBaseMap" [disabled]="downloadLocalBaseMap" (click)="downloadLocalMap()">{{
+      i18n.get('downloadLocalBaseMap')
+    }}</mat-checkbox>
+    <mat-checkbox [checked]="hideUnavailableLayers" [disabled]="hideUnavailableLayers" (click)="hideUnavailable()">{{
+      i18n.get('hideUnavailableLayers')
+    }}</mat-checkbox>
+    <mat-checkbox [checked]="downloadAvailableLayers" [disabled]="downloadAvailableLayers" (click)="downloadAvailable()">{{
+      i18n.get('downloadAvailableLayers')
+    }}</mat-checkbox>
+    <mat-checkbox [checked]="haveSearchCapability" [disabled]="haveSearchCapability" (click)="showSearchInfo($event)">{{
+      i18n.get('haveSearchCapability')
+    }}</mat-checkbox>
   </fieldset>
 </div>

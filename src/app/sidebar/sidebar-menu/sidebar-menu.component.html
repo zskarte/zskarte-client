@@ -79,7 +79,10 @@
     <app-projection-selection
       [projectionFormatIndex]="data.projectionFormatIndex"
       [numerical]="data.numerical"
-      (projectionChanged)="data.numerical = $event.numerical ?? data.numerical; data.projectionFormatIndex = $event.projectionFormatIndex ?? data.projectionFormatIndex"
+      (projectionChanged)="
+        data.numerical = $event.numerical ?? data.numerical;
+        data.projectionFormatIndex = $event.projectionFormatIndex ?? data.projectionFormatIndex
+      "
     ></app-projection-selection>
   </div>
   <div mat-dialog-actions align="end">

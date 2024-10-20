@@ -8,7 +8,10 @@ mat-form-field {
   width: 100%;
 }
 
-.availableSources, .favoriteLayers, .selectedLayers, .availableLayers {
+.availableSources,
+.favoriteLayers,
+.selectedLayers,
+.availableLayers {
   max-height: 300px;
   overflow: auto;
 }

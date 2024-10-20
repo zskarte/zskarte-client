@@ -13,30 +13,32 @@
   </mat-form-field>
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('layerSourceUrl') }}</mat-label>
-    <input matInput type="url" [(ngModel)]="sourceUrl"/>
+    <input matInput type="url" [(ngModel)]="sourceUrl" />
   </mat-form-field>
   <div *ngIf="layer.type === 'csv'">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ i18n.get('delimiter') }}</mat-label>
-      <input matInput type="text" maxlength="1" [(ngModel)]="layer.delimiter"/>
+      <input matInput type="text" maxlength="1" [(ngModel)]="layer.delimiter" />
     </mat-form-field>
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ i18n.get('fieldX') }}</mat-label>
-      <input matInput type="text" [(ngModel)]="layer.fieldX"/>
+      <input matInput type="text" [(ngModel)]="layer.fieldX" />
     </mat-form-field>
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ i18n.get('fieldY') }}</mat-label>
-      <input matInput type="text" [(ngModel)]="layer.fieldY"/>
+      <input matInput type="text" [(ngModel)]="layer.fieldY" />
     </mat-form-field>
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ i18n.get('dataProjection') }}</mat-label>
-      <input matInput type="text" [(ngModel)]="layer.dataProjection"/>
-      <div class="infoText">swiss: 'EPSG:2056', GPS: 'EPSG:4326', mercator: 'EPSG:3857' <a target="_blank" href="https://epsg.io/">epsg.io</a></div>
+      <input matInput type="text" [(ngModel)]="layer.dataProjection" />
+      <div class="infoText">
+        swiss: 'EPSG:2056', GPS: 'EPSG:4326', mercator: 'EPSG:3857' <a target="_blank" href="https://epsg.io/">epsg.io</a>
+      </div>
     </mat-form-field>
     <fieldset class="like-mat-form-field-outline">
       <legend>{{ i18n.get('filterRegExPattern') }}</legend>
-      <div class="infoText">{{ i18n.get('filterRegExPatternInfo') }}<br><code [innerText]="'(val1|val2|prefix.*|.*suffix)'"></code></div>
-      <div class="infoText">{{ i18n.get('filterRegExPatternInfo2') }}<br><code [innerText]="'.*(?<!val1)(?<!val2)'"></code></div>
+      <div class="infoText">{{ i18n.get('filterRegExPatternInfo') }}<br /><code [innerText]="'(val1|val2|prefix.*|.*suffix)'"></code></div>
+      <div class="infoText">{{ i18n.get('filterRegExPatternInfo2') }}<br /><code [innerText]="'.*(?<!val1)(?<!val2)'"></code></div>
       <div class="infoText">{{ i18n.get('searchRegExPatternFullMatch') }} <code>^...$</code></div>
       <ng-container *ngIf="layer.filterRegExPattern">
         <div class="regexTitle">
@@ -45,12 +47,26 @@
           <div class="attr-filter-options">{{ i18n.get('searchRegExPatternOptionsTitle') }}</div>
         </div>
         <div class="filterRegExPattern" *ngFor="let regex of layer.filterRegExPattern; index as i">
-          <input class="attr-filter-field" matInput type="text" [(ngModel)]="regex[0]"/>
-          <input class="attr-filter-regex" matInput [appRegexValidator]="regex[2]" #validInfo="ngModel" type="text" [(ngModel)]="regex[1]"/>
-          <input class="attr-filter-options" matInput type="text" [(ngModel)]="regex[2]" (input)="deferredRevalidate(validInfo)" (blur)="validInfo.control.updateValueAndValidity()"/>
+          <input class="attr-filter-field" matInput type="text" [(ngModel)]="regex[0]" />
+          <input
+            class="attr-filter-regex"
+            matInput
+            [appRegexValidator]="regex[2]"
+            #validInfo="ngModel"
+            type="text"
+            [(ngModel)]="regex[1]"
+          />
+          <input
+            class="attr-filter-options"
+            matInput
+            type="text"
+            [(ngModel)]="regex[2]"
+            (input)="deferredRevalidate(validInfo)"
+            (blur)="validInfo.control.updateValueAndValidity()"
+          />
           <mat-icon class="attr-remove" (click)="removeFilterPattern(i)">remove</mat-icon>
           <div class="regexError" *ngIf="validInfo.errors?.['regex']">
-            {{validInfo.errors?.['regex']}}
+            {{ validInfo.errors?.['regex'] }}
           </div>
         </div>
       </ng-container>
@@ -68,10 +84,10 @@
           <div class="extent-field">max y</div>
         </div>
         <div class="extenValue">
-          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[0]"/>
-          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[1]"/>
-          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[2]"/>
-          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[3]"/>
+          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[0]" />
+          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[1]" />
+          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[2]" />
+          <input class="extent-field" matInput type="number" [(ngModel)]="layer.extent[3]" />
         </div>
       </div>
     </fieldset>
@@ -87,17 +103,25 @@
   <fieldset class="like-mat-form-field-outline">
     <legend>{{ i18n.get('styleFormat') }}</legend>
     <mat-radio-group [(ngModel)]="layer.styleFormat">
-      <mat-radio-button value="mapbox">{{ i18n.get('styleFormatMapBox') }} <a target="_blank" href="https://docs.mapbox.com/style-spec/guides/">{{ i18n.get('styleFormatSpec') }}</a></mat-radio-button>
-      <mat-radio-button value="olFlat">{{ i18n.get('styleFormatOlFlat') }} <a target="_blank" href="https://openlayers.org/en/latest/apidoc/module-ol_style_flat.html">{{ i18n.get('styleFormatSpec') }}</a></mat-radio-button>
+      <mat-radio-button value="mapbox"
+        >{{ i18n.get('styleFormatMapBox') }}
+        <a target="_blank" href="https://docs.mapbox.com/style-spec/guides/">{{ i18n.get('styleFormatSpec') }}</a></mat-radio-button
+      >
+      <mat-radio-button value="olFlat"
+        >{{ i18n.get('styleFormatOlFlat') }}
+        <a target="_blank" href="https://openlayers.org/en/latest/apidoc/module-ol_style_flat.html">{{
+          i18n.get('styleFormatSpec')
+        }}</a></mat-radio-button
+      >
     </mat-radio-group>
   </fieldset>
   <mat-form-field *ngIf="layer.styleFormat === 'mapbox'" appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('styleSourceName') }}</mat-label>
-    <input matInput type="url" [(ngModel)]="layer.styleSourceName"/>
+    <input matInput type="url" [(ngModel)]="layer.styleSourceName" />
   </mat-form-field>
   <mat-form-field *ngIf="layer.styleSourceType === 'url'" appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('styleSourceUrl') }}</mat-label>
-    <input matInput type="url" [(ngModel)]="layer.styleUrl"/>
+    <input matInput type="url" [(ngModel)]="layer.styleUrl" />
   </mat-form-field>
   <mat-form-field *ngIf="layer.styleSourceType === 'text'" appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('styleSourceText') }}</mat-label>
@@ -113,12 +137,18 @@
   </fieldset>
   <mat-form-field *ngIf="layer.searchable" appearance="outline" floatLabel="always" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('searchResultLabelMask') }}</mat-label>
-    <div class="infoText">{{ i18n.get('searchResultLabelMaskInfo') }}<br><code [innerText]="'${streetName} ${entranceNumber}'"></code></div>
-    <input matInput [(ngModel)]="layer.searchResultLabelMask"/>
+    <div class="infoText">
+      {{ i18n.get('searchResultLabelMaskInfo') }}<br /><code [innerText]="'${streetName} ${entranceNumber}'"></code>
+    </div>
+    <input matInput [(ngModel)]="layer.searchResultLabelMask" />
   </mat-form-field>
   <fieldset *ngIf="layer.searchable" class="like-mat-form-field-outline">
     <legend>{{ i18n.get('searchRegExPattern') }}</legend>
-    <div class="infoText">{{ i18n.get('searchRegExPatternInfo') }}<br><code [innerText]="'(?<streetName>\\p{L}+(?: \\p{L}+)*) (?<entranceNumber>\\d+ ?\\p{L}?)'"></code></div>
+    <div class="infoText">
+      {{ i18n.get('searchRegExPatternInfo') }}<br /><code
+        [innerText]="'(?<streetName>\\p{L}+(?: \\p{L}+)*) (?<entranceNumber>\\d+ ?\\p{L}?)'"
+      ></code>
+    </div>
     <div class="infoText">{{ i18n.get('searchRegExPatternFullMatch') }} <code>^...$</code></div>
     <ng-container *ngIf="layer.searchRegExPatterns">
       <div class="regexTitle">
@@ -126,11 +156,18 @@
         <div class="attr-search-options">{{ i18n.get('searchRegExPatternOptionsTitle') }}</div>
       </div>
       <div class="searchRegExPatterns" *ngFor="let regex of layer.searchRegExPatterns; index as i">
-        <input class="attr-search-regex" matInput [appRegexValidator]="regex[1]" #validInfo="ngModel" type="text" [(ngModel)]="regex[0]"/>
-        <input class="attr-search-options" matInput type="text" [(ngModel)]="regex[1]" (input)="deferredRevalidate(validInfo)" (blur)="validInfo.control.updateValueAndValidity()"/>
+        <input class="attr-search-regex" matInput [appRegexValidator]="regex[1]" #validInfo="ngModel" type="text" [(ngModel)]="regex[0]" />
+        <input
+          class="attr-search-options"
+          matInput
+          type="text"
+          [(ngModel)]="regex[1]"
+          (input)="deferredRevalidate(validInfo)"
+          (blur)="validInfo.control.updateValueAndValidity()"
+        />
         <mat-icon class="attr-remove" (click)="removePattern(i)">remove</mat-icon>
         <div class="regexError" *ngIf="validInfo.errors?.['regex']">
-          {{validInfo.errors?.['regex']}}
+          {{ validInfo.errors?.['regex'] }}
         </div>
       </div>
     </ng-container>
@@ -140,8 +177,11 @@
     <legend>{{ i18n.get('searchResultGrouping') }}</legend>
     <div class="infoText">{{ i18n.get('searchResultGroupingInfo') }}</div>
     <ng-container *ngIf="layer.searchResultGroupingFilterFields">
-      <div class="searchResultGroupingFilterFields" *ngFor="let dummy of [].constructor(layer.searchResultGroupingFilterFields.length); index as i">
-        <input class="attr-field" matInput type="text" [(ngModel)]="layer.searchResultGroupingFilterFields[i]"/>
+      <div
+        class="searchResultGroupingFilterFields"
+        *ngFor="let dummy of [].constructor(layer.searchResultGroupingFilterFields.length); index as i"
+      >
+        <input class="attr-field" matInput type="text" [(ngModel)]="layer.searchResultGroupingFilterFields[i]" />
         <mat-icon class="attr-remove" (click)="removeField(i)">remove</mat-icon>
       </div>
     </ng-container>
@@ -172,8 +212,8 @@
         <div class="attr-url">URL</div>
       </div>
       <div class="attribution" *ngFor="let attr of layer.attribution; index as i">
-        <input class="attr-title" matInput type="text" [(ngModel)]="attr[0]"/>
-        <input class="attr-url" matInput type="url" [(ngModel)]="attr[1]"/>
+        <input class="attr-title" matInput type="text" [(ngModel)]="attr[0]" />
+        <input class="attr-url" matInput type="url" [(ngModel)]="attr[1]" />
         <mat-icon class="attr-remove" (click)="removeAttribution(i)">remove</mat-icon>
       </div>
     </ng-container>
