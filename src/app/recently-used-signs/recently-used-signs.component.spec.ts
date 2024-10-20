@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RecentlyUsedSignsComponent } from './recently-used-signs.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('RecentlyUsedSignsComponent', () => {
   let component: RecentlyUsedSignsComponent;
@@ -11,10 +12,11 @@ describe('RecentlyUsedSignsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MatMenuModule, MatIconModule, HttpClientTestingModule],
-      declarations: [RecentlyUsedSignsComponent],
-      schemas: [NO_ERRORS_SCHEMA],
-    });
+    declarations: [RecentlyUsedSignsComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [MatMenuModule, MatIconModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+});
   });
 
   beforeEach(() => {

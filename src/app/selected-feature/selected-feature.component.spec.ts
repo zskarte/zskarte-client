@@ -6,7 +6,8 @@ import { DetailImageViewComponent } from '../detail-image-view/detail-image-view
 import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 
 import { SelectedFeatureComponent } from './selected-feature.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('SelectedFeatureComponent', () => {
   let component: SelectedFeatureComponent;
@@ -14,10 +15,11 @@ describe('SelectedFeatureComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MatDialogModule, HttpClientTestingModule],
-      declarations: [SelectedFeatureComponent, SelectSignDialog, ConfirmationDialogComponent, DetailImageViewComponent],
-      schemas: [NO_ERRORS_SCHEMA],
-    });
+    declarations: [SelectedFeatureComponent, SelectSignDialog, ConfirmationDialogComponent, DetailImageViewComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [MatDialogModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+});
   });
 
   beforeEach(() => {

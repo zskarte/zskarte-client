@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { GeocoderComponent } from './geocoder.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('GeocoderComponent', () => {
   let component: GeocoderComponent;
@@ -11,10 +12,11 @@ describe('GeocoderComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MatAutocompleteModule, HttpClientTestingModule],
-      declarations: [GeocoderComponent],
-      schemas: [NO_ERRORS_SCHEMA],
-    });
+    declarations: [GeocoderComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [MatAutocompleteModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+});
   });
 
   beforeEach(() => {

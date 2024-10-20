@@ -33,8 +33,8 @@ const transformResponse = <T>(data: any, customOptions?: TransformerOptions): T 
     }
 
     // collection
-    if (isArray(data) && data.length && has(head(data), 'attributes')) {
-      return data.map((e) => transformResponse(e), customOptions) as T;
+    if (Array.isArray(data) && (data as any[]).length && has(head(data), 'attributes')) {
+      return (data as any[]).map?.((e) => transformResponse(e), customOptions) as T;
     }
   }
 

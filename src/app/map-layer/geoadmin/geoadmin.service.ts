@@ -100,7 +100,7 @@ export class GeoadminService {
               matrixSet: '',
               crossOrigin: 'anonymous',
               attributions: attributionHtml,
-            }),
+            }) as any,
             opacity: layerConf.opacity,
             minResolution: layerConf.minResolution ?? undefined,
             maxResolution: layerConf.maxResolution ?? undefined,
@@ -120,7 +120,7 @@ export class GeoadminService {
               attributions: attributionHtml,
               //gutter does not work correct e.g. for 'ch.kantone.cadastralwebmap-farbe'
               //gutter: 12, //prevent cutted layers on image boundaries => need to use same projection for tile as for view!
-            }),
+            }) as any,
             opacity: layerConf?.opacity ?? layerConf.background ? 1.0 : 0.75,
             minResolution: layerConf.minResolution ?? undefined,
             maxResolution: layerConf.maxResolution ?? undefined,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable, Subject } from 'rxjs';
-import produce, { applyPatches, Patch } from 'immer';
+import { applyPatches, Patch, produce } from 'immer';
 import { isEqual } from 'lodash';
 import {
   getDefaultIZsMapState,

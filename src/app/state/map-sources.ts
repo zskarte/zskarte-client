@@ -56,7 +56,7 @@ export const ZsMapSources = {
           declutter: true,
           source: new PMTilesVectorSource({
             url: mapUrl,
-            crossOrigin: 'anonymous',
+            // crossOrigin: 'anonymous',
             attributions: ['<a target="_blank" href="https://www.swisstopo.admin.ch/de/home.html">swisstopo</a>'],
           }),
           style: null,
