@@ -1,0 +1,8 @@
+<h1 mat-dialog-title [innerText]="i18n.get('offlineDialogTitle')"></h1>
+<div mat-dialog-content>
+  <p [innerText]="i18n.get('offlineDialogMain')"></p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()" [innerText]="i18n.get('cancel')"></button>
+  <button mat-button (click)="onConfirm()" [innerText]="i18n.get('confirm')"></button>
+</div>

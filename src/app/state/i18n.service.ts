@@ -1934,6 +1934,16 @@ export class I18NService {
       en: 'Map layer(s) with offline search capability show a Magnifying glass symbol on the list of "Available layers" and they are of "Shared layers" Layer Source.',
       fr: 'Les couches de carte avec capacité de recherche hors ligne affichent un symbole de loupe sur la liste des "Couches cartographiques disponibles" et elles appartiennent à la source de couche "Couches partagées".',
     },
+    offlineDialogTitle: {
+      de: 'Offline-Warnung',
+      en: 'Offline Warning',
+      fr: 'Avertissement hors ligne',
+    },
+    offlineDialogMain: {
+      de: 'Sie sind derzeit offline. Wenn Sie die Seite aktualisieren oder verlassen, werden Sie abgemeldet und können sich erst wieder anmelden, wenn Sie eine Internetverbindung haben. Sind Sie sicher, dass Sie fortfahren möchten?',
+      en: "You are currently offline. Refreshing or exiting the page will log you out and you won't be able to log back in until you have an internet connection. Are you sure you want to proceed?",
+      fr: "Vous êtes actuellement hors ligne. Actualiser ou quitter la page vous déconnectera et vous ne pourrez pas vous reconnecter tant que vous ne disposerez pas d'une connexion internet. Êtes-vous sûr de vouloir continuer ?",
+    },
   };
 
   public getLabelForSign(sign: Sign): string {

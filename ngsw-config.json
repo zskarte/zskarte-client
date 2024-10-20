@@ -18,13 +18,23 @@
     },
     {
       "name": "assets",
-      "installMode": "lazy",
+      "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
         "files": [
           "/assets/**",
-          "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)",
+          "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif)",
           "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "fonts",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/*.(otf|ttf|woff|woff2)"
         ]
       }
     }

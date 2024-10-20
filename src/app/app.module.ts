@@ -45,7 +45,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { EditCoordinatesComponent } from './edit-coordinates/edit-coordinates.component';
 import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filters.component';
 import { SessionService } from './session/session.service';
-
 import { registerLocaleData, DatePipe } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
 import { LoginComponent } from './session/login/login.component';
@@ -82,6 +81,7 @@ import { OrganisationLayerSettingsComponent } from './map-layer/organisation-lay
 import { GeoJSONLayerOptionsComponent } from './map-layer/geojson/geojson-layer-options/geojson-layer-options.component';
 import { RegexValidatorDirective } from './map-layer/regex-validator.directive';
 import { BlobMetaOptionsComponent } from './map-layer/blob-meta-options/blob-meta-options.component';
+import { OfflineDialogComponent } from './offline-dialog/offline-dialog.component';
 
 registerLocaleData(localeCH);
 
@@ -141,6 +141,7 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     GeoJSONLayerOptionsComponent,
     BlobMetaOptionsComponent,
     RegexValidatorDirective,
+    OfflineDialogComponent,
   ],
   imports: [
     BrowserModule,
