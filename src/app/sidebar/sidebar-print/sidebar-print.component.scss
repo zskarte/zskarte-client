@@ -1,0 +1,24 @@
+.printingOptions {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+.printingOptions > * {
+  flex-grow: 1;
+}
+
+.progress {
+  margin-top: 10px;
+  height: 20px;
+  width: 0;
+  transition: width 250ms;
+  background-color: green;
+  border-radius: 5px;
+}
+.generate-error {
+  color: red;
+}
+
+fieldset.like-mat-form-field-outline {
+  margin-top: -10px;
+}
