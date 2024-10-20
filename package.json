@@ -74,7 +74,6 @@
     "@types/jwt-decode": "^3.1.0",
     "@types/lodash": "^4.17.12",
     "@types/luxon": "^3.4.2",
-    "@types/ol-ext": "npm:@siedlerchr/types-ol-ext@*",
     "@types/proj4": "^2.5.2",
     "@types/qrcode": "^1.5.5",
     "@types/uuid": "^10.0.0",

@@ -3185,11 +3185,6 @@
   dependencies:
     undici-types "~6.19.2"
 
-"@types/ol-ext@npm:@siedlerchr/types-ol-ext@*":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@siedlerchr/types-ol-ext/-/types-ol-ext-3.5.0.tgz#8d21f8e3dec8eb771b7664ae709d8d193a3b547b"
-  integrity sha512-qC6hvHtLBqHSEGxqCkHlc/e0ZhMZNy9MlcY80i6yH8cwSJydOsmVK0BaCZ4WY/s4goFwx5hoZ7CkRy/P4KHLCg==
-
 "@types/plist@^3.0.1":
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@types/plist/-/plist-3.0.5.tgz#9a0c49c0f9886c8c8696a7904dd703f6284036e0"
