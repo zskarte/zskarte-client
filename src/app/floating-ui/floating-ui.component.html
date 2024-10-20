@@ -118,7 +118,13 @@
             <mat-icon>zoom_in</mat-icon>
           </button>
           <mat-divider *ngIf="!printView" class="divider"></mat-divider>
-          <button mat-icon-button *ngIf="!printView" class="toggle-button" (click)="zoomToScale()" [attr.aria-label]="i18n.get('zoomToScale')">
+          <button
+            mat-icon-button
+            *ngIf="!printView"
+            class="toggle-button"
+            (click)="zoomToScale()"
+            [attr.aria-label]="i18n.get('zoomToScale')"
+          >
             <mat-icon>linear_scale</mat-icon>
           </button>
           <mat-divider class="divider"></mat-divider>

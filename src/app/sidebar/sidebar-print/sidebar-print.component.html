@@ -5,7 +5,7 @@
     <mat-label>{{ i18n.get('paperFormat') }}</mat-label>
     <mat-select [(value)]="format" (selectionChange)="updateDimension()">
       @for (format of paperDimensions; track format) {
-        <mat-option [value]="format">{{format}}</mat-option>
+        <mat-option [value]="format">{{ format }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
@@ -19,7 +19,7 @@
 
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>{{ i18n.get('printMargin') }}</mat-label>
-    <input matInput min="0" type="number" [(ngModel)]="printMargin" (change)="updateDimension()"/>
+    <input matInput min="0" type="number" [(ngModel)]="printMargin" (change)="updateDimension()" />
   </mat-form-field>
 
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
