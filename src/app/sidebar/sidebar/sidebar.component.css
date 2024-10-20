@@ -50,7 +50,7 @@ mat-slider {
 }
 
 .map-progress {
-  margin-top:  1rem;
+  margin-top: 1rem;
   margin-bottom: 2rem;
   width: 100%;
 }
@@ -60,7 +60,9 @@ mat-slider {
   margin-right: 1rem;
 }
 
-.button-cancel, .button-upload, .button-remove {
+.button-cancel,
+.button-upload,
+.button-remove {
   margin-bottom: 1rem;
 }
 
