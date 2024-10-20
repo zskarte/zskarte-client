@@ -325,7 +325,7 @@ export class WmsService {
     */
     return [
       new OlTileLayer({
-        source: new OlTileWMTS(options),
+        source: new OlTileWMTS(options) as any,
         opacity: mapLayer.opacity,
         zIndex: mapLayer.zIndex,
       }),
@@ -398,7 +398,7 @@ export class WmsService {
           transition: 0,
           gutter: 12, //prevent cutted features on image boundaries => need to use same projection for tile as for view!
           ...sourceOptionAddons,
-        }),
+        }) as any,
       });
     } else {
       return new ImageLayer({

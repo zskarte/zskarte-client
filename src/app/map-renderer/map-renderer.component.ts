@@ -805,7 +805,7 @@ export class MapRendererComponent implements AfterViewInit {
       features: [this._printDimensionArea],
     });
     this._printDimensionLayer = new VectorLayer({
-      source: printDimensionSource,
+      source: printDimensionSource as any,
       visible: false,
     });
     this._printDimensionLayer.setZIndex(LAYER_Z_INDEX_PRINT_DIMENSIONS);
@@ -840,7 +840,6 @@ export class MapRendererComponent implements AfterViewInit {
    */
   initDrawHole() {
     this._drawHole = new DrawHole({
-      // @ts-expect-error this is the correct type
       layers: this._allLayers,
       type: 'Polygon',
     });
@@ -1339,7 +1338,7 @@ export class MapRendererComponent implements AfterViewInit {
           }
           if (tileCount) {
             if (tileCount > 512) {
-              s.updateCacheSize(tileCount, this._view.getProjection());
+              (s.updateCacheSize as any)(tileCount, this._view.getProjection());
             }
             if (printState.tileEventCallback) {
               printState.tileEventCallback(new CustomEvent<{ tileCount: number }>('tileCountInfo', { detail: { tileCount } }));
