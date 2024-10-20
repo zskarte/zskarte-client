@@ -13,22 +13,22 @@ describe('DrawingDialogComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    declarations: [SelectSignDialog],
-    schemas: [NO_ERRORS_SCHEMA],
-    imports: [MatDialogModule],
-    providers: [
+      declarations: [SelectSignDialog],
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [MatDialogModule],
+      providers: [
         {
-            provide: MatDialogRef,
-            useValue: jasmine.createSpyObj('MatDialogRef', ['close']),
+          provide: MatDialogRef,
+          useValue: jasmine.createSpyObj('MatDialogRef', ['close']),
         },
         {
-            provide: NgxIndexedDBService,
-            useValue: jasmine.createSpyObj('NgxIndexedDBService', ['add']),
+          provide: NgxIndexedDBService,
+          useValue: jasmine.createSpyObj('NgxIndexedDBService', ['add']),
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-});
+      ],
+    });
   });
 
   beforeEach(() => {

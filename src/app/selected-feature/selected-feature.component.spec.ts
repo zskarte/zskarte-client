@@ -15,11 +15,11 @@ describe('SelectedFeatureComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    declarations: [SelectedFeatureComponent, SelectSignDialog, ConfirmationDialogComponent, DetailImageViewComponent],
-    schemas: [NO_ERRORS_SCHEMA],
-    imports: [MatDialogModule],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-});
+      declarations: [SelectedFeatureComponent, SelectSignDialog, ConfirmationDialogComponent, DetailImageViewComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [MatDialogModule],
+      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+    });
   });
 
   beforeEach(() => {

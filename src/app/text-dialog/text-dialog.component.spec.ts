@@ -12,18 +12,18 @@ describe('TextDialogComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    declarations: [TextDialogComponent],
-    schemas: [NO_ERRORS_SCHEMA],
-    imports: [],
-    providers: [
+      declarations: [TextDialogComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [],
+      providers: [
         {
-            provide: MatDialogRef,
-            useValue: jasmine.createSpyObj('MatDialogRef', ['close']),
+          provide: MatDialogRef,
+          useValue: jasmine.createSpyObj('MatDialogRef', ['close']),
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-});
+      ],
+    });
   });
 
   beforeEach(() => {
