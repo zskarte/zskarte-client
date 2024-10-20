@@ -20,6 +20,7 @@ export class OperationsComponent implements OnDestroy {
     public operationService: OperationService,
     private route: ActivatedRoute,
   ) {
+    this.operationService.loadLocal();
     this._session
       .observeOrganizationId()
       .pipe(takeUntil(this._ngUnsubscribe))

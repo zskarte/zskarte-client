@@ -12,6 +12,8 @@ import { HelpComponent } from '../help/help.component';
 import { SidebarContext } from '../sidebar/sidebar.interfaces';
 import { SidebarService } from '../sidebar/sidebar.service';
 import { ScaleSelectionComponent } from '../scale-selection/scale-selection.component';
+import { ZsMapStateSource } from '../state/interfaces';
+import { db } from '../db/db';
 
 @Component({
   selector: 'app-floating-ui',
@@ -31,6 +33,8 @@ export class FloatingUIComponent {
   public canUndo = new BehaviorSubject<boolean>(false);
   public canRedo = new BehaviorSubject<boolean>(false);
   public printView = false;
+  public canWorkOffline = new BehaviorSubject<boolean>(false);
+  public workLocal: boolean;
 
   constructor(
     public i18n: I18NService,
@@ -69,6 +73,39 @@ export class FloatingUIComponent {
       .subscribe((connections) => {
         this.connectionCount.next(connections.length);
       });
+
+    this.workLocal = _session.isWorkLocal();
+    if (this.workLocal) {
+      this._state
+        .observeDisplayState()
+        .pipe(takeUntil(this._ngUnsubscribe))
+        .subscribe(async (displayState) => {
+          if (displayState.source === ZsMapStateSource.LOCAL || displayState.source === ZsMapStateSource.NONE) {
+            //using local map
+            if (displayState.layers.filter((l) => !l.offlineAvailable && !l.hidden).length === 0) {
+              //all used layer are offlineAvailable
+              if (displayState.source === ZsMapStateSource.LOCAL) {
+                const localMapInfo = await db.localMapInfo.get(displayState.source);
+                if (localMapInfo?.offlineAvailable) {
+                  //and it's saved on DB
+                  if (!this.canWorkOffline.value) {
+                    this.canWorkOffline.next(true);
+                  }
+                  return;
+                }
+              } else {
+                if (!this.canWorkOffline.value) {
+                  this.canWorkOffline.next(true);
+                }
+                return;
+              }
+            }
+          }
+          if (this.canWorkOffline.value) {
+            this.canWorkOffline.next(false);
+          }
+        });
+    }
 
     this.activeLayer$ = _state.observeActiveLayer();
 

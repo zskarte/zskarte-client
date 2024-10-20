@@ -9,6 +9,7 @@
     "ng:serve": "ng serve --port 4300",
     "ng:serve:dev": "ng serve --port 4300 --host 0.0.0.0 --configuration development-local",
     "ng:serve:local": "ng serve --port 4300 --configuration local",
+    "ng:serve:swerder": "ng serve --port 4300 --configuration swerder",
     "ng:serve:e2e": "npm-run-all -p ng:serve:dev wait",
     "ng:serve:prod": "ng serve --port 4300 --configuration production",
     "ng:build:prod": "ng build --configuration production",
@@ -60,6 +61,7 @@
     "socket.io-client": "^4.5.4",
     "ts-md5": "^1.3.1",
     "tslib": "^2.4.1",
+    "udsv": "^0.5.3",
     "uuid": "^9.0.0",
     "zone.js": "~0.14.3"
   },

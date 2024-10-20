@@ -49,14 +49,14 @@ export class SidebarHistoryComponent implements AfterViewInit {
   loadData(page: number) {
     const operationId = this.sessionService.getOperationId();
     return this.apiService.get$<Snapshots>(
-      `${this.apiPath}?fields[0]=createdAt&filters[operation][id][$eq]=${operationId}&sort[0]=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=20`,
+      `${this.apiPath}?fields[0]=createdAt&operationId=${operationId}&sort[0]=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=20`,
     );
   }
 
   async setHistory(snapshot: Snapshot) {
-    const fullSnapshot = await this.apiService.get(`${this.apiPath}/${snapshot.id}`);
+    const { result } = await this.apiService.get(`${this.apiPath}/${snapshot.id}`);
 
-    this.stateService.setMapState(fullSnapshot.result.mapState);
+    this.stateService.setMapState(result.mapState);
 
     this.snackBarService.open(`${this.i18n.get('toastSnapshotApplied')}: ${snapshot.attributes.createdAt.toLocaleString()}`, 'OK', {
       duration: 2000,

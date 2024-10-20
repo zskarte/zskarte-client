@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, lastValueFrom, merge, Observable, Subject } from 'rxjs';
 import produce, { applyPatches, Patch } from 'immer';
 import { isEqual } from 'lodash';
 import {
@@ -21,15 +21,17 @@ import {
   ZsMapLayerStateType,
   ZsMapPolygonDrawElementState,
   ZsMapStateSource,
+  SearchFunction,
+  IZsMapSearchConfig,
 } from './interfaces';
-import { distinctUntilChanged, map, takeWhile } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, takeUntil, takeWhile } from 'rxjs/operators';
 import { ZsMapBaseLayer } from '../map-renderer/layers/base-layer';
 import { v4 as uuidv4 } from 'uuid';
 import { ZsMapDrawLayer } from '../map-renderer/layers/draw-layer';
 import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
 import { DrawElementHelper } from '../helper/draw-element-helper';
 import { areArraysEqual, toggleInArray } from '../helper/array';
-import { GeoFeature } from '../core/entity/geoFeature';
+import { MapLayer, WmsSource } from '../map-layer/map-layer-interface';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectSignDialog } from '../select-sign-dialog/select-sign-dialog.component';
 import { defineDefaultValuesForSignature, Sign } from '../core/entity/sign';
@@ -40,14 +42,13 @@ import { SessionService } from '../session/session.service';
 import { SimpleGeometry } from 'ol/geom';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { I18NService } from './i18n.service';
-import { ApiService } from '../api/api.service';
-import { IZsMapOperation } from '../session/operations/operation.interfaces';
 import { Feature } from 'ol';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM, DEFAULT_DPI, LOG2_ZOOM_0_RESOLUTION, INCHES_PER_METER } from '../session/default-map-values';
 import { Coordinate } from 'ol/coordinate';
-import { getPointResolution } from 'ol/proj';
-import { mercatorProjection } from '../helper/projections';
+import { getPointResolution, transform } from 'ol/proj';
+import { coordinatesProjection, mercatorProjection } from '../helper/projections';
 import { PermissionType } from '../session/session.interfaces';
+import { OperationService } from '../session/operations/operation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -75,6 +76,9 @@ export class ZsMapStateService {
   private _mergeMode = new BehaviorSubject<boolean>(false);
   private _drawHoleMode = new BehaviorSubject<boolean>(false);
   private _currentMapCenter: BehaviorSubject<number[]> | undefined;
+  private _globalWmsSources = new BehaviorSubject<WmsSource[]>([]);
+  private _globalMapLayers = new BehaviorSubject<MapLayer[]>([]);
+  private _searchConfigs = new BehaviorSubject<IZsMapSearchConfig[]>([]);
 
   constructor(
     public i18n: I18NService,
@@ -82,14 +86,32 @@ export class ZsMapStateService {
     private _sync: SyncService,
     private _session: SessionService,
     private _snackBar: MatSnackBar,
-    private _api: ApiService,
-  ) {}
+    private _operationService: OperationService,
+  ) {
+    const _changeOperationId = new Subject<void>();
+    _session.observeOperationId().subscribe((operationId) => {
+      _changeOperationId.next();
+      if (operationId && operationId < 0) {
+        this.observeMapState()
+          .pipe(debounceTime(250), takeUntil(_changeOperationId))
+          .subscribe((mapState) => {
+            if (!this.isHistoryMode() && mapState && mapState.layers) {
+              if (coordinatesProjection && mercatorProjection) {
+                mapState = { ...mapState, center: transform(this._display.value.mapCenter, mercatorProjection, coordinatesProjection) };
+              }
+              _operationService.updateLocalMapState(mapState);
+            }
+          });
+      }
+    });
+  }
 
   private _getDefaultDisplayState(mapState?: IZsMapState): IZsMapDisplayState {
     const state: IZsMapDisplayState = {
       version: 1,
       mapOpacity: 1,
       displayMode: ZsMapDisplayMode.DRAW,
+      expertView: false,
       positionFlag: { coordinates: DEFAULT_COORDINATES, isVisible: false },
       mapCenter: DEFAULT_COORDINATES,
       mapZoom: DEFAULT_ZOOM,
@@ -102,7 +124,8 @@ export class ZsMapStateService {
       layerOrder: [],
       elementVisibility: {},
       elementOpacity: {},
-      features: [],
+      layers: [],
+      wmsSources: [],
       hiddenSymbols: [],
       hiddenFeatureTypes: [],
       hiddenCategories: [],
@@ -270,6 +293,34 @@ export class ZsMapStateService {
 
   public isHistoryMode(): boolean {
     return this._display.value?.displayMode === ZsMapDisplayMode.HISTORY;
+  }
+
+  public toggleExpertView() {
+    this.updateDisplayState((draft) => {
+      draft.expertView = !draft.expertView;
+      if (draft.expertView) {
+        this._snackBar.open(this.i18n.get('toastExpertView'), 'OK', {
+          duration: 2000,
+        });
+      } else {
+        this._snackBar.open(this.i18n.get('toastDefaultView'), 'OK', {
+          duration: 2000,
+        });
+      }
+    });
+  }
+
+  public observeIsExpertView(): Observable<boolean> {
+    return this._display.pipe(
+      map((o) => {
+        return o.expertView;
+      }),
+      distinctUntilChanged((x, y) => x === y),
+    );
+  }
+
+  public isExpertView(): boolean {
+    return this._display.value?.expertView;
   }
 
   public observeDisplayState(): Observable<IZsMapDisplayState> {
@@ -461,8 +512,7 @@ export class ZsMapStateService {
     });
   }
 
-  // layers
-
+  // draw layers
   public getLayer(layer: string): ZsMapBaseLayer {
     return this._layerCache[layer];
   }
@@ -565,23 +615,23 @@ export class ZsMapStateService {
     }
   }
 
-  // features
-  public observeSelectedFeatures$(): Observable<GeoFeature[]> {
+  // layers
+  public observeSelectedMapLayers$(): Observable<MapLayer[]> {
     return this._display.pipe(
       map((o) => {
-        return o?.features?.filter((feature) => !feature.deleted);
+        return o?.layers?.filter((feature) => !feature.deleted);
       }),
-      distinctUntilChanged((x, y) => x === y),
+      distinctUntilChanged((x, y) => x && y && x.length === y.length && x.map((l, i) => l === y[i]).filter((l) => l).length === x.length),
     );
   }
 
-  public observeFeature$(serverLayerName: string): Observable<GeoFeature | undefined> {
+  public observeMapLayers$(fullId: string): Observable<MapLayer | undefined> {
     return this._display.pipe(
       map((o) => {
-        return o?.features?.find((feature) => feature.serverLayerName === serverLayerName);
+        return o?.layers?.find((layer) => layer.fullId === fullId);
       }),
       distinctUntilChanged((x, y) => x === y),
-      takeWhile((feature) => Boolean(feature)),
+      takeWhile((layer) => Boolean(layer)),
     );
   }
 
@@ -595,28 +645,58 @@ export class ZsMapStateService {
     );
   }
 
-  public addFeature(feature: GeoFeature) {
+  public addMapLayer(layer: MapLayer) {
     this.updateDisplayState((draft) => {
-      let maxIndex = Math.max(...(draft.features.map((f) => f.zIndex).filter(Boolean) as number[]));
+      let maxIndex = Math.max(...draft.layers.map((f) => f.zIndex));
       maxIndex = Number.isInteger(maxIndex) ? maxIndex + 1 : 0;
-      draft.features.unshift({ ...feature, opacity: 0.75, deleted: false, zIndex: maxIndex });
+      draft.layers.unshift({ ...layer, deleted: false, zIndex: maxIndex });
     });
   }
 
-  public removeFeature(index: number) {
+  public removeMapLayer(index: number) {
     this.updateDisplayState((draft) => {
-      draft.features.splice(index, 1);
+      draft.layers.splice(index, 1);
     });
   }
 
-  public sortFeatureUp(index: number) {
+  public sortMapLayerUp(index: number) {
     this.updateDisplayState((draft) => {
-      const feature = draft.features[index];
-      const currentZIndex = feature.zIndex;
+      const layer = draft.layers[index];
+      const currentZIndex = layer.zIndex;
 
-      draft.features[index - 1].zIndex = currentZIndex;
-      feature.zIndex = currentZIndex + 1;
-      draft.features.sort((a, b) => b.zIndex - a.zIndex);
+      draft.layers[index - 1].zIndex = currentZIndex;
+      layer.zIndex = currentZIndex + 1;
+      draft.layers.sort((a, b) => b.zIndex - a.zIndex);
+    });
+  }
+
+  public reloadAllMapLayers() {
+    const layers = [...this._display.value.layers];
+    this.updateDisplayState((draft) => {
+      draft.layers = [];
+    });
+    this.updateDisplayState((draft) => {
+      for (let i = 0; i < layers.length; i++) {
+        const layer = layers[i];
+        //update source object
+        let source = draft.wmsSources?.find((s) => s.id === layer.source?.id);
+        if (!source) {
+          source = draft.wmsSources?.find((s) => s.url === layer.source?.url);
+        }
+        if (source) {
+          layers[i] = { ...layer, source };
+        }
+      }
+      draft.layers = layers;
+    });
+  }
+
+  public replaceMapLayer(item: MapLayer, index: number) {
+    this.updateDisplayState((draft) => {
+      draft.layers.splice(index, 1);
+    });
+    this.updateDisplayState((draft) => {
+      draft.layers.splice(index, 0, item);
     });
   }
 
@@ -643,30 +723,88 @@ export class ZsMapStateService {
     this._currentMapCenter.next(coordinates);
   }
 
-  public sortFeatureDown(index: number) {
+  public sortMapLayerDown(index: number) {
     this.updateDisplayState((draft) => {
-      const feature = draft.features[index];
-      const currentZIndex = feature.zIndex;
+      const layer = draft.layers[index];
+      const currentZIndex = layer.zIndex;
 
-      draft.features[index + 1].zIndex = currentZIndex;
-      feature.zIndex = currentZIndex - 1;
-      draft.features.sort((a, b) => b.zIndex - a.zIndex);
+      draft.layers[index + 1].zIndex = currentZIndex;
+      layer.zIndex = currentZIndex - 1;
+      draft.layers.sort((a, b) => b.zIndex - a.zIndex);
     });
   }
 
-  public setFeatureOpacity(index: number, opacity: number | null) {
+  public setMapLayerOpacity(index: number, opacity: number | null) {
     this.updateDisplayState((draft) => {
-      draft.features[index].opacity = opacity ?? 0;
+      draft.layers[index].opacity = opacity ?? 0;
     });
   }
 
-  public toggleFeature(item: GeoFeature, index: number) {
-    const opacity = item.opacity > 0 ? 0 : 0.75;
-    this.setFeatureOpacity(index, opacity);
+  public toggleMapLayer(item: MapLayer, index: number) {
+    const hidden = !item.hidden;
+    this.updateDisplayState((draft) => {
+      draft.layers[index].hidden = hidden;
+    });
   }
 
   public getActiveLayerState(): ZsMapLayerState | undefined {
     return this._map.value.layers?.find((layer) => layer.id === this._display.value.activeLayer);
+  }
+
+  public setGlobalWmsSources(sources: WmsSource[]) {
+    this._globalWmsSources.next(sources);
+  }
+
+  public getGlobalWmsSources() {
+    return this._globalWmsSources.value;
+  }
+
+  public setGlobalMapLayers(mapLayers: MapLayer[]) {
+    this._globalMapLayers.next(mapLayers);
+  }
+
+  public getGlobalMapLayers() {
+    return this._globalMapLayers.value;
+  }
+
+  public observeGlobalMapLayers$() {
+    return this._globalMapLayers.asObservable();
+  }
+
+  public addWmsSource(source: WmsSource) {
+    this.updateDisplayState((draft) => {
+      if (!draft.wmsSources) {
+        draft.wmsSources = [];
+      }
+      draft.wmsSources.push(source);
+    });
+  }
+
+  public removeWmsSource(source: WmsSource) {
+    const index = this._display.value.wmsSources?.findIndex((o) => o === source) ?? -1;
+    if (index === -1) {
+      throw new Error('source to remove not found');
+    }
+    this.updateDisplayState((draft) => {
+      if (draft.wmsSources) {
+        draft.wmsSources.splice(index, 1);
+      }
+    });
+  }
+
+  public setWmsSources(sources: WmsSource[]) {
+    this.updateDisplayState((draft) => {
+      draft.wmsSources = sources;
+    });
+  }
+
+  public observeWmsSources$() {
+    return this._display.pipe(
+      map((o) => {
+        return o?.wmsSources;
+      }),
+      distinctUntilChanged((x, y) => x === y && x?.length === y?.length),
+    );
   }
 
   public addDrawElement(element: ZsMapDrawElementState): ZsMapDrawElementState | null {
@@ -977,7 +1115,8 @@ export class ZsMapStateService {
   }
 
   public async refreshMapState(): Promise<void> {
-    if (this._session.getOperationId()) {
+    const operationId = this._session.getOperationId();
+    if (operationId) {
       if (!this.isHistoryMode()) {
         await this._sync.sendCachedMapStatePatches();
       }
@@ -985,15 +1124,14 @@ export class ZsMapStateService {
         const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
         return Array.prototype.map.call(new Uint8Array(buf), (x) => `00${(x as number).toString(16)}`.slice(-2)).join('');
       };
-      const { error, result } = await this._api.get<IZsMapOperation>(`/api/operations/${this._session.getOperationId()}`);
-      if (error || !result) return;
-      if (result.mapState) {
+      const operation = await this._operationService.getOperation(operationId);
+      if (operation?.mapState) {
         const [oldDigest, newDigest] = await Promise.all([
           sha256(JSON.stringify(this._map.value)),
-          sha256(JSON.stringify(result.mapState)),
+          sha256(JSON.stringify(operation.mapState)),
         ]);
         if (oldDigest !== newDigest) {
-          this.setMapState(result.mapState);
+          this.setMapState(operation.mapState);
         }
       }
     }
@@ -1015,5 +1153,32 @@ export class ZsMapStateService {
         return !hasWritePermission || isHistoryMode;
       }),
     );
+  }
+
+  public addSearch(
+    searchFunc: SearchFunction,
+    searchName: string,
+    maxResultCount: number | undefined = undefined,
+    resultOrder: number | undefined = undefined,
+  ) {
+    const configs = this._searchConfigs.value;
+    const config: IZsMapSearchConfig = {
+      label: searchName,
+      func: searchFunc,
+      active: true,
+      maxResultCount: maxResultCount ?? 50,
+      resultOrder: resultOrder ?? 0,
+    };
+    configs.push(config);
+    this._searchConfigs.next(configs);
+  }
+
+  public removeSearch(searchFunc: SearchFunction) {
+    const configs = this._searchConfigs.value.filter((conf) => conf.func !== searchFunc);
+    this._searchConfigs.next(configs);
+  }
+
+  public getSearchConfigs(): IZsMapSearchConfig[] {
+    return this._searchConfigs.value;
   }
 }

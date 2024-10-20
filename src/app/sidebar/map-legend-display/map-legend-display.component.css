@@ -1,3 +1,6 @@
 .loading {
   overflow: hidden;
 }
+.legend-img {
+  display: block;
+}

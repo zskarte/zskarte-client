@@ -1,7 +1,3 @@
-.features {
-  margin-left: 1em;
-}
-
 .selectedLayer {
   margin-top: 1em;
   margin-bottom: 1em;
@@ -55,15 +51,49 @@ mat-slider {
   width: 100%;
 }
 
-.button-download {
-  margin-bottom: 1rem;
-  margin-right: 1rem;
+.buttons {
+  margin-left: 40px;
 }
 
-.button-cancel, .button-upload, .button-remove {
-  margin-bottom: 1rem;
+.button-download {
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .mapfile-input {
   display: none;
+}
+
+.sourceControl {
+  display: flex;
+}
+.sourceControl mat-form-field {
+  margin-bottom: 5px;
+}
+.sourceControl button {
+  margin-left: 15px
+}
+
+.material-icons {
+  /*needed as not match for 'visibility_on'*/
+  width: 24px;
+}
+
+.wmsSourceError {
+  color:red;
+}
+
+.organisationSettings, .expertButton {
+  transform: translateX(-50%);
+  left: 50%;
+  margin-bottom: 5px;
+}
+
+.mapSourceAvailable i {
+  vertical-align: middle;
+}
+
+.availableLayers button mat-icon {
+  vertical-align: bottom;
+  margin-right: 5px;
 }

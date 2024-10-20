@@ -43,6 +43,9 @@
         <mat-action-list *ngFor="let o of operationService.operations | async">
           <div class="operation-list-item">
             <mat-list-item role="button" (click)="selectOperation(o)">
+              <div matListItemMeta class="operation-list-item-meta">
+                <mat-icon *ngIf="(o.id ?? 0) < 0" title="{{ i18n.get('localOperation') }}">cloud_done</mat-icon>
+              </div>
               <div matListItemTitle>{{ o.name }}</div>
               <div matListItemLine *ngIf="o.description">{{ o.description }}</div>
             </mat-list-item>

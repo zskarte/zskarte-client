@@ -13,10 +13,16 @@
 .offline-container {
   margin-left: 20px;
   margin-right: 20px;
-  padding-top: 50px;
+  padding-top: 25px;
+  padding-bottom: 25px;
   display: flex;
   align-items: center;
   flex-direction: column;
+}
+
+.local-container {
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .offline-container > .mat-icon {
@@ -41,6 +47,7 @@ mat-form-field {
 }
 
 .flex-label {
+  padding-top: 5px;
   display: flex;
   gap: 15px;
   align-items: center;

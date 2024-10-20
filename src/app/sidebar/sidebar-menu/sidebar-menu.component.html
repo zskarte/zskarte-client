@@ -30,6 +30,16 @@
   {{ i18n.get('help') }}
 </button>
 <mat-divider></mat-divider>
+<button mat-menu-item (click)="zsMapStateService.toggleExpertView()" title="ALT+H">
+  <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="!(zsMapStateService.observeIsExpertView() | async)"
+    >manage_accounts</mat-icon
+  >
+  <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('exportSession')" *ngIf="zsMapStateService.observeIsExpertView() | async"
+    >person</mat-icon
+  >
+  {{ (zsMapStateService.observeIsExpertView() | async) ? i18n.get('defaultView') : i18n.get('expertView') }}
+</button>
+<mat-divider></mat-divider>
 <ng-container *ngIf="session.observeHasWritePermission() | async">
   <button mat-menu-item class="tools-menu-item" [matMenuTriggerFor]="shareOptions">
     <mat-icon aria-hidden="false" [attr.aria-label]="i18n.get('share')">share</mat-icon>
@@ -64,6 +74,19 @@
     {{ i18n.get('protocolSaveAsExcel') }}
   </button>
 </mat-menu>
+<ng-template #projectionSelectionTemplate let-data>
+  <div mat-dialog-content>
+    <app-projection-selection
+      [projectionFormatIndex]="data.projectionFormatIndex"
+      [numerical]="data.numerical"
+      (projectionChanged)="data.numerical = $event.numerical ?? data.numerical; data.projectionFormatIndex = $event.projectionFormatIndex ?? data.projectionFormatIndex"
+    ></app-projection-selection>
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-raised-button [mat-dialog-close]="null">{{ i18n.get('cancel') }}</button>
+    <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{ i18n.get('ok') }}</button>
+  </div>
+</ng-template>
 
 <mat-menu #shareOptions="matMenu">
   <button mat-menu-item (click)="generateShareLink(false, false)">

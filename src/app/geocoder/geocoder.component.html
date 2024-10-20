@@ -11,14 +11,31 @@
     <mat-icon aria-hidden="false" aria-label="Search" matSuffix>search</mat-icon>
   </mat-form-field>
 
-  <mat-autocomplete #auto="matAutocomplete" [displayWith]="getLabel" (optionSelected)="geoCodeSelected($event)">
-    <mat-option
-      *ngFor="let location of foundLocations"
-      [value]="location.attrs"
-      (mouseenter)="previewCoordinate(location.attrs)"
-      (mouseleave)="goToCoordinate(false)"
-    >
-      <span [innerHTML]="location.attrs.label" [title]="getLabel(location.attrs)"></span>
-    </mat-option>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="geoCodeSelected($event)" (optionActivated)="previewCoordinate($event.option?.value)">
+    <ng-template let-location="location" #option>
+      <mat-option
+        [value]="location"
+        (mouseenter)="previewCoordinate(location)"
+        (mouseleave)="goToCoordinate(false)"
+      >
+        <span [innerHTML]="location.label" [title]="getLabel(location)"></span>
+      </mat-option>
+    </ng-template>
+    @if(foundLocations.length === 1) {
+      <ng-container *ngFor="let location of foundLocations[0].results" [ngTemplateOutlet]="option" [ngTemplateOutletContext]="{location: location}"></ng-container>
+    } @else {
+      <mat-optgroup *ngFor="let group of foundLocations" [label]="group.config.label + ' (' + group.results.length + ')'" (mousedown)="expandGroup(group, $event)">
+        <ng-container>
+        @if(group.collapsed === 'peek') {
+          <ng-container *ngFor="let location of group.results | slice:0:3;" [ngTemplateOutlet]="option" [ngTemplateOutletContext]="{location: location}"></ng-container>
+          <div class="hasMore" *ngIf="group.results.length > 3">...</div>
+        } @else if(!group.collapsed) {
+          <ng-container *ngFor="let location of group.results" [ngTemplateOutlet]="option" [ngTemplateOutletContext]="{location: location}"></ng-container>
+        } @else {
+          <mat-option class="dummyOption"></mat-option>
+        }
+        </ng-container>
+      </mat-optgroup>
+    }
   </mat-autocomplete>
 </div>

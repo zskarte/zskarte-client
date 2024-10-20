@@ -45,7 +45,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { EditCoordinatesComponent } from './edit-coordinates/edit-coordinates.component';
 import { SidebarFiltersComponent } from './sidebar/sidebar-filters/sidebar-filters.component';
 import { SessionService } from './session/session.service';
-
 import { registerLocaleData, DatePipe } from '@angular/common';
 import localeCH from '@angular/common/locales/de-CH';
 import { LoginComponent } from './session/login/login.component';
@@ -75,6 +74,13 @@ import { DrawDialogComponent } from './draw-dialog/draw-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { IncidentSelectComponent } from './incident-select/incident-select.component';
+import { ProjectionSelectionComponent } from './projection-selection/projection-selection.component';
+import { WmsSourceComponent } from './map-layer/wms/wms-source/wms-source.component';
+import { WmsLayerOptionsComponent } from './map-layer/wms/wms-layer-options/wms-layer-options.component';
+import { OrganisationLayerSettingsComponent } from './map-layer/organisation-layer-settings/organisation-layer-settings.component';
+import { GeoJSONLayerOptionsComponent } from './map-layer/geojson/geojson-layer-options/geojson-layer-options.component';
+import { RegexValidatorDirective } from './map-layer/regex-validator.directive';
+import { BlobMetaOptionsComponent } from './map-layer/blob-meta-options/blob-meta-options.component';
 import { OfflineDialogComponent } from './offline-dialog/offline-dialog.component';
 
 registerLocaleData(localeCH);
@@ -128,6 +134,13 @@ export function appFactory(session: SessionService, sync: SyncService, state: Zs
     SidebarPrintComponent,
     DrawDialogComponent,
     IncidentSelectComponent,
+    ProjectionSelectionComponent,
+    WmsSourceComponent,
+    WmsLayerOptionsComponent,
+    OrganisationLayerSettingsComponent,
+    GeoJSONLayerOptionsComponent,
+    BlobMetaOptionsComponent,
+    RegexValidatorDirective,
     OfflineDialogComponent,
   ],
   imports: [

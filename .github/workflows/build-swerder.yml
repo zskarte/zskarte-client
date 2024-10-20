@@ -1,0 +1,35 @@
+on:
+  push:
+    branches:
+      - swerder
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+  TAG_NAME: ${{ github.sha }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image to GitHub
+        id: build-image
+        run: |
+          docker build "$GITHUB_WORKSPACE/" -f "Dockerfile" -t ${{ env.IMAGE_NAME }}:${{ env.TAG_NAME }} -t ${{ env.IMAGE_NAME }}:latest --label dockerfile-path=Dockerfile
+          docker push ${{ env.IMAGE_NAME }}:${{ env.TAG_NAME }}
+          docker push ${{ env.IMAGE_NAME }}:latest
+          docker build "$GITHUB_WORKSPACE/" -f "Dockerfile" --build-arg="CONFIG=swerder-debug" -t ${{ env.IMAGE_NAME }}:${{ env.TAG_NAME }}-debug -t ${{ env.IMAGE_NAME }}:latest-debug --label dockerfile-path=Dockerfile
+          docker push ${{ env.IMAGE_NAME }}:${{ env.TAG_NAME }}-debug
+          docker push ${{ env.IMAGE_NAME }}:latest-debug
