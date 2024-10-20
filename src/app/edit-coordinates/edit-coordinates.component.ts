@@ -66,7 +66,7 @@ export class EditCoordinatesComponent {
     try {
       const parsedCoordinates = JSON.parse(value);
       return convertFrom(parsedCoordinates, this.projectionFormatIndex, this.numerical);
-    } catch (e) {
+    } catch {
       this.error = 'Invalid JSON payload';
       return undefined;
     }

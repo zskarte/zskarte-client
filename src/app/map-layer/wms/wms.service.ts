@@ -325,6 +325,7 @@ export class WmsService {
     */
     return [
       new OlTileLayer({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         source: new OlTileWMTS(options) as any,
         opacity: mapLayer.opacity,
         zIndex: mapLayer.zIndex,
@@ -398,6 +399,7 @@ export class WmsService {
           transition: 0,
           gutter: 12, //prevent cutted features on image boundaries => need to use same projection for tile as for view!
           ...sourceOptionAddons,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         }) as any,
       });
     } else {
@@ -457,11 +459,11 @@ export class WmsService {
         mapLayer.zIndex,
         //use layer based value as fallback or as default based on splitIntoSubLayers value
         mapLayer.splitIntoSubLayers ?
-          info.MinScaleDenominator ?? mapLayer.MinScaleDenominator
-        : mapLayer.MinScaleDenominator ?? info.MinScaleDenominator,
+          (info.MinScaleDenominator ?? mapLayer.MinScaleDenominator)
+        : (mapLayer.MinScaleDenominator ?? info.MinScaleDenominator),
         mapLayer.splitIntoSubLayers ?
-          info.MaxScaleDenominator ?? mapLayer.MaxScaleDenominator
-        : mapLayer.MaxScaleDenominator ?? info.MaxScaleDenominator,
+          (info.MaxScaleDenominator ?? mapLayer.MaxScaleDenominator)
+        : (mapLayer.MaxScaleDenominator ?? info.MaxScaleDenominator),
         mapLayer.tileSize,
         mapLayer.tileFormat,
       ),
@@ -478,7 +480,7 @@ export class WmsService {
     try {
       capa = await this.getWMSCapa(mapLayer.source as WmsSource);
       wmsUrl = capa['Capability']['Request']['GetMap']['DCPType'][0]['HTTP']['Get']['OnlineResource'];
-    } catch (ignore) {
+    } catch {
       //get infos if the custom source has a valid Capability endpoint, and use defaults otherwise
     }
 

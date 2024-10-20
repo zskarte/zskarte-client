@@ -805,6 +805,7 @@ export class MapRendererComponent implements AfterViewInit {
       features: [this._printDimensionArea],
     });
     this._printDimensionLayer = new VectorLayer({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       source: printDimensionSource as any,
       visible: false,
     });
@@ -1338,6 +1339,7 @@ export class MapRendererComponent implements AfterViewInit {
           }
           if (tileCount) {
             if (tileCount > 512) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (s.updateCacheSize as any)(tileCount, this._view.getProjection());
             }
             if (printState.tileEventCallback) {

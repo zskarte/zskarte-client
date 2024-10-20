@@ -217,7 +217,7 @@ export class SessionService {
       try {
         const mapCenter = queryParams['center'].split(',').map(parseFloat);
         displayState.mapCenter = mapCenter;
-      } catch (ex) {
+      } catch {
         //ignoring invalid center infos
       }
     }
@@ -228,7 +228,7 @@ export class SessionService {
         const xResolution = size[0] / window.innerWidth;
         const yResolution = size[1] / window.innerHeight;
         displayState.mapZoom = LOG2_ZOOM_0_RESOLUTION - Math.log2(Math.max(xResolution, yResolution));
-      } catch (ex) {
+      } catch {
         //ignoring invalid size infos
       }
     }
@@ -418,7 +418,7 @@ export class SessionService {
     if (queryParams['operationId']) {
       try {
         queryOperationId = parseInt(queryParams['operationId']);
-      } catch (ex) {
+      } catch {
         //ignore invalid operationId param
       }
     }

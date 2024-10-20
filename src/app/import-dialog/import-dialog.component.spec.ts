@@ -12,18 +12,18 @@ describe('ImportDialogComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    declarations: [ImportDialogComponent],
-    schemas: [NO_ERRORS_SCHEMA],
-    imports: [],
-    providers: [
+      declarations: [ImportDialogComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [],
+      providers: [
         {
-            provide: MatDialogRef,
-            useValue: jasmine.createSpyObj('MatDialogRef', ['close']),
+          provide: MatDialogRef,
+          useValue: jasmine.createSpyObj('MatDialogRef', ['close']),
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-});
+      ],
+    });
   });
 
   beforeEach(() => {

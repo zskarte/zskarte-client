@@ -35,7 +35,7 @@ export class GeoadminService {
       .pipe(
         tap((data) => {
           Object.keys(data).forEach((key) => {
-            data[key].opacity = data[key].opacity ?? data[key].background ? 1.0 : 0.75;
+            data[key].opacity = (data[key].opacity ?? data[key].background) ? 1.0 : 0.75;
             data[key].fullId = `${data[key].source}|${data[key].serverLayerName}`;
           });
         }),
@@ -100,6 +100,7 @@ export class GeoadminService {
               matrixSet: '',
               crossOrigin: 'anonymous',
               attributions: attributionHtml,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }) as any,
             opacity: layerConf.opacity,
             minResolution: layerConf.minResolution ?? undefined,
@@ -120,8 +121,9 @@ export class GeoadminService {
               attributions: attributionHtml,
               //gutter does not work correct e.g. for 'ch.kantone.cadastralwebmap-farbe'
               //gutter: 12, //prevent cutted layers on image boundaries => need to use same projection for tile as for view!
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }) as any,
-            opacity: layerConf?.opacity ?? layerConf.background ? 1.0 : 0.75,
+            opacity: (layerConf?.opacity ?? layerConf.background) ? 1.0 : 0.75,
             minResolution: layerConf.minResolution ?? undefined,
             maxResolution: layerConf.maxResolution ?? undefined,
             zIndex: layerConf.zIndex,

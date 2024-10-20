@@ -168,7 +168,7 @@ export class BlobService {
         data: blob,
       });
       await BlobService._finish('downloaded', 'done', operation);
-    } catch (e) {
+    } catch {
       operation.mapProgress = 0;
       await BlobService._finish('missing', 'error', operation);
     }

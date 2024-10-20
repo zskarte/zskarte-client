@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnDestroy } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs/internal/Observable';

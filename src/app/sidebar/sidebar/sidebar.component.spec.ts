@@ -13,11 +13,11 @@ describe('SidebarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [SidebarComponent],
-    schemas: [NO_ERRORS_SCHEMA],
-    imports: [MatDialogModule, MatSnackBarModule],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents();
+      declarations: [SidebarComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [MatDialogModule, MatSnackBarModule],
+      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+    }).compileComponents();
   });
 
   beforeEach(() => {

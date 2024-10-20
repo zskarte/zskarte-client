@@ -12,11 +12,11 @@ describe('RecentlyUsedSignsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    declarations: [RecentlyUsedSignsComponent],
-    schemas: [NO_ERRORS_SCHEMA],
-    imports: [MatMenuModule, MatIconModule],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-});
+      declarations: [RecentlyUsedSignsComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      imports: [MatMenuModule, MatIconModule],
+      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+    });
   });
 
   beforeEach(() => {
