@@ -459,11 +459,11 @@ export class WmsService {
         mapLayer.zIndex,
         //use layer based value as fallback or as default based on splitIntoSubLayers value
         mapLayer.splitIntoSubLayers ?
-          (info.MinScaleDenominator ?? mapLayer.MinScaleDenominator)
-        : (mapLayer.MinScaleDenominator ?? info.MinScaleDenominator),
+          info.MinScaleDenominator ?? mapLayer.MinScaleDenominator
+        : mapLayer.MinScaleDenominator ?? info.MinScaleDenominator,
         mapLayer.splitIntoSubLayers ?
-          (info.MaxScaleDenominator ?? mapLayer.MaxScaleDenominator)
-        : (mapLayer.MaxScaleDenominator ?? info.MaxScaleDenominator),
+          info.MaxScaleDenominator ?? mapLayer.MaxScaleDenominator
+        : mapLayer.MaxScaleDenominator ?? info.MaxScaleDenominator,
         mapLayer.tileSize,
         mapLayer.tileFormat,
       ),
