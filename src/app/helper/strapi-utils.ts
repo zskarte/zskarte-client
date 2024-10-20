@@ -31,7 +31,6 @@ export const getResponsiveImageSource = (asset: IZsStrapiAsset) => {
   if (asset.formats) {
     responsiveImageSource.srcSet = Object.keys(asset.formats)
       .map((key) => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const format = asset.formats![key];
         return format.url ? `${mapInternalUrl(format.url)} ${format.width}w` : '';
       })

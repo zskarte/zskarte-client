@@ -40,7 +40,7 @@ export class OperationsComponent implements OnDestroy {
               this.selectOperation(operation);
             }
           });
-        } catch (ex) {
+        } catch {
           //ignore invalid operationId param
         }
       }

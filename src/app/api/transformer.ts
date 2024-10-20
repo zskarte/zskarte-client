@@ -33,7 +33,9 @@ const transformResponse = <T>(data: any, customOptions?: TransformerOptions): T 
     }
 
     // collection
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (Array.isArray(data) && (data as any[]).length && has(head(data), 'attributes')) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data as any[]).map?.((e) => transformResponse(e), customOptions) as T;
     }
   }

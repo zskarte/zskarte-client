@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { ArgsHandler } from './args';
 import { BrowserWindow } from 'electron';
 import * as path from 'path';

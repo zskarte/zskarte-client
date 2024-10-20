@@ -336,7 +336,7 @@ export class SidebarPrintComponent {
       } else {
         //fallback to scale text
         pdf.setFontSize(14);
-        const scale = this.scale ? `1:${this.scale * 1000}` : this.autoScaleHint ?? '';
+        const scale = this.scale ? `1:${this.scale * 1000}` : (this.autoScaleHint ?? '');
         pdf.text(scale, this.printMargin, this.printMargin + this.dimensions[1] - 1);
       }
     }

@@ -27,7 +27,7 @@ export class ShareComponent {
           await this._session.updateJWT(response.result?.jwt);
           return;
         }
-      } catch (err) {
+      } catch {
         // do nothing
       }
 

@@ -1028,7 +1028,6 @@ export class ZsMapStateService {
 
   public filterAll(active: boolean, featureTypes: string[], categoryNames: string[]) {
     this.updateDisplayState((draft) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       draft.hiddenSymbols = active ? [...Signs.SIGNS.map((s) => s.id!)] : [];
       draft.hiddenFeatureTypes = active ? featureTypes : [];
       draft.hiddenCategories = active ? categoryNames : [];
