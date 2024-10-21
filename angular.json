@@ -58,40 +58,6 @@
               ],
               "outputHashing": "all"
             },
-            "swerder": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "3mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.swerder.ts"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "swerder-debug": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.swerder.ts"
-                }
-              ],
-              "outputHashing": "all"
-            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -121,9 +87,6 @@
             },
             "development": {
               "buildTarget": "zskarte-v3:build:development"
-            },
-            "swerder": {
-              "buildTarget": "zskarte-v3:build:swerder"
             },
             "development-local": {
               "buildTarget": "zskarte-v3:build:local",
