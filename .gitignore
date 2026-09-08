@@ -141,6 +141,12 @@ scripts/offlineData/swissNAMES3D/canton_layer_mapping.env
 !packages/app/src/app/resource/testing/*.csv
 
 ############################
+# shipped assets (exempt from the *.csv rule above)
+############################
+
+!packages/app/src/assets/doc/resource/*.csv
+
+############################
 # local db backups (see DEVELOPER_GUIDE.md "update init.sql")
 ############################
 

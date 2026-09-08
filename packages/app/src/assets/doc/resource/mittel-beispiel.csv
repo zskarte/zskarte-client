@@ -1,0 +1,20 @@
+Organisation;ZSO Musterstadt
+Hinweis;Vorlage für die Mittelübersicht der Zivilschutz-Karte. Ersetzen Sie die Beispielzeilen unten durch Ihren eigenen Bestand.
+Hinweis;Trennzeichen ist das Semikolon; als Zeichensatz eignen sich UTF-8 und Windows-1252. Alle Zeilen oberhalb der Kopfzeile "Organisation;Status;..." werden beim Import ignoriert.
+Hinweis;Eine Zeile = ein physisches Stück. Mehrere Zeilen mit derselben Artikelnummer werden zu einem Artikel zusammengefasst (Bestand = Anzahl Zeilen).
+Hinweis;Pflichtspalten: Status, Artikelnummer, Artikel, Artikelgruppe, Artikeltyp, Seriennummer, Lagerort. Seriennummer und Lagerort dürfen leer bleiben.
+Hinweis;Mit Seriennummer wird jedes Stück einzeln zuweisbar; ohne Seriennummer zählt nur die Menge.
+Hinweis;Status "an Lager" heisst einsatzbereit. Jeder andere Wert (z.B. "in Reparatur", "ausgeliehen") gilt als nicht verfügbar - das Mittel bleibt aber auffindbar und zuweisbar.
+Hinweis;Artikelgruppe "Transport/Logistik" und "Sanitätsmaterial" erhalten eine eigene Signatur, alle übrigen ein neutrales Mittel-Symbol.
+Hinweis;Optional: Kaufdatum als TT.MM.JJJJ, Koordinaten als "Breitengrad, Längengrad" (WGS84), Plombiert als Ja/Nein.
+Exportiert am;01.09.2026;;08:00:00
+Organisation;Status;Artikelnummer;Artikel;Artikelgruppe;Artikeltyp;Hersteller;Einheit;Seriennummer;Charge;Kommentar;Plombiert;Kaufdatum;Lagerort-Code;Lagerort;Lagerort 2;Koordinaten
+ZSO Musterstadt;an Lager;ZM-000001;Stromaggregat 2 kVA;Erzeugen von Energie;Stand. ZS Material Kat. C;Honda;Stk;SN-1001;;;Nein;14.03.2022;1.1;Werkhof\Lager;Werkhof Musterstadt;
+ZSO Musterstadt;an Lager;ZM-000001;Stromaggregat 2 kVA;Erzeugen von Energie;Stand. ZS Material Kat. C;Honda;Stk;SN-1002;;;Nein;14.03.2022;1.1;Werkhof\Lager;Werkhof Musterstadt;
+ZSO Musterstadt;in Reparatur;ZM-000001;Stromaggregat 2 kVA;Erzeugen von Energie;Stand. ZS Material Kat. C;Honda;Stk;SN-1003;;Generator defekt, in Revision;Nein;14.03.2022;1.1;Werkhof\Lager;Werkhof Musterstadt;
+ZSO Musterstadt;an Lager;ZM-000002;Warnweste Zivilschutz L;Ausrüstung AdZS;Stand. ZS Material Kat. C;;Stk;;CH-2024-07;;Nein;;1.2;Werkhof\Lager;Werkhof Musterstadt;
+ZSO Musterstadt;an Lager;ZM-000002;Warnweste Zivilschutz L;Ausrüstung AdZS;Stand. ZS Material Kat. C;;Stk;;CH-2024-07;;Nein;;1.2;Werkhof\Lager;Werkhof Musterstadt;
+ZSO Musterstadt;an Lager;ZM-000002;Warnweste Zivilschutz L;Ausrüstung AdZS;Stand. ZS Material Kat. C;;Stk;;CH-2024-07;;Nein;;1.2;Werkhof\Lager;Werkhof Musterstadt;
+ZSO Musterstadt;an Lager;ZM-000003;Anhänger 2 t;Transport/Logistik;Stand. ZS Material Kat. B;Humbaur;Stk;AG-7;;Weisse Nummer;Nein;02.05.2019;2.1;Einstellhalle;Werkhof Musterstadt;47.0502, 8.3093
+ZSO Musterstadt;an Lager;ZM-000004;Sanitätsrucksack;Sanitätsmaterial;Stand. ZS Material Kat. A;;Stk;SR-21;;Verfalldaten prüfen;Ja;10.11.2023;3.4;Sanitätsposten;Zivilschutzanlage Musterstadt;
+ZSO Musterstadt;ausgeliehen;ZM-000004;Sanitätsrucksack;Sanitätsmaterial;Stand. ZS Material Kat. A;;Stk;SR-22;;Ausgeliehen an Feuerwehr;Ja;10.11.2023;3.4;Sanitätsposten;Zivilschutzanlage Musterstadt;
