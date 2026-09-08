@@ -19,10 +19,8 @@ import { EmptyComponent, EmptyHeaderComponent, EmptyMediaComponent, EmptyTitleCo
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+/** One resource on one marker - a row of the nested table inside an expanded marker. */
 interface DeployedRow {
-  kind: 'item';
-  /** True when this row is listed under a group header, i.e. its marker carries several resources. */
-  inGroup: boolean;
   elementId: string;
   assignment: ResourceAssignment;
   /** Resolved from the catalogue for filtering; undefined when the article is no longer in it. */
@@ -33,32 +31,27 @@ interface DeployedRow {
   markerAssignmentCount: number;
   signatureSrc?: string;
   signatureAlt: string;
-  articleLabel: string;
   markerName: string;
   reportNumber: string;
   location: string;
 }
 
 /**
- * Header row standing for one marker that carries several resources: the marker's identity
- * (pictogram, name, message, location) is shown once here instead of being repeated - and
- * silently looking like unrelated rows - on every one of its resources.
+ * One marker, grouping the resources it carries - the top-level row of this table, mirroring
+ * how the catalogue lists an article and expands to its individual pieces. The marker's
+ * identity (pictogram, name, message, location) is stated once here instead of being repeated
+ * on every resource, where identical rows looked like unrelated markers.
  */
-interface DeployedGroupRow {
-  kind: 'group';
+interface DeployedMarkerRow {
   elementId: string;
+  /** The marker's name, or what its pictogram depicts when it has none ("Materialdepot"). */
   markerLabel: string;
   signatureSrc?: string;
   signatureAlt: string;
   reportNumber: string;
   location: string;
-  /** Resources of this marker currently listed (filters can hide some of them). */
-  count: number;
-  /** Total resources on the marker, which "take back all" acts on. */
-  totalCount: number;
+  assignments: DeployedRow[];
 }
-
-type DeployedTableRow = DeployedRow | DeployedGroupRow;
 
 @Component({
   selector: 'app-resource-deployed',
@@ -84,7 +77,9 @@ export class ResourceDeployedComponent {
   resourceService = inject(ResourceService);
   i18n = inject(I18NService);
 
-  displayedColumns: string[] = ['signature', 'article', 'markerName', 'reportNumber', 'location', 'actions'];
+  displayedColumns: string[] = ['signature', 'markerName', 'count', 'reportNumber', 'location', 'actions', 'expand'];
+  /** Columns of the nested table listing the resources of one marker. */
+  assignmentColumns: string[] = ['article', 'serialNumber', 'storageLocation', 'actions'];
 
   private readonly drawElements: Signal<IZsMapBaseDrawElementState[]> = toSignal(
     this.state.observeMapState().pipe(map((mapState) => Object.values(mapState?.drawElements ?? {}))),
@@ -129,51 +124,59 @@ export class ResourceDeployedComponent {
   });
 
   /**
-   * The rows as the table renders them: resources of the same marker are kept together under
-   * one group header. A marker with a single (visible) resource stays a plain row - a header
-   * for one item would be noise.
+   * The markers the table lists, each carrying its own resources - built by grouping the
+   * filtered rows, which `buildRows()` already emits marker by marker.
    */
-  readonly tableRows: Signal<DeployedTableRow[]> = computed(() => {
-    const rows = this.rows();
-    const tableRows: DeployedTableRow[] = [];
+  readonly markerRows: Signal<DeployedMarkerRow[]> = computed(() => {
+    const byElement = new Map<string, DeployedMarkerRow>();
 
-    for (let index = 0; index < rows.length; ) {
-      const start = index;
-      while (index < rows.length && rows[index].elementId === rows[start].elementId) {
-        index++;
+    for (const row of this.rows()) {
+      let marker = byElement.get(row.elementId);
+      if (!marker) {
+        marker = {
+          elementId: row.elementId,
+          markerLabel: row.markerName || row.signatureAlt,
+          signatureSrc: row.signatureSrc,
+          signatureAlt: row.signatureAlt,
+          reportNumber: row.reportNumber,
+          location: row.location,
+          assignments: [],
+        };
+        byElement.set(row.elementId, marker);
       }
-      const group = rows.slice(start, index);
-      const [head] = group;
-      if (group.length === 1) {
-        tableRows.push({ ...head, inGroup: false });
-        continue;
-      }
-      tableRows.push({
-        kind: 'group',
-        elementId: head.elementId,
-        // an unnamed marker is identified by what it depicts, e.g. "Materialdepot"
-        markerLabel: head.markerName || head.signatureAlt,
-        signatureSrc: head.signatureSrc,
-        signatureAlt: head.signatureAlt,
-        reportNumber: head.reportNumber,
-        location: head.location,
-        count: group.length,
-        totalCount: head.markerAssignmentCount,
-      });
-      tableRows.push(...group.map((row) => ({ ...row, inGroup: true })));
+      marker.assignments.push(row);
     }
 
-    return tableRows;
+    return [...byElement.values()];
   });
 
-  // skipcq: JS-0105
-  isGroupRow(_index: number, row: DeployedTableRow): boolean {
-    return row.kind === 'group';
+  /** Markers the user expanded by hand; a filter expands everything on top of that (see `isExpanded`). */
+  private readonly expandedElementIds = signal<ReadonlySet<string>>(new Set());
+
+  private readonly hasActiveFilter = computed(
+    () =>
+      !!this.search().trim() ||
+      this.selectedGroups().length > 0 ||
+      this.selectedTypes().length > 0 ||
+      this.selectedStorageSites().length > 0,
+  );
+
+  /**
+   * Expanded while filtering: a marker is listed because one of its resources matched, so
+   * collapsing it would hide the very thing that was searched for.
+   */
+  isExpanded(marker: DeployedMarkerRow): boolean {
+    return this.hasActiveFilter() || this.expandedElementIds().has(marker.elementId);
   }
 
-  /** Centres the map on the marker of a group header or a plain row alike. */
-  navigateToElement(row: DeployedTableRow) {
-    this.navigateTo(row.elementId);
+  toggleExpand(marker: DeployedMarkerRow): void {
+    const next = new Set(this.expandedElementIds());
+    if (next.has(marker.elementId)) {
+      next.delete(marker.elementId);
+    } else {
+      next.add(marker.elementId);
+    }
+    this.expandedElementIds.set(next);
   }
 
   private buildRows(): DeployedRow[] {
@@ -206,8 +209,6 @@ export class ResourceDeployedComponent {
             ]
           : [];
         rows.push({
-          kind: 'item',
-          inGroup: false,
           elementId: element.id,
           assignment,
           articleGroup: article?.articleGroup,
@@ -216,7 +217,6 @@ export class ResourceDeployedComponent {
           markerAssignmentCount: element.resourceItems.length,
           signatureSrc,
           signatureAlt,
-          articleLabel: this.formatAssignment(assignment),
           markerName,
           reportNumber,
           location,
@@ -224,11 +224,6 @@ export class ResourceDeployedComponent {
       }
     }
     return rows;
-  }
-
-  private formatAssignment(assignment: ResourceAssignment): string {
-    const base = `${assignment.quantity}× ${assignment.name}`;
-    return assignment.serialNumber ? `${base} (${this.i18n.get('resourceSerialNumber')}: ${assignment.serialNumber})` : base;
   }
 
   navigateTo(elementId: string) {

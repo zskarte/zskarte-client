@@ -25,55 +25,35 @@ mat-card {
   padding-left: 1.25rem;
 }
 
-// One marker carrying several resources: its identity is stated once in a group header, and
-// its resources are indented under it instead of repeating the same marker data per row.
-.group-row td {
+// The resources of one marker, laid out exactly like the catalogue's individual pieces:
+// an expandable detail row holding a nested table on a tinted surface.
+.element-row {
+  cursor: default;
+}
+
+.detail-row {
+  height: 0;
+}
+
+.detail-row:not(.expanded) td {
   padding: 0;
-  border-bottom: none;
+  border: none;
+  overflow: hidden;
+  height: 0;
 }
 
-.group-cell {
-  padding: 0.5rem 0.75rem 0.25rem !important;
+.detail-row.expanded td {
+  padding: 0.5rem 0;
+  border-bottom-width: 1px;
 }
 
-.group-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+.assignment-table-container {
+  padding: 0.5rem 1rem 1rem;
+  background: var(--mat-sys-surface-variant, #f5f5f5);
+  border-radius: 0.5rem;
 }
 
-.group-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-
-.group-label {
-  font-weight: 600;
-}
-
-.group-meta {
-  color: #666;
-  font-size: 0.8rem;
-}
-
-.group-location {
-  color: #666;
-  font-size: 0.85rem;
-  white-space: nowrap;
-}
-
-.grouped-article {
-  padding-left: 1.75rem;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0.9rem;
-    top: 0;
-    bottom: 0;
-    border-left: 2px solid #e0e0e0;
-  }
+.assignment-table {
+  width: 100%;
+  background: transparent;
 }

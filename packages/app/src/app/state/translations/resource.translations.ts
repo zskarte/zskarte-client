@@ -165,15 +165,15 @@ export const RESOURCE_TRANSLATIONS = {
     en: 'The template contains every required column, explains them in its header rows and shows example rows - replace the example rows and you are done.',
     fr: "Le modèle contient toutes les colonnes obligatoires, les explique dans ses en-têtes et montre des lignes d'exemple - remplacez-les et c'est prêt.",
   },
-  resourceMarkerGroup: {
-    de: 'Markierung',
-    en: 'Marker',
-    fr: 'Marqueur',
+  resourceMarkerResourceCount: {
+    de: 'Mittel',
+    en: 'Resources',
+    fr: 'Moyens',
   },
-  resourceMarkerGroupCount: {
-    de: 'Mittel auf dieser Markierung',
-    en: 'resources on this marker',
-    fr: 'moyens sur ce marqueur',
+  resourceMarkerResourcesToggle: {
+    de: 'Mittel dieser Markierung anzeigen/ausblenden',
+    en: 'Show/hide the resources of this marker',
+    fr: 'Afficher/masquer les moyens de ce marqueur',
   },
   resourceLastImport: {
     de: 'Stand',
