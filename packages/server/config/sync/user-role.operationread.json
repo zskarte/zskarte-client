@@ -71,6 +71,16 @@
       "locale": null
     },
     {
+      "action": "api::resource-article.resource-article.find",
+      "documentId": "lui8nyyk8kr8b2ihhu2ydhjv",
+      "locale": null
+    },
+    {
+      "action": "api::resource-article.resource-article.findOne",
+      "documentId": "rn4x4efu1o4p2pcj13jctfql",
+      "locale": null
+    },
+    {
       "action": "api::wms-source.wms-source.find",
       "documentId": "r1kuk1iq2925r1xyvuui5318",
       "locale": null

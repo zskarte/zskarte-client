@@ -1,5 +1,6 @@
 import { FeatureLike } from "ol/Feature";
 import { Circle, LineString, MultiPolygon, Point, Polygon } from "ol/geom";
+import { ResourceAssignment } from "../resource/interfaces";
 
 export enum HierarchyLevel {
   TRUPP = 'trupp',
@@ -70,6 +71,9 @@ export interface Sign {
   additionalInfo?: string; // Right text (2 Z, 3 Gr, etc.)
   formationNumber?: string; // Bottom number
   formationLocation?: string; // Bottom location name
+
+  // Resource catalogue (Mittelübersicht)
+  resourceItems?: ResourceAssignment[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

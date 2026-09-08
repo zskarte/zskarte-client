@@ -126,6 +126,21 @@
       "locale": null
     },
     {
+      "action": "api::resource-article.resource-article.find",
+      "documentId": "qt73siywhyrcqozytvb2p5l7",
+      "locale": null
+    },
+    {
+      "action": "api::resource-article.resource-article.findOne",
+      "documentId": "rg6obxbds32pldqbkkwzckw5",
+      "locale": null
+    },
+    {
+      "action": "api::resource-article.resource-article.import",
+      "documentId": "ra3imprtguest000000000001",
+      "locale": null
+    },
+    {
       "action": "api::wms-source.wms-source.find",
       "documentId": "bm55vo5otup253d0awakyosh",
       "locale": null
