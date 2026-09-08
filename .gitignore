@@ -132,3 +132,16 @@ scripts/offlineData/swissNAMES3D/swissboundaries3d_*.zip
 scripts/offlineData/swissNAMES3D/swissBOUNDARIES3D_*
 scripts/offlineData/swissNAMES3D/swissNAMES3D_PLY*.csv
 scripts/offlineData/swissNAMES3D/canton_layer_mapping.env
+
+############################
+# test fixtures (exempt from the *.csv rule above)
+############################
+
+!packages/app/tests/fixtures/*.csv
+!packages/app/src/app/resource/testing/*.csv
+
+############################
+# local db backups (see DEVELOPER_GUIDE.md "update init.sql")
+############################
+
+data_backup*
