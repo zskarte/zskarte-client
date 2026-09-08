@@ -191,14 +191,26 @@ const addChangeset = async (
         return { error, result: undefined };
       }
       const oldMapState = mapState;
-      mapState = applyPatches(mapState, changeset.patches);
+      let revertedMapState: typeof mapState;
+      try {
+        mapState = applyPatches(mapState, changeset.patches);
 
-      if (task.aborted || task.clientAborted) {
-        return { error: { message: 'aborted' }, result: undefined };
+        if (task.aborted || task.clientAborted) {
+          return { error: { message: 'aborted' }, result: undefined };
+        }
+
+        //verify clean reverse possible
+        revertedMapState = applyPatches(mapState, changeset.inversePatches);
+      } catch (e) {
+        // A patch whose path cannot be resolved (e.g. it targets a draw element this server
+        // never received) is not a server fault: throwing here turned into a 500, which the
+        // client treats as "retry later", so the very same broken changeset was resubmitted
+        // forever. Report it as invalid instead - the client already has a path for that and
+        // drops the changeset.
+        const message = e instanceof Error ? e.message : String(e);
+        strapi.log.error(`changeset ${changeset.id} cannot be applied: ${message}`);
+        return { error: { message, isInvalid: true }, result: undefined };
       }
-
-      //verify clean reverse possible
-      const revertedMapState = applyPatches(mapState, changeset.inversePatches);
       if (!_.isEqual(oldMapState, revertedMapState)) {
         const elemId = changeset.patches[0].path[1];
         console.error(
