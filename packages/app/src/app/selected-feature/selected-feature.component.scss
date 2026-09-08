@@ -233,3 +233,54 @@ div.flex {
 .report-number-chip mat-icon::after {
   margin-left: -2px;
 }
+
+.resource-add-field {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+// The option holds two lines, so it must be allowed to grow; its inner text wrapper is part of
+// mat-option's own view, hence ::ng-deep to lay the icon and the label out side by side.
+.resource-add-option {
+  height: auto;
+  min-height: 48px;
+
+  ::ng-deep .mdc-list-item__primary-text {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+}
+
+.resource-add-option-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+}
+
+.resource-add-option-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+  padding: 0.25rem 0;
+}
+
+.resource-add-option-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// The meta line carries the state ("verfügbar", "in Reparatur", ...) - it must stay readable in
+// the narrow panel, so it wraps instead of being cut off.
+.resource-add-option-meta {
+  white-space: normal;
+}
+
+.resource-add-option-meta {
+  color: #787878;
+  font-size: 0.8rem;
+}

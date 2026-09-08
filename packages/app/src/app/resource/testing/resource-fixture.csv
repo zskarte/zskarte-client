@@ -1,0 +1,25 @@
+Organisation;ZSO Unteres Fricktal;;;67;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Material - Übersicht Bestand;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Bestand ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Exportiert am;07.09.2026;;14:15:45;;Benutzer;max.muster;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Organisation;Status;aktuelle Verwendung;Artikelnummer;Artikel;Artikelgruppe;Artikeltyp;Sirenentyp;Kommentar;Seriennummer;Serien-Nr. intern;Charge;Hersteller;Plombiert;Konserviert;Betriebsart;Inhalt;Einheit;Kapazität;Aktueller Inhalt;Einkaufspreis;Kaufpreis;Kaufdatum;Garantieende;Zulassungs-Nr.;Lagerort-Code;Lagerort;Verrechnung;Verrechnung am;Verrechnung durch;Verrechnung Detail;SAP Exportdatum;SAP Zuweisungs-Nr.;SAP Zahlungsdatum;SAP Mahnung 1;SAP Beleg-Nr.;Lagerort 2;Koordinaten
+ZSO Unteres Fricktal;an Lager;;ZM-000680;"Stromaggregat ""Kirsch""";Erzeugen von Energie;Stand. ZS Material Kat. B;;;SN-1;12;;Kirsch;Nein;Nein;;;;;;;;;;;2.2.01;Augarten\Halle;Nein;;;;;;;;;BSA Augarten Rheinfelden;
+ZSO Unteres Fricktal;an Lager;;ZM-000680;"Stromaggregat ""Kirsch""";Erzeugen von Energie;Stand. ZS Material Kat. B;;;SN-2;13;;Kirsch;Nein;Nein;;;;;;;;;;;2.2.01;Augarten\Halle;Nein;;;;;;;;;BSA Augarten Rheinfelden;
+ZSO Unteres Fricktal;an Lager;;ZM-000680;"Stromaggregat ""Kirsch""";Erzeugen von Energie;Stand. ZS Material Kat. B;;;SN-2;14;;Kirsch;Nein;Nein;;;;;;;;;;;2.2.02;Augarten\Halle;Nein;;;;;;;;;BSA Augarten Rheinfelden;
+ZSO Unteres Fricktal;an Lager;;ZM-000057;Anhänger ZS;Transport/Logistik;Stand. ZS Material Kat. B;;"AG 719 186
+Weisse Nummer";AG-1;;;;Nein;Nein;;;;;;;;;;;2.1.1;Rüteli\Aussenplatz;Nein;;;;;;;;;Materiallager Rüteli;
+ZSO Unteres Fricktal;in Reparatur;;ZM-000057;Anhänger ZS;Transport/Logistik;Stand. ZS Material Kat. B;;;AG-2;;;;Nein;Nein;;;;;;;;;;;2.1.1;Rüteli\Aussenplatz;Nein;;;;;;;;;Materiallager Rüteli;
+ZSO Unteres Fricktal;an Lager;;ZM-001577;"Klett ""Soldat""";Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.1;Persönlich;Nein;;;;;;;;;Persönliche Ausrüstung;
+ZSO Unteres Fricktal;an Lager;;ZM-001577;"Klett ""Soldat""";Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.1;Persönlich;Nein;;;;;;;;;Persönliche Ausrüstung;
+ZSO Unteres Fricktal;an Lager;;ZM-001577;"Klett ""Soldat""";Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.1;Persönlich;Nein;;;;;;;;;Persönliche Ausrüstung;
+ZSO Unteres Fricktal;an Lager;;;Beingummi pro Stück;Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.2;Persönlich;Nein;;;;;;;;;Persönliche Ausrüstung;
+ZSO Unteres Fricktal;an Lager;;;Beingummi pro Stück;Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.2;Persönlich;Nein;;;;;;;;;Persönliche Ausrüstung;
+ZSO Unteres Fricktal;an Lager;;ZM-000552;Regenjacke 52/56;Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.3;Persönlich;Nein;;;;;;;;;Persönliche Ausrüstung;
+ZSO Unteres Fricktal;an Lager;;ZM-000552;Regenjacke 52/56;Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.3;Persönlich;Nein;;;;;;;;;Persönliche Ausrüstung;
+ZSO Unteres Fricktal;an Lager;;ZM-000552;Regenjacke52/56;Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.3;Persönlich;Nein;;;;;;;;;Persönliche Ausrüstung;
+ZSO Unteres Fricktal;an Lager;;ZM-000582;Schadenplatzbeleuchtung (el);Beleuchtung;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;2.3;Werkhof\Lager;Nein;;;;;;;;;#VALUE!;
+ZSO Unteres Fricktal;an Lager;;ZM-000015;Abwasser Tauchpumpe Mast ATP20, inkl. Zubehör;Wassermaterial;Stand. ZS Material Kat. C;;;TP-9;;;;Ja;Nein;;;Liter;;;;;09.12.2024;;;2.4;Werkhof\Lager;Nein;;;;;;;;;BSA Werkhof Stein;47.547959470582526, 7.767585683309598
+ZSO Unteres Fricktal;an Lager;;ZM-999999;;Keine Zuordnung;ZSO Material;;;;;;;Nein;Nein;;;;;;;;;;;9.9;Unbekannt;Nein;;;;;;;;;;

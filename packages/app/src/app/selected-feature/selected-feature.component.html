@@ -246,6 +246,103 @@
                   />
                 </mat-form-field>
               }
+              @if (canAssignResources(drawElement)) {
+                <div class="resource-assignments">
+                  <div class="resource-assignments-header" style="font-weight: bold; margin-bottom: 0.5rem">
+                    {{ i18n.get('resourceAssignedItems') }} ({{ (drawElement.resourceItems ?? []).length }})
+                  </div>
+                  @for (assignment of drawElement.resourceItems ?? []; track $index) {
+                    <div
+                      class="resource-assignment-row"
+                      style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem"
+                    >
+                      @let sign = resourceAssignmentSignature(assignment);
+                      @if (sign) {
+                        <img
+                          [src]="getImageUrl(sign)"
+                          alt=""
+                          class="resource-assignment-icon"
+                          style="width: 22px; height: 22px; object-fit: contain; flex-shrink: 0"
+                        />
+                      }
+                      <span class="resource-assignment-label" style="flex: 1; min-width: 0">
+                        {{ assignment.quantity }}× {{ assignment.name }}
+                        @if (assignment.serialNumber) {
+                          <span
+                            class="resource-assignment-serial"
+                            style="display: block; color: #787878; font-size: 0.8rem"
+                          >
+                            {{ i18n.get('resourceSerialNumber') }}: {{ assignment.serialNumber }}
+                          </span>
+                        }
+                      </span>
+                      <button
+                        mat-icon-button
+                        type="button"
+                        [attr.aria-label]="i18n.get('resourceRemoveAssignment')"
+                        [matTooltip]="i18n.get('resourceRemoveAssignment')"
+                        (click)="removeResourceAssignment($index, drawElement)"
+                      >
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="resource-add-field">
+                    <mat-label>{{ i18n.get('resourceAddAssignment') }}</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      [placeholder]="i18n.get('resourceAddAssignmentSearch')"
+                      [matAutocomplete]="resourceAddAutocomplete"
+                      [ngModel]="resourceSearch()"
+                      (ngModelChange)="updateResourceSearch($event)"
+                    />
+                    <mat-icon matSuffix>search</mat-icon>
+                  </mat-form-field>
+                  <mat-autocomplete
+                    #resourceAddAutocomplete="matAutocomplete"
+                    [displayWith]="displayNoResourceOption"
+                    (optionSelected)="addResourceAssignment($event.option.value, drawElement)"
+                  >
+                    @for (option of resourceAddOptions(); track option.itemKey ?? option.articleNumber + option.state) {
+                      <mat-option
+                        [value]="option"
+                        [disabled]="!canAssignResourceOption(option)"
+                        class="resource-add-option"
+                      >
+                        @let optionSign = resourceOptionSignature(option);
+                        @if (optionSign) {
+                          <img [src]="getImageUrl(optionSign)" alt="" class="resource-add-option-icon" />
+                        }
+                        <span class="resource-add-option-label">
+                          <span class="resource-add-option-name">{{ option.name }}</span>
+                          <span class="resource-add-option-meta">
+                            {{ option.articleNumber }}
+                            @if (option.serialNumber) {
+                              · {{ i18n.get('resourceSerialNumber') }}: {{ option.serialNumber }}
+                            } @else {
+                              · {{ option.count }} {{ i18n.get('resourceAddAssignmentPieces') }}
+                            }
+                            @switch (option.state) {
+                              @case ('free') {
+                                · {{ i18n.get('resourceAddAssignmentAvailable') }}
+                              }
+                              @case ('deployed') {
+                                · {{ i18n.get('resourceAddAssignmentDeployed') }}
+                              }
+                              @case ('notInStock') {
+                                · {{ option.status }}
+                              }
+                            }
+                          </span>
+                        </span>
+                      </mat-option>
+                    } @empty {
+                      <mat-option disabled>{{ i18n.get('resourceAddAssignmentNoResults') }}</mat-option>
+                    }
+                  </mat-autocomplete>
+                </div>
+              }
             }
           </div>
           <mat-divider></mat-divider>

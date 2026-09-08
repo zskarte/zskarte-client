@@ -1,0 +1,85 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resource_articles",
+  "info": {
+    "singularName": "resource-article",
+    "pluralName": "resource-articles",
+    "displayName": "Resource Article",
+    "description": "One inventory article (Artikelnummer) of an operation's resource catalogue; the individual pieces are stored in items[]"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "articleNumber": {
+      "type": "string",
+      "required": true
+    },
+    "syntheticNumber": {
+      "type": "boolean",
+      "default": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "nameVariants": {
+      "type": "json"
+    },
+    "articleGroup": {
+      "type": "string"
+    },
+    "articleType": {
+      "type": "string"
+    },
+    "manufacturer": {
+      "type": "string"
+    },
+    "unit": {
+      "type": "string"
+    },
+    "sirenType": {
+      "type": "string"
+    },
+    "serialized": {
+      "type": "boolean",
+      "default": false
+    },
+    "totalCount": {
+      "type": "integer",
+      "required": true
+    },
+    "inStockCount": {
+      "type": "integer",
+      "required": true
+    },
+    "items": {
+      "type": "json",
+      "required": true
+    },
+    "importId": {
+      "type": "string",
+      "required": true
+    },
+    "importedAt": {
+      "type": "datetime"
+    },
+    "sourceExportedAt": {
+      "type": "datetime"
+    },
+    "sourceOrganisation": {
+      "type": "string"
+    },
+    "operation": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::operation.operation"
+    },
+    "organization": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::organization.organization"
+    }
+  }
+}

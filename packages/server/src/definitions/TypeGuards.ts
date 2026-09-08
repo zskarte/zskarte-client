@@ -53,6 +53,7 @@ const HasOperationTypes: HasOperationType[] = [
   'api::access.access',
   'api::map-snapshot.map-snapshot',
   'api::journal-entry.journal-entry',
+  'api::resource-article.resource-article',
 ];
 const HasOrganizationTypes: HasOrganizationType[] = [
   'plugin::users-permissions.user',
@@ -60,6 +61,7 @@ const HasOrganizationTypes: HasOrganizationType[] = [
   'api::wms-source.wms-source',
   'api::map-layer.map-layer',
   'api::journal-entry.journal-entry',
+  'api::resource-article.resource-article',
 ];
 const AccessCheckableTypes: AccessCheckableType[] = [
   ...IsOperationTypes,

@@ -9,6 +9,7 @@ import {
   IZsMapOperation,
   WmsSource,
   IZsChangesetInternal,
+  ResourceArticleApi,
 } from '@zskarte/types';
 import { JournalEntry } from '../journal/journal.types';
 
@@ -59,6 +60,8 @@ export type PatchJournalEntry = {
 
 export type LocalJournalEntry = JournalEntry & { operationId: string; organizationId: string; fromCache: boolean };
 
+export type LocalResourceArticle = ResourceArticleApi & { operationId: string; organizationId: string; fromCache: boolean };
+
 export class AppDB extends Dexie {
   sessions!: Table<IZsMapSession, string>;
   displayStates!: Table<IZsMapDisplayState, string>;
@@ -72,6 +75,7 @@ export class AppDB extends Dexie {
   localMapLayerSettings!: Table<LocalMapLayerSettings, string>;
   patchJournalEntries!: Table<PatchJournalEntry, number>;
   localJournalEntries!: Table<LocalJournalEntry, string>;
+  localResourceArticles!: Table<LocalResourceArticle, string>;
 
   constructor(databaseName: string) {
     super(databaseName);
@@ -160,6 +164,14 @@ export class AppDB extends Dexie {
     this.version(10).stores({
       patchSyncQueue: null,
       changesetOutgoingQueue: 'id, operationId',
+    });
+    this.version(11).stores({
+      localResourceArticles: '[operationId+articleNumber], operationId, organizationId, importId',
+    });
+    //the catalogue is always read/replaced per operation+organization, so index that pair
+    this.version(12).stores({
+      localResourceArticles:
+        '[operationId+articleNumber], [operationId+organizationId], operationId, organizationId, importId',
     });
   }
 }

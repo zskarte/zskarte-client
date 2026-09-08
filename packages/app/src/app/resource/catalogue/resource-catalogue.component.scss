@@ -1,0 +1,93 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.state-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.catalogue-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.count-line {
+  padding: 0 0 0.5rem;
+  color: var(--mat-sys-on-surface-variant, #666);
+  font-size: 0.8125rem;
+}
+
+.table-container {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+}
+
+.catalogue-table {
+  width: 100%;
+}
+
+.catalogue-table th,
+.catalogue-table td {
+  padding-right: 8px;
+}
+
+.element-row {
+  cursor: default;
+}
+
+.signature-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.signature-icon.placeholder {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.detail-row {
+  height: 0;
+}
+
+.detail-row:not(.expanded) td {
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  height: 0;
+}
+
+.detail-row.expanded td {
+  padding: 0.5rem 0;
+  border-bottom-width: 1px;
+}
+
+.no-results {
+  padding: 1rem 0;
+}
+
+.selection-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--mat-sys-outline-variant, #dedede);
+  background: var(--mat-sys-surface, #fff);
+  position: sticky;
+  bottom: 0;
+}
+
+.selection-count {
+  flex: 1;
+  font-weight: 500;
+}

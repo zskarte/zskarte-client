@@ -1,0 +1,79 @@
+.file-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.hint {
+  color: #666;
+  margin: 0;
+}
+
+.preview-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.file-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.diff-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.unchanged-count {
+  color: #666;
+  margin: 0;
+}
+
+.notice {
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  background: #f5f5f5;
+
+  h3 {
+    margin: 0 0 0.5rem;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+}
+
+.notice.warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: #fff4e5;
+  color: #7a4a00;
+}
+
+.notice.error-block {
+  background: #fdecea;
+  color: #a11c1c;
+}
+
+// Reads as part of the sentence explaining the format, not as a separate action.
+.example-csv {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: 0.35rem;
+  color: #1a56db;
+  text-decoration: underline;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+}

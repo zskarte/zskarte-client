@@ -79,6 +79,7 @@ export abstract class ZsMapBaseDrawElement<
       additionalInfo: state.additionalInfo,
       formationNumber: state.formationNumber,
       formationLocation: state.formationLocation,
+      resourceItems: state.resourceItems,
     });
   }
 

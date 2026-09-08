@@ -3,6 +3,7 @@ import { Sign } from '@zskarte/types';
 export class Signs {
   public static HAZARD_SIGN_ID = 57;
   public static FORMATION_SIGN_ID = 210;
+  public static RESOURCE_PLACEHOLDER_SIGN_ID = 211;
   public static TRUCK_SIGN_ID = 190;
   public static MOTOR_VEHICLE_SIGN_ID = 192;
   public static TRANSPORT_VEHICLE_SIGN_ID = 201;
@@ -1994,6 +1995,16 @@ export class Signs {
       de: 'Formation (Trupp, Gruppe, Zug, Kompanie, Bataillon)',
       en: 'Formation (Squad, Group, Platoon, Company, Battalion)',
       fr: 'Formation (Équipe, Groupe, Section, Compagnie, Bataillon)',
+    },
+    {
+      id: Signs.RESOURCE_PLACEHOLDER_SIGN_ID,
+      kat: 'action',
+      type: 'Point',
+      color: '#0000FF',
+      src: 'resource-placeholder.svg',
+      de: 'Mittel (aus Mittelübersicht)',
+      en: 'Resource (from resource overview)',
+      fr: 'Moyen (aperçu des ressources)',
     },
   ];
 

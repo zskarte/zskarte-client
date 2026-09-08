@@ -9,6 +9,7 @@ import { SearchService } from './search/search.service';
 import { OperationService } from './session/operations/operation.service';
 import { ChangesetService } from './changeset/changeset.service';
 import { SidebarService } from './sidebar/sidebar.service';
+import { ResourceService } from './resource/resource.service';
 
 registerLocaleData(localeCH);
 
@@ -22,6 +23,7 @@ export function appFactory(
   operation: OperationService,
   changeset: ChangesetService,
   sidebar: SidebarService,
+  resource: ResourceService,
 ) {
   return async () => {
     // "inject" services to prevent circular dependencies
@@ -34,6 +36,7 @@ export function appFactory(
     changeset.setStateService(state);
     changeset.setSidebarService(sidebar);
     changeset.setSessionService(session);
+    resource.setStateService(state);
 
     if (!window.location.pathname.startsWith('/share/')) {
       await session.loadSavedSession();

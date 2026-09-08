@@ -132,4 +132,18 @@ const broadcastJournal = (operationCache: OperationCache, identifier: string, da
   }
 };
 
-export { connectSocketIo, socketConnection, broadcastConnections, broadcastChangeset, broadcastJournal };
+/** Broadcast received resource catalogue change to all currently connected sockets of an operation */
+const broadcastResources = (operationCache: OperationCache, identifier: string, data: any) => {
+  data = superjsonSerialize(data);
+  const connections = _.filter(operationCache.connections, (c) => c.identifier !== identifier);
+  for (const connection of connections) {
+    try {
+      connection.socket.emit(WebsocketEvent.STATE_RESOURCES, data);
+    } catch (error) {
+      connection.socket.disconnect();
+      strapi.log.error(error);
+    }
+  }
+};
+
+export { connectSocketIo, socketConnection, broadcastConnections, broadcastChangeset, broadcastJournal, broadcastResources };

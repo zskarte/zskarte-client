@@ -644,6 +644,48 @@ export interface ApiOrganizationOrganization extends Struct.CollectionTypeSchema
   };
 }
 
+export interface ApiResourceArticleResourceArticle extends Struct.CollectionTypeSchema {
+  collectionName: 'resource_articles';
+  info: {
+    description: "One inventory article (Artikelnummer) of an operation's resource catalogue; the individual pieces are stored in items[]";
+    displayName: 'Resource Article';
+    pluralName: 'resource-articles';
+    singularName: 'resource-article';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    articleGroup: Schema.Attribute.String;
+    articleNumber: Schema.Attribute.String & Schema.Attribute.Required;
+    articleType: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    importedAt: Schema.Attribute.DateTime;
+    importId: Schema.Attribute.String & Schema.Attribute.Required;
+    inStockCount: Schema.Attribute.Integer & Schema.Attribute.Required;
+    items: Schema.Attribute.JSON & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::resource-article.resource-article'> &
+      Schema.Attribute.Private;
+    manufacturer: Schema.Attribute.String;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    nameVariants: Schema.Attribute.JSON;
+    operation: Schema.Attribute.Relation<'manyToOne', 'api::operation.operation'>;
+    organization: Schema.Attribute.Relation<'manyToOne', 'api::organization.organization'>;
+    publishedAt: Schema.Attribute.DateTime;
+    serialized: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    sirenType: Schema.Attribute.String;
+    sourceExportedAt: Schema.Attribute.DateTime;
+    sourceOrganisation: Schema.Attribute.String;
+    syntheticNumber: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    totalCount: Schema.Attribute.Integer & Schema.Attribute.Required;
+    unit: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSigningKeySigningKey extends Struct.CollectionTypeSchema {
   collectionName: 'signing_keys';
   info: {
@@ -1121,6 +1163,7 @@ declare module '@strapi/strapi' {
       'api::map-snapshot.map-snapshot': ApiMapSnapshotMapSnapshot;
       'api::operation.operation': ApiOperationOperation;
       'api::organization.organization': ApiOrganizationOrganization;
+      'api::resource-article.resource-article': ApiResourceArticleResourceArticle;
       'api::signing-key.signing-key': ApiSigningKeySigningKey;
       'api::wms-source.wms-source': ApiWmsSourceWmsSource;
       'plugin::content-releases.release': PluginContentReleasesRelease;

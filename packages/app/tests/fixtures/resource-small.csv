@@ -1,0 +1,14 @@
+Organisation;ZSO Unteres Fricktal;;;67;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Material - Übersicht Bestand;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Bestand ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Exportiert am;07.09.2026;;14:15:45;;Benutzer;max.muster;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Organisation;Status;aktuelle Verwendung;Artikelnummer;Artikel;Artikelgruppe;Artikeltyp;Sirenentyp;Kommentar;Seriennummer;Serien-Nr. intern;Charge;Hersteller;Plombiert;Konserviert;Betriebsart;Inhalt;Einheit;Kapazität;Aktueller Inhalt;Einkaufspreis;Kaufpreis;Kaufdatum;Garantieende;Zulassungs-Nr.;Lagerort-Code;Lagerort;Verrechnung;Verrechnung am;Verrechnung durch;Verrechnung Detail;SAP Exportdatum;SAP Zuweisungs-Nr.;SAP Zahlungsdatum;SAP Mahnung 1;SAP Beleg-Nr.;Lagerort 2;Koordinaten
+ZSO Unteres Fricktal;an Lager;;ZM-000001;Stromaggregat Honda EU20i, 2kVA;Erzeugen von Energie;Stand. ZS Material Kat. C;;;SN-1;;;;Nein;Nein;;;;;;;;;;;1.1;Werkhof\Lager;Nein;;;;;;;;;BSA Werkhof Stein;
+ZSO Unteres Fricktal;an Lager;;ZM-000001;Stromaggregat Honda EU20i, 2kVA;Erzeugen von Energie;Stand. ZS Material Kat. C;;;SN-2;;;;Nein;Nein;;;;;;;;;;;1.1;Werkhof\Lager;Nein;;;;;;;;;BSA Werkhof Stein;
+ZSO Unteres Fricktal;an Lager;;ZM-000002;Warnweste Zivilschutz L;Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.1;Werkhof\Lager;Nein;;;;;;;;;BSA Werkhof Stein;
+ZSO Unteres Fricktal;an Lager;;ZM-000002;Warnweste Zivilschutz L;Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.1;Werkhof\Lager;Nein;;;;;;;;;BSA Werkhof Stein;
+ZSO Unteres Fricktal;an Lager;;ZM-000002;Warnweste Zivilschutz L;Ausrüstung AdZS;Stand. ZS Material Kat. C;;;;;;;Nein;Nein;;;;;;;;;;;1.1;Werkhof\Lager;Nein;;;;;;;;;BSA Werkhof Stein;
+ZSO Unteres Fricktal;in Reparatur;;ZM-000003;Anhänger ZS;Transport/Logistik;Stand. ZS Material Kat. B;;;AG-7;;;;Nein;Nein;;;;;;;;;;;1.1;Werkhof\Lager;Nein;;;;;;;;;BSA Werkhof Stein;

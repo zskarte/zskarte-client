@@ -1,0 +1,178 @@
+@if (allRowsCount() > 0) {
+  <app-resource-catalogue-filter
+    [articleGroups]="resourceService.articleGroups()"
+    [articleTypes]="resourceService.articleTypes()"
+    [storageSites]="resourceService.storageSites()"
+    [showAvailability]="false"
+    [(search)]="search"
+    [(selectedGroups)]="selectedGroups"
+    [(selectedTypes)]="selectedTypes"
+    [(selectedStorageSites)]="selectedStorageSites"
+    [(selectedAvailability)]="selectedAvailability"
+  />
+}
+
+@if (markerRows().length > 0) {
+  <mat-card>
+    <table mat-table [dataSource]="markerRows()" multiTemplateDataRows class="deployed-table">
+      <!-- Signature Column -->
+      <ng-container matColumnDef="signature">
+        <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvSignatur') }}</th>
+        <td mat-cell *matCellDef="let marker">
+          @if (marker.signatureSrc) {
+            <img [src]="marker.signatureSrc" [alt]="marker.signatureAlt" class="signature-preview" />
+          }
+        </td>
+      </ng-container>
+
+      <!-- Marker Name Column -->
+      <ng-container matColumnDef="markerName">
+        <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvLabel') }}</th>
+        <td mat-cell *matCellDef="let marker">{{ marker.markerLabel }}</td>
+      </ng-container>
+
+      <!-- Number of resources on this marker -->
+      <ng-container matColumnDef="count">
+        <th mat-header-cell *matHeaderCellDef>{{ i18n.get('resourceMarkerResourceCount') }}</th>
+        <td mat-cell *matCellDef="let marker">{{ marker.assignments.length }}</td>
+      </ng-container>
+
+      <!-- Report Number Column -->
+      <ng-container matColumnDef="reportNumber">
+        <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvReportNumber') }}</th>
+        <td mat-cell *matCellDef="let marker">{{ marker.reportNumber }}</td>
+      </ng-container>
+
+      <!-- Location Column -->
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvLocation') }}</th>
+        <td mat-cell *matCellDef="let marker" class="location" (click)="navigateTo(marker.elementId)">
+          {{ marker.location }}
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let marker" class="actions">
+          <button
+            mat-icon-button
+            type="button"
+            [attr.aria-label]="i18n.get('resourceTakeBackAll')"
+            [matTooltip]="i18n.get('resourceTakeBackAll')"
+            (click)="takeBackAll(marker.elementId)"
+          >
+            <mat-icon>playlist_remove</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Expand toggle, mirroring the catalogue's "show individual pieces" -->
+      <ng-container matColumnDef="expand">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let marker">
+          <button
+            mat-icon-button
+            type="button"
+            [attr.aria-label]="i18n.get('resourceMarkerResourcesToggle')"
+            [matTooltip]="i18n.get('resourceMarkerResourcesToggle')"
+            (click)="toggleExpand(marker)"
+          >
+            <mat-icon>{{ isExpanded(marker) ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- The resources of one marker, as the catalogue lists the pieces of an article -->
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let marker" [attr.colspan]="displayedColumns.length">
+          @if (isExpanded(marker)) {
+            <div class="assignment-table-container">
+              <table mat-table [dataSource]="marker.assignments" class="assignment-table">
+                <ng-container matColumnDef="article">
+                  <th mat-header-cell *matHeaderCellDef>{{ i18n.get('resourceArticleName') }}</th>
+                  <!-- the serial has its own column right next to this one -->
+                  <td mat-cell *matCellDef="let row">{{ row.assignment.quantity }}× {{ row.assignment.name }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="serialNumber">
+                  <th mat-header-cell *matHeaderCellDef>{{ i18n.get('resourceSerialNumber') }}</th>
+                  <td mat-cell *matCellDef="let row">{{ row.assignment.serialNumber || '–' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="storageLocation">
+                  <th mat-header-cell *matHeaderCellDef>{{ i18n.get('resourceStorageLocation') }}</th>
+                  <td mat-cell *matCellDef="let row">{{ row.storageSites.join(', ') || '–' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let row" class="actions">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      [attr.aria-label]="i18n.get('resourceTakeBack')"
+                      [matTooltip]="i18n.get('resourceTakeBack')"
+                      (click)="takeBack(row)"
+                    >
+                      <mat-icon>undo</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="assignmentColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: assignmentColumns"></tr>
+              </table>
+            </div>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let marker; columns: displayedColumns" class="element-row"></tr>
+      <tr
+        mat-row
+        *matRowDef="let marker; columns: ['expandedDetail']"
+        class="detail-row"
+        [class.expanded]="isExpanded(marker)"
+      ></tr>
+    </table>
+  </mat-card>
+} @else if (allRowsCount() > 0) {
+  <!-- filters active but nothing matches - do not claim that nothing is deployed -->
+  <app-empty>
+    <app-empty-header>
+      <app-empty-media variant="icon">
+        <mat-icon>filter_alt_off</mat-icon>
+      </app-empty-media>
+      <app-empty-title>{{ i18n.get('resourceNoDeployedFilterResults') }}</app-empty-title>
+    </app-empty-header>
+  </app-empty>
+} @else {
+  <app-empty>
+    <app-empty-header>
+      <app-empty-media variant="icon">
+        <mat-icon>inventory_2</mat-icon>
+      </app-empty-media>
+      <app-empty-title>{{ i18n.get('resourceNoDeployed') }}</app-empty-title>
+      <app-empty-description>{{ i18n.get('resourceNoDeployedHint') }}</app-empty-description>
+    </app-empty-header>
+  </app-empty>
+}
+
+@if (resourceService.orphanedAssignments().length > 0) {
+  <h3 class="orphan-heading">{{ i18n.get('resourceOrphanAssignments') }}</h3>
+  <ul class="orphan-list">
+    @for (
+      orphan of resourceService.orphanedAssignments();
+      track orphan.assignment.itemKey || orphan.elementId + orphan.assignment.articleNumber
+    ) {
+      <li>
+        {{ orphan.assignment.quantity }}× {{ orphan.assignment.name }}
+        @if (orphan.assignment.serialNumber) {
+          ({{ i18n.get('resourceSerialNumber') }}: {{ orphan.assignment.serialNumber }})
+        }
+      </li>
+    }
+  </ul>
+}

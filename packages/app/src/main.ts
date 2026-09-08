@@ -57,6 +57,7 @@ import { SearchService } from './app/search/search.service';
 import { OperationService } from './app/session/operations/operation.service';
 import { ChangesetService } from './app/changeset/changeset.service';
 import { SidebarService } from './app/sidebar/sidebar.service';
+import { ResourceService } from './app/resource/resource.service';
 
 // enable immerjs patches
 enablePatches();
@@ -120,6 +121,7 @@ bootstrapApplication(AppComponent, {
         inject(OperationService),
         inject(ChangesetService),
         inject(SidebarService),
+        inject(ResourceService),
       );
       return initializerFn();
     }),

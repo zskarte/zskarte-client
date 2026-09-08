@@ -1,0 +1,59 @@
+mat-card {
+  width: 100%;
+  display: block;
+}
+
+.signature-preview {
+  height: 30px;
+  width: auto;
+}
+
+.location {
+  cursor: pointer;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.orphan-heading {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.orphan-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+// The resources of one marker, laid out exactly like the catalogue's individual pieces:
+// an expandable detail row holding a nested table on a tinted surface.
+.element-row {
+  cursor: default;
+}
+
+.detail-row {
+  height: 0;
+}
+
+.detail-row:not(.expanded) td {
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  height: 0;
+}
+
+.detail-row.expanded td {
+  padding: 0.5rem 0;
+  border-bottom-width: 1px;
+}
+
+.assignment-table-container {
+  padding: 0.5rem 1rem 1rem;
+  background: var(--mat-sys-surface-variant, #f5f5f5);
+  border-radius: 0.5rem;
+}
+
+.assignment-table {
+  width: 100%;
+  background: transparent;
+}

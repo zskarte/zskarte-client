@@ -1,0 +1,62 @@
+@if (resources$ | async; as resources) {
+  @if (resources.length > 0) {
+    <mat-card>
+      <table mat-table [dataSource]="resources" class="resource-table">
+        <!-- Organization Column -->
+        <ng-container matColumnDef="organization">
+          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('organization') }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.organization }}</td>
+        </ng-container>
+
+        <!-- Formation Location Column -->
+        <ng-container matColumnDef="formationLocation">
+          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('formationLocation') }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.formationLocation }}</td>
+        </ng-container>
+
+        <!-- Hierarchy Level Column -->
+        <ng-container matColumnDef="hierarchyLevel">
+          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('hierarchyLevel') }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.hierarchyLevel }}</td>
+        </ng-container>
+
+        <!-- Formation Number Column -->
+        <ng-container matColumnDef="formationNumber">
+          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('formationNumber') }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.formationNumber }}</td>
+        </ng-container>
+
+        <!-- Formation Detail Column -->
+        <ng-container matColumnDef="formationDetail">
+          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('formationDetail') }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.formationDetail }}</td>
+        </ng-container>
+
+        <!-- Additional Info Column -->
+        <ng-container matColumnDef="additionalInfo">
+          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('additionalInfo') }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.additionalInfo }}</td>
+        </ng-container>
+
+        <!-- Location Column -->
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvLocation') }}</th>
+          <td mat-cell *matCellDef="let row" class="location" (click)="navigateTo(row)">{{ row.location }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-card>
+  } @else {
+    <app-empty>
+      <app-empty-header>
+        <app-empty-media variant="icon">
+          <mat-icon>groups</mat-icon>
+        </app-empty-media>
+        <app-empty-title>{{ i18n.get('resourceNoFormations') }}</app-empty-title>
+        <app-empty-description>{{ i18n.get('resourceNoFormationsHint') }}</app-empty-description>
+      </app-empty-header>
+    </app-empty>
+  }
+}

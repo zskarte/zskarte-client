@@ -1,0 +1,175 @@
+@if (resourceService.loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+} @else if (resourceService.error()) {
+  <app-empty>
+    <app-empty-header>
+      <app-empty-media variant="icon">
+        <mat-icon>error_outline</mat-icon>
+      </app-empty-media>
+      <app-empty-title>{{ i18n.get('resourceLoadError') }}</app-empty-title>
+    </app-empty-header>
+  </app-empty>
+} @else if (resourceService.articles().length === 0) {
+  <app-empty>
+    <app-empty-header>
+      <app-empty-media variant="icon">
+        <mat-icon>inventory_2</mat-icon>
+      </app-empty-media>
+      <app-empty-title>{{ i18n.get('resourceNoCatalogue') }}</app-empty-title>
+      <app-empty-description>{{ i18n.get('resourceNoCatalogueHint') }}</app-empty-description>
+    </app-empty-header>
+  </app-empty>
+} @else {
+  <div class="catalogue-container">
+    <app-resource-catalogue-filter
+      [articleGroups]="resourceService.articleGroups()"
+      [articleTypes]="resourceService.articleTypes()"
+      [storageSites]="resourceService.storageSites()"
+      [(search)]="search"
+      [(selectedGroups)]="selectedGroups"
+      [(selectedTypes)]="selectedTypes"
+      [(selectedStorageSites)]="selectedStorageSites"
+      [(selectedAvailability)]="selectedAvailability"
+    ></app-resource-catalogue-filter>
+
+    <div class="count-line">
+      {{ filteredArticleCount() }} {{ i18n.get('resourceCountOf') }} {{ totalArticleCount() }}
+      {{ i18n.get('resourceImportArticles') }} · {{ filteredPieceCount() }} {{ i18n.get('resourceImportItems') }}
+    </div>
+
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows class="catalogue-table">
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox
+              [checked]="allFilteredSelected()"
+              [indeterminate]="someFilteredSelected()"
+              [attr.aria-label]="i18n.get('resourceSelectAllArticles')"
+              (change)="toggleAllFiltered($event)"
+            ></mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox
+              [checked]="isRowFullySelected(row)"
+              [indeterminate]="isRowPartiallySelected(row)"
+              [disabled]="row.availableCount <= 0"
+              [attr.aria-label]="i18n.get('resourceSelectArticle')"
+              (click)="$event.stopPropagation()"
+              (change)="toggleRow(row)"
+            ></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="signature">
+          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('resourceDeploySignature') }}</th>
+          <td mat-cell *matCellDef="let row">
+            @let signature = signaturePreview(row.article);
+            <img
+              [src]="signature.url"
+              [alt]="signature.label"
+              [matTooltip]="signature.label"
+              class="signature-icon"
+              [class.placeholder]="signature.isPlaceholder"
+            />
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="articleNumber">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by article number">
+            {{ i18n.get('resourceArticleNumber') }}
+          </th>
+          <td mat-cell *matCellDef="let row">{{ row.article.articleNumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by name">
+            {{ i18n.get('resourceArticleName') }}
+          </th>
+          <td mat-cell *matCellDef="let row">{{ row.article.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="articleGroup">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by article group">
+            {{ i18n.get('resourceArticleGroup') }}
+          </th>
+          <td mat-cell *matCellDef="let row">{{ row.article.articleGroup }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalCount">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by total count">
+            {{ i18n.get('resourceTotalCount') }}
+          </th>
+          <td mat-cell *matCellDef="let row">{{ row.article.totalCount }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="availableCount">
+          <th mat-header-cell mat-sort-header *matHeaderCellDef sortActionDescription="Sort by available count">
+            {{ i18n.get('resourceFreeCount') }}
+          </th>
+          <td mat-cell *matCellDef="let row">{{ row.availableCount }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <button
+              mat-icon-button
+              type="button"
+              [attr.aria-label]="i18n.get('resourceItemsToggle')"
+              (click)="toggleExpand(row)"
+            >
+              <mat-icon>{{ isExpanded(row) ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+            @if (isExpanded(row)) {
+              <app-resource-item-table
+                [article]="row.article"
+                [row]="row"
+                [selection]="selectionFor(row)"
+                (selectionChange)="updateSelection(row.article.articleNumber, $event)"
+              ></app-resource-item-table>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="element-row"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['expandedDetail']"
+          class="detail-row"
+          [class.expanded]="isExpanded(row)"
+        ></tr>
+      </table>
+
+      @if (filteredArticleCount() === 0) {
+        <app-empty class="no-results">
+          <app-empty-header>
+            <app-empty-media variant="icon">
+              <mat-icon>search_off</mat-icon>
+            </app-empty-media>
+            <app-empty-title>{{ i18n.get('resourceNoFilterResults') }}</app-empty-title>
+          </app-empty-header>
+        </app-empty>
+      }
+
+      <mat-paginator [pageSize]="50" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
+    </div>
+
+    @if (hasSelection()) {
+      <div class="selection-footer">
+        <span class="selection-count">{{ totalSelectedQuantity() }} {{ i18n.get('resourceSelected') }}</span>
+        <button mat-button type="button" (click)="clearSelection()">{{ i18n.get('resourceSelectionClear') }}</button>
+        <button mat-flat-button color="primary" type="button" (click)="deploy()">
+          {{ i18n.get('resourceDeploy') }}
+        </button>
+      </div>
+    }
+  </div>
+}

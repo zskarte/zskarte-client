@@ -1,0 +1,166 @@
+<app-dialog-header>
+  <h2>{{ i18n.get('resourceDeployTitle') }}</h2>
+</app-dialog-header>
+
+<app-dialog-body>
+  <section class="section">
+    <h3>{{ i18n.get('resourceDeploySelection') }}</h3>
+    <ul class="selection-list">
+      @for (selection of selections; track selection.article.articleNumber) {
+        <li class="selection-row">
+          @let signature = selectionSignature(selection);
+          <img
+            [src]="signature.url"
+            [alt]="signature.label"
+            [matTooltip]="signature.label"
+            class="signature-icon"
+            [class.placeholder]="signature.isPlaceholder"
+          />
+          <span class="selection-label">{{ selectionLabel(selection) }}</span>
+          @if (signature.isPlaceholder) {
+            <mat-icon class="placeholder-hint" [matTooltip]="i18n.get('resourcePlaceholderSign')">info</mat-icon>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="section">
+    <h3>{{ i18n.get('resourceDeployMessage') }}</h3>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-select [ngModel]="messageNumber()" (ngModelChange)="messageNumber.set($event)">
+        <mat-option [value]="undefined">{{ i18n.get('resourceDeployMessageNone') }}</mat-option>
+        @for (entry of journalEntries(); track entry.messageNumber) {
+          <mat-option [value]="entry.messageNumber">{{ journalEntryLabel(entry) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    @if (fromJournalHint()) {
+      <div class="hint">{{ i18n.get('resourceDeployFromJournal') }}</div>
+    }
+  </section>
+
+  <section class="section location-section">
+    <h3>{{ i18n.get('resourceDeployLocation') }}</h3>
+
+    @if (pickedLocationLabel(); as label) {
+      <div class="location-chosen">
+        <mat-icon>place</mat-icon>
+        <div class="location-chosen-text">
+          <span class="location-chosen-caption">{{ i18n.get('resourceDeployLocationChosen') }}</span>
+          <span class="location-label">{{ label }}</span>
+        </div>
+      </div>
+    }
+
+    <!--
+      The input and <app-search-autocomplete> must stay together in the SAME, unconditional
+      view - exactly as geocoder.component.html and text-area-with-address-search do it.
+      `autocompleteRef` is a @ViewChild inside the child component, so it is only resolved
+      after that child's view init; if the [matAutocomplete] binding sits in a conditional
+      branch it is evaluated in a different pass and flips undefined -> object, which trips
+      NG0100. Keeping the field always visible also lets the user simply search again.
+    -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="location-search-field">
+      <input
+        matInput
+        [placeholder]="i18n.get('resourceDeployLocationSearch')"
+        [matAutocomplete]="locationAutocomplete.autocompleteRef"
+        [ngModel]="locationSearchTerm()"
+        (ngModelChange)="locationSearchTerm.set($event)"
+      />
+      <mat-icon class="search" matSuffix>search</mat-icon>
+    </mat-form-field>
+    <app-search-autocomplete
+      #locationAutocomplete
+      [searchTerm]="locationSearchTerm()"
+      [foundLocations]="locationResults()"
+      (selected)="locationSelected($event)"
+    ></app-search-autocomplete>
+
+    @if (!pickedLocationLabel()) {
+      <div class="hint">{{ i18n.get('resourceDeployLocationRequired') }}</div>
+    }
+
+    <div class="location-alternatives">
+      <span class="hint">{{ i18n.get('resourceDeployLocationAlternatives') }}</span>
+      <button mat-stroked-button type="button" (click)="placeAtCenter()">
+        <mat-icon>my_location</mat-icon>
+        {{ i18n.get('resourceDeployAtCenter') }}
+      </button>
+      <button mat-stroked-button type="button" (click)="placeOnMap()">
+        <mat-icon>touch_app</mat-icon>
+        {{ i18n.get('resourceDeploy') }}
+      </button>
+    </div>
+  </section>
+
+  <section class="section">
+    <h3>{{ i18n.get('resourceDeployMode') }}</h3>
+    <mat-radio-group [ngModel]="mode()" (ngModelChange)="mode.set($event)" class="mode-group">
+      <mat-radio-button value="collection">
+        {{ i18n.get('resourceDeployCollection') }}
+        <span class="hint">{{ i18n.get('resourceDeployCollectionHint') }}</span>
+      </mat-radio-button>
+      <mat-radio-button value="single">
+        {{ i18n.get('resourceDeploySingle') }}
+        <span class="hint">{{ i18n.get('resourceDeploySingleHint') }}</span>
+      </mat-radio-button>
+    </mat-radio-group>
+    @if (manyMarkersWarning()) {
+      <div class="warning">
+        <mat-icon>warning</mat-icon>
+        {{ i18n.get('resourceDeployManyMarkersWarning') }}
+      </div>
+    }
+
+    <div class="subsection">
+      <span class="subheading">{{ i18n.get('resourceDeploySignature') }}</span>
+      @if (mode() === 'collection') {
+        @let signature = collectionSignature();
+        <div class="signature-row">
+          <img
+            [src]="signature.url"
+            [alt]="signature.label"
+            class="signature-icon large"
+            [class.placeholder]="signature.isPlaceholder"
+          />
+          <span class="selection-label">{{ signature.label }}</span>
+          <button mat-stroked-button type="button" (click)="changeSignature()">
+            <mat-icon>cached</mat-icon>
+            {{ i18n.get('resourceDeployChangeSignature') }}
+          </button>
+        </div>
+      } @else {
+        <ul class="selection-list">
+          @for (signature of singleSignatures(); track signature.url + signature.label) {
+            <li class="selection-row">
+              <img
+                [src]="signature.url"
+                [alt]="signature.label"
+                class="signature-icon"
+                [class.placeholder]="signature.isPlaceholder"
+              />
+              <span class="selection-label">{{ signature.label }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    @if (mode() === 'collection') {
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="name-field">
+        <mat-label>{{ i18n.get('resourceDeployName') }}</mat-label>
+        <input matInput type="text" [ngModel]="name()" (ngModelChange)="name.set($event)" />
+      </mat-form-field>
+    }
+  </section>
+</app-dialog-body>
+
+<app-dialog-footer>
+  <button mat-stroked-button type="button" (click)="cancel()">{{ i18n.get('cancel') }}</button>
+  <button mat-flat-button color="primary" type="button" [disabled]="!pickedCoordinates()" (click)="placeAtLocation()">
+    <mat-icon>place</mat-icon>
+    {{ i18n.get('resourceDeployAtLocation') }}
+  </button>
+</app-dialog-footer>

@@ -1,0 +1,70 @@
+<app-dialog-header>
+  <h2>{{ step() === 'file' ? i18n.get('resourceImportTitle') : i18n.get('resourceImportPreviewTitle') }}</h2>
+</app-dialog-header>
+
+<app-dialog-body>
+  @if (step() === 'file') {
+    <div class="file-step">
+      <p class="hint">
+        {{ i18n.get('resourceImportHint') }}
+        <a class="example-csv" [href]="exampleCsvUrl" [attr.download]="exampleCsvFileName">
+          <mat-icon>download</mat-icon>
+          {{ i18n.get('resourceExampleCsv') }}
+        </a>
+      </p>
+      <p class="hint">{{ i18n.get('resourceExampleCsvHint') }}</p>
+      <input type="file" accept=".csv" #fileInput (change)="onFileSelected()" />
+      @if (parsing()) {
+        <mat-spinner diameter="24"></mat-spinner>
+      }
+    </div>
+  }
+
+  @if (step() === 'preview') {
+    <div class="preview-step">
+      <div class="file-summary">
+        <strong>{{ fileName() }}</strong>
+        <span>
+          {{ i18n.get('resourceImportReadSummary') }}: {{ parseResult()?.rows?.length ?? 0 }}
+          {{ i18n.get('resourceImportRows') }} · {{ aggregateResult()?.articles?.length ?? 0 }}
+          {{ i18n.get('resourceImportArticles') }}
+        </span>
+      </div>
+
+      <!-- Only blocking problems are shown: without them the disabled commit button would be
+           unexplained. Everything else (diff, per-row notices) was noise and is gone. -->
+      @if ((parseResult()?.errors?.length ?? 0) > 0) {
+        <div class="notice error-block">
+          <h3>{{ i18n.get('resourceImportErrors') }}</h3>
+          <ul>
+            @for (issue of parseResult()?.errors; track issue.code + (issue.line ?? '')) {
+              <li>{{ issue.message }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (commitError()) {
+        <p class="notice error-block">{{ commitError() }}</p>
+      }
+    </div>
+  }
+</app-dialog-body>
+
+<app-dialog-footer>
+  @if (step() === 'file') {
+    <button mat-button (click)="cancel()">{{ i18n.get('cancel') }}</button>
+    <button mat-flat-button color="primary" [disabled]="!fileName() || parsing()" (click)="readFile()">
+      {{ i18n.get('resourceImportRead') }}
+    </button>
+  } @else {
+    <button mat-button (click)="backToFileStep()">{{ i18n.get('resourceImportSelectFile') }}</button>
+    <button mat-flat-button color="primary" [disabled]="!canCommit()" (click)="commitImport()">
+      @if (committing()) {
+        <mat-spinner diameter="18"></mat-spinner>
+      } @else {
+        {{ i18n.get('resourceImportCommit') }}
+      }
+    </button>
+  }
+</app-dialog-footer>
