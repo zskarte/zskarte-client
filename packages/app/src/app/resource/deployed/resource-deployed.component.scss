@@ -1,0 +1,79 @@
+mat-card {
+  width: 100%;
+  display: block;
+}
+
+.signature-preview {
+  height: 30px;
+  width: auto;
+}
+
+.location {
+  cursor: pointer;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.orphan-heading {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.orphan-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+// One marker carrying several resources: its identity is stated once in a group header, and
+// its resources are indented under it instead of repeating the same marker data per row.
+.group-row td {
+  padding: 0;
+  border-bottom: none;
+}
+
+.group-cell {
+  padding: 0.5rem 0.75rem 0.25rem !important;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.group-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.group-label {
+  font-weight: 600;
+}
+
+.group-meta {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.group-location {
+  color: #666;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.grouped-article {
+  padding-left: 1.75rem;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0.9rem;
+    top: 0;
+    bottom: 0;
+    border-left: 2px solid #e0e0e0;
+  }
+}

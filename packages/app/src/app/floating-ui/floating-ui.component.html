@@ -15,9 +15,10 @@
           </button>
         }
       </div>
-      <app-changeset-overlay/>
+      <app-changeset-overlay />
     </div>
     <app-journal-draw-overlay [ngClass]="{ 'sidebar-open': sidebar.observeIsOpen() | async }" />
+    <app-resource-placement-overlay [ngClass]="{ 'sidebar-open': sidebar.observeIsOpen() | async }" />
     <app-coordinates [ngClass]="{ 'sidebar-open': sidebar.observeIsOpen() | async }" />
   </div>
   <div class="action-buttons noprint" [ngClass]="{ 'sidebar-open': sidebar.observeIsOpen() | async }">
@@ -46,9 +47,7 @@
             @if (isOnline | async) {
               <mat-icon matBadgeColor="warn" matBadge="!" aria-hidden="false">network_wifi</mat-icon>
             } @else {
-              <mat-icon matBadgeColor="warn" matBadge="!" aria-hidden="false"
-                >signal_wifi_off</mat-icon
-              >
+              <mat-icon matBadgeColor="warn" matBadge="!" aria-hidden="false">signal_wifi_off</mat-icon>
             }
           }
         } @else {

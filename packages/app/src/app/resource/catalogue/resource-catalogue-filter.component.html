@@ -1,0 +1,92 @@
+<div class="filter-bar">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>{{ i18n.get('resourceSearch') }}</mat-label>
+    <input
+      matInput
+      name="resourceCatalogueSearch"
+      [ngModel]="search()"
+      (ngModelChange)="search.set($event)"
+      [placeholder]="i18n.get('resourceSearchHint')"
+    />
+    @if (search()) {
+      <button
+        matSuffix
+        mat-icon-button
+        type="button"
+        [attr.aria-label]="i18n.get('resourceFilterClear')"
+        (click)="clearSearch()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-select">
+    <mat-label>{{ i18n.get('resourceArticleGroup') }}</mat-label>
+    <mat-select
+      multiple
+      name="resourceCatalogueGroupFilter"
+      [ngModel]="selectedGroups()"
+      (ngModelChange)="selectedGroups.set($event)"
+    >
+      @for (group of articleGroups(); track group) {
+        <mat-option [value]="group">{{ group }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-select">
+    <mat-label>{{ i18n.get('resourceArticleType') }}</mat-label>
+    <mat-select
+      multiple
+      name="resourceCatalogueTypeFilter"
+      [ngModel]="selectedTypes()"
+      (ngModelChange)="selectedTypes.set($event)"
+    >
+      @for (type of articleTypes(); track type) {
+        <mat-option [value]="type">{{ type }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-select">
+    <mat-label>{{ i18n.get('resourceStorageLocation') }}</mat-label>
+    <mat-select
+      multiple
+      name="resourceCatalogueStorageFilter"
+      [ngModel]="selectedStorageSites()"
+      (ngModelChange)="selectedStorageSites.set($event)"
+    >
+      @for (site of storageSites(); track site) {
+        <mat-option [value]="site">{{ site }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (showAvailability()) {
+    <mat-form-field appearance="outline" class="filter-select">
+      <mat-label>{{ i18n.get('resourceFilterAvailability') }}</mat-label>
+      <mat-select
+        multiple
+        name="resourceCatalogueAvailabilityFilter"
+        [ngModel]="selectedAvailability()"
+        (ngModelChange)="selectedAvailability.set($event)"
+      >
+        @for (option of availabilityOptions; track option.value) {
+          <mat-option [value]="option.value">{{ i18n.get(option.labelKey) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
+  <button
+    mat-stroked-button
+    type="button"
+    class="clear-button"
+    [disabled]="!hasActiveFilters()"
+    (click)="clearFilters()"
+  >
+    <mat-icon>filter_alt_off</mat-icon>
+    {{ i18n.get('resourceFilterClear') }}
+  </button>
+</div>

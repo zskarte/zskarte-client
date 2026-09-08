@@ -44,6 +44,9 @@ export class DrawStyle {
     } else if (signature.id === Signs.FORMATION_SIGN_ID) {
       // The formation sign is generated on the fly
       return DrawStyle.getFormationSvg(signature);
+    } else if (signature.id === Signs.RESOURCE_PLACEHOLDER_SIGN_ID) {
+      // The resource sign is generated on the fly
+      return DrawStyle.getResourceSvg(signature);
     } else if (Signs.TRANSPORT_SIGN_IDS.includes(signature.id ?? 0)) {
       // The transport sign is generated on the fly
       return DrawStyle.getTransportSvg(signature);
@@ -333,6 +336,15 @@ export class DrawStyle {
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   }
 
+  private static escapeXml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  }
+
   public static getHazardSignSvg(signature: Sign): string {
     const color = '#FF9100';
     const hazardCode = signature.hazardCode ?? '';
@@ -408,10 +420,10 @@ export class DrawStyle {
   <path d="${bodyPath}" fill="white" stroke="${color}" stroke-width="7"/>
   
   <!-- Organization text in body -->
-  <text x="${padding + 78}" y="${55 + padding}" fill="${color}" font-family="Arial" font-weight="700" font-size="${orgFontSize}" text-anchor="middle">${organization}</text>
-  
+  <text x="${padding + 78}" y="${55 + padding}" fill="${color}" font-family="Arial" font-weight="700" font-size="${orgFontSize}" text-anchor="middle">${DrawStyle.escapeXml(organization)}</text>
+
   <!-- Formation detail text above body -->
-  <text x="${padding + 78}" y="${padding - 5}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${formationDetail}</text>
+  <text x="${padding + 78}" y="${padding - 5}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${DrawStyle.escapeXml(formationDetail)}</text>
   
   <!-- Wheels -->
   ${wheelsHtml}
@@ -473,7 +485,7 @@ export class DrawStyle {
   <circle cx="${centerX}" cy="${circleY}" r="${circleRadius}" fill="white" stroke="${color}" stroke-width="9"/>
   
   <!-- Organization text inside circle -->
-  <text x="${centerX}" y="${circleY + 8}" fill="${color}" font-family="Arial" font-weight="700" font-size="${orgFontSize}" text-anchor="middle">${organization}</text>
+  <text x="${centerX}" y="${circleY + 8}" fill="${color}" font-family="Arial" font-weight="700" font-size="${orgFontSize}" text-anchor="middle">${DrawStyle.escapeXml(organization)}</text>
 </svg>`.trim();
 
     return this.asDataImageSvg(svg);
@@ -543,12 +555,12 @@ export class DrawStyle {
       const bottomY2 = 170 + padding;
       if (formationNumber && formationLocation) {
         bottomText = `
-          <text x="${circleCenter}" y="${bottomY1}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${formationNumber}</text>
-          <text x="${circleCenter}" y="${bottomY2}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${formationLocation}</text>`;
+          <text x="${circleCenter}" y="${bottomY1}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${DrawStyle.escapeXml(formationNumber)}</text>
+          <text x="${circleCenter}" y="${bottomY2}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${DrawStyle.escapeXml(formationLocation)}</text>`;
       } else if (formationNumber) {
-        bottomText = `<text x="${circleCenter}" y="${bottomY1}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${formationNumber}</text>`;
+        bottomText = `<text x="${circleCenter}" y="${bottomY1}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${DrawStyle.escapeXml(formationNumber)}</text>`;
       } else {
-        bottomText = `<text x="${circleCenter}" y="${bottomY1}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${formationLocation}</text>`;
+        bottomText = `<text x="${circleCenter}" y="${bottomY1}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="middle">${DrawStyle.escapeXml(formationLocation)}</text>`;
       }
     }
 
@@ -561,16 +573,65 @@ export class DrawStyle {
   <circle cx="${circleCenter}" cy="${78 + padding}" r="40" fill="white" stroke="${color}" stroke-width="8"/>
   
   <!-- Organization text inside circle -->
-  <text x="${circleCenter}" y="${85 + padding}" fill="${color}" font-family="Arial" font-weight="700" font-size="${orgFontSize}" text-anchor="middle">${organization}</text>
-  
+  <text x="${circleCenter}" y="${85 + padding}" fill="${color}" font-family="Arial" font-weight="700" font-size="${orgFontSize}" text-anchor="middle">${DrawStyle.escapeXml(organization)}</text>
+
   <!-- Left text (formation detail) -->
-  <text x="${25 + padding}" y="${85 + padding}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="end">${formationDetail}</text>
-  
+  <text x="${25 + padding}" y="${85 + padding}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="end">${DrawStyle.escapeXml(formationDetail)}</text>
+
   <!-- Right text (additional info) -->
-  <text x="${131 + padding}" y="${85 + padding}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="start">${additionalInfo}</text>
+  <text x="${131 + padding}" y="${85 + padding}" fill="${color}" font-family="Arial" font-weight="600" font-size="22" text-anchor="start">${DrawStyle.escapeXml(additionalInfo)}</text>
   
   <!-- Bottom text -->
   ${bottomText}
+</svg>`.trim();
+
+    return this.asDataImageSvg(svg);
+  }
+
+  private static truncateForSvg(value: string, maxLength = 16): string {
+    return value.length > maxLength ? `${value.slice(0, maxLength - 1)}…` : value;
+  }
+
+  public static getResourceSvg(signature: Sign): string {
+    const color = signature.color ?? '#0000FF';
+    const resourceItems = signature.resourceItems ?? [];
+
+    // Use larger viewBox with padding to prevent clipping
+    const padding = 20;
+    const boxWidth = 156;
+    const boxHeight = 100;
+    const viewBoxWidth = boxWidth + padding * 2;
+    const viewBoxHeight = boxHeight + padding * 2;
+    const centerX = viewBoxWidth / 2;
+
+    const distinctArticleNumbers = new Set(resourceItems.map((item) => item.articleNumber));
+    const totalQuantity = resourceItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    let titleLine: string;
+    let quantityLine = '';
+    if (distinctArticleNumbers.size <= 1) {
+      const articleName = resourceItems[0]?.name ?? signature.label ?? '';
+      titleLine = DrawStyle.truncateForSvg(articleName);
+      if (totalQuantity > 1) {
+        quantityLine = `×${totalQuantity}`;
+      }
+    } else {
+      titleLine = DrawStyle.truncateForSvg(signature.label || 'Mittel');
+      quantityLine = `${distinctArticleNumbers.size} Artikel`;
+    }
+
+    const titleY = quantityLine ? viewBoxHeight / 2 - 6 : viewBoxHeight / 2 + 7;
+
+    const svg = `
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${viewBoxWidth} ${viewBoxHeight}" width="${viewBoxWidth}px" height="${viewBoxHeight}px">
+  <!-- Rounded resource box -->
+  <rect x="${padding}" y="${padding}" width="${boxWidth}" height="${boxHeight}" rx="14" ry="14" fill="white" stroke="${color}" stroke-width="7"/>
+
+  <!-- Article name -->
+  <text x="${centerX}" y="${titleY}" fill="${color}" font-family="Arial" font-weight="700" font-size="22" text-anchor="middle">${DrawStyle.escapeXml(titleLine)}</text>
+
+  <!-- Quantity / article count -->
+  ${quantityLine ? `<text x="${centerX}" y="${viewBoxHeight / 2 + 20}" fill="${color}" font-family="Arial" font-weight="600" font-size="20" text-anchor="middle">${DrawStyle.escapeXml(quantityLine)}</text>` : ''}
 </svg>`.trim();
 
     return this.asDataImageSvg(svg);
@@ -613,6 +674,7 @@ export class DrawStyle {
         additionalInfo: signature.additionalInfo,
         formationNumber: signature.formationNumber,
         formationLocation: signature.formationLocation,
+        resourceItems: signature.resourceItems,
       }),
     ).toString();
   }

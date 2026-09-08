@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Component, computed, inject, OnDestroy } from '@angular/core';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { DetailImageViewComponent } from '../detail-image-view/detail-image-view.component';
@@ -27,11 +27,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   defineDefaultValuesForSignature,
   FillStyle,
   getColorForCategory,
   IconsOffset,
+  ResourceAssignment,
   Sign,
   signatureDefaultValues,
   ZsMapDrawElementState,
@@ -41,6 +44,10 @@ import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Signs } from '../map-renderer/signs';
+import { ResourceService } from '../resource/resource.service';
+import { RESOURCE_LAYER_NAME, ResourcePlacementService } from '../resource/placement/resource-placement.service';
+import { resolveResourceSignId } from '../resource/resource-signature.mapping';
+import { ResourceAddOption, buildResourceAddOptions, canAssignOption } from '../resource/resource-assignment-picker';
 
 @Component({
   selector: 'app-selected-feature',
@@ -62,12 +69,16 @@ import { Signs } from '../map-renderer/signs';
     MatCheckboxModule,
     MatDividerModule,
     MatChipsModule,
+    MatTooltipModule,
+    MatAutocompleteModule,
   ],
 })
 export class SelectedFeatureComponent implements OnDestroy {
   dialog = inject(MatDialog);
   i18n = inject(I18NService);
   zsMapStateService = inject(ZsMapStateService);
+  private resourceService = inject(ResourceService);
+  private resourcePlacement = inject(ResourcePlacementService);
   private router = inject(Router);
 
   groupedFeatures = null;
@@ -263,6 +274,97 @@ export class SelectedFeatureComponent implements OnDestroy {
         draft[field as T] = value;
       });
     }
+  }
+
+  /**
+   * Resolves the small pictogram shown next to one assigned resource: looked up via the
+   * article's own group (not the marker's `symbolId`, which the user can freely change), or
+   * the resource placeholder when the article is no longer in the catalogue.
+   */
+  resourceAssignmentSignature(assignment: ResourceAssignment): Sign | undefined {
+    const article = this.resourceService.findArticle(assignment.articleNumber);
+    const signId = article ? resolveResourceSignId(article) : Signs.RESOURCE_PLACEHOLDER_SIGN_ID;
+    return Signs.getSignById(signId);
+  }
+
+  /** Free-text term of the "add resource" search below the assigned-resources list. */
+  readonly resourceSearch = signal('');
+
+  /**
+   * The catalogue entries matching `resourceSearch()`, free ones first. Nothing is hidden: a
+   * piece the inventory export lists as unavailable (in Reparatur, ausgeliehen, ...) is offered
+   * too, with its status shown, since the export is a snapshot and the person on the map knows
+   * what is actually on site. Only pieces already carried by a marker cannot be picked.
+   */
+  readonly resourceAddOptions = computed(() =>
+    buildResourceAddOptions(
+      this.resourceService.articles(),
+      this.resourceService.assignmentIndex(),
+      this.resourceSearch(),
+    ),
+  );
+
+  // skipcq: JS-0105
+  canAssignResourceOption(option: ResourceAddOption): boolean {
+    return canAssignOption(option);
+  }
+
+  /**
+   * Whether the resource section (list + search) is offered for this element: for markers that
+   * already carry resources, and for anything on the shared "Mittel im Einsatz" layer - the
+   * markers `ResourcePlacementService` deploys to. Keeping it to those preserves the invariant
+   * that a marker carrying resources *is* a resource marker, which is what lets `takeBack`
+   * delete it once its last piece is returned to stock.
+   */
+  canAssignResources(element: ZsMapDrawElementState): boolean {
+    if (this.resourceService.articles().length === 0) {
+      return false;
+    }
+    return !!element.resourceItems?.length || this.selectedElementLayerName() === RESOURCE_LAYER_NAME;
+  }
+
+  /** Pictogram of one search result, resolved from its article exactly like an assigned row. */
+  resourceOptionSignature(option: ResourceAddOption): Sign | undefined {
+    return Signs.getSignById(resolveResourceSignId(option.article));
+  }
+
+  /** Adds the picked piece to this marker and resets the search so the next one can be typed. */
+  addResourceAssignment(option: ResourceAddOption, element: ZsMapDrawElementState) {
+    this.resourceSearch.set('');
+    if (!element.id || !canAssignOption(option)) {
+      return;
+    }
+    this.resourcePlacement.assign(element.id, option);
+  }
+
+  /**
+   * The autocomplete writes the picked option (an object) back through `ngModel` before
+   * `optionSelected` fires; only real typing carries a string.
+   */
+  updateResourceSearch(value: unknown) {
+    this.resourceSearch.set(typeof value === 'string' ? value : '');
+  }
+
+  /** Keeps the input empty when an option is picked - the picked resource shows up in the list above. */
+  // skipcq: JS-0105
+  displayNoResourceOption(): string {
+    return '';
+  }
+
+  /**
+   * Removes one assigned resource from this marker via `ResourcePlacementService.takeBack`, the
+   * same path `resource-deployed.component` uses - so both places behave identically, including
+   * deleting the marker once its last resource item is taken back. The piece becomes available
+   * again in the catalogue automatically: `ResourceService.assignmentIndex` is a computed signal
+   * derived from `state.observeMapState()`, which `takeBack` writes through, so this recomputes
+   * as soon as the map state changes - no separate "free the item" step needed.
+   */
+  removeResourceAssignment(index: number, element: ZsMapDrawElementState) {
+    const assignment = (element.resourceItems ?? [])[index];
+    if (!element.id || !assignment) {
+      return;
+    }
+    this.resourcePlacement.takeBack(element.id, assignment);
   }
 
   updateFillStyle<T extends keyof FillStyle>(element: ZsMapDrawElementState, field: T, value: FillStyle[T]) {

@@ -45,7 +45,7 @@
   align-self: flex-start;
   justify-content: space-between;
   container: floating-ui-top-row / inline-size;
-    
+
   &.sidebar-open {
     width: calc(100% - var(--sidebar-width));
   }
@@ -143,6 +143,14 @@ app-journal-draw-overlay {
   z-index: 1;
 }
 
+app-resource-placement-overlay {
+  position: fixed;
+  bottom: 5rem;
+  left: 1.25rem;
+  width: 400px;
+  z-index: 1;
+}
+
 app-coordinates {
   position: absolute;
   bottom: 1.25rem;
@@ -175,6 +183,11 @@ app-geocoder {
     bottom: 8.5rem;
     width: calc(100vw - 1.25rem - 80px);
   }
+
+  app-resource-placement-overlay {
+    bottom: 8.5rem;
+    width: calc(100vw - 1.25rem - 80px);
+  }
 }
 
 @media (max-width: 800px) {
@@ -185,6 +198,9 @@ app-geocoder {
 
 :host-context(.journal-address-preview) {
   app-journal-draw-overlay {
+    display: none;
+  }
+  app-resource-placement-overlay {
     display: none;
   }
   app-coordinates {

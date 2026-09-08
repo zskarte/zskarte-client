@@ -14,6 +14,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { deserialize, SuperJSONResult } from 'superjson';
 import { ChangesetInconsistentError, IZsChangeset } from '@zskarte/types';
 import { ChangesetService } from '../changeset/changeset.service';
+import { ResourceService } from '../resource/resource.service';
 
 export interface User {
   username: string;
@@ -40,6 +41,7 @@ export class SyncService {
   private _session = inject(SessionService);
   private _journal = inject(JournalService);
   private _changeset = inject(ChangesetService);
+  private _resource = inject(ResourceService);
 
   private _connectionId = uuidv4();
   private _socket: Socket | undefined;
@@ -121,6 +123,7 @@ export class SyncService {
 
     this._journal.setConnectionId(this._connectionId);
     this._changeset.setConnectionId(this._connectionId);
+    this._resource.setConnectionId(this._connectionId);
   }
 
   public setStateService(state: ZsMapStateService): void {
@@ -174,6 +177,9 @@ export class SyncService {
       this._socket.on('state:journal', (json: SuperJSONResult) => {
         const entry = deserialize(json) as Partial<JournalEntry>;
         this._journal.patchEntry(entry);
+      });
+      this._socket.on('state:resources', () => {
+        this._resource.reload();
       });
       this._socket.on('state:connections', (connections: Connection[]) => {
         this._connections.next(connections);

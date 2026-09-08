@@ -1,7 +1,76 @@
-mat-card {
-    width: fit-content;
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.location {
-  cursor: pointer;
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex: 1;
+}
+
+.header-hint {
+  margin: 0;
+  color: #666;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  max-width: 90ch;
+}
+
+// Inline with the sentence it belongs to, so the download reads as part of the explanation.
+.example-csv {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: 0.35rem;
+  color: #1a56db;
+  text-decoration: underline;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.meta-info {
+  color: #666;
+}
+
+.chip {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #fff4e5;
+  color: #7a4a00;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+app-dialog-body {
+  display: block;
+  flex: 1;
+  overflow: hidden;
+}
+
+mat-tab-group {
+  height: 100%;
 }

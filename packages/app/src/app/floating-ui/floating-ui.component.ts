@@ -23,6 +23,7 @@ import { MAX_DRAW_ELEMENTS_GUEST } from '../session/default-map-values';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GuestLimitDialogComponent } from '../guest-limit-dialog/guest-limit-dialog.component';
 import { JournalDrawOverlayComponent } from '../journal-draw-overlay/journal-draw-overlay.component';
+import { ResourcePlacementOverlayComponent } from '../resource/placement/resource-placement-overlay.component';
 import { SearchService } from '../search/search.service';
 import { CompassButtonComponent } from '../compass-button/compass-button.component';
 import { JournalService } from '../journal/journal.service';
@@ -41,6 +42,7 @@ import { ChangesetOverlayComponent } from '../changeset/changeset-overlay/change
     GeocoderComponent,
     CoordinatesComponent,
     JournalDrawOverlayComponent,
+    ResourcePlacementOverlayComponent,
     ChangesetOverlayComponent,
     CommonModule,
     CompassButtonComponent,

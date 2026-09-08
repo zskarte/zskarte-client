@@ -1,101 +1,102 @@
-import { Component, DestroyRef, inject } from '@angular/core';
-import { ZsMapStateService } from '../state/state.service';
-import { I18NService } from '../state/i18n.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { HierarchyLevel, Sign, ZsMapDrawElementState } from '@zskarte/types';
-import { map } from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
-import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DialogHeaderComponent, DialogBodyComponent } from '../ui/dialog-layout';
-import { MatCard } from '@angular/material/card';
-import { convertTo, projection_LV95 } from '../helper/projections';
-import { ZsMapBaseDrawElement } from '../map-renderer/elements/base/base-draw-element';
-import { SimpleGeometry } from 'ol/geom';
-import { getCenter } from 'ol/extent';
-
-interface ResourceRow {
-  id: string;
-  organization: string;
-  formationLocation: string;
-  hierarchyLevel: string;
-  formationNumber: string;
-  formationDetail: string;
-  additionalInfo: string;
-  location: string;
-}
+import { I18NService } from '../state/i18n.service';
+import { SessionService } from '../session/session.service';
+import { ResourceService } from '../resource/resource.service';
+import { ResourceCatalogueComponent } from '../resource/catalogue/resource-catalogue.component';
+import { ResourceDeployedComponent } from '../resource/deployed/resource-deployed.component';
+import { ResourceFormationTableComponent } from '../resource/formations/resource-formation-table.component';
+import { ResourceImportDialogComponent } from '../resource/import/resource-import-dialog.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-resource-overview',
-  imports: [MatTableModule, AsyncPipe, DialogHeaderComponent, DialogBodyComponent, MatCard],
+  imports: [
+    DatePipe,
+    MatButtonModule,
+    MatIconModule,
+    MatTabsModule,
+    MatTooltipModule,
+    DialogHeaderComponent,
+    DialogBodyComponent,
+    ResourceCatalogueComponent,
+    ResourceDeployedComponent,
+    ResourceFormationTableComponent,
+  ],
   templateUrl: './resource-overview.component.html',
   styleUrl: './resource-overview.component.scss',
 })
 export class ResourceOverviewComponent {
-  private state = inject(ZsMapStateService);
-  private destroyRef = inject(DestroyRef);
+  private dialog = inject(MatDialog);
+  private session = inject(SessionService);
+  resourceService = inject(ResourceService);
   i18n = inject(I18NService);
 
-  readonly RESOURCE_SIGN_ID = [210];
+  /**
+   * Downloadable, self-documenting template: its rows above the CSV header explain the format
+   * and are skipped by the parser, so it doubles as the documentation of the import. Kept in
+   * sync with the parser by `resource-csv.parser.spec.ts`, which imports this very file.
+   */
+  readonly exampleCsvUrl = 'assets/doc/resource/mittel-beispiel.csv';
+  readonly exampleCsvFileName = 'mittel-beispiel.csv';
 
-  displayedColumns: string[] = [
-    'organization',
-    'formationLocation',
-    'hierarchyLevel',
-    'formationNumber',
-    'formationDetail',
-    'additionalInfo',
-    'location',
-  ];
+  readonly canImport = this.session.hasWritePermission() && !this.session.isArchived();
+  readonly isOnline = toSignal(this.session.observeIsOnline(), { initialValue: this.session.isOnline() });
 
-  resources$ = this.state.observeDrawElements().pipe(
-    takeUntilDestroyed(this.destroyRef),
-    map((elements) =>
-      elements
-        .filter((e) => this.RESOURCE_SIGN_ID.includes(e.elementState?.symbolId as number))
-        .map((e) => this.mapToResourceRow(e)),
-    ),
-  );
-
-  private mapToResourceRow(element: ZsMapBaseDrawElement): ResourceRow {
-    const state = element.elementState as ZsMapDrawElementState;
-    const geometry = element.getOlFeature().getGeometry() as SimpleGeometry;
-    return {
-      id: state.id ?? '',
-      organization: state.organization ?? '',
-      formationLocation: state.formationLocation ?? String(state.coordinates) ?? '',
-      hierarchyLevel: this.getHierarchyLabel(state.hierarchyLevel),
-      formationNumber: state.formationNumber ?? '',
-      formationDetail: state.formationDetail ?? '',
-      additionalInfo: state.additionalInfo ?? '',
-      location: convertTo(geometry.getCoordinates() || [], projection_LV95!, false) as string
-    };
+  /** True once a catalogue exists, i.e. there is something that could be cleared. */
+  get hasCatalogue(): boolean {
+    return this.resourceService.articles().length > 0;
   }
 
-  private getHierarchyLabel(level?: HierarchyLevel): string {
-    if (!level) return '';
-    switch (level) {
-      case HierarchyLevel.TRUPP:
-        return this.i18n.get('hierarchyTrupp');
-      case HierarchyLevel.GRUPPE:
-        return this.i18n.get('hierarchyGruppe');
-      case HierarchyLevel.ZUG:
-        return this.i18n.get('hierarchyZug');
-      case HierarchyLevel.KOMPANIE:
-        return this.i18n.get('hierarchyKompanie');
-      case HierarchyLevel.BATAILLON:
-        return this.i18n.get('hierarchyBataillon');
-      default:
-        return '';
+  openImportDialog(): void {
+    if (!this.canImport || !this.isOnline()) {
+      return;
     }
+    this.dialog.open(ResourceImportDialogComponent, { width: '700px', maxWidth: '95vw' });
   }
 
-  navigateTo(element: ZsMapDrawElementState) {
-    if (element.id) {
-      this.state.setSelectedFeature(element.id);
-      const extent = this.state.getDrawElement(element.id)?.getOlFeature()?.getGeometry()?.getExtent();
-      if (extent) {
-        this.state.setMapCenter(getCenter(extent));
+  /**
+   * Clears the whole catalogue of this operation, e.g. before re-importing a corrected export.
+   * An import with an empty article list is exactly the "replace" the endpoint already performs,
+   * so no dedicated delete endpoint is needed.
+   *
+   * Markers already placed on the map are deliberately kept - they then show up as
+   * "Nicht im Katalog", consistent with the re-import behaviour. The confirmation says so.
+   */
+  clearCatalogue(): void {
+    if (!this.canImport || !this.isOnline() || !this.hasCatalogue) {
+      return;
+    }
+    const confirmation = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: this.i18n.get('resourceClearTitle'),
+        message: this.i18n.get('resourceClearConfirm'),
+        confirmLabel: this.i18n.get('resourceClear'),
+      },
+    });
+    confirmation.afterClosed().subscribe(async (confirmed) => {
+      if (!confirmed) {
+        return;
       }
-    }
+      const operationId = this.session.getOperationId();
+      const organizationId = this.session.getOrganization()?.documentId;
+      if (!operationId || !organizationId) {
+        return;
+      }
+      await this.resourceService.commitImport({
+        operation: operationId,
+        organization: organizationId,
+        importId: uuidv4(),
+        articles: [],
+      });
+    });
   }
 }

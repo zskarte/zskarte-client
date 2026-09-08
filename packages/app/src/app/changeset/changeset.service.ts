@@ -1087,7 +1087,12 @@ export class ChangesetService {
           .filter((k) => k.startsWith(path))
           .forEach((k) => delete changes[k]);
         changes[path] = null;
-      } else if (typeof value === 'object' && !path.endsWith('coordinates') && !path.endsWith('reportNumber')) {
+      } else if (
+        typeof value === 'object' &&
+        !path.endsWith('coordinates') &&
+        !path.endsWith('reportNumber') &&
+        !path.endsWith('resourceItems')
+      ) {
         Object.entries(value).forEach(([key, val]) => {
           updateValue(changes, op, path ? `${path}.${key}` : key, val);
         });

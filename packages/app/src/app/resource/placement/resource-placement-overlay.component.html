@@ -1,0 +1,12 @@
+@if (placement.pendingLabel(); as label) {
+  <div class="placement-infos mat-elevation-z3">
+    <mat-icon>touch_app</mat-icon>
+    <div class="placement-text">
+      <span class="hint">{{ i18n.get('resourceDeployOnMap') }}</span>
+      <span class="label">{{ label }}</span>
+    </div>
+    <button mat-icon-button [attr.aria-label]="i18n.get('cancel')" (click)="cancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+}

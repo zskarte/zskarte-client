@@ -119,7 +119,7 @@ export class SidebarMenuComponent {
   }
 
   openResourceOverviewWindow(): void {
-    this.dialog.open(ResourceOverviewComponent);
+    this.dialog.open(ResourceOverviewComponent, { width: '90vw', maxWidth: '1400px', height: '85vh' });
   }
 
   organisationSettings(): void {

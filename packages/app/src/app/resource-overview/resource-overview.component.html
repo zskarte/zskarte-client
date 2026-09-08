@@ -1,61 +1,65 @@
 <app-dialog-header>
-  <h2>{{ i18n.get('resourceOverview') }}</h2>
+  <div class="header-content">
+    <div class="header-row">
+      <h2>{{ i18n.get('resourceOverview') }}</h2>
+      <div class="header-meta">
+        @if (resourceService.importMeta(); as meta) {
+          <span class="meta-info"
+            >{{ i18n.get('resourceLastImport') }} {{ meta.importedAt | date: 'dd.MM.yyyy HH:mm' }}</span
+          >
+        }
+        @if (resourceService.cachedOnly()) {
+          <span class="chip">{{ i18n.get('resourceCachedOnly') }}</span>
+        }
+        @if (canImport) {
+          <button
+            mat-stroked-button
+            [disabled]="!isOnline()"
+            [matTooltip]="!isOnline() ? i18n.get('resourceImportOnlineOnly') : ''"
+            (click)="openImportDialog()"
+          >
+            <mat-icon>upload_file</mat-icon>
+            {{ i18n.get('resourceImportCsv') }}
+          </button>
+          @if (hasCatalogue) {
+            <button
+              mat-stroked-button
+              [disabled]="!isOnline()"
+              [matTooltip]="!isOnline() ? i18n.get('resourceImportOnlineOnly') : ''"
+              (click)="clearCatalogue()"
+            >
+              <mat-icon>delete_sweep</mat-icon>
+              {{ i18n.get('resourceClear') }}
+            </button>
+          }
+        }
+      </div>
+    </div>
+    <p class="header-hint">
+      {{ i18n.get('resourceOverviewIntro') }}
+      <a
+        class="example-csv"
+        [href]="exampleCsvUrl"
+        [attr.download]="exampleCsvFileName"
+        [matTooltip]="i18n.get('resourceExampleCsvHint')"
+      >
+        <mat-icon>download</mat-icon>
+        {{ i18n.get('resourceExampleCsv') }}
+      </a>
+    </p>
+  </div>
 </app-dialog-header>
 
-<app-dialog-body>  
-  <mat-card>
-  @if (resources$ | async; as resources) {
-    @if (resources.length > 0) {
-      <table mat-table [dataSource]="resources" class="resource-table">
-        <!-- Organization Column -->
-        <ng-container matColumnDef="organization">
-          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('organization') }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.organization }}</td>
-        </ng-container>
-
-        <!-- Formation Location Column -->
-        <ng-container matColumnDef="formationLocation">
-          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('formationLocation') }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.formationLocation }}</td>
-        </ng-container>
-
-        <!-- Hierarchy Level Column -->
-        <ng-container matColumnDef="hierarchyLevel">
-          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('hierarchyLevel') }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.hierarchyLevel }}</td>
-        </ng-container>
-
-        <!-- Formation Number Column -->
-        <ng-container matColumnDef="formationNumber">
-          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('formationNumber') }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.formationNumber }}</td>
-        </ng-container>
-
-        <!-- Formation Detail Column -->
-        <ng-container matColumnDef="formationDetail">
-          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('formationDetail') }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.formationDetail }}</td>
-        </ng-container>
-
-        <!-- Additional Info Column -->
-        <ng-container matColumnDef="additionalInfo">
-          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('additionalInfo') }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.additionalInfo }}</td>
-        </ng-container>
-
-        <!-- Location Column -->
-        <ng-container matColumnDef="location">
-          <th mat-header-cell *matHeaderCellDef>{{ i18n.get('csvLocation') }}</th>
-          <td mat-cell *matCellDef="let row" class="location" (click)="navigateTo(row)">{{ row.location }}</td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    } @else {
-      <p class="no-resources">{{ i18n.get('noResources') }}</p>
-    }
-  }
-  </mat-card>
+<app-dialog-body>
+  <mat-tab-group animationDuration="0ms">
+    <mat-tab [label]="i18n.get('resourceTabCatalogue')">
+      <app-resource-catalogue />
+    </mat-tab>
+    <mat-tab [label]="i18n.get('resourceTabDeployed')">
+      <app-resource-deployed />
+    </mat-tab>
+    <mat-tab [label]="i18n.get('resourceTabFormations')">
+      <app-resource-formation-table />
+    </mat-tab>
+  </mat-tab-group>
 </app-dialog-body>
-
