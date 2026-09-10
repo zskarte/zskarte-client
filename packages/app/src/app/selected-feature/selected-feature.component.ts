@@ -101,6 +101,7 @@ export class SelectedFeatureComponent implements OnDestroy {
   protected selectedElementLayerName = toSignal(
     this.selectedElementLayer$.pipe(switchMap((layer) => layer?.observeName() ?? EMPTY)),
   );
+  protected layers = toSignal(this.zsMapStateService.observeLayers(), { initialValue: [] });
 
   protected editMode = computed(() => {
     const activeLayer = this.activeLayer();
@@ -191,8 +192,18 @@ export class SelectedFeatureComponent implements OnDestroy {
 
   get featureGroups() {
     return this.groupedFeatures ?
-        Object.values(this.groupedFeatures).sort((a: any, b: any) => a.label.localeCompare(b.label))
+      Object.values(this.groupedFeatures).sort((a: any, b: any) => a.label.localeCompare(b.label))
       : null;
+  }
+
+  onLayerChange(
+    drawElement: ZsMapDrawElementState,
+    layerId: string): void {
+    if (!drawElement.id) {
+      return;
+    }
+
+    this.zsMapStateService.updateDrawElementState(drawElement.id, 'layer', layerId);
   }
 
   isPolygon() {
@@ -469,7 +480,7 @@ export class SelectedFeatureComponent implements OnDestroy {
     const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
     defineDefaultValuesForSignature(sign);
     this.zsMapStateService.updateDrawElementState(element.id, 'iconSize', sign.iconSize);
-    this.zsMapStateService.updateDrawElementState(element.id, 'iconsOffset', {...sign.iconsOffset as IconsOffset});
+    this.zsMapStateService.updateDrawElementState(element.id, 'iconsOffset', { ...sign.iconsOffset as IconsOffset });
     this.zsMapStateService.updateDrawElementState(element.id, 'rotation', sign.rotation);
     this.zsMapStateService.updateDrawElementState(element.id, 'iconOpacity', sign.iconOpacity);
     this.zsMapStateService.updateDrawElementState(element.id, 'hideIcon', sign.hideIcon);
@@ -489,6 +500,6 @@ export class SelectedFeatureComponent implements OnDestroy {
     const sign = Signs.getSignById(element.symbolId) ?? ({} as Sign);
     defineDefaultValuesForSignature(sign);
     this.zsMapStateService.updateDrawElementState(element.id, 'fillOpacity', sign.fillOpacity);
-    this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', {...sign.fillStyle as FillStyle});
+    this.zsMapStateService.updateDrawElementState(element.id, 'fillStyle', { ...sign.fillStyle as FillStyle });
   }
 }
