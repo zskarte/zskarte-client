@@ -27,7 +27,18 @@
                     {{ drawElement.createdAt | date: 'dd.MM.yyyy, HH:mm' }}
                   </div>
                 }
-                <div>{{ i18n.get('drawLayer') }}: {{ selectedElementLayerName() }}</div>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ i18n.get('drawLayer') }}</mat-label>
+                  <mat-select
+                    [ngModel]="drawElement['layer']"
+                    (ngModelChange)="onLayerChange(drawElement, $event)"
+                  >
+                    @for (layer of layers(); track layer.getId()) {
+                    <mat-option [value]="layer.getId()">
+                      {{ layer.observeName() | async }}
+                    </mat-option>}
+                  </mat-select>
+                </mat-form-field>
               </div>
             }
             @if (selectedElementLayer()?.getId() !== activeLayer()?.getId()) {
